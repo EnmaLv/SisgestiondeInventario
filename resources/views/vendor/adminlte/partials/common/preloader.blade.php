@@ -15,7 +15,7 @@
              alt="{{ config('adminlte.preloader.img.alt', 'AdminLTE Preloader Image') }}"
              width="{{ config('adminlte.preloader.img.width', 60) }}"
              height="{{ config('adminlte.preloader.img.height', 60) }}"
-             style="animation-iteration-count:infinite;">
+             style="animation-iteration-count:infinite; border-radius: 0!important;">
 
     @endif
 
