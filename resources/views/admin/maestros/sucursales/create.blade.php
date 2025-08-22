@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Crea una Nueva Sucursal</h1>
+    <h1>Sucursal</h1>
     <p>Bienvenido {{ auth()->user()->name }}.</p>
 @stop
 
@@ -10,7 +10,7 @@
         <div class="col-md-8 m-auto">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><b>Llenar los campos del formulario</b></h3>
+                    <h3 class="card-title"><b>Crear Sucursal</b></h3>
 
                     <div class="card-tools">
                         <a href="{{ url('admin/maestros/sucursales') }}" class="btn btn-tool">

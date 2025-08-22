@@ -26,3 +26,13 @@ Table Productos {
   estado boolean [default: true]
   categoria_id int [ref: > Categorias.id]
 }
+
+Table Proveedores {
+  id int [pk, increment]
+  empresa varchar(100) [not null]
+  direccion varchar(255)
+  nombre varchar(100) [not null]
+  telefono varchar(20)
+  email varchar(100)
+  estado boolean [default: true]
+}

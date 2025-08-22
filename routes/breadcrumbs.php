@@ -56,6 +56,7 @@ Breadcrumbs::for('admin.maestros.productos.index', function (Trail $trail) {
     $trail->push('Productos', route('admin.maestros.productos.index'));
 });
 
+
 Breadcrumbs::for('admin.maestros.productos.create', function (Trail $trail) {
     $trail->parent('admin.maestros.productos.index');
     $trail->push('Crear', route('admin.maestros.productos.create'));
@@ -69,6 +70,27 @@ Breadcrumbs::for('admin.maestros.productos.show', function (Trail $trail, $produ
 Breadcrumbs::for('admin.maestros.productos.edit', function (Trail $trail, $producto) {
     $trail->parent('admin.maestros.productos.index');
     $trail->push('Editar', route('admin.maestros.productos.edit', $producto));
+});
+
+// Maestros > Proveedores
+Breadcrumbs::for('admin.maestros.proveedores.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Proveedores', route('admin.maestros.proveedores.index'));
+});
+
+Breadcrumbs::for('admin.maestros.proveedores.create', function (Trail $trail) {
+    $trail->parent('admin.maestros.proveedores.index');
+    $trail->push('Crear', route('admin.maestros.proveedores.create'));
+});
+
+Breadcrumbs::for('admin.maestros.proveedores.show', function (Trail $trail, $proveedor) {
+    $trail->parent('admin.maestros.proveedores.index');
+    $trail->push('Ver Mas', route('admin.maestros.proveedores.show', $proveedor));
+});
+
+Breadcrumbs::for('admin.maestros.proveedores.edit', function (Trail $trail, $proveedor) {
+    $trail->parent('admin.maestros.proveedores.index');
+    $trail->push('Editar', route('admin.maestros.proveedores.edit', $proveedor));
 });
 
 // Movimientos > Transacciones

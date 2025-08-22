@@ -353,6 +353,14 @@ return [
             'active' => ['admin/maestros/productos*'],
         ],
 
+        [
+            'text' => 'Proveedores',
+            'url' => 'admin/maestros/proveedores',
+            'icon' => 'fas fa-fw fa-truck',
+            'classes' => 'bg-primary text-white',
+            'active' => ['admin/maestros/proveedores*'],
+        ],
+
         ['header' => 'Movimientos'],
 
         [

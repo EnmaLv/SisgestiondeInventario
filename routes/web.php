@@ -40,6 +40,15 @@ Route::get('/admin/maestros/productos/{producto}/edit', [App\Http\Controllers\Pr
 Route::put('/admin/maestros/productos/{producto}', [App\Http\Controllers\ProductoController::class, 'update'])->name('admin.maestros.productos.update')->middleware('auth');
 Route::delete('/admin/maestros/productos/{producto}', [App\Http\Controllers\ProductoController::class, 'destroy'])->name('admin.maestros.productos.destroy');
 
+//Proveedores
+Route::get('/admin/maestros/proveedores', [App\Http\Controllers\ProveedorController::class, 'index'])->name('admin.maestros.proveedores.index')->middleware('auth');
+Route::get('/admin/maestros/proveedores/create', [App\Http\Controllers\ProveedorController::class, 'create'])->name('admin.maestros.proveedores.create')->middleware('auth');
+Route::post('/admin/maestros/proveedores/store', [App\Http\Controllers\ProveedorController::class, 'store'])->name('admin.maestros.proveedores.store')->middleware('auth');
+Route::get('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'show'])->name('admin.maestros.proveedores.show')->middleware('auth');
+Route::get('/admin/maestros/proveedores/{proveedor}/edit', [App\Http\Controllers\ProveedorController::class, 'edit'])->name('admin.maestros.proveedores.edit')->middleware('auth');
+Route::put('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'update'])->name('admin.maestros.proveedores.update')->middleware('auth');
+Route::delete('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'destroy'])->name('admin.maestros.proveedores.destroy')->middleware('auth');
+
 //Rutas para Movimientos
 Route::get('/admin/movimientos/transacciones', [App\Http\Controllers\TransaccionController::class, 'index'])->name('admin.movimientos.transacciones.index')->middleware('auth');
 
