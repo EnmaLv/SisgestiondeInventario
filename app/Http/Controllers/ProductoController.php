@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use Illuminate\Http\Request;
+use App\Models\categoria;
+
+use App\Http\Requests\ProductoRequest;
 
 class ProductoController extends Controller
 {
@@ -21,28 +23,17 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        $categorias = \App\Models\Categoria::all();
+        $categorias = categoria::all();
         return view('admin.maestros.productos.create', compact('categorias'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductoRequest $request)
     {
-        $validated = $request->validate([
-            'categoria_id' => 'required|exists:categorias,id',
-            'codigo' => 'required|string|max:255',
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'precio_compra' => 'required|numeric',
-            'precio_venta' => 'required|numeric',
-            'stock_minimo' => 'required|integer',
-            'stock_maximo' => 'required|integer',
-            'unidad_medida' => 'required',
-            'estado' => 'required|boolean',
-        ]);
+        //validamos los datos de la solicitud
+        $validated = $request->validated();
 
         $producto = new Producto();
         $producto->categoria_id = $validated['categoria_id'];
@@ -79,29 +70,18 @@ class ProductoController extends Controller
     {
         
         $producto = Producto::findOrFail($id);
-        $categorias = \App\Models\Categoria::all();
+        $categorias = categoria::all();
         return view('admin.maestros.productos.edit', compact('producto', 'categorias'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(ProductoRequest $request, $id)
     {
         $producto = Producto::findOrFail($id);
 
-        $validated = $request->validate([
-            'codigo' => 'required|string|max:255',
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'precio_compra' => 'required|numeric',
-            'precio_venta' => 'required|numeric',
-            'stock_minimo' => 'required|integer',
-            'stock_maximo' => 'required|integer',
-            'unidad_medida' => 'required|string|max:100',
-            'estado' => 'required|boolean',
-        ]);
+        $validated = $request->validated();
 
         $producto->codigo = $validated['codigo'];
         $producto->nombre = $validated['nombre'];

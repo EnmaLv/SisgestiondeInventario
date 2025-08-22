@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\categoria;
-use Illuminate\Http\Request;
+use App\Http\Requests\CategoriaRequest;
 
 class CategoriaController extends Controller
 {
@@ -27,12 +27,10 @@ class CategoriaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoriaRequest $request)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:1000',
-        ]);
+        //Validamos los datos de la solicitud
+        $validated = $request->validated();
 
         $categoria = new Categoria();
         $categoria->nombre = $validated['nombre'];
@@ -63,14 +61,11 @@ class CategoriaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(CategoriaRequest $request, $id)
     {
         $categoria = Categoria::findOrFail($id);
 
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $categoria->nombre = $validated['nombre'];
         $categoria->descripcion = $validated['descripcion'];
