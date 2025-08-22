@@ -21,4 +21,9 @@ class Proveedor extends Model
         'estado',
     ];
 
+    public function lotes()
+    {
+        return $this->hasMany(Lote::class);
+    }
+
 }

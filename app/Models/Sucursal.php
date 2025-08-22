@@ -18,4 +18,9 @@ class Sucursal extends Model
         'telefono',
         'activo',
     ];
+
+    public function inventarioSucursalLotes()
+    {
+        return $this->hasMany(InventarioSucursalLote::class);
+    }
 }

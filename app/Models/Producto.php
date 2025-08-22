@@ -30,4 +30,9 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class);
     }
+
+    public function lotes()
+    {
+        return $this->hasMany(Lote::class);
+    }
 }
