@@ -93,10 +93,30 @@ Breadcrumbs::for('admin.maestros.proveedores.edit', function (Trail $trail, $pro
     $trail->push('Editar', route('admin.maestros.proveedores.edit', $proveedor));
 });
 
-// Movimientos > Transacciones
-Breadcrumbs::for('admin.movimientos.transacciones.index', function (Trail $trail) {
+// Movimientos > Compras
+Breadcrumbs::for('admin.movimientos.compras.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Transacciones', route('admin.movimientos.transacciones.index'));
+    $trail->push('Compras', route('admin.movimientos.compras.index'));
+});
+
+Breadcrumbs::for('admin.movimientos.compras.create', function (Trail $trail) {
+    $trail->parent('admin.movimientos.compras.index');
+    $trail->push('Crear', route('admin.movimientos.compras.create'));
+});
+
+Breadcrumbs::for('admin.movimientos.compras.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.compras.index');
+    $trail->push('Editar', route('admin.movimientos.compras.edit', $id));
+});
+
+Breadcrumbs::for('admin.movimientos.compras.show', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.compras.index');
+    $trail->push('Ver Mas', route('admin.movimientos.compras.show', $id));
+});
+
+Breadcrumbs::for('admin.movimientos.compras.enviarCorreo', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.compras.index');
+    $trail->push('Enviar Correo', route('admin.movimientos.compras.enviarCorreo', $id));
 });
 
 // Consultas > Reportes

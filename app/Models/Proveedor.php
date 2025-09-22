@@ -26,4 +26,9 @@ class Proveedor extends Model
         return $this->hasMany(Lote::class);
     }
 
+    public function compras()
+    {
+        return $this->hasMany(Compra::class);
+    }
+
 }

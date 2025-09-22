@@ -81,7 +81,16 @@ Route::put('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\Prov
 Route::delete('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'destroy'])->name('admin.maestros.proveedores.destroy')->middleware('auth');
 
 //Rutas para Movimientos
-Route::get('/admin/movimientos/transacciones', [App\Http\Controllers\TransaccionController::class, 'index'])->name('admin.movimientos.transacciones.index')->middleware('auth');
+
+//Compras
+Route::get('/admin/movimientos/compras', [App\Http\Controllers\CompraController::class, 'index'])->name('admin.movimientos.compras.index')->middleware('auth');
+Route::get('/admin/movimientos/compras/create', [App\Http\Controllers\CompraController::class, 'create'])->name('admin.movimientos.compras.create')->middleware('auth');
+Route::post('/admin/movimientos/compras/store', [App\Http\Controllers\CompraController::class, 'store'])->name('admin.movimientos.compras.store')->middleware('auth');
+Route::get('/admin/movimientos/compras/{id}', [App\Http\Controllers\CompraController::class, 'show'])->name('admin.movimientos.compras.show')->middleware('auth');
+Route::get('/admin/movimientos/compras/{id}/edit', [App\Http\Controllers\CompraController::class, 'edit'])->name('admin.movimientos.compras.edit')->middleware('auth');
+Route::get('/admin/movimientos/compras/{compra}/enviar-correo', [App\Http\Controllers\CompraController::class, 'enviarCorreo'])->name('admin.movimientos.compras.enviarCorreo')->middleware('auth');
+Route::post('/admin/movimientos/compras/{compra}/finalizar-compra', [App\Http\Controllers\CompraController::class, 'finalizarCompra'])->name('admin.movimientos.compras.finalizarCompra')->middleware('auth');
+Route::delete('/admin/movimientos/compras/{id}', [App\Http\Controllers\CompraController::class, 'destroy'])->name('admin.movimientos.compras.destroy')->middleware('auth');
 
 //Rutas para Consultas
 Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');

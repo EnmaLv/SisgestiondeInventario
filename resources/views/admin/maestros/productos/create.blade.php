@@ -255,7 +255,7 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="form-group">
+                        <div class="form-group" style="text-align: right">
                             <a href="{{ url('admin/maestros/sucursales') }}" class="btn btn-secondary">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Crear</button>
                         </div>

@@ -364,10 +364,13 @@ return [
         ['header' => 'Movimientos'],
 
         [
-            'text' => 'Transacciones',
-            'url' => 'admin/movimientos/transacciones',
-            'icon' => 'fas fa-fw fa-exchange-alt',
+            'text' => 'Compras',
+            'url' => 'admin/movimientos/compras',
+            'icon' => 'fas fa-fw fa-shopping-cart',
+            'classes' => 'bg-primary text-white',
+            'active' => ['admin/movimientos/compras*'],
         ],
+
         ['header' => 'Consultas'],
         [
             'text' => 'Reportes',

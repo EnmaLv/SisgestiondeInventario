@@ -1,5 +1,6 @@
 @extends('adminlte::page')
 
+
 @section('content_header')
     <h1>Panel de Control</h1>
 @stop
@@ -73,6 +74,23 @@
                             style="text-decoration: none; color: #000;"><b>Proveedores</b></span></a>
                     <span class="info-box-number">
                         {{ $total_proveedores }} proveedores
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+                <a href="{{ url('/admin/movimientos/compras') }}">
+                    <span class="info-box-icon bg-info">
+                        <img src="{{ url('/img/lista-de-verificacion.gif') }}" alt="xd">
+                    </span>
+                </a>
+                <div class="info-box-content">
+                    <a href="{{ url('/admin/movimientos/compras') }}">
+                        <span class="info-box-text" style="text-decoration: none; color: #000;"><b>Compras</b></span></a>
+                    <span class="info-box-number">
+                        {{ $total_compras }} Compras
                     </span>
                 </div>
             </div>
