@@ -81,10 +81,9 @@ class CompraController extends Controller
         $compra->save();
 
         $proveedorEmail = $compra->proveedor->email;
-        
+
         Mail::to($proveedorEmail)->send(new CompraProveedorMail($compra));
         return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('mensaje', 'Correo Enviado Exitosamente al Proveedor')->with('icono', 'success');
-        
     }
 
     public function finalizarCompra(Request $request, Compra $compra)
@@ -112,8 +111,9 @@ class CompraController extends Controller
                     [
                         'lote_id' => $lote->id,
                         'sucursal_id' => $request->sucursal_id,
-                        'cantidad' => 0,
-                    ]);
+                        'cantidad' => $detalle->cantidad,
+                    ]
+                );
                 $inventarioLote->cantidad = $inventarioLote->cantidad + $detalle->cantidad;
                 $inventarioLote->save();
 
@@ -125,15 +125,14 @@ class CompraController extends Controller
                     'cantidad' => $detalle->cantidad,
                     'fecha' => now(),
                 ]);
-            } 
+            }
 
             $compra->estado = 'Finalizada';
             $compra->save();
             DB::commit();
 
             return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('mensaje', 'Compra Finalizada Exitosamente')->with('icono', 'success');
-
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('mensaje', 'Error al finalizar la compra: ' . $e->getMessage())->with('icono', 'error');
         }
@@ -142,5 +141,4 @@ class CompraController extends Controller
         $compra->save();
         return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('mensaje', 'Compra Finalizada Exitosamente')->with('icono', 'success'); */
     }
-
 }

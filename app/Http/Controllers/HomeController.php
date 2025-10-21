@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -28,6 +29,7 @@ class HomeController extends Controller
         $total_productos = \App\Models\Producto::count();
         $total_proveedores = \App\Models\Proveedor::count();
         $total_compras = \App\Models\Compra::count();
-        return view('home', compact('total_sucursales', 'total_categorias', 'total_productos', 'total_proveedores', 'total_compras'));
+        $total_lotes_vencidos = \App\Models\Lote::where('fecha_vencimiento', '<', Carbon::now())->count();
+        return view('home', compact('total_sucursales', 'total_categorias', 'total_productos', 'total_proveedores', 'total_compras', 'total_lotes_vencidos'));
     }
 }

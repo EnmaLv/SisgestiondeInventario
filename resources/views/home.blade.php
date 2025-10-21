@@ -65,7 +65,7 @@
             <div class="info-box">
                 <a href="{{ url('/admin/maestros/proveedores') }}">
                     <span class="info-box-icon bg-info">
-                        <img src="{{ url('/img/lista-de-verificacion.gif') }}" alt="xd">
+                        <img src="{{ url('/img/camion.gif') }}" alt="xd">
                     </span>
                 </a>
                 <div class="info-box-content">
@@ -91,6 +91,24 @@
                         <span class="info-box-text" style="text-decoration: none; color: #000;"><b>Compras</b></span></a>
                     <span class="info-box-number">
                         {{ $total_compras }} Compras
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+                <a href="{{ url('/admin/movimientos/lotes') }}">
+                    <span class="info-box-icon bg-info">
+                        <img src="{{ url('/img/alerta.gif') }}" alt="xd">
+                    </span>
+                </a>
+                <div class="info-box-content">
+                    <a href="{{ url('/admin/movimientos/lotes') }}">
+                        <span class="info-box-text" style="text-decoration: none; color: #000;"><b>Lotes
+                                Vencidos</b></span></a>
+                    <span class="info-box-number">
+                        {{ $total_lotes_vencidos }} Lotes
                     </span>
                 </div>
             </div>
