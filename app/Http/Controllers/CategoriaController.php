@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\categoria;
+use App\Models\Categoria;
 use App\Http\Requests\CategoriaRequest;
 
 class CategoriaController extends Controller
 {
     /**
      * Display a listing of the resource.
-     */
+     */     
     public function index()
     {
         $categorias = Categoria::all();

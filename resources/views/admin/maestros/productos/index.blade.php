@@ -6,221 +6,261 @@
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-outline card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><b>Productos Registrados</b></h3>
-
-                    <div class="card-tools">
-                        <a class="btn btn-primary" href=" {{ url('admin/maestros/productos/create') }}" class="btn btn-tool">
-                            <i class="fas fa-plus"></i>
-                            <b>Crear Nuevo</b>
-                        </a>
-                    </div>
-                    <!-- /.card-tools -->
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body" style="display: block;">
-                    <table id="example1" class="table table-bordered table-striped table-hover table-sm" border="1">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Categoria</th>
-                                <th>Codigo</th>
-                                <th>Nombre</th>
-                                <th>Descripcion</th>
-                                <th>Imagen</th>
-                                <th>Precio de Compra</th>
-                                <th>Precio de Venta</th>
-                                <th>Stock Minimo</th>
-                                <th>Stock Maximo</th>
-                                <th>Unidad de Medida</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($productos as $producto)
-                                <tr>
-                                    <td style="text-align: center;">{{ $loop->iteration }}</td>
-                                    <td>{{ $producto->categoria->nombre }}</td>
-                                    <td>{{ $producto->codigo }}</td>
-                                    <td>{{ $producto->nombre }}</td>
-                                    <td>{!! $producto->descripcion !!}</td>
-                                    <td>
-                                        <img src="{{ asset('storage/' . $producto->imagen) }}" class="img-thumbnail"
-                                            alt="{{ $producto->nombre }}"
-                                            style="width: 150px; height: auto; object-fit: cover;">
-                                    </td>
-                                    <td>{{ $producto->precio_compra }}</td>
-                                    <td>{{ $producto->precio_venta }}</td>
-                                    <td>{{ $producto->stock_minimo }}</td>
-                                    <td>{{ $producto->stock_maximo }}</td>
-                                    <td>{{ $producto->unidad_medida }}</td>
-                                    <td style="text-align: center;">
-                                        @if ($producto->estado)
-                                            <span class="badge badge-success">Activo</span>
-                                        @else
-                                            <span class="badge badge-danger">Inactivo</span>
-                                        @endif
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <a href="{{ url('admin/maestros/productos/' . $producto->id) }}"
-                                            class="btn btn-info"><i class="fas fa-eye"></i></a>
-                                        <a href="{{ url('admin/maestros/productos/' . $producto->id . '/edit') }}"
-                                            class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ url('admin/maestros/productos/' . $producto->id) }}"
-                                            method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="preguntar{{ $producto->id }}(event)"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </form>
-                                        <script>
-                                            function preguntar{{ $producto->id }}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Estás seguro?',
-                                                    text: "No podrás deshacer esta acción",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Sí, eliminar',
-                                                    cancelButtonText: 'Cancelar'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        event.target.form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
+    <input type="hidden" id="FormOpen" value="0">
+    <div id="content-wrapper">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fas fa-check"></i> ¡Éxito!</h5>
+                {{ session('success') }}
             </div>
-            <!-- /.card -->
+        @endif
+        @include('admin.maestros.productos.indexContent')
         </div>
     </div>
 @stop
 
 @section('css')
     <style>
-        /* Fondo transparente y sin borde en el contenedor */
-        #example1_wrapper .dt-buttons {
-            background-color: transparent;
-            box-shadow: none;
-            border: none;
-            display: flex;
-            justify-content: center;
-            /* Centrar los botones */
-            gap: 10px;
-            /* Espaciado entre botones */
-            margin-bottom: 15px;
-            /* Separar botones de la tabla */
+        .ck.ck-editor {
+            width: 100% !important;
         }
 
-        /* Estilo personalizado para los botones */
-        #example1_wrapper .btn {
-            color: #fff;
-            /* Color del texto en blanco */
-            border-radius: 4px;
-            /* Bordes redondeados */
-            padding: 5px 15px;
-            /* Espaciado interno */
-            font-size: 14px;
-            /* TamaÃ±o de fuente */
+        .ck.ck-editor__editable {
+            width: 100% !important;
+            min-height: 300px;
+            box-sizing: border-box;
         }
 
-        /* Colores por tipo de botÃ³n */
-        .btn-danger {
-            background-color: #dc3545;
-            border: none;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-
-        .btn-info {
-            background-color: #17a2b8;
-            border: none;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-            border: none;
-        }
-
-        .btn-default {
-            background-color: #6e7176;
-            color: #212529;
-            border: none;
+        @media (max-width: 768px) {
+            .ck.ck-editor__editable {
+                min-height: 250px;
+                padding: 10px;
+            }
         }
     </style>
 @stop
 
 @section('js')
-    <script>
-        $(function() {
-            $("#example1").DataTable({
-                "pageLength": 10,
-                "language": {
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Sucursales",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Sucursales",
-                    "infoFiltered": "(Filtrado de _MAX_ total Sucursales)",
-                    "lengthMenu": "Mostrar _MENU_ Sucursales",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscador:",
-                    "searchPlaceholder": "Ingrese su búsqueda",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
+<script>    
+
+    // Inicializa CKEditor en el textarea #descripcion si aún no está inicializado
+    function initEditors(){
+        try {
+            if (typeof ClassicEditor === 'undefined') return;
+            const el = document.querySelector('#descripcion');
+            if (!el) return;
+            // Evitar doble inicialización: si ya existe un contenedor .ck-editor cerca
+            if (el.closest('.ck-editor')) return;
+
+            ClassicEditor
+                .create(el, {
+                    toolbar: {
+                        items: [
+                            'heading', '|',
+                            'bold', 'italic', 'underline', 'strikethrough', 'subscript', '|',
+                            'link', 'bulletedList', 'numberedList', '|',
+                            'outdent', 'indent', '|',
+                            'blockQuote', 'insertTable', 'mediaEmbed', '|',
+                            'undo', 'redo', '|',
+                            'footBackgroundColor', 'fontColor', 'fontSize', 'fontFamily', '|',
+                            'code', 'codeBlock', 'htmlEmbed', '|',
+                            'sourceEditing'
+                        ],
+                        shouldNotGroupWhenFull: true
+                    },
+                    language: 'es'
+                })
+                .then(editor => {
+                    const editorEl = editor.ui.view.element;
+                    if (editorEl) {
+                        editorEl.style.width = '100%';
+                        const editable = editorEl.querySelector('.ck-editor__editable');
+                        if (editable) editable.style.width = '100%';
                     }
-                },
-                "responsive": true,
-                "lengthChange": true,
-                "autoWidth": false,
-                buttons: [{
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        extend: 'copy',
-                        className: 'btn btn-default'
-                    },
-                    {
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        extend: 'pdf',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        text: '<i class="fas fa-file-csv"></i> CSV',
-                        extend: 'csv',
-                        className: 'btn btn-info'
-                    },
-                    {
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
-                        extend: 'excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        extend: 'print',
-                        className: 'btn btn-warning'
-                    }
-                ]
-            }).buttons().container().appendTo('#example1_wrapper .row:eq(0)');
+                })
+                .catch(error => { console.error(error); });
+        } catch (e) { console.error(e); }
+    }
+
+    // Muestra un alert de éxito (estilo similar al session('success'))
+    function showSuccessAlert(message){
+        const container = document.querySelector('.col-md-12') || document.body
+        // Si ya hay un alert de éxito, actualizar el mensaje y no crear otro
+        const existing = container.querySelector('.alert.alert-success.alert-dismissible[data-js-success]')
+        if (existing) {
+            const msgEl = existing.querySelector('.js-success-message')
+            if (msgEl) msgEl.textContent = message
+            return
+        }
+
+        const wrapper = document.createElement('div')
+        wrapper.innerHTML = `
+            <div class="alert alert-success alert-dismissible" data-js-success="1">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fas fa-check"></i> ¡Éxito!</h5>
+                <span class="js-success-message">${message}</span>
+            </div>
+        `
+        // Insertar al inicio del contenedor
+        container.insertBefore(wrapper.firstElementChild, container.firstChild)
+    }
+
+    function reloadTable(){
+        const table = document.querySelector('#example1')
+        if(!table) return
+
+        fetch(window.location.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser()
+            const doc = parser.parseFromString(html, 'text/html')
+            const newTbody = doc.querySelector('#example1 tbody')
+            const oldTbody = table.querySelector('tbody')
+            if (newTbody && oldTbody) {
+                oldTbody.innerHTML = newTbody.innerHTML
+            }
+        })
+        .catch(err => console.error('Error al recargar la tabla:', err))
+        
+    }
+    
+
+    $(document).on('submit', '#editForm', function(e){
+        e.preventDefault();
+        var $form = $(this);
+        var formData = new FormData(this);
+        var csrf = $('meta[name="csrf-token"]').attr('content');
+        $.ajax({
+            url: $form.attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+        }).done(function(resp){
+            fetchAndSwap('/admin/maestros/productos', function(){
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'success', title: 'Éxito', text: (resp && resp.message) ? resp.message : 'Producto actualizado correctamente.' });
+                }
+            });
+        }).fail(function(xhr){
+            let msg = 'Error al actualizar el producto.';
+            if (xhr && xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'error', title: 'Error', text: msg });
+            } else {
+                alert(msg);
+            }
         });
-    </script>
-@stop
+    });
+
+
+
+    function injectContent(html){
+        const target = document.getElementById('content-wrapper');
+        if (target) target.innerHTML = html;
+    }
+
+    function fetchAndSwap(url, onDone){
+        $.ajax({
+            url: url,
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).done(function(data){
+            injectContent(data);
+            // Inicializar plugins que dependan del DOM inyectado
+            initEditors();
+            history.pushState({urlPath: window.location.pathname}, document.title, url);
+            // Marcar estado de formulario según URL (create o edit)
+            if (/\/admin\/maestros\/productos\/create(\b|\/|\?|$)/.test(url) || /\/admin\/maestros\/productos\/(\d+|[^\/]+)\/edit(\b|\/|\?|$)/.test(url)) {
+                $('#FormOpen').val(1);
+            } else {
+                $('#FormOpen').val(0);
+            }
+            if (typeof onDone === 'function') onDone();
+        }).fail(function(){
+            if (typeof Swal !== 'undefined') {
+                Swal.fire('Error', 'No se pudo cargar el contenido.', 'error');
+            } else {
+                alert('No se pudo cargar el contenido.');
+            }
+        });
+    }
+
+    function GoTo(url){
+        var formOpenVal = $('#FormOpen').val();
+        if (formOpenVal == 1 && typeof Swal !== 'undefined'){
+            Swal.fire({
+                title: '¿Quiere salir de esta pantalla?',
+                text: 'Esta acción causará que se pierdan los datos del formulario!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, salir!',
+                cancelButtonText: 'No, cancelar!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetchAndSwap(url);
+                    $('#FormOpen').val(0);
+                }
+            });
+        } else {
+            fetchAndSwap(url);
+        }
+    }
+
+    window.addEventListener('popstate', function (event) {
+        if (event.state && event.state.urlPath) {
+            // Recargar el contenido para la URL actual
+            $.ajax({
+                url: location.pathname + location.search,
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).done(function(data){ 
+                injectContent(data);
+                initEditors();
+            });
+        }
+    });
+
+    // Envío AJAX de creación: sin recargar, mostrar alerta y volver al listado
+    $(document).on('submit', '#createForm', function(e){
+        e.preventDefault();
+        var $form = $(this);
+        var formData = new FormData(this);
+        var csrf = $('meta[name="csrf-token"]').attr('content');
+
+        $.ajax({
+            url: $form.attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+        }).done(function(resp){
+            // Volver al listado y mostrar alerta de éxito
+            fetchAndSwap('/admin/maestros/productos', function(){
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'success', title: 'Éxito', text: (resp && resp.message) ? resp.message : 'Producto creado correctamente.' });
+                }
+            });
+        }).fail(function(xhr){
+            let msg = 'Error al crear el producto.';
+            if (xhr && xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'error', title: 'Error', text: msg });
+            } else {
+                alert(msg);
+            }
+        });
+    });
+
+    // Inicialización en carga inicial
+    document.addEventListener('DOMContentLoaded', initEditors);
+
+</script>
+@endsection 
