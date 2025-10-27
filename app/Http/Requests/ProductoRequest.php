@@ -21,18 +21,12 @@ class ProductoRequest extends FormRequest
      */
     public function rules(): array
     {
-        //Para que la imagen sea obligatoria solo en el metodo post
-        $imageRule = 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048';
-        if ($this->isMethod('post')) {
-            $imageRule = 'required|image|mimes:jpeg,png,jpg,gif|max:2048';
-        }
-
         return [
             'categoria_id' => 'required|exists:categorias,id',
             'codigo' => 'required|string|max:255',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'imagen' => $imageRule,
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'precio_compra' => 'required|numeric',
             'precio_venta' => 'required|numeric',
             'stock_minimo' => 'required|integer',

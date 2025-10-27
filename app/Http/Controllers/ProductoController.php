@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use App\Models\Categoria;
-use Illuminate\Http\Request;
+use App\Models\categoria;
 
 use App\Http\Requests\ProductoRequest;
 
@@ -15,11 +14,7 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::paginate(10) ;
-        if(request()->ajax())
-        {
-            return view('admin.maestros.productos.indexContent', compact('productos'));
-        }
+        $productos = Producto::all();
         return view('admin.maestros.productos.index', compact('productos'));
     }
 
@@ -28,11 +23,7 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        $categorias = Categoria::all();
-        if(request()->ajax())
-        {
-            return view('admin.maestros.productos.createContent', compact('categorias'));
-        }
+        $categorias = categoria::all();
         return view('admin.maestros.productos.create', compact('categorias'));
     }
 
@@ -69,26 +60,18 @@ class ProductoController extends Controller
     public function show($id)
     {
         $producto = Producto::findOrFail($id);
-        if(request()->ajax())
-        {
-            return view('admin.maestros.productos.showContent', compact('producto'));
-        }
-        return redirect()->route('admin.maestros.productos.index');
+        return view('admin.maestros.productos.show', compact('producto'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
         
         $producto = Producto::findOrFail($id);
-        $categorias = Categoria::all();
-        if($request->ajax())
-        {
-            return view('admin.maestros.productos.editContent', compact('producto', 'categorias'));
-        }
-        return redirect()->route('admin.maestros.productos.index');
+        $categorias = categoria::all();
+        return view('admin.maestros.productos.edit', compact('producto', 'categorias'));
     }
 
     /**
@@ -99,34 +82,22 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
 
         $validated = $request->validated();
-        try{
 
-            $producto->codigo = $validated['codigo'];
-            $producto->nombre = $validated['nombre'];
-            $producto->descripcion = $validated['descripcion'];
-            if ($request->hasFile('imagen')) {
-                $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
-            }
-            $producto->precio_compra = $validated['precio_compra'];
-            $producto->precio_venta = $validated['precio_venta'];
-            $producto->stock_minimo = $validated['stock_minimo'];
-            $producto->stock_maximo = $validated['stock_maximo'];
-            $producto->unidad_medida = $validated['unidad_medida'];
-            $producto->estado = $validated['estado'];
-            $producto->save();
-
-            return response()->json([
-                'message' => 'Producto actualizado exitosamente.',
-                'icon' => 'success'
-            ]);
-
-        }catch(Exception $e){
-            return response()->json([
-                'message' => 'Error al actualizar el producto.',
-                'icon' => 'error'
-            ]);
+        $producto->codigo = $validated['codigo'];
+        $producto->nombre = $validated['nombre'];
+        $producto->descripcion = $validated['descripcion'];
+        if ($request->hasFile('imagen')) {
+            $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
         }
+        $producto->precio_compra = $validated['precio_compra'];
+        $producto->precio_venta = $validated['precio_venta'];
+        $producto->stock_minimo = $validated['stock_minimo'];
+        $producto->stock_maximo = $validated['stock_maximo'];
+        $producto->unidad_medida = $validated['unidad_medida'];
+        $producto->estado = $validated['estado'];
+        $producto->save();
 
+        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto actualizado exitosamente.')->with('icon', 'success');
     }
 
     /**
