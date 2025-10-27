@@ -13,15 +13,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Sucursal::factory(20)->create();
-        \App\Models\Categoria::factory(50)->create();
-        \App\Models\Producto::factory(1000)->create();
-        \App\Models\Proveedor::factory(30)->create();
+        $this->call([
+            EstatusSeeder::class,
+            EstadoVeSeeder::class,
+            //Seeders con relacion
+            PerfilSeeder::class,
+            PnfSeeder::class,
+            SedeSeeder::class,
+            PersonaSeeder::class,
+        ]);
 
         User::create([
             'name' => 'Enma',
             'email' => 'medina.enma1234@gmail.com',
             'password' => bcrypt('31008661'),
         ]);
+
     }
 }

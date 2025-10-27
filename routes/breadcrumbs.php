@@ -140,6 +140,11 @@ Breadcrumbs::for('admin.movimientos.lotes.show', function (Trail $trail, $id) {
     $trail->push('Ver Mas', route('admin.movimientos.lotes.show', $id));
 });
 
+Breadcrumbs::for('admin.movimientos.registro_diario.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Registro Diario', route('admin.movimientos.registro_diario.index'));
+});
+
 // Consultas > Reportes
 Breadcrumbs::for('admin.consultas.reportes.index', function (Trail $trail) {
     $trail->parent('home');
