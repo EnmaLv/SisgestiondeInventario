@@ -11,19 +11,10 @@
             <div class="card card-outline card-primary">
                 <div class="card-header">
                     <h3 class="card-title"><b>Registro Diario</b></h3>
-
-                    <!-- /.card-tools -->
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body" style="display: block;">
-                    <form action="" class="d-flex justify-content-center" method="POST">
-                        @csrf
-                        <div class="d-flex align-items-center flex-wrap">
-                            <label for="cedula" class="mb-0 mr-2">Cedula</label>
-                            <input type="number" name="cedula" id="cedula" class="form-control mr-2" placeholder="Ejemplo: 12345678" style="max-width: 220px;" autofocus>
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                        </div>
-                    </form>
+                    <livewire:register-noti />
                     <table id="example1" class="table table-bordered table-striped table-hover table-sm" border="1">
                         <thead>
                             <tr>

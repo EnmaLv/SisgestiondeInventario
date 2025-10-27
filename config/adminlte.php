@@ -378,6 +378,13 @@ return [
             'classes' => 'bg-primary text-white',
             'active' => ['admin/movimientos/lotes*'],
         ],
+        [
+            'text' => 'Registro Diario',
+            'url' => 'admin/movimientos/registro_diario',
+            'icon' => 'fas fa-fw fa-calendar',
+            'classes' => 'bg-primary text-white',
+            'active' => ['admin/movimientos/registro_diario*'],
+        ],
 
         ['header' => 'Consultas'],
         [

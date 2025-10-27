@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\RegistroDiarioController;  
 
 
 Route::get('/', function () {
@@ -59,6 +60,11 @@ Route::prefix('/admin/maestros/productos')->middleware('auth')->group(function (
     Route::get('/{producto}/edit', [ProductoController::class, 'edit'])->name('admin.maestros.productos.edit');
     Route::put('/{producto}', [ProductoController::class, 'update'])->name('admin.maestros.productos.update');
     Route::delete('/{producto}', [ProductoController::class, 'destroy'])->name('admin.maestros.productos.destroy');
+});
+
+//Registro Diario
+Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
+    Route::get('/', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
 });
 
 // Route::get('/admin/maestros/productos', [App\Http\Controllers\ProductoController::class, 'index'])->name('admin.maestros.productos.index')->middleware('auth');
