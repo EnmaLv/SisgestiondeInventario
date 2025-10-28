@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Lotes</h1>
+    <h1>Historial de Movimientos</h1>
     <p>Bienvenido {{ auth()->user()->name }}.</p>
 @stop
 
@@ -10,10 +10,10 @@
         <div class="col-md-12">
             <div class="card card-outline card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><b>Lotes Registrados</b></h3>
+                    <h3 class="card-title"><b>Movimientos registrados</b></h3>
 
                     <div class="card-tools">
-                        <a class="btn btn-primary" href=" {{ url('admin/movimientos/lotes/create') }}" class="btn btn-tool">
+                        <a class="btn btn-primary" href=" {{ url('admin/movimientos/historial_movimientos/create') }}" class="btn btn-tool">
                             <i class="fas fa-plus"></i>
                             <b>Crear Nuevo</b>
                         </a>
@@ -25,33 +25,32 @@
                     <table id="example1" class="table table-bordered table-striped table-hover table-sm" border="1">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Codigo Lote</th>
+                                <th>Nro</th>
+                                <th>Tipo de Movimiento</th>
                                 <th>Producto</th>
-                                <th>Proveedor</th>
-                                <th>Fecha Entrada</th>
-                                <th>Fecha Vencimiento</th>
-                                <th>Cantidad Actual</th>
-                                <th>Estado</th>
+                                <th>Lote</th>
+                                <th>Cantidad</th>
+                                <th>Sucursal</th>
+                                <th>Fecha</th>
+                                <th>Observación</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($lotes as $lote)
-                                <tr class="{{ $lote->is_expired ? 'table-danger' : '' }}">
+                            @foreach ($movimientos as $movimiento)
+                                <tr>
                                     <td style="text-align: center;">{{ $loop->iteration }}</td>
-                                    <td>{{ $lote->codigo_lote }}</td>
-                                    <td>{{ $lote->producto->nombre }}</td>
-                                    <td>{{ $lote->proveedor->nombre }}</td>
-                                    <td>{{ $lote->fecha_entrada }}</td>
-                                    <td>{{ $lote->fecha_vencimiento }}</td>
-                                    <td>{{ $lote->cantidad_actual }}</td>
-                                    <td style="text-align: center;">
-                                        @if ($lote->is_expired)
-                                            <span class="badge badge-danger">Vencido</span>
-                                        @else
-                                            <span class="badge badge-success">Vigente</span>
-                                        @endif
-                                    </td>
+                                    <td>{{ $movimiento->tipo_movimiento }}</td>
+                                    <td>{{ $movimiento->producto->nombre }}</td>
+                                    <td>{{ $movimiento->lote->codigo_lote }}</td>
+                                    <td>{{ $movimiento->cantidad }}</td>
+                                    <td>{{ $movimiento->sucursal->nombre }}</td>
+                                    <td>{{ $movimiento->fecha }}</td>
+                                    @if ($movimiento->observacion)
+                                        <td>{{ $movimiento->observacion }}</td>
+                                    @else
+                                        <td>Sin observación</td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
@@ -129,14 +128,13 @@
                 "pageLength": 10,
                 "language": {
                     "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Lotes",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Lotes",
-                    "infoFiltered": "(Filtrado de _MAX_ total Lotes)",
-                    "lengthMenu": "Mostrar _MENU_ Lotes",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Categorias",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Categorias",
+                    "infoFiltered": "(Filtrado de _MAX_ total Categorias)",
+                    "lengthMenu": "Mostrar _MENU_ Categorias",
                     "loadingRecords": "Cargando...",
                     "processing": "Procesando...",
                     "search": "Buscador:",
-                    "searchPlaceholder": "Ingrese su búsqueda",
                     "zeroRecords": "Sin resultados encontrados",
                     "paginate": {
                         "first": "Primero",
