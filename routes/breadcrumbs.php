@@ -119,6 +119,32 @@ Breadcrumbs::for('admin.movimientos.compras.enviarCorreo', function (Trail $trai
     $trail->push('Enviar Correo', route('admin.movimientos.compras.enviarCorreo', $id));
 });
 
+// Movimientos > Lotes
+Breadcrumbs::for('admin.movimientos.lotes.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Lotes', route('admin.movimientos.lotes.index'));
+});
+
+Breadcrumbs::for('admin.movimientos.lotes.create', function (Trail $trail) {
+    $trail->parent('admin.movimientos.lotes.index');
+    $trail->push('Crear', route('admin.movimientos.lotes.create'));
+});
+
+Breadcrumbs::for('admin.movimientos.lotes.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.lotes.index');
+    $trail->push('Editar', route('admin.movimientos.lotes.edit', $id));
+});
+
+Breadcrumbs::for('admin.movimientos.lotes.show', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.lotes.index');
+    $trail->push('Ver Mas', route('admin.movimientos.lotes.show', $id));
+});
+
+Breadcrumbs::for('admin.movimientos.registro_diario.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Registro Diario', route('admin.movimientos.registro_diario.index'));
+});
+
 // Consultas > Reportes
 Breadcrumbs::for('admin.consultas.reportes.index', function (Trail $trail) {
     $trail->parent('home');

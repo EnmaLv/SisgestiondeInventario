@@ -14,21 +14,21 @@ class ItemsCompra extends Component
     public Compra $compra;
 
     public int $productoId;
-    
+
     public int $cantidad = 1;
 
     public float $precioUnitario;
-    
+
     public float $precioCompra;
 
     public float $precioVenta;
 
     public $codigoLote;
-    
+
     public $fechaVencimiento;
-    
+
     public $productos;
-    
+
     public $totalCompra;
 
     public function mount(Compra $compra)
@@ -101,7 +101,6 @@ class ItemsCompra extends Component
             DB::commit();
             $this->cargarDatos();
             $this->aggItems();
-
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch(
@@ -120,8 +119,8 @@ class ItemsCompra extends Component
     public function aggItems()
     {
         $this->dispatch(
-            'mostrar-alerta', 
-            icono: 'success', 
+            'mostrar-alerta',
+            icono: 'success',
             mensaje: 'Producto agregado correctamente'
         );
         $this->cantidad = $this->cantidad;
@@ -133,25 +132,25 @@ class ItemsCompra extends Component
         try {
 
 
-           $detalle = DetalleCompra::find($detalleId);
+            $detalle = DetalleCompra::find($detalleId);
 
-           $lote_id = $detalle->lote_id;
-           $lote = Lote::find($lote_id);
-           $lote->delete();
-           $detalle->delete();
+            $lote_id = $detalle->lote_id;
+            $lote = Lote::find($lote_id);
+            $lote->delete();
+            $detalle->delete();
 
 
 
-           $this->compra->total = $this->compra->detalleCompras->sum('subtotal');
-           $this->compra->save();
+            $this->compra->total = $this->compra->detalleCompras->sum('subtotal');
+            $this->compra->save();
 
-           DB::commit();
+            DB::commit();
             $this->cargarDatos();
             $this->dispatch(
                 'mostrar-alerta',
                 icono: 'success',
-            mensaje: 'Producto eliminado correctamente'
-        );
+                mensaje: 'Producto eliminado correctamente'
+            );
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch(

@@ -371,6 +371,21 @@ return [
             'active' => ['admin/movimientos/compras*'],
         ],
 
+        [
+            'text' => 'Lotes',
+            'url' => 'admin/movimientos/lotes',
+            'icon' => 'fas fa-fw fa-boxes',
+            'classes' => 'bg-primary text-white',
+            'active' => ['admin/movimientos/lotes*'],
+        ],
+        [
+            'text' => 'Registro Diario',
+            'url' => 'admin/movimientos/registro_diario',
+            'icon' => 'fas fa-fw fa-calendar',
+            'classes' => 'bg-primary text-white',
+            'active' => ['admin/movimientos/registro_diario*'],
+        ],
+
         ['header' => 'Consultas'],
         [
             'text' => 'Reportes',
@@ -447,7 +462,7 @@ return [
     */
 
     'plugins' => [
-       'Datatables' => [
+        'Datatables' => [
             'active' => true,
             'files' => [
                 [

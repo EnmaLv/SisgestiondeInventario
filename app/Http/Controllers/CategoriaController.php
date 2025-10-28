@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\categoria;
+use App\Models\Categoria;
 use App\Http\Requests\CategoriaRequest;
 
 class CategoriaController extends Controller
@@ -13,6 +13,7 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = Categoria::all();
+
         return view('admin.maestros.categorias.index', compact('categorias'));
     }
 
@@ -31,6 +32,7 @@ class CategoriaController extends Controller
     {
         //Validamos los datos de la solicitud
         $validated = $request->validated();
+
 
         $categoria = new Categoria();
         $categoria->nombre = $validated['nombre'];
@@ -82,6 +84,6 @@ class CategoriaController extends Controller
         $categoria = Categoria::findOrFail($id);
         $categoria->delete();
 
-        return redirect()->route('admin.maestros.categorias.index')->with('mensaje', 'Categoría eliminada exitosamente.')->with('icono', 'success');   
+        return redirect()->route('admin.maestros.categorias.index')->with('mensaje', 'Categoría eliminada exitosamente.')->with('icono', 'success');
     }
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\RegistroDiarioController;  
 
 
 Route::get('/', function () {
@@ -34,7 +35,6 @@ Route::prefix('/admin/maestros/categorias')->group(function () {
     Route::put('/{categoria}', [CategoriaController::class, 'update'])->name('admin.maestros.categorias.update');
     //Eliminar una categoria especifica
     Route::delete('/{categoria}', [CategoriaController::class, 'destroy'])->name('admin.maestros.categorias.destroy');
-
 })->middleware('auth');
 
 
@@ -60,6 +60,11 @@ Route::prefix('/admin/maestros/productos')->middleware('auth')->group(function (
     Route::get('/{producto}/edit', [ProductoController::class, 'edit'])->name('admin.maestros.productos.edit');
     Route::put('/{producto}', [ProductoController::class, 'update'])->name('admin.maestros.productos.update');
     Route::delete('/{producto}', [ProductoController::class, 'destroy'])->name('admin.maestros.productos.destroy');
+});
+
+//Registro Diario
+Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
+    Route::get('/', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
 });
 
 // Route::get('/admin/maestros/productos', [App\Http\Controllers\ProductoController::class, 'index'])->name('admin.maestros.productos.index')->middleware('auth');
@@ -91,6 +96,15 @@ Route::get('/admin/movimientos/compras/{id}/edit', [App\Http\Controllers\CompraC
 Route::get('/admin/movimientos/compras/{compra}/enviar-correo', [App\Http\Controllers\CompraController::class, 'enviarCorreo'])->name('admin.movimientos.compras.enviarCorreo')->middleware('auth');
 Route::post('/admin/movimientos/compras/{compra}/finalizar-compra', [App\Http\Controllers\CompraController::class, 'finalizarCompra'])->name('admin.movimientos.compras.finalizarCompra')->middleware('auth');
 Route::delete('/admin/movimientos/compras/{id}', [App\Http\Controllers\CompraController::class, 'destroy'])->name('admin.movimientos.compras.destroy')->middleware('auth');
+
+//Lotes
+Route::get('/admin/movimientos/lotes', [App\Http\Controllers\LoteController::class, 'index'])->name('admin.movimientos.lotes.index')->middleware('auth');
+Route::get('/admin/movimientos/lotes/create', [App\Http\Controllers\LoteController::class, 'create'])->name('admin.movimientos.lotes.create')->middleware('auth');
+Route::post('/admin/movimientos/lotes/store', [App\Http\Controllers\LoteController::class, 'store'])->name('admin.movimientos.lotes.store')->middleware('auth');
+Route::get('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'show'])->name('admin.movimientos.lotes.show')->middleware('auth');
+Route::get('/admin/movimientos/lotes/{id}/edit', [App\Http\Controllers\LoteController::class, 'edit'])->name('admin.movimientos.lotes.edit')->middleware('auth');
+Route::put('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'update'])->name('admin.movimientos.lotes.update')->middleware('auth');
+Route::delete('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'destroy'])->name('admin.movimientos.lotes.destroy')->middleware('auth');
 
 //Rutas para Consultas
 Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');

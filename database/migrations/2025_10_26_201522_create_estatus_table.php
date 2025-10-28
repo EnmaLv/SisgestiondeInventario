@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventario_sucursal_lotes', function (Blueprint $table) {
-            $table->id();
+        Schema::create('estatus', function (Blueprint $table) {
+            $table->id('id_estatus');
+            $table->string('nombre_estatus');
+            $table->timestamps();
+        });
 
-            $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');
-            $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
-            $table->integer('cantidad');
-
+        Schema::create('estado_ve', function (Blueprint $table) {
+            $table->id('id_estado_ve');
+            $table->string('nombre_estado_ve');
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventario_sucursal_lotes');
+        Schema::dropIfExists('estatus');
     }
 };
