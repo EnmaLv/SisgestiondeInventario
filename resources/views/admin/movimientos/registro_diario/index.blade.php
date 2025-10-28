@@ -15,23 +15,8 @@
                 <!-- /.card-header -->
                 <div class="card-body" style="display: block;">
                     <livewire:register-noti />
-                    <table id="example1" class="table table-bordered table-striped table-hover table-sm" border="1">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Codigo Lote</th>
-                                <th>Producto</th>
-                                <th>Proveedor</th>
-                                <th>Fecha Entrada</th>
-                                <th>Fecha Vencimiento</th>
-                                <th>Cantidad Actual</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                    <h3>Historial de Registros</h3>
+                    <livewire:historial-registro />
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -98,6 +83,53 @@
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
         -webkit-appearance: none; 
+        }
+
+        .minimalist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .minimalist-item:last-child {
+            border-bottom: none;
+        }
+        
+        .minimalist-info {
+            flex: 1;
+        }
+        
+        .minimalist-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .minimalist-details {
+            display: flex;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .minimalist-details span {
+            margin-right: 15px;
+        }
+        
+        .minimalist-status {
+            font-weight: 600;
+        }
+        
+        .minimalist-status.success {
+            color: #27ae60;
+        }
+        
+        .minimalist-status.error {
+            color: #e74c3c;
+        }
+        
+        .minimalist-status.warning {
+            color: #f39c12;
         }
     </style>
 @stop

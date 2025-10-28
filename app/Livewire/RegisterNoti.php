@@ -15,7 +15,6 @@ class RegisterNoti extends Component
     #[Validate('required|numeric|min:7', message: ['required' => 'La cédula es requerida', 'numeric' => 'La cédula debe ser un número', 'min' => 'La cédula debe tener al menos 7 dígitos'])]
     public $cedula = '';
 
-    protected $listeners = ['saved' => 'showNotification'];
     
     public $showNotification = false;
 
@@ -27,6 +26,12 @@ class RegisterNoti extends Component
     public function save()
     {
         $this->validate();
+
+        $DatosHistorial = [
+            'cedula' => $this->cedula,
+            'fecha' => date('Y-m-d'),
+            'hora' => date('H:i:s'),
+        ];
         //Valida que la persona exista
         $persona = Persona::where('cedula_persona', $this->cedula)->first();
 
@@ -35,14 +40,21 @@ class RegisterNoti extends Component
             $is_register = Registro_diario::where('id_persona', $persona->id_persona)->where('fecha_regis_diario_c', date('Y-m-d'))->exists();
 
             if($is_register){
-                //retornamos un mensaje de error
+                //retornamos un mensaje de erro
                 $this->notification = [
                     'type' => 'danger',
                     'message' => "El estudiante {$persona->nombre_persona} {$persona->apellido_persona} ya se registro hoy"
                 ];
 
-                $this->showNotification = true;
+                $DatosHistorial['nombre'] = $persona->nombre_persona;
+                $DatosHistorial['estado'] = 'Rechazado';
+                $DatosHistorial['observacion'] = 'El estudiante ya se registro hoy';
+
+                $this->showNotification();
                 $this->cedula = '';
+
+                //hacemos un evento para recuperar los datos
+                $this->dispatch('cedula-validada', datos: $DatosHistorial);
                 return;
             }
 
@@ -60,7 +72,10 @@ class RegisterNoti extends Component
 
                 //Codigo para la parte del inventario
 
-                
+                $DatosHistorial['nombre'] = $persona->nombre_persona;
+                $DatosHistorial['estado'] = 'Aprobado';
+                $DatosHistorial['observacion'] = 'El estudiante se registro exitosamente';
+
                 //Aplicamos en la base de datos
                 DB::commit();
             }catch(Exception $e){
@@ -69,20 +84,34 @@ class RegisterNoti extends Component
                     'type' => 'danger',
                     'message' => "Error al registrar el estudiante {$persona->nombre_persona} {$persona->apellido_persona}, Intente de nuevo."
                 ];
+
+                $DatosHistorial['nombre'] = "Sin Nombre";
+                $DatosHistorial['estado'] = 'Rechazado';
+                $DatosHistorial['observacion'] = 'Error al registrar el estudiante';
+
+                //hacemos un evento para recuperar los datos
+                $this->dispatch('cedula-validada', datos: $DatosHistorial);
             }
 
             $this->notification = [
                 'type' => 'success',
                 'message' => "El estudiante {$persona->nombre_persona} {$persona->apellido_persona} se registro exitosamente!"
             ];
+
+            $DatosHistorial['nombre'] = $persona->nombre_persona;
+            $DatosHistorial['estado'] = 'Aprobado';
+            $DatosHistorial['observacion'] = 'El estudiante se registro exitosamente';
+
+            $this->dispatch('cedula-validada', datos: $DatosHistorial);
         } else {
+
             $this->notification = [
                 'type' => 'danger',
                 'message' => 'No se encontró un registro para la cédula: ' . $this->cedula
             ];
         }
         
-        $this->showNotification = true;
+        $this->showNotification();
         $this->cedula = '';
         
         // Ocultar la notificación después de 5 segundos
