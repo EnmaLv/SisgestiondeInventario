@@ -372,12 +372,29 @@ return [
         ],
 
         [
-            'text' => 'Lotes',
-            'url' => 'admin/movimientos/lotes',
+            'text' => 'Inventario',
+            'url' => 'admin/movimientos/inventario',
             'icon' => 'fas fa-fw fa-boxes',
             'classes' => 'bg-primary text-white',
-            'active' => ['admin/movimientos/lotes*'],
+            'active' => ['admin/movimientos/inventario*'],
+            'submenu' => [
+                [
+                    'text' => 'Lotes',
+                    'url' => 'admin/movimientos/lotes',
+                ],
+
+                [
+                    'text' => 'Sucursales por Lotes',
+                    'url' => 'admin/movimientos/sucursales_lotes',
+                ],
+
+                [
+                    'text' => 'Stock',
+                    'url' => 'admin/movimientos/stock',
+                ],
+            ],
         ],
+
         [
             'text' => 'Registro Diario',
             'url' => 'admin/movimientos/registro_diario',

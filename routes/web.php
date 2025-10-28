@@ -106,6 +106,11 @@ Route::get('/admin/movimientos/lotes/{id}/edit', [App\Http\Controllers\LoteContr
 Route::put('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'update'])->name('admin.movimientos.lotes.update')->middleware('auth');
 Route::delete('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'destroy'])->name('admin.movimientos.lotes.destroy')->middleware('auth');
 
+// Sucursales por Lotes
+Route::get('/admin/movimientos/sucursales_lotes', [App\Http\Controllers\InventarioSucursalLoteController::class, 'index'])->name('admin.movimientos.sucursales_lotes')->middleware('auth');
+
+Route::get('/admin/movimientos/registro_diario', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index')->middleware('auth');
+
 //Rutas para Consultas
 Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');
 
