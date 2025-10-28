@@ -7,45 +7,24 @@
 
 @section('content')
     <div class="row">
-        @foreach ($sucursalesLotes as $sucursalLote)
+        @foreach ($sucursales as $sucursalLote)
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box">
-                    <a
-                        href="{{ url('/admin/movimientos/sucursales_lotes/' . $sucursalLote->sucursal->id . '/' . $sucursalLote->lote->id) }}">
+                    <a href="{{ url('/admin/movimientos/sucursales_lotes/'. $sucursalLote->id) }}">
                         <span class="info-box-icon bg-info">
-                            <img src="{{ url('/img/lote.png') }}" alt="xd">
+                            <img src="{{ url('/img/restaurante.gif') }}" alt="xd">
                         </span>
                     </a>
                     <div class="info-box-content">
-                        <a
-                            href="{{ url('/admin/movimientos/sucursales_lotes/' . $sucursalLote->sucursal->id . '/' . $sucursalLote->lote->id) }}">
-                            <span class="info-box-text"
-                                style="text-decoration: none; color: #000;"><b>{{ $sucursalLote->lote->producto->nombre }}
-                                    - {{ $sucursalLote->sucursal->nombre }}</b></span></a>
+                        <a href="{{ url('/admin/movimientos/sucursales_lotes/'. $sucursalLote->id) }}">
+                            <span class="info-box-text" style="text-decoration: none; color: #000;"><b>{{ $sucursalLote->nombre }}</b></span></a>
                         <span class="info-box-number">
-                            {{ $sucursalLote->cantidad }} Unidades
+                            {{ $sucursalLote->totalInventarioSucursalLotes }} Unidades
                         </span>
                     </div>
                 </div>
             </div>
         @endforeach
-        <div class="col-md-3 col-sm-6 col-12">
-            <div class="info-box">
-                <a href="{{ url('/admin/movimientos/lotes') }}">
-                    <span class="info-box-icon bg-info">
-                        <img src="{{ url('/img/alerta.gif') }}" alt="xd">
-                    </span>
-                </a>
-                <div class="info-box-content">
-                    <a href="{{ url('/admin/movimientos/lotes') }}">
-                        <span class="info-box-text" style="text-decoration: none; color: #000;"><b>Lotes
-                                Vencidos</b></span></a>
-                    <span class="info-box-number">
-                        12 Lotes
-                    </span>
-                </div>
-            </div>
-        </div>
     </div>
 @stop
 
@@ -108,58 +87,5 @@
 @stop
 
 @section('js')
-    <script>
-        $(function() {
-            $("#example1").DataTable({
-                "pageLength": 10,
-                "language": {
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Lotes",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Lotes",
-                    "infoFiltered": "(Filtrado de _MAX_ total Lotes)",
-                    "lengthMenu": "Mostrar _MENU_ Lotes",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscador:",
-                    "searchPlaceholder": "Ingrese su búsqueda",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
-                "responsive": true,
-                "lengthChange": true,
-                "autoWidth": false,
-                buttons: [{
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        extend: 'copy',
-                        className: 'btn btn-default'
-                    },
-                    {
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        extend: 'pdf',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        text: '<i class="fas fa-file-csv"></i> CSV',
-                        extend: 'csv',
-                        className: 'btn btn-info'
-                    },
-                    {
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
-                        extend: 'excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        extend: 'print',
-                        className: 'btn btn-warning'
-                    }
-                ]
-            }).buttons().container().appendTo('#example1_wrapper .row:eq(0)');
-        });
-    </script>
+
 @stop
