@@ -24,9 +24,24 @@
     </form>
 
     @if($showNotification)
-        <div class="alert alert-{{ $notification['type'] }} alert-dismissible fade show my-5 fade-in" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)">
+<div class="alert alert-{{ $notification['type'] }} alert-dismissible fade show my-5 fade-in" role="alert" 
+             x-data="{ 
+                 show: true,
+                 init() {
+                     // Garantizar que se muestre por lo menos 3 segundos
+                     setTimeout(() => {
+                         this.show = false;
+                         setTimeout(() => @this.set('showNotification', false), 300);
+                     }, 3000);
+                 }
+             }" 
+             x-show="show"
+             x-transition:leave="transition ease-in duration-300"
+             x-transition:leave-start="opacity-100"
             {{ $notification['message'] }}
-            <button type="button" class="close" @click="show = false" aria-label="Close">
+            <button type="button" class="close" 
+                    @click="show = false; setTimeout(() => @this.set('showNotification', false), 300)" 
+                    aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -37,10 +52,30 @@
 <script>
 
     document.addEventListener('livewire:initialized', () => {
+        let isNotificationVisible = false;
+        let hideTimeout = null;
+        
         @this.on('notify-saved', () => {
-            setTimeout(() => {
+            // Si ya hay una notificación visible, no hacer nada
+            if (isNotificationVisible) {
+                return;
+            }
+            
+            isNotificationVisible = true;
+            
+            // Ocultar después de 3 segundos
+            hideTimeout = setTimeout(() => {
                 @this.set('showNotification', false);
+                isNotificationVisible = false;
             }, 3000);
+        });
+        
+        // Limpiar el estado cuando la notificación se oculta
+        @this.on('notify-hidden', () => {
+            isNotificationVisible = false;
+            if (hideTimeout) {
+                clearTimeout(hideTimeout);
+            }
         });
     });
     
