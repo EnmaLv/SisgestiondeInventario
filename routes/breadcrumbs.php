@@ -151,6 +151,17 @@ Breadcrumbs::for('admin.movimientos.sucursales_lotes', function (Trail $trail) {
     $trail->push('Lotes por Sucursal', route('admin.movimientos.sucursales_lotes'));
 });
 
+Breadcrumbs::for('admin.movimientos.sucursales_lotes.show', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.sucursales_lotes');
+    $trail->push('Ver Mas', route('admin.movimientos.sucursales_lotes.show', $id));
+});
+
+// Movimientos > Historial de Movimientos
+Breadcrumbs::for('admin.movimientos.historial_movimientos.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Historial de Movimientos', route('admin.movimientos.historial_movimientos.index'));
+});
+
 // Consultas > Reportes
 Breadcrumbs::for('admin.consultas.reportes.index', function (Trail $trail) {
     $trail->parent('home');

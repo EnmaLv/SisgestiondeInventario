@@ -389,8 +389,8 @@ return [
                 ],
 
                 [
-                    'text' => 'Stock',
-                    'url' => 'admin/movimientos/stock',
+                    'text' => 'Historial de Movimientos',
+                    'url' => 'admin/movimientos/historial_movimientos',
                 ],
             ],
         ],

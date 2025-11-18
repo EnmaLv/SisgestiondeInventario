@@ -33,7 +33,6 @@
                                 <th>Fecha Vencimiento</th>
                                 <th>Cantidad Actual</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,39 +51,6 @@
                                         @else
                                             <span class="badge badge-success">Vigente</span>
                                         @endif
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <a href="{{ url('admin/movimientos/lotes/' . $lote->id) }}" class="btn btn-info"><i
-                                                class="fas fa-eye"></i></a>
-                                        <a href="{{ url('admin/movimientos/lotes/' . $lote->id . '/edit') }}"
-                                            class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                        <form action="{{ url('admin/movimientos/lotes/' . $lote->id) }}" method="POST"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="preguntar{{ $lote->id }}(event)"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </form>
-                                        <script>
-                                            function preguntar{{ $lote->id }}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Estás seguro?',
-                                                    text: "No podrás deshacer esta acción",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Sí, eliminar',
-                                                    cancelButtonText: 'Cancelar'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        event.target.form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
                                     </td>
                                 </tr>
                             @endforeach

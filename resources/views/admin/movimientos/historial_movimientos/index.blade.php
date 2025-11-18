@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Inventario por Sucursal</h1>
+    <h1>Historial de Movimientos</h1>
     <p>Bienvenido {{ auth()->user()->name }}.</p>
 @stop
 
@@ -10,10 +10,10 @@
         <div class="col-md-12">
             <div class="card card-outline card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><b>Inventario Registrado</b></h3>
+                    <h3 class="card-title"><b>Movimientos registrados</b></h3>
 
                     <div class="card-tools">
-                        <a class="btn btn-primary" href=" {{ url('admin/movimientos/sucursales_lotes/create') }}" class="btn btn-tool">
+                        <a class="btn btn-primary" href=" {{ url('admin/movimientos/historial_movimientos/create') }}" class="btn btn-tool">
                             <i class="fas fa-plus"></i>
                             <b>Crear Nuevo</b>
                         </a>
@@ -26,24 +26,31 @@
                         <thead>
                             <tr>
                                 <th>Nro</th>
-                                <th>Lote</th>
+                                <th>Tipo de Movimiento</th>
                                 <th>Producto</th>
+                                <th>Lote</th>
                                 <th>Cantidad</th>
-                                <th>Fecha de entrada</th>
-                                <th>Fecha de vencimiento</th>
-                                <th>Proveedor</th>
+                                <th>Sucursal</th>
+                                <th>Fecha</th>
+                                <th>Observación</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($sucursal as $sucursalLote)
+                            @foreach ($movimientos as $movimiento)
                                 <tr>
                                     <td style="text-align: center;">{{ $loop->iteration }}</td>
-                                    <td>{{ $sucursalLote->lote->codigo_lote }}</td>
-                                    <td>{{ $sucursalLote->lote->producto->nombre }}</td>
-                                    <td>{{ $sucursalLote->cantidad }}</td>
-                                    <td>{{ $sucursalLote->lote->fecha_entrada }}</td>
-                                    <td>{{ $sucursalLote->lote->fecha_vencimiento }}</td>
-                                    <td>{{ $sucursalLote->lote->proveedor->nombre }}</td>
+                                    <td>{{ $movimiento->tipo_movimiento }}</td>
+                                    <td>{{ $movimiento->producto->nombre }}</td>
+                                    <td>{{ $movimiento->lote->codigo_lote }}</td>
+                                    <td>{{ $movimiento->cantidad }}</td>
+                                    <td>{{ $movimiento->sucursal->nombre }}</td>
+                                    <td>{{ $movimiento->fecha }}</td>
+                                    @if ($movimiento->observacion)
+                                        <td>{{ $movimiento->observacion }}</td>
+                                    @else
+                                        <td>Sin observación</td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
