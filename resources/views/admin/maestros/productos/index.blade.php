@@ -29,8 +29,8 @@
                                 <th>Categoria</th>
                                 <th>Codigo</th>
                                 <th>Nombre</th>
-                                <th>Descripcion</th>
-                                <th>Imagen</th>
+                                {{-- <th>Descripcion</th> --}}
+                                {{-- <th>Imagen</th> --}}
                                 <th>Precio de Compra</th>
                                 <th>Precio de Venta</th>
                                 <th>Stock Minimo</th>
@@ -47,12 +47,12 @@
                                     <td>{{ $producto->categoria->nombre }}</td>
                                     <td>{{ $producto->codigo }}</td>
                                     <td>{{ $producto->nombre }}</td>
-                                    <td>{!! $producto->descripcion !!}</td>
-                                    <td>
+                                    {{-- <td>{!! $producto->descripcion !!}</td> --}}
+                                    {{--  <td>
                                         <img src="{{ asset('storage/' . $producto->imagen) }}" class="img-thumbnail"
                                             alt="{{ $producto->nombre }}"
                                             style="width: 150px; height: auto; object-fit: cover;">
-                                    </td>
+                                    </td> --}}
                                     <td>{{ $producto->precio_compra }}</td>
                                     <td>{{ $producto->precio_venta }}</td>
                                     <td>{{ $producto->stock_minimo }}</td>
