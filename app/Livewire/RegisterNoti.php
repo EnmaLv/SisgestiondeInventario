@@ -59,10 +59,11 @@ class RegisterNoti extends Component
             }
 
             try{
+                //Iniciamos las transacciones
                 DB::beginTransaction();
                 $personaPnf = PersonaPnf::where('id_persona_pnf', $persona->id_persona)->first();
                    
-
+                //Insertamos el registro diario
                 DB::table('registro_diario_c')->insert([
                     'id_persona' => $persona->id_persona,
                     'id_persona_pnf' => $personaPnf->id_persona_pnf ,
@@ -72,14 +73,12 @@ class RegisterNoti extends Component
 
                 //Codigo para la parte del inventario
 
-                $DatosHistorial['nombre'] = $persona->nombre_persona;
-                $DatosHistorial['estado'] = 'Aprobado';
-                $DatosHistorial['observacion'] = 'El estudiante se registro exitosamente';
 
                 //Aplicamos en la base de datos
                 DB::commit();
             }catch(Exception $e){
                 DB::rollBack();
+                //retornamos un mensaje de error
                 $this->notification = [
                     'type' => 'danger',
                     'message' => "Error al registrar el estudiante {$persona->nombre_persona} {$persona->apellido_persona}, Intente de nuevo."
@@ -92,7 +91,8 @@ class RegisterNoti extends Component
                 //hacemos un evento para recuperar los datos
                 $this->dispatch('cedula-validada', datos: $DatosHistorial);
             }
-
+            
+            //retornamos un mensaje de exito
             $this->notification = [
                 'type' => 'success',
                 'message' => "El estudiante {$persona->nombre_persona} {$persona->apellido_persona} se registro exitosamente!"
@@ -105,6 +105,7 @@ class RegisterNoti extends Component
             $this->dispatch('cedula-validada', datos: $DatosHistorial);
         } else {
 
+            //retornamos un mensaje de error
             $this->notification = [
                 'type' => 'danger',
                 'message' => 'No se encontró un registro para la cédula: ' . $this->cedula
