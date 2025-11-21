@@ -8,9 +8,29 @@ use App\Models\Persona;
 
 class RegistroDiarioController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.movimientos.registro_diario.index');
+        //Recibir el valor del input
+        $buscar = $request->input("buscar");
+
+        $fecha_desde = $request->input("fecha_desde");
+        $fecha_hasta = $request->input("fecha_hasta");
+
+        $filter = [
+            "fecha_desde" => $fecha_desde ?? null,
+            "fecha_hasta" => $fecha_hasta ?? null,
+            "buscar"=> $buscar ?? null
+        ];
+
+
+
+        if ($filter != null) {
+            $data = Registro_diario::showData($filter);
+        }else{
+
+            $data = Registro_diario::showData();
+        }
+        return view('admin.movimientos.registro_diario.index', compact('data'));
     }
 
     //Funcion para verrificar si la persona esta en la bd
