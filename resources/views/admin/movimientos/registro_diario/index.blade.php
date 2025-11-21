@@ -14,9 +14,98 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body" style="display: block;">
-                    <livewire:register-noti />
-                    <h3>Historial de Registros</h3>
-                    <livewire:historial-registro />
+                    <div class="row mb-3 justify-content-between">
+                        <div class="col-md-4">
+                            <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET" class="form-group mb-0">
+                                <label for="busqueda_registro" class="mb-1"><strong>Buscar</strong></label>
+                                <div class="d-flex">
+                                    <input type="text" id="busqueda_registro" name="buscar" class="form-control form-control-sm w-50" placeholder="Buscar por nombre, apellido o PNF" value="{{ $buscar ?? '' }}">
+                                    <button type="submit" class="btn btn-primary btn-sm ml-2" id="btnSerach">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-end align-items-end mt-2 mt-md-0">
+                            <button type="button" class="btn btn-primary btn-sm mr-2" data-toggle="collapse" data-target="#filtrosRegistroDiario" aria-expanded="false" aria-controls="filtrosRegistroDiario">
+                                <i class="fas fa-filter"></i> Filtros
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm mr-2">
+                                <i class="fas fa-file-excel"></i> Reporte Excel
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class="fas fa-file-pdf"></i> Reporte PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="collapse mb-3" id="filtrosRegistroDiario">
+                        <div class="card card-body p-3">
+                            <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET" class="form-row">
+                                <div class="col-md-3">
+                                    <div class="form-group mb-2">
+                                        <label for="fecha_desde" class="mb-1"><strong>Fecha desde</strong></label>
+                                        <input type="date" id="fecha_desde" class="form-control form-control-sm" name="fecha_desde">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group mb-2">
+                                        <label for="fecha_hasta" class="mb-1"><strong>Fecha hasta</strong></label>
+                                        <input type="date" id="fecha_hasta" class="form-control form-control-sm" name="fecha_hasta">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end mb-2">
+                                    <button type="submit" class="btn btn-primary btn-sm mr-2">Aplicar</button>
+                                    <button type="button" class="btn btn-default btn-sm" onclick="reset()">Limpiar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <table id="example1" class="table table-bordered table-striped table-hover table-sm" border="1">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Persona</th>
+                                <th>Apellido</th>
+                                <th>PNF</th>
+                                <th>Fecha de Registro</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($data as $registro)
+                                <tr>
+                                    <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                    <td>{{ $registro->nombre_persona}}</td>
+                                    <td>{{ $registro->apellido_persona }}</td>
+                                    <td>{{ $registro->nombre_pnf }}</td>
+                                    <td>{{ Carbon\Carbon::parse($registro->fecha_regis_diario_c)->format('d/m/Y') }}</td>
+                                    <td style="text-align: center;">
+                                        <span class="badge badge-success">Aprobado</span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <a href=""
+                                            class="btn btn-info"><i class="fas fa-eye"></i></a>
+                                        <a href="   "
+                                            class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                        <form action=""method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">No hay registros</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
                 <!-- /.card-body -->
             </div>
@@ -136,57 +225,45 @@
 
 @section('js')
     <script>
-        $(function() {
-            $("#example1").DataTable({
-                "pageLength": 10,
-                "language": {
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Lotes",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Lotes",
-                    "infoFiltered": "(Filtrado de _MAX_ total Lotes)",
-                    "lengthMenu": "Mostrar _MENU_ Lotes",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscador:",
-                    "searchPlaceholder": "Ingrese su búsqueda",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
-                "responsive": true,
-                "lengthChange": true,
-                "autoWidth": false,
-                buttons: [{
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        extend: 'copy',
-                        className: 'btn btn-default'
-                    },
-                    {
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        extend: 'pdf',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        text: '<i class="fas fa-file-csv"></i> CSV',
-                        extend: 'csv',
-                        className: 'btn btn-info'
-                    },
-                    {
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
-                        extend: 'excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        extend: 'print',
-                        className: 'btn btn-warning'
-                    }
-                ]
-            }).buttons().container().appendTo('#example1_wrapper .row:eq(0)');
-        });
+        const desdeDate = document.getElementById('fecha_desde');
+        const hastaDate = document.getElementById('fecha_hasta');
+
+        // Fecha actual (máximo permitido)
+        const fechaActual = new Date().toISOString().split('T')[0];
+
+        // Establecer máximo hoy para ambos campos
+        if (desdeDate) desdeDate.max = fechaActual;
+        if (hastaDate) hastaDate.max = fechaActual;
+        
+
+        // Cuando cambie "desde", ajustar el mínimo de "hasta"
+        if (desdeDate && hastaDate) {
+            desdeDate.addEventListener('change', function () {
+                if (!desdeDate.value) {
+                    // Si se borra la fecha desde, quitamos la restricción mínima en hasta
+                    hastaDate.min = '';
+                    return;
+                }
+
+                // "hasta" no puede ser menor que "desde"
+                hastaDate.min = desdeDate.value;
+
+                if (hastaDate.value && hastaDate.value < desdeDate.value) {
+                    hastaDate.value = desdeDate.value;
+                }
+            });
+
+            // Cuando cambie "hasta", validar contra "desde"
+            hastaDate.addEventListener('change', function () {
+                if (!hastaDate.value || !desdeDate.value) {
+                    return;
+                }
+
+                if (hastaDate.value < desdeDate.value) {
+                    // Si el usuario pone una fecha hasta menor, movemos "desde" a esa fecha
+                    desdeDate.value = hastaDate.value;
+                }
+            });
+        }
     </script>
 @stop

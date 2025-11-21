@@ -24,20 +24,20 @@
     </form>
 
     @if($showNotification)
-<div class="alert alert-{{ $notification['type'] }} alert-dismissible fade show my-5 fade-in" role="alert" 
-             x-data="{ 
-                 show: true,
-                 init() {
-                     // Garantizar que se muestre por lo menos 3 segundos
-                     setTimeout(() => {
-                         this.show = false;
-                         setTimeout(() => @this.set('showNotification', false), 300);
-                     }, 3000);
-                 }
-             }" 
-             x-show="show"
-             x-transition:leave="transition ease-in duration-300"
-             x-transition:leave-start="opacity-100"
+        <div class="alert alert-{{ $notification['type'] }} alert-dismissible fade show my-5 fade-in" role="alert" 
+            x-data="{ 
+                show: true,
+                init() {
+                    // Garantizar que se muestre por lo menos 3 segundos
+                    setTimeout(() => {
+                        this.show = false;
+                        setTimeout(() => @this.set('showNotification', false), 300);
+                    }, 3000);
+                }
+            }" 
+            x-show="show"
+            x-transition:leave="transition ease-in duration-300"
+            x-transition:leave-start="opacity-100">
             {{ $notification['message'] }}
             <button type="button" class="close" 
                     @click="show = false; setTimeout(() => @this.set('showNotification', false), 300)" 
@@ -79,7 +79,24 @@
         });
     });
     
-    document.getElementById('cedula').addEventListener('input', function(e) {
+    // Evento para el input de cédula
+    const inputCedula = document.getElementById('cedula');
+
+    //Focus al input
+    inputCedula.focus();
+
+    //escuchar el click en cualquier parte del documento para no perder el focus
+    document.querySelector('.content-wrapper').addEventListener('click', function() {
+        inputCedula.focus();
+    });
+
+    //Re-enfocar si la ventana vuelve a estar activa (ej. alt-tab y volver)
+    window.addEventListener('focus', function() {
+        inputCedula.focus();
+    });
+    
+    //Limites del input
+    inputCedula.addEventListener('input', function(e) {
         // Remover caracteres no numéricos
         this.value = this.value.replace(/[^0-9]/g, '');
         

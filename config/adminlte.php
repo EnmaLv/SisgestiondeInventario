@@ -333,7 +333,6 @@ return [
             'text' => 'Sucursales',
             'url' => 'admin/maestros/sucursales',
             'icon' => 'fas fa-fw fa-store',
-            'classes' => 'bg-primary text-white',
             'active' => ['admin/maestros/sucursales*'],
         ],
 
@@ -341,7 +340,6 @@ return [
             'text' => 'Categorías',
             'url' => 'admin/maestros/categorias',
             'icon' => 'fas fa-fw fa-tags',
-            'classes' => 'bg-primary text-white',
             'active' => ['admin/maestros/categorias*'],
         ],
 
@@ -349,7 +347,6 @@ return [
             'text' => 'Productos',
             'url' => 'admin/maestros/productos',
             'icon' => 'fas fa-fw fa-box',
-            'classes' => 'bg-primary text-white',
             'active' => ['admin/maestros/productos*'],
         ],
 
@@ -357,7 +354,6 @@ return [
             'text' => 'Proveedores',
             'url' => 'admin/maestros/proveedores',
             'icon' => 'fas fa-fw fa-truck',
-            'classes' => 'bg-primary text-white',
             'active' => ['admin/maestros/proveedores*'],
         ],
 
@@ -367,7 +363,6 @@ return [
             'text' => 'Compras',
             'url' => 'admin/movimientos/compras',
             'icon' => 'fas fa-fw fa-shopping-cart',
-            'classes' => 'bg-primary text-white',
             'active' => ['admin/movimientos/compras*'],
         ],
 
@@ -375,7 +370,6 @@ return [
             'text' => 'Inventario',
             'url' => 'admin/movimientos/inventario',
             'icon' => 'fas fa-fw fa-boxes',
-            'classes' => 'bg-primary text-white',
             'active' => ['admin/movimientos/inventario*'],
             'submenu' => [
                 [
@@ -396,10 +390,9 @@ return [
         ],
 
         [
-            'text' => 'Registro Diario',
+            'text' => 'Gestion de Comedor',
             'url' => 'admin/movimientos/registro_diario',
-            'icon' => 'fas fa-fw fa-calendar',
-            'classes' => 'bg-primary text-white',
+            'icon' => 'fas fa-utensils',
             'active' => ['admin/movimientos/registro_diario*'],
         ],
 
