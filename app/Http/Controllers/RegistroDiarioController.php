@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Registro_diario;
 use App\Models\Persona; 
+use App\Utilities\PdfGeneratorUtil;
 
 class RegistroDiarioController extends Controller
 {
@@ -43,4 +44,33 @@ class RegistroDiarioController extends Controller
     {
         return;
     }
+
+    public function exportPdf(Request $request)
+    {
+        $filter = [];
+
+        $Hoy = date('Y-m-d');
+
+        //Recuperamos la informacion de la fecha desde y hasta
+        $fecha_desde = $request->input('fecha_desde') == "" ?  date('Y-m-d', strtotime('-1 month')) : $request->input('fecha_desde');
+        $fecha_hasta = $request->input('fecha_hasta') == "" ? $Hoy : $request->input('fecha_hasta');
+
+
+        $filter = [
+            'fecha_desde'=> $fecha_desde,
+            'fecha_hasta'=> $fecha_hasta,
+        ];
+
+
+
+        $register = Registro_diario::showData($filter, true);
+
+        $datos = [
+            'registros' => $register,
+            'fecha_desde' => $fecha_desde,
+            'fecha_hasta' => $fecha_hasta
+        ]; 
+
+        return PdfGeneratorUtil::ShowPdf('pdf.registro_diario',$datos , "Registro Diario");
+    }   
 }

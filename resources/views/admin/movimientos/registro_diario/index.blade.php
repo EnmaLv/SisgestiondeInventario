@@ -33,7 +33,7 @@
                             <button type="button" class="btn btn-success btn-sm mr-2">
                                 <i class="fas fa-file-excel"></i> Reporte Excel
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm">
+                            <button type="button" class="btn btn-danger btn-sm" id="pdfBtn">
                                 <i class="fas fa-file-pdf"></i> Reporte PDF
                             </button>
                         </div>
@@ -234,7 +234,7 @@
         // Establecer máximo hoy para ambos campos
         if (desdeDate) desdeDate.max = fechaActual;
         if (hastaDate) hastaDate.max = fechaActual;
-        
+
 
         // Cuando cambie "desde", ajustar el mínimo de "hasta"
         if (desdeDate && hastaDate) {
@@ -265,5 +265,21 @@
                 }
             });
         }
+
+        //Script para mostrar el PdfGeneratorUtil
+        const pdfBtn = document.querySelector('#pdfBtn');
+        const pdfRoute = `{{ route('admin.movimientos.registro_diario.export_pdf') }}`;
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', function () {
+
+                const params = new URLSearchParams(window.location.search);
+                const fechaDesde = params.get('fecha_desde')?? "";
+                const fechaHasta = params.get('fecha_hasta')?? "";
+
+                const url = `${pdfRoute}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}`;
+                window.open(url, '_blank');     
+            });
+        }
+
     </script>
 @stop

@@ -115,7 +115,10 @@ Route::get('/admin/movimientos/historial_movimientos', [App\Http\Controllers\Mov
 Route::get('/admin/movimientos/sucursales_lotes/{id}', [App\Http\Controllers\InventarioSucursalLoteController::class, 'mostrar_sucursal_lote'])->name('admin.movimientos.sucursales_lotes.show')->middleware('auth');
 
 // Registro diario
-Route::get('/admin/movimientos/registro_diario', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index')->middleware('auth');
+Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
+    Route::get('/export-pdf', [App\Http\Controllers\RegistroDiarioController::class, 'exportPdf'])->name('admin.movimientos.registro_diario.export_pdf');
+});
 
 //Rutas para Consultas
 Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');
