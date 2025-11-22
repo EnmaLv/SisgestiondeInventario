@@ -10,11 +10,30 @@ class SucursalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sucursales = Sucursal::all();
+        $buscar = $request->input('buscar');
+        $activo = $request->input('activo');
+
+        $query = Sucursal::query();
+
+        if ($buscar) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('nombre','like', "%{$buscar}%")
+                ->orWhere('direccion','like', "%{$buscar}%")
+                ->orWhere('telefono','like', "%{$buscar}%");
+            });
+        }
+
+        if ($activo !== null && $activo !== '') {
+            $query->where('activo', (int)$activo);
+        }
+
+        $sucursales = $query->orderBy('id','desc')->paginate(10);
+
         return view('admin.maestros.sucursales.index', compact('sucursales'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -97,4 +116,5 @@ class SucursalController extends Controller
 
         return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sucursal eliminada exitosamente.');
     }
+
 }

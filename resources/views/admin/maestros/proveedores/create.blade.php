@@ -111,28 +111,6 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-4" style="display: inline-block;">
-                                    <label for="estado">Estado</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
-                                                    class="fas fa-toggle-on"></i></span>
-                                        </div>
-                                        <select name="estado" id="estado" class="form-control">
-                                            <option value="">Seleccione un estado</option>
-                                            <option value="1" {{ old('estado') == '1' ? 'selected' : '' }}>Activo
-                                            </option>
-                                            <option value="0" {{ old('estado') == '0' ? 'selected' : '' }}>
-                                                Inactivo
-                                            </option>
-                                        </select>
-                                    </div>
-                                    @error('estado')
-                                        <div class="alert text-danger p-0 m-0">
-                                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                                        </div>
-                                    @enderror
-                                </div>
                             </div>
                         </div>
                         <div class="form-group">

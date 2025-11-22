@@ -1,54 +1,126 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Categorías</h1>
-    <p>Bienvenido {{ auth()->user()->name }}.</p>
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+        style="
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+         ">
+
+        <!-- Texto principal -->
+        <div>
+            <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
+                Categorias
+            </h1>
+
+            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
+                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+            </p>
+        </div>
+
+        <!-- Imagen + Fecha -->
+        <div>
+            <a href="{{ url('admin/maestros/categorias/create') }}" class="rd-btn rd-btn-primary">
+                <i class="fas fa-plus"></i> Crear Nuevo
+            </a>
+        </div>
+
+    </div>
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-outline card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><b>Categorias Registradas</b></h3>
+    <div class="rd-card rd-card-full">
 
-                    <div class="card-tools">
-                        <a class="btn btn-primary" href=" {{ url('admin/maestros/categorias/create') }}" class="btn btn-tool">
-                            <i class="fas fa-plus"></i>
-                            <b>Crear Nuevo</b>
-                        </a>
-                    </div>
-                    <!-- /.card-tools -->
+        <div class="rd-card-body">
+            <div class="rd-card-header rd-header-space">
+                <div>
+                    <h3 class="rd-title-sm">Sucursales Registradas</h3>
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body" style="display: block;">
-                    <table id="example1" class="table table-bordered table-striped table-hover table-sm" border="1">
-                        <thead>
+
+                <div class="rd-actions">
+                    <form action="{{ route('admin.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
+                        role="search">
+                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+                            placeholder="Escriba la categoria" />
+                        <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
+                    </form>
+
+                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
+                        aria-controls="filters" title="Filtros">
+                        <i class="fas fa-filter"></i>
+                    </button>
+
+                    <div class="rd-export-group">
+                        <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
+                            Excel</button>
+                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
+                            PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- <div class="collapse" id="filters">
+                <div class="rd-filters">
+                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                        class="rd-filters-form">
+                        <div class="rd-filter-row">
+                            <label>Desde</label>
+                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
+                        </div>
+                        <div class="rd-filter-row">
+                            <label>Hasta</label>
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" />
+                        </div>
+                        <div class="rd-filter-row rd-filter-actions">
+                            <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
+                            <button type="button" class="rd-btn rd-btn-default"
+                                onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div> --}}
+
+            {{-- Tabla --}}
+            <div id="printArea">
+                <table class="rd-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">#</th>
+                            <th class="text-center">Nombre</th>
+                            <th class="text-center">Descripcion</th>
+                            <th style="width:120px" class="text-center">Estado</th>
+                            <th style="width:150px" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($categorias as $categoria)
                             <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($categorias as $categoria)
-                                <tr>
-                                    <td style="text-align: center;">{{ $loop->iteration }}</td>
-                                    <td>{{ $categoria->nombre }}</td>
-                                    <td>{{ $categoria->descripcion }}</td>
-                                    <td>
-                                        <a href="{{ url('admin/maestros/categorias/' . $categoria->id) }}"
-                                            class="btn btn-info"><i class="fas fa-eye"></i> Ver</a>
+                                <td class="text-center">
+                                    {{ ($categorias->currentPage() - 1) * $categorias->perPage() + $loop->iteration }}</td>
+                                <td class="text-center">{{ $categoria->nombre }}</td>
+                                <td class="text-center">{{ $categoria->descripcion }}</td>
+                                <td class="text-center">
+                                    @if ($categoria->estado)
+                                        <span class="rd-badge rd-badge-success">Activo</span>
+                                    @else
+                                        <span class="rd-badge rd-badge-danger">Inactivo</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <div class="rd-action-group">
+
                                         <a href="{{ url('admin/maestros/categorias/' . $categoria->id . '/edit') }}"
-                                            class="btn btn-warning"><i class="fas fa-edit"></i> Editar</a>
+                                            class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
+
                                         <form action="{{ url('admin/maestros/categorias/' . $categoria->id) }}"
                                             method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="preguntar{{ $categoria->id }}(event)"><i class="fas fa-trash"></i>
-                                                Eliminar</button>
+                                            <button type="submit" class="rd-action rd-action-danger btn-delete"
+                                                onclick="preguntar{{ $categoria->id }}(event)"><i
+                                                    class="fas fa-trash"></i></button>
                                         </form>
                                         <script>
                                             function preguntar{{ $categoria->id }}(event) {
@@ -69,129 +141,27 @@
                                                 });
                                             }
                                         </script>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-            <!-- /.card -->
+
+            {{-- Paginación del servidor --}}
+            <div class="mt-3 d-flex justify-content-center">
+                {{ $categorias->onEachSide(1)->links('components.pagination') }}
+            </div>
         </div>
     </div>
 @stop
 
+
 @section('css')
-    <style>
-        /* Fondo transparente y sin borde en el contenedor */
-        #example1_wrapper .dt-buttons {
-            background-color: transparent;
-            box-shadow: none;
-            border: none;
-            display: flex;
-            justify-content: center;
-            /* Centrar los botones */
-            gap: 10px;
-            /* Espaciado entre botones */
-            margin-bottom: 15px;
-            /* Separar botones de la tabla */
-        }
-
-        /* Estilo personalizado para los botones */
-        #example1_wrapper .btn {
-            color: #fff;
-            /* Color del texto en blanco */
-            border-radius: 4px;
-            /* Bordes redondeados */
-            padding: 5px 15px;
-            /* Espaciado interno */
-            font-size: 14px;
-            /* TamaÃ±o de fuente */
-        }
-
-        /* Colores por tipo de botÃ³n */
-        .btn-danger {
-            background-color: #dc3545;
-            border: none;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-
-        .btn-info {
-            background-color: #17a2b8;
-            border: none;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-            border: none;
-        }
-
-        .btn-default {
-            background-color: #6e7176;
-            color: #212529;
-            border: none;
-        }
-    </style>
-@stop
-
-@section('js')
-    <script>
-        $(function() {
-            $("#example1").DataTable({
-                "pageLength": 10,
-                "language": {
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Categorias",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Categorias",
-                    "infoFiltered": "(Filtrado de _MAX_ total Categorias)",
-                    "lengthMenu": "Mostrar _MENU_ Categorias",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscador:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
-                "responsive": true,
-                "lengthChange": true,
-                "autoWidth": false,
-                buttons: [{
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        extend: 'copy',
-                        className: 'btn btn-default'
-                    },
-                    {
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        extend: 'pdf',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        text: '<i class="fas fa-file-csv"></i> CSV',
-                        extend: 'csv',
-                        className: 'btn btn-info'
-                    },
-                    {
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
-                        extend: 'excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        extend: 'print',
-                        className: 'btn btn-warning'
-                    }
-                ]
-            }).buttons().container().appendTo('#example1_wrapper .row:eq(0)');
-        });
-    </script>
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop

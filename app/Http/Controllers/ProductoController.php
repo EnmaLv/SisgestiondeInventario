@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\categoria;
+use Illuminate\Http\Request;
 
 use App\Http\Requests\ProductoRequest;
 
@@ -12,9 +13,27 @@ class ProductoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $productos = Producto::all();
+        $buscar = $request->input('buscar');
+        $activo = $request->input('estado');
+
+        $query = Producto::query();
+
+        if ($buscar) {
+            $query->where(function($q) use ($buscar) {
+                
+                $q->where('codigo','like', "%{$buscar}%")
+                ->orWhere('nombre','like', "%{$buscar}%");
+            });
+        }
+
+        if ($activo !== null && $activo !== '') {
+            $query->where('estado', (int)$activo);
+        }
+
+        $productos = $query->orderBy('id','desc')->paginate(10);
+
         return view('admin.maestros.productos.index', compact('productos'));
     }
 

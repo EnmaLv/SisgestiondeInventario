@@ -47,7 +47,7 @@ Route::prefix('/admin/maestros/sucursales')->middleware('auth')->group(function 
     Route::get('/{sucursal}', [SucursalController::class, 'show'])->name('admin.maestros.sucursales.show');
     Route::get('/{sucursal}/edit', [SucursalController::class, 'edit'])->name('admin.maestros.sucursales.edit');
     Route::put('/{sucursal}', [SucursalController::class, 'update'])->name('admin.maestros.sucursales.update');
-    Route::delete('/{sucursal}', [SucursalController::class, 'destroy'])->name('admin.maestros.sucursales.destroy');
+    Route::delete('/{id}', [SucursalController::class, 'destroy'])->name('admin.maestros.sucursales.destroy');
 });
 
 //Productos
@@ -124,3 +124,6 @@ Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController:
 Route::get('/admin/configuracion', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.configuracion.index')->middleware('auth');
 
 Route::get('/admin/configuracion/indexar', [App\Http\Controllers\IndexarController::class, 'index'])->name('admin.configuracion.indexar.index')->middleware('auth');
+
+
+

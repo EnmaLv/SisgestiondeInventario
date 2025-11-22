@@ -1,0 +1,169 @@
+/* RD condensed styles for the registro diario block */
+.rd-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+.rd-card-body {
+    padding: 16px;
+}
+
+.rd-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.rd-header-space {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.rd-title-sm {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #0f172a;
+}
+
+.rd-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rd-search-inline {
+    gap: 6px;
+}
+
+.rd-search-input {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e6eef6;
+    min-width: 220px;
+}
+
+.rd-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #e6eef6;
+    background: #fff;
+    cursor: pointer;
+}
+
+.rd-btn {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 0;
+    cursor: pointer;
+}
+
+.rd-btn-primary {
+    background: #4f46e5;
+    color: #fff;
+}
+
+.rd-btn-default {
+    background: #6b7280;
+    color: #fff;
+}
+
+.rd-btn-success {
+    background: #10b981;
+    color: #fff;
+}
+
+.rd-btn-danger {
+    background: #ef4444;
+    color: #fff;
+}
+
+.rd-btn-warning {
+    background: #f59e0b;
+    color: #fff;
+}
+
+.rd-filters .form-control {
+    border-radius: 8px;
+}
+
+.rd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+}
+
+.rd-table thead th {
+    background: #fbfdff;
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #eef2f6;
+    font-weight: 700;
+    color: #374151;
+}
+
+.rd-table tbody td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #f6f8fb;
+    vertical-align: middle;
+}
+
+.rd-action {
+    padding: 7px 8px;
+    border-radius: 8px;
+    background: transparent;
+    color: #374151;
+    border: 1px solid transparent;
+}
+
+.rd-action:hover {
+    background: #f3f4f6;
+}
+
+.rd-action-danger {
+    background: #fff7f7;
+    border: 1px solid #fee2e2;
+    color: #dc2626;
+}
+
+.rd-badge {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.rd-badge-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #bbf7d0;
+}
+
+.rd-badge-danger {
+    background: #fffbeb;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+@media (max-width: 768px) {
+    .rd-actions {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .rd-search-input {
+        min-width: 140px;
+    }
+}

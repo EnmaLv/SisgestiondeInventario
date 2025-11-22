@@ -1,180 +1,140 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Lotes</h1>
-    <p>Bienvenido {{ auth()->user()->name }}.</p>
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+        style="
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+         ">
+
+        <!-- Texto principal -->
+        <div>
+            <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
+                Lotes
+            </h1>
+
+            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
+                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+            </p>
+        </div>
+
+        <!-- Imagen + Fecha -->
+        <div>
+            <a href="{{ url('admin/movimientos/lotes/create') }}" class="rd-btn rd-btn-primary">
+                <i class="fas fa-plus"></i> Crear Nuevo
+            </a>
+        </div>
+
+    </div>
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-outline card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><b>Lotes Registrados</b></h3>
+    <div class="rd-card rd-card-full">
 
-                    <div class="card-tools">
-                        <a class="btn btn-primary" href=" {{ url('admin/movimientos/lotes/create') }}" class="btn btn-tool">
-                            <i class="fas fa-plus"></i>
-                            <b>Crear Nuevo</b>
-                        </a>
+        <div class="rd-card-body">
+            <div class="rd-card-header rd-header-space">
+                <div>
+                    <h3 class="rd-title-sm">Lotes Registrados</h3>
+                </div>
+
+                <div class="rd-actions">
+                    <form action="{{ route('admin.movimientos.lotes.index') }}" method="GET" class="rd-search-inline"
+                        role="search">
+                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+                            placeholder="Escriba el lote" />
+                        <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
+                    </form>
+
+                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
+                        aria-controls="filters" title="Filtros">
+                        <i class="fas fa-filter"></i>
+                    </button>
+
+                    <div class="rd-export-group">
+                        <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
+                            Excel</button>
+                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
+                            PDF</button>
                     </div>
-                    <!-- /.card-tools -->
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body" style="display: block;">
-                    <table id="example1" class="table table-bordered table-striped table-hover table-sm" border="1">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Codigo Lote</th>
-                                <th>Producto</th>
-                                <th>Proveedor</th>
-                                <th>Fecha Entrada</th>
-                                <th>Fecha Vencimiento</th>
-                                <th>Cantidad Actual</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($lotes as $lote)
-                                <tr class="{{ $lote->is_expired ? 'table-danger' : '' }}">
-                                    <td style="text-align: center;">{{ $loop->iteration }}</td>
-                                    <td>{{ $lote->codigo_lote }}</td>
-                                    <td>{{ $lote->producto->nombre }}</td>
-                                    <td>{{ $lote->proveedor->nombre }}</td>
-                                    <td>{{ $lote->fecha_entrada }}</td>
-                                    <td>{{ $lote->fecha_vencimiento }}</td>
-                                    <td>{{ $lote->cantidad_actual }}</td>
-                                    <td style="text-align: center;">
-                                        @if ($lote->is_expired)
-                                            <span class="badge badge-danger">Vencido</span>
-                                        @else
-                                            <span class="badge badge-success">Vigente</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
             </div>
-            <!-- /.card -->
+
+            {{-- <div class="collapse" id="filters">
+                <div class="rd-filters">
+                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                        class="rd-filters-form">
+                        <div class="rd-filter-row">
+                            <label>Desde</label>
+                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
+                        </div>
+                        <div class="rd-filter-row">
+                            <label>Hasta</label>
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" />
+                        </div>
+                        <div class="rd-filter-row rd-filter-actions">
+                            <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
+                            <button type="button" class="rd-btn rd-btn-default"
+                                onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div> --}}
+
+            {{-- Tabla --}}
+            <div id="printArea">
+                <table class="rd-table">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">#</th>
+                            <th>Codigo Lote</th>
+                            <th>Producto</th>
+                            <th>Proveedor</th>
+                            <th>Fecha Entrada</th>
+                            <th>Fecha Vencimiento</th>
+                            <th>Cantidad Actual</th>
+                            <th style="width:120px">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($lotes as $lote)
+                            <tr>
+                                <td class="text-center">
+                                    {{ ($lotes->currentPage() - 1) * $lotes->perPage() + $loop->iteration }}
+                                </td>
+                                <td>{{ $lote->codigo_lote }}</td>
+                                <td>{{ $lote->producto->nombre }}</td>
+                                <td>{{ $lote->proveedor->nombre }}</td>
+                                <td>{{ $lote->fecha_entrada }}</td>
+                                <td>{{ $lote->fecha_vencimiento }}</td>
+                                <td>{{ $lote->cantidad_actual }}</td>
+                                <td class="text-center">
+                                    @if ($lote->estado == true)
+                                        <span class="rd-badge rd-badge-success">Activo</span>
+                                    @else
+                                        <span class="rd-badge rd-badge-danger">Inactivo</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Paginación del servidor --}}
+            <div class="mt-3 d-flex justify-content-center">
+                {{ $lotes->onEachSide(1)->links('components.pagination') }}
+            </div>
         </div>
     </div>
 @stop
 
+
 @section('css')
-    <style>
-        /* Fondo transparente y sin borde en el contenedor */
-        #example1_wrapper .dt-buttons {
-            background-color: transparent;
-            box-shadow: none;
-            border: none;
-            display: flex;
-            justify-content: center;
-            /* Centrar los botones */
-            gap: 10px;
-            /* Espaciado entre botones */
-            margin-bottom: 15px;
-            /* Separar botones de la tabla */
-        }
-
-        /* Estilo personalizado para los botones */
-        #example1_wrapper .btn {
-            color: #fff;
-            /* Color del texto en blanco */
-            border-radius: 4px;
-            /* Bordes redondeados */
-            padding: 5px 15px;
-            /* Espaciado interno */
-            font-size: 14px;
-            /* TamaÃ±o de fuente */
-        }
-
-        /* Colores por tipo de botÃ³n */
-        .btn-danger {
-            background-color: #dc3545;
-            border: none;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-
-        .btn-info {
-            background-color: #17a2b8;
-            border: none;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-            border: none;
-        }
-
-        .btn-default {
-            background-color: #6e7176;
-            color: #212529;
-            border: none;
-        }
-    </style>
-@stop
-
-@section('js')
-    <script>
-        $(function() {
-            $("#example1").DataTable({
-                "pageLength": 10,
-                "language": {
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Lotes",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Lotes",
-                    "infoFiltered": "(Filtrado de _MAX_ total Lotes)",
-                    "lengthMenu": "Mostrar _MENU_ Lotes",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscador:",
-                    "searchPlaceholder": "Ingrese su búsqueda",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
-                "responsive": true,
-                "lengthChange": true,
-                "autoWidth": false,
-                buttons: [{
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        extend: 'copy',
-                        className: 'btn btn-default'
-                    },
-                    {
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        extend: 'pdf',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        text: '<i class="fas fa-file-csv"></i> CSV',
-                        extend: 'csv',
-                        className: 'btn btn-info'
-                    },
-                    {
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
-                        extend: 'excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        extend: 'print',
-                        className: 'btn btn-warning'
-                    }
-                ]
-            }).buttons().container().appendTo('#example1_wrapper .row:eq(0)');
-        });
-    </script>
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop

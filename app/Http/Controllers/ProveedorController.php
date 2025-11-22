@@ -10,9 +10,27 @@ class ProveedorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $proveedores = Proveedor::all();
+        $buscar = $request->input('buscar');
+        $activo = $request->input('estado');
+
+        $query = Proveedor::query();
+
+        if ($buscar) {
+            $query->where(function($q) use ($buscar) {
+                
+                $q->where('empresa','like', "%{$buscar}%")
+                ->orWhere('nombre','like', "%{$buscar}%");
+            });
+        }
+
+        if ($activo !== null && $activo !== '') {
+            $query->where('estado', (int)$activo);
+        }
+
+        $proveedores = $query->orderBy('id','desc')->paginate(10);
+        
         return view('admin.maestros.proveedores.index', compact('proveedores'));
     }
 
@@ -35,7 +53,6 @@ class ProveedorController extends Controller
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'estado' => 'required|boolean',
         ]);
 
         $proveedor = new Proveedor();
@@ -44,7 +61,7 @@ class ProveedorController extends Controller
         $proveedor->nombre = $validated['nombre'];
         $proveedor->telefono = $validated['telefono'];
         $proveedor->email = $validated['email'];
-        $proveedor->estado = $validated['estado'];
+        $proveedor->estado = true;
         $proveedor->save();
 
         return redirect()->route('admin.maestros.proveedores.index')->with('success', 'Proveedor creado exitosamente.')->with('icono', 'success');
@@ -81,7 +98,6 @@ class ProveedorController extends Controller
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'estado' => 'required|boolean',
         ]);
 
         $proveedor->empresa = $validated['empresa'];
@@ -89,7 +105,6 @@ class ProveedorController extends Controller
         $proveedor->nombre = $validated['nombre'];
         $proveedor->telefono = $validated['telefono'];
         $proveedor->email = $validated['email'];
-        $proveedor->estado = $validated['estado'];
         $proveedor->save();
 
         return redirect()->route('admin.maestros.proveedores.index')->with('success', 'Proveedor actualizado exitosamente.')->with('icono', 'success');

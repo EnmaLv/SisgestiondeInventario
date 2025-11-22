@@ -28,4 +28,32 @@ class Sucursal extends Model
     {
         return $this->hasMany(MovimientoInventario::class);
     }
+
+    public function exportCsv(Request $request)
+    {
+        $query = Sucursal::query();
+        // aplica mismos filtros que index
+        if ($request->buscar) { /* ... */ }
+        if ($request->activo !== null && $request->activo !== '') { /* ... */ }
+
+        $rows = $query->get(['id','nombre','direccion','telefono','activo']);
+
+        $filename = 'sucursales_'.date('Ymd_His').'.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function() use ($rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['ID','Nombre','Direccion','Telefono','Activo']);
+            foreach ($rows as $r) {
+                fputcsv($out, [$r->id, $r->nombre, $r->direccion, $r->telefono, $r->activo ? 'Activo' : 'Inactivo']);
+            }
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
 }

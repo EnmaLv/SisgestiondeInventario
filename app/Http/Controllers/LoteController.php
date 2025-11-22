@@ -12,13 +12,26 @@ use Illuminate\Support\Facades\DB;
 
 class LoteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        /*  $lotes = Lote::all();
-        return response()->json([
-            $lotes,
-        ]); */
-        $lotes = Lote::all();
+        $buscar = $request->input('buscar');
+        $activo = $request->input('estado');
+
+        $query = Lote::query();
+
+        if ($buscar) {
+            $query->where(function($q) use ($buscar) {
+                
+                $q->where('codigo','like', "%{$buscar}%")
+                ->orWhere('nombre','like', "%{$buscar}%");
+            });
+        }
+
+        if ($activo !== null && $activo !== '') {
+            $query->where('estado', (int)$activo);
+        }
+
+        $lotes = $query->orderBy('id','desc')->paginate(10);
         $productos = Producto::all();
         $proveedores = Proveedor::all();
         $detalleCompras = DetalleCompra::all();

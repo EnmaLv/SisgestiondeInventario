@@ -4,15 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use App\Http\Requests\CategoriaRequest;
+use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categorias = Categoria::all();
+        $buscar = $request->input('buscar');
+        $activo = $request->input('estado');
+
+        $query = Categoria::query();
+
+        if ($buscar) {
+            $query->where(function($q) use ($buscar) {
+                
+                $q->where('codigo','like', "%{$buscar}%")
+                ->orWhere('nombre','like', "%{$buscar}%");
+            });
+        }
+
+        if ($activo !== null && $activo !== '') {
+            $query->where('estado', (int)$activo);
+        }
+
+        $categorias = $query->orderBy('id','desc')->paginate(10);
 
         return view('admin.maestros.categorias.index', compact('categorias'));
     }
