@@ -29,7 +29,14 @@
                         <div class="rd-toast rd-toast-{{ $notification['type'] ?? 'info' }}" role="status"
                             aria-live="polite">
                             <div class="rd-toast-body">
-                                <strong>{{ ucfirst($notification['type'] ?? 'Info') }}:</strong>
+                                @php
+                                    if($notification['type'] == 'success'){
+                                        $type = 'exito';
+                                    }else{
+                                        $type = 'error';
+                                    }
+                                @endphp
+                                <strong>{{ ucfirst($type) }}</strong>
                                 <span>{{ $notification['message'] }}</span>
                             </div>
                             <button class="rd-toast-close" aria-label="Cerrar"
@@ -56,7 +63,7 @@
                     <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
                         class="rd-search-inline" role="search">
                         <input name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Nombre, apellido o PNF" />
+                            placeholder="Nombre, apellido o PNF" id="search"/>
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
@@ -84,9 +91,9 @@
                         </div>
                         <div class="rd-filter-row">
                             <label>Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" />
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" max="{{ date("Y-m-d") }}" />
                         </div>
-                        <div class="rd-filter-row rd-filter-actions">
+                        <div class="rd-filter-actions">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
                             <button type="button" class="rd-btn rd-btn-default"
                                 onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
@@ -314,7 +321,7 @@
             border: 1px solid #bfdbfe;
         }
 
-        .rd-toast-error {
+        .rd-toast-danger {
             background: linear-gradient(90deg, #fff1f2, #fff7f7);
             border: 1px solid #fecaca;
         }
@@ -383,6 +390,7 @@
             display: flex;
             gap: 12px;
             align-items: flex-end;
+            justify-content: center;
             flex-wrap: wrap;
         }
 
@@ -501,59 +509,6 @@
     </style>
 @endpush
 
-@push('js')
-    <script>
-        // ==== Livewire notifications (safe + debounce) ====
-        document.addEventListener('livewire:load', function() {
-            let notificationTimer = null;
-
-            Livewire.on('notify-saved', () => {
-                // showNotification control es manejado por el componente
-                // pero nos aseguramos de ocultarlo si no se hace desde servidor
-                if (notificationTimer) clearTimeout(notificationTimer);
-                notificationTimer = setTimeout(() => {
-                    Livewire.emit('hide-notification'); // si quieres manejarlo desde componente
-                }, 3000);
-            });
-        });
-
-        // ===== Mantener foco en cédula con seguridad (solo si existe) =====
-        (function focusCedula() {
-            const ced = document.getElementById('cedula');
-            if (!ced) return;
-            ced.focus({
-                preventScroll: true
-            });
-            // volver a enfocar cuando el usuario clickee por fuera del contenido principal
-            const root = document.querySelector('.content-wrapper') || document.body;
-            root.addEventListener('click', () => ced.focus({
-                preventScroll: true
-            }));
-            window.addEventListener('focus', () => ced.focus({
-                preventScroll: true
-            }));
-        })();
-
-        // ===== Fecha max/logic =====
-        (function dateLimits() {
-            const desde = document.getElementById('fecha_desde');
-            const hasta = document.getElementById('fecha_hasta');
-            if (!desde || !hasta) return;
-            const hoy = new Date().toISOString().split('T')[0];
-            desde.max = hoy;
-            hasta.max = hoy;
-
-            desde.addEventListener && desde.addEventListener('change', function() {
-                hasta.min = this.value || '';
-                if (hasta.value && hasta.value < this.value) hasta.value = this.value;
-            });
-            hasta.addEventListener && hasta.addEventListener('change', function() {
-                if (desde.value && this.value < desde.value) desde.value = this.value;
-            });
-        })();
-    </script>
-@endpush
-
 
 
 @push('js')
@@ -588,19 +543,45 @@
 
         // Evento para el input de cédula
         const inputCedula = document.getElementById('cedula');
+        const inputSearch = document.getElementById('search');
 
-        //Focus al input
-        inputCedula.focus();
+        if (inputCedula) {
+            let blockCedulaFocus = false;
 
-        //escuchar el click en cualquier parte del documento para no perder el focus
-        document.querySelector('.content-wrapper').addEventListener('click', function() {
-            inputCedula.focus();
-        });
+            const focusCedulaSafely = () => {
+                if (blockCedulaFocus) return;
+                inputCedula.focus({
+                    preventScroll: true
+                });
+            };
 
-        //Re-enfocar si la ventana vuelve a estar activa (ej. alt-tab y volver)
-        window.addEventListener('focus', function() {
-            inputCedula.focus();
-        });
+            // Focus inicial
+            focusCedulaSafely();
+
+            if (inputSearch) {
+                inputSearch.addEventListener('focus', () => {
+                    blockCedulaFocus = true;
+                });
+                inputSearch.addEventListener('blur', () => {
+                    blockCedulaFocus = false;
+                    focusCedulaSafely();
+                });
+            }
+
+            // Escuchar click en el contenedor principal
+            const root = document.querySelector('.content-wrapper') || document.body;
+            root.addEventListener('click', (event) => {
+                if (inputSearch && (event.target === inputSearch || inputSearch.contains(event.target))) {
+                    return;
+                }
+                focusCedulaSafely();
+            });
+
+            // Re-enfocar cuando la ventana retorne, respetando el focus del search
+            window.addEventListener('focus', () => {
+                focusCedulaSafely();
+            });
+        }
 
         //Limites del input
         inputCedula.addEventListener('input', function(e) {
@@ -656,126 +637,3 @@
     </script>
 @endpush
 
-@push('css')
-    <style>
-        @keyframes fade-in {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .fade-in {
-            animation: fade-in 0.5s ease-in-out;
-        }
-
-        /* Fondo transparente y sin borde en el contenedor */
-        #example1_wrapper .dt-buttons {
-            background-color: transparent;
-            box-shadow: none;
-            border: none;
-            display: flex;
-            justify-content: center;
-            /* Centrar los botones */
-            gap: 10px;
-            /* Espaciado entre botones */
-            margin-bottom: 15px;
-            /* Separar botones de la tabla */
-        }
-
-        /* Estilo personalizado para los botones */
-        #example1_wrapper .btn {
-            color: #fff;
-            /* Color del texto en blanco */
-            border-radius: 4px;
-            /* Bordes redondeados */
-            padding: 5px 15px;
-            /* Espaciado interno */
-            font-size: 14px;
-            /* TamaÃ±o de fuente */
-        }
-
-        /* Colores por tipo de botÃ³n */
-        .btn-danger {
-            background-color: #dc3545;
-            border: none;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-
-        .btn-info {
-            background-color: #17a2b8;
-            border: none;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-            border: none;
-        }
-
-        .btn-default {
-            background-color: #6e7176;
-            color: #212529;
-            border: none;
-        }
-
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-        }
-
-        .minimalist-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .minimalist-item:last-child {
-            border-bottom: none;
-        }
-
-        .minimalist-info {
-            flex: 1;
-        }
-
-        .minimalist-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .minimalist-details {
-            display: flex;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .minimalist-details span {
-            margin-right: 15px;
-        }
-
-        .minimalist-status {
-            font-weight: 600;
-        }
-
-        .minimalist-status.success {
-            color: #27ae60;
-        }
-
-        .minimalist-status.error {
-            color: #e74c3c;
-        }
-
-        .minimalist-status.warning {
-            color: #f39c12;
-        }
-    </style>
-@endpush
