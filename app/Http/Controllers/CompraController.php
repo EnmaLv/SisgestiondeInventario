@@ -62,7 +62,7 @@ class CompraController extends Controller
         $compra->fecha = $validated['fecha'];
         $compra->observaciones = $validated['observaciones'] ?? null;
         $compra->total = 0;
-        $compra->estado = 'pendiente';
+        $compra->estado = 'Pendiente';
         $compra->save();
 
         return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('success', 'Compra creada exitosamente, Ahora puedes agregar productos.')->with('icono', 'success');
@@ -70,9 +70,19 @@ class CompraController extends Controller
 
     public function show($id)
     {
-        $compra = \App\Models\Compra::with('detalleCompras.producto', 'proveedor')->findOrFail($id);
-        $productos = \App\Models\Producto::all();
-        return view('admin.movimientos.compras.show', compact('compra', 'productos'));
+        $compra = \App\Models\Compra::findOrFail($id);
+        $compra->load('detalleCompras.lote.producto', 'detalleCompras.lote.proveedor', 'proveedor');
+
+        $movimiento_entradas = MovimientoInventario::whereHas('lote', function ($query) use ($compra) {
+            $query->whereIn('id', $compra->detalleCompras->pluck('lote_id'));
+        })->where('tipo_movimiento', 'Entrada')->first();
+
+        $sucursal_destino = null;
+        if ($movimiento_entradas) {
+            $sucursal_destino = Sucursal::find($movimiento_entradas->sucursal_id);
+        }
+
+        return view('admin.movimientos.compras.show', compact('compra', 'sucursal_destino'));
     }
 
     public function edit($id)
@@ -87,8 +97,23 @@ class CompraController extends Controller
     public function destroy($id)
     {
         $compra = \App\Models\Compra::findOrFail($id);
-        $compra->delete();
-        return redirect()->route('admin.movimientos.compras.index')->with('success', 'Compra eliminada exitosamente.')->with('icono', 'success');
+
+        DB::beginTransaction();
+        try {
+            foreach ($compra->detalleCompras as $detalle) {
+                $lote = $detalle->lote;
+
+                $lote->delete();
+                $detalle->delete();
+            }
+            $compra->delete();
+
+            DB::commit();
+            
+            return redirect()->route('admin.movimientos.compras.index')->with('mensaje', 'Compra eliminada exitosamente')->with('icono', 'success');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.movimientos.compras.index')->with('mensaje', 'Error al eliminar la compra: ' . $e->getMessage())->with('icono', 'error');
+        }
     }
 
     public function enviarCorreo(Compra $compra)
@@ -119,23 +144,29 @@ class CompraController extends Controller
         DB::beginTransaction();
         try {
             foreach ($compra->detalleCompras as $detalle) {
+
                 $lote = $detalle->lote;
                 $producto = $detalle->producto;
 
-                $lote->cantidad_actual = $lote->cantidad_actual + $detalle->cantidad;
+                // Actualizar cantidad del lote general
+                $lote->cantidad_actual += $detalle->cantidad;
                 $lote->save();
 
+                // Inventario en sucursal por lote (corregido)
                 $inventarioLote = InventarioSucursalLote::firstOrCreate(
                     [
                         'lote_id' => $lote->id,
                         'sucursal_id' => $request->sucursal_id,
-                        'cantidad' => $detalle->cantidad,
+                    ],
+                    [
+                        'cantidad' => 0,
                     ]
                 );
-                $inventarioLote->cantidad = $inventarioLote->cantidad + $detalle->cantidad;
+
+                $inventarioLote->cantidad += $detalle->cantidad;
                 $inventarioLote->save();
 
-                $movimientoInventario = \App\Models\MovimientoInventario::create([
+                MovimientoInventario::create([
                     'producto_id' => $producto->id,
                     'lote_id' => $lote->id,
                     'sucursal_id' => $request->sucursal_id,
@@ -145,18 +176,21 @@ class CompraController extends Controller
                 ]);
             }
 
+
             $compra->estado = 'Finalizada';
             $compra->save();
             DB::commit();
 
-            return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('mensaje', 'Compra Finalizada Exitosamente')->with('icono', 'success');
+            return redirect()->route('admin.movimientos.compras.index')->with('mensaje', 'Compra Finalizada Exitosamente')->with('icono', 'success');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('mensaje', 'Error al finalizar la compra: ' . $e->getMessage())->with('icono', 'error');
+            return redirect()->route('admin.movimientos.compras.index')->with('mensaje', 'Error al finalizar la compra: ' . $e->getMessage())->with('icono', 'error');
         }
 
         /* $compra->estado = 'Finalizada';
         $compra->save();
         return redirect()->route('admin.movimientos.compras.edit', $compra->id)->with('mensaje', 'Compra Finalizada Exitosamente')->with('icono', 'success'); */
     }
+
+    
 }

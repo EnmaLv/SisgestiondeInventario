@@ -151,6 +151,12 @@
     border: 1px solid #bbf7d0;
 }
 
+.rd-badge-warning {
+    background: #fffbeb;
+    color: #78350f;
+    border: 1px solid #fcd34d;
+}
+
 .rd-badge-danger {
     background: #fffbeb;
     color: #b91c1c;

@@ -44,6 +44,7 @@
 
     </div>
 @stop
+
 @section('content')
     <div class="rd-card rd-card-form">
         <div class="rd-card-body">

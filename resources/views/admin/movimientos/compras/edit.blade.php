@@ -1,14 +1,54 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Compra nro {{ $compra->id }}</h1>
-    <p>Bienvenido {{ auth()->user()->name }}.</p>
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+        style="
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+         ">
+
+        <!-- Texto principal -->
+        <div>
+            <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
+                Compra nro {{ $compra->id }}
+            </h1>
+
+            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
+                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+            </p>
+        </div>
+
+        <!-- Imagen + Fecha -->
+        <div class="d-flex align-items-center" style="gap:14px;">
+            <div class="text-right d-none d-sm-block">
+                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <span style="font-weight:600; font-size:0.95rem;">
+                    {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                </span>
+            </div>
+
+            <div
+                style="
+                width:46px;
+                height:46px;
+                border-radius:12px;
+                overflow:hidden;
+                box-shadow:0 4px 12px rgba(15,23,42,0.08);
+            ">
+                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                    style="width:100%; height:100%; object-fit:cover;">
+            </div>
+        </div>
+
+    </div>
 @stop
 
 @section('content')
     <div class="row">
         <div class="col-md-12 m-auto">
-            <div class="card card-info">
+            <div class="card">
                 <div class="card-header">
                     <h3 class="card-title"><b>Paso 1 | Compra creada</b></h3>
 
@@ -24,7 +64,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-2 display: inline-block;">
+                                <div class="col-md-3 display: inline-block;">
                                     <div class="form-group">
                                         <label for="nombre">Proveedor</label>
                                         <div class="input-group mb-3">
@@ -48,7 +88,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="form-group col-md-2" style="display: inline-block;">
+                                <div class="form-group col-md-3" style="display: inline-block;">
                                     <label for="codigo">Fecha de Compra</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
@@ -73,9 +113,15 @@
                                             <span class="input-group-text inline-block"><i
                                                     class="fas fa-sticky-note"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="observaciones" name="observaciones"
-                                            placeholder="Ingrese observaciones"
-                                            value="{{ old('observaciones', $compra->observaciones) }}" readonly>
+                                        @if ($compra->observaciones == !null)
+                                            <input type="text" class="form-control" id="observaciones"
+                                                name="observaciones" placeholder="Ingrese observaciones"
+                                                value="{{ old('observaciones', $compra->observaciones) }}" readonly>
+                                        @else
+                                            <input type="text" class="form-control" id="observaciones"
+                                                name="observaciones" placeholder="Ingrese observaciones"
+                                                value="Sin observaciones" readonly>
+                                        @endif
                                     </div>
                                     @error('observaciones')
                                         <div class="alert text-danger p-0 m-0">
@@ -84,7 +130,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-md-2" style="display: inline-block;">
-                                    <label for="codigo">Estado</label>
+                                    <label for="codigo">Compra</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text inline-block"><i
@@ -112,66 +158,65 @@
     </div>
     <div class="row">
         <div class="col-md-12 m-auto">
-            <div class="card card-info">
+            <div class="card">
                 <div class="card-header">
                     <h3 class="card-title"><b>Paso 2 | Agregar productos</b></h3>
                 </div>
                 <div class="card-body" style="display: block;">
                     <livewire:admin.movimientos.compras.items-compra :compra="$compra" />
+
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12 m-auto">
-            <div class="card card-success">
-                <div class="card-header">
-                    <h3 class="card-title"><b>Paso 3 | Finalizar Compra</b></h3>
-                </div>
-                <div class="card-body" style="display: block;">
-                    <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-4">
-
-                                <div class="form-group">
-                                    <label for="sucursal_id">Sucursales</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i class="fas fa-tags"></i></span>
+    @if ($compra->estado == 'Enviado al proveedor')
+        <div class="row">
+            <div class="col-md-5 m-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><b>Paso 3 | Finalizar Compra</b></h3>
+                    </div>
+                    <div class="card-body" style="display: block;">
+                        <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="sucursal_id">Sucursales</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text inline-block"><i
+                                                        class="fas fa-tags"></i></span>
+                                            </div>
+                                            <select class="form-control" id="sucursal_id" name="sucursal_id">
+                                                <option value="">Seleccione una sucursal</option>
+                                                @foreach ($sucursales as $sucursal)
+                                                    <option value="{{ $sucursal->id }}"
+                                                        {{ old('sucursal_id') == $sucursal->id ? 'selected' : '' }}>
+                                                        {{ $sucursal->nombre }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        <select class="form-control" id="sucursal_id" name="sucursal_id">
-                                            <option value="">Seleccione una sucursal</option>
-                                            @foreach ($sucursales as $sucursal)
-                                                <option value="{{ $sucursal->id }}"
-                                                    {{ old('sucursal_id') == $sucursal->id ? 'selected' : '' }}>
-                                                    {{ $sucursal->nombre }}</option>
-                                            @endforeach
-                                        </select>
+                                        @error('sucursal_id')
+                                            <div class="alert text-danger p-0 m-0">
+                                                <b>{{ 'Este campo es obligatorio.' }}</b>
+                                            </div>
+                                        @enderror
                                     </div>
-                                    @error('sucursal_id')
-                                        <div class="alert text-danger p-0 m-0">
-                                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                                        </div>
-                                    @enderror
-                                </div>
-                                <hr>
-                                <div class="form-group">
-
-                                    <a href="{{ route('admin.movimientos.compras.enviarCorreo', $compra) }}"
-                                        class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar Correo al
-                                        Proveedor</a>
-                                    <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Finalizar
-                                        Compra</button>
+                                    <div class="form-group" style="text-align: right;">
+                                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i>
+                                            Finalizar
+                                            Compra</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
 
 

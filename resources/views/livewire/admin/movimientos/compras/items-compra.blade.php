@@ -154,8 +154,16 @@
                 <h4>No hay productos agregados a la compra.</h4>
 
             @endif
-            <h3><b>Total de la Compra: </b>{{ $compra->total }}</h3>
-
+            <h3 style="display: inline-block"><b>Total de la Compra: </b>{{ $compra->total }}</h3>
+            @if ($compra->detalleCompras->count() == 0)
+                <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">*Agregue
+                    productos para
+                    enviar el correo al proveedor.</span>
+            @else
+                <a style="float: right" href="{{ route('admin.movimientos.compras.enviarCorreo', $compra) }}"
+                    class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar Correo al
+                    Proveedor</a>
+            @endif
         </div>
     </div>
 </div>

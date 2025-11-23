@@ -91,7 +91,7 @@
                             <th>Proveedor</th>
                             <th>Fecha de la Compra</th>
                             <th>Total</th>
-                            <th style="width:120px">Estado</th>
+                            <th style="width:120px">Compra</th>
                             <th style="width:150px">Acciones</th>
                         </tr>
                     </thead>
@@ -105,47 +105,68 @@
                                 <td>{{ $compra->fecha }}</td>
                                 <td>{{ $compra->total }}</td>
                                 <td class="text-center">
-                                    @if ($compra->estado == true)
-                                        <span class="rd-badge rd-badge-success">Activo</span>
+                                    @if ($compra->estado == 'Pendiente')
+                                        <span class="rd-badge rd-badge-danger">Pendiente</span>
+                                    @elseif ($compra->estado == 'Enviado al proveedor')
+                                        <span class="rd-badge rd-badge-warning">En espera</span>
                                     @else
-                                        <span class="rd-badge rd-badge-danger">Inactivo</span>
+                                        <span class="rd-badge rd-badge-success">Finalizada</span>
                                     @endif
                                 </td>
-                                <td class="text-center">
-                                    <div class="rd-action-group">
 
-                                        <a href="{{ url('admin/maestros/proveedores/' . $compra->proveedor->id . '/edit') }}"
-                                            class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
+                                @if ($compra->estado == 'Pendiente' || $compra->estado == 'Enviado al proveedor')
+                                    <td class="text-center">
+                                        <div class="rd-action-group">
 
-                                        <form action="{{ url('admin/maestros/proveedores/' . $compra->proveedor->id) }}"
-                                            method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                onclick="preguntar{{ $compra->proveedor->id }}(event)"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </form>
-                                        <script>
-                                            function preguntar{{ $compra->proveedor->id }}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Estás seguro?',
-                                                    text: "No podrás deshacer esta acción",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Sí, eliminar',
-                                                    cancelButtonText: 'Cancelar'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        event.target.form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
-                                    </div>
-                                </td>
+                                            <a href="{{ url('admin/movimientos/compras/' . $compra->id) }}"
+                                                class="rd-action" title="Ver Detalles"><i class="fas fa-eye"></i></a>
+
+                                            <a href="{{ url('admin/movimientos/compras/' . $compra->id . '/edit') }}"
+                                                class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
+
+                                            <form action="{{ url('admin/movimientos/compras/' . $compra->id) }}"
+                                                method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit" class="rd-action rd-action-danger btn-delete"
+                                                    onclick="preguntar{{ $compra->proveedor->id }}(event)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+
+                                            <script>
+                                                function preguntar{{ $compra->proveedor->id }}(event) {
+                                                    event.preventDefault();
+
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "No podrás deshacer esta acción",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, eliminar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            event.target.closest('form').submit();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
+
+                                        </div>
+                                    </td>
+                                @else
+                                    <td class="text-center">
+                                        <div class="rd-action-group">
+                                            <a href="{{ url('admin/movimientos/compras/' . $compra->id) }}"
+                                                class="rd-action" title="Ver Detalles"><i class="fas fa-eye"></i></a>
+                                        </div>
+                                    </td>
+                                @endif
+
                             </tr>
                         @empty
                             <tr>

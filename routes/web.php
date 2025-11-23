@@ -67,14 +67,6 @@ Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(f
     Route::get('/', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
 });
 
-// Route::get('/admin/maestros/productos', [App\Http\Controllers\ProductoController::class, 'index'])->name('admin.maestros.productos.index')->middleware('auth');
-
-// Route::get('/admin/maestros/productos/create', [App\Http\Controllers\ProductoController::class, 'create'])->name('admin.maestros.productos.create')->middleware('auth');
-// Route::post('/admin/maestros/productos/store', [App\Http\Controllers\ProductoController::class, 'store'])->name('admin.maestros.productos.store')->middleware('auth');
-// Route::get('/admin/maestros/productos/{producto}', [App\Http\Controllers\ProductoController::class, 'show'])->name('admin.maestros.productos.show')->middleware('auth');
-// Route::get('/admin/maestros/productos/{producto}/edit', [App\Http\Controllers\ProductoController::class, 'edit'])->name('admin.maestros.productos.edit')->middleware('auth');
-// Route::put('/admin/maestros/productos/{producto}', [App\Http\Controllers\ProductoController::class, 'update'])->name('admin.maestros.productos.update')->middleware('auth');
-// Route::delete('/admin/maestros/productos/{producto}', [App\Http\Controllers\ProductoController::class, 'destroy'])->name('admin.maestros.productos.destroy');
 
 //Proveedores
 Route::get('/admin/maestros/proveedores', [App\Http\Controllers\ProveedorController::class, 'index'])->name('admin.maestros.proveedores.index')->middleware('auth');
@@ -108,11 +100,10 @@ Route::delete('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteControl
 
 // Sucursales por Lotes
 Route::get('/admin/movimientos/sucursales_lotes', [App\Http\Controllers\InventarioSucursalLoteController::class, 'index'])->name('admin.movimientos.sucursales_lotes')->middleware('auth');
+Route::get('/admin/movimientos/sucursales_lotes/show/{id}', [App\Http\Controllers\InventarioSucursalLoteController::class, 'show'])->name('admin.movimientos.sucursales_lotes.show')->middleware('auth');
 
 // Historial de Movimientos
 Route::get('/admin/movimientos/historial_movimientos', [App\Http\Controllers\MovimientoInventarioController::class, 'index'])->name('admin.movimientos.historial_movimientos.index')->middleware('auth');
-
-Route::get('/admin/movimientos/sucursales_lotes/{id}', [App\Http\Controllers\InventarioSucursalLoteController::class, 'mostrar_sucursal_lote'])->name('admin.movimientos.sucursales_lotes.show')->middleware('auth');
 
 // Registro diario
 Route::get('/admin/movimientos/registro_diario', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index')->middleware('auth');
