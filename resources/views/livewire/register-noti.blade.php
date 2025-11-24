@@ -30,9 +30,9 @@
                             aria-live="polite">
                             <div class="rd-toast-body">
                                 @php
-                                    if($notification['type'] == 'success'){
+                                    if ($notification['type'] == 'success') {
                                         $type = 'exito';
-                                    }else{
+                                    } else {
                                         $type = 'error';
                                     }
                                 @endphp
@@ -63,7 +63,7 @@
                     <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
                         class="rd-search-inline" role="search">
                         <input name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Nombre, apellido o PNF" id="search"/>
+                            placeholder="Nombre, apellido o PNF" id="search" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
@@ -91,7 +91,8 @@
                         </div>
                         <div class="rd-filter-row">
                             <label>Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" max="{{ date("Y-m-d") }}" />
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input"
+                                max="{{ date('Y-m-d') }}" />
                         </div>
                         <div class="rd-filter-actions">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
@@ -132,13 +133,6 @@
                                         <div class="rd-action-group">
                                             <a class="rd-action" href="#" title="Ver"><i
                                                     class="fas fa-eye"></i></a>
-                                            <a class="rd-action" href="#" title="Editar"><i
-                                                    class="fas fa-edit"></i></a>
-                                            <form action="#" method="POST" class="d-inline">
-                                                @csrf @method('DELETE')
-                                                <button class="rd-action rd-action-danger" title="Eliminar"
-                                                    type="submit"><i class="fas fa-trash"></i></button>
-                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -636,4 +630,3 @@
         }
     </script>
 @endpush
-

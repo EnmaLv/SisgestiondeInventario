@@ -1,140 +1,161 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Proveedor</h1>
-    <p>Bienvenido {{ auth()->user()->name }}.</p>
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Registrar Proveedor</h1>
+            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
+                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center" style="gap:14px;">
+            <div class="text-right d-none d-sm-block">
+                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <span style="font-weight:600; font-size:0.95rem;">
+                    {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                </span>
+            </div>
+
+            <div
+                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
+                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                    style="width:100%; height:100%; object-fit:cover;">
+            </div>
+        </div>
+    </div>
 @stop
+
 
 @section('content')
     <div class="row">
-        <div class="col-md-9 m-auto">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><b>Registrar Proveedor</b></h3>
+        <div class="col-md-12 m-auto">
+            <div class="rd-card p-4">
 
-                    <div class="card-tools">
-                        <a href="{{ url('admin/maestros/proveedores') }}" class="btn btn-tool">
-                            <i class="fas fa-arrow-left"></i>
-                            <b>Volver</b>
-                        </a>
+                {{-- Encabezado --}}
+                <div class="rd-card-header mb-3">
+                    <h3 class="rd-title-sm">Registrar proveedor</h3>
+
+                    <a href="{{ url('admin/maestros/proveedores') }}" class="rd-btn rd-btn-default">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+
+                {{-- Formulario --}}
+                <form action="{{ route('admin.maestros.proveedores.store') }}" method="POST">
+                    @csrf
+
+                    <div class="row">
+                        {{-- Empresa --}}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Empresa</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                    <input type="text" class="form-control rd-filter-input" name="empresa"
+                                        value="{{ old('empresa') }}" placeholder="Nombre de la empresa">
+                                </div>
+                                @error('empresa')
+                                    <div class="text-danger"><b>{{ $message }}</b></div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Dirección --}}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Dirección</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control rd-filter-input" name="direccion"
+                                        value="{{ old('direccion') }}" placeholder="Dirección completa">
+                                </div>
+                                @error('direccion')
+                                    <div class="text-danger"><b>{{ $message }}</b></div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Nombre del proveedor --}}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Nombre del proveedor</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control rd-filter-input" name="nombre"
+                                        value="{{ old('nombre') }}" placeholder="Nombre de contacto">
+                                </div>
+                                @error('nombre')
+                                    <div class="text-danger"><b>{{ $message }}</b></div>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body" style="display: block;">
-                    <form action="{{ route('admin.maestros.proveedores.store') }}" method="POST">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="form-group col-md-4" style="display: inline-block;">
-                                        <label for="empresa">Empresa</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-user"></i></span>
-                                            </div>
-                                            <input type="text" value="{{ old('empresa') }}" class="form-control"
-                                                id="empresa" name="empresa" placeholder="Ingrese el nombre de la empresa">
-                                        </div>
-                                        @error('empresa')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-4" style="display: inline-block;">
-                                        <label for="direccion">Dirección</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-map-marker-alt"></i></span>
-                                            </div>
-                                            <input type="text" value="{{ old('direccion') }}" class="form-control"
-                                                id="direccion" name="direccion"
-                                                placeholder="Ingrese la dirección de la sucursal">
-                                        </div>
-                                        @error('direccion')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-4" style="display: inline-block;">
-                                        <label for="nombre">Nombre del Proveedor</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-map-marker-alt"></i></span>
-                                            </div>
-                                            <input type="text" value="{{ old('nombre') }}" class="form-control"
-                                                id="nombre" name="nombre" placeholder="Ingrese el nombre del proveedor">
-                                        </div>
-                                        @error('nombre')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
-                                    </div>
+
+                    {{-- Fila 2 --}}
+                    <div class="row mt-3">
+
+                        {{-- Teléfono --}}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Teléfono</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="text" class="form-control rd-filter-input" name="telefono"
+                                        id="telefono" value="{{ old('telefono') }}"
+                                        data-inputmask="'mask': '(999) 999-9999'" data-mask placeholder="(123) 456-7890">
                                 </div>
+                                @error('telefono')
+                                    <div class="text-danger"><b>{{ $message }}</b></div>
+                                @enderror
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-row col-md-12">
-                                <div class="form-group col-md-4" style="display: inline-block;">
-                                    <label for="telefono">Teléfono</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i class="fas fa-phone"></i></span>
-                                        </div>
-                                        <input type="text" value="{{ old('telefono') }}" class="form-control"
-                                            data-inputmask="'mask': '(999) 999-9999'" data-mask id="telefono"
-                                            inputmode="numeric" placeholder="(123) 456-7890" name="telefono">
-                                    </div>
-                                    @error('telefono')
-                                        <div class="alert text-danger p-0 m-0">
-                                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                                        </div>
-                                    @enderror
+
+                        {{-- Email --}}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Email</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control rd-filter-input" name="email"
+                                        value="{{ old('email') }}" placeholder="correo@empresa.com">
                                 </div>
-                                <div class="form-group col-md-4 float-right" style="display: inline-block;">
-                                    <label for="email">Email</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
-                                                    class="fas fa-map-marker-alt"></i></span>
-                                        </div>
-                                        <input type="email" value="{{ old('email') }}" class="form-control"
-                                            id="email" name="email" placeholder="Ingrese el email del proveedor">
-                                    </div>
-                                    @error('email')
-                                        <div class="alert text-danger p-0 m-0">
-                                            <b>{{ 'Este campo es obligatorio.' }}</b>
-                                        </div>
-                                    @enderror
-                                </div>
+                                @error('email')
+                                    <div class="text-danger"><b>{{ $message }}</b></div>
+                                @enderror
                             </div>
                         </div>
-                        <div class="form-group">
-                            <a href="{{ url('admin/maestros/proveedores') }}" class="btn btn-default">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Crear</button>
-                        </div>
-                    </form>
-                </div>
+
+                    </div>
+
+                    <hr>
+
+                    {{-- Botones --}}
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url('admin/maestros/proveedores') }}" class="rd-btn rd-btn-default">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="rd-btn rd-btn-primary">
+                            <i class="fas fa-save"></i> Registrar
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
 @stop
 
 @section('css')
-
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
+
 
 @section('js')
     <script>
         $(document).ready(function() {
             $("[data-mask]").inputmask();
-        });
-        $(function() {
-            $("#telefono").inputmask("(999) 999-9999");
         });
     </script>
 @stop

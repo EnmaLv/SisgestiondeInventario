@@ -91,6 +91,7 @@ class CompraController extends Controller
         $proveedores = \App\Models\Proveedor::all();
         $productos = \App\Models\Producto::all();
         $sucursales = \App\Models\Sucursal::all();
+        
         return view('admin.movimientos.compras.edit', compact('compra', 'proveedores', 'productos', 'sucursales'));
     }
 

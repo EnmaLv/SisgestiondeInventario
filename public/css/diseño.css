@@ -1,3 +1,42 @@
+ /* RD INPUT GROUP */
+        .rd-input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding-left: 10px;
+            transition: .25s ease;
+        }
+
+        .rd-input-group span {
+            color: #64748b;
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+
+        .rd-input-group .rd-input {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .rd-input-group:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .rd-label {
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .rd-error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 3px;
+        }
+
 /* RD condensed styles for the registro diario block */
 .rd-card {
     background: #fff;

@@ -21,8 +21,7 @@ class CategoriaController extends Controller
         if ($buscar) {
             $query->where(function($q) use ($buscar) {
                 
-                $q->where('codigo','like', "%{$buscar}%")
-                ->orWhere('nombre','like', "%{$buscar}%");
+                $q->Where('nombre','like', "%{$buscar}%");
             });
         }
 

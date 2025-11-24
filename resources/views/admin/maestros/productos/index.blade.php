@@ -87,10 +87,9 @@
                 <table class="rd-table">
                     <thead>
                         <tr>
-                            <th class="text-center">ID</th>
-                            <th class="text-center">Categoria</th>
                             <th class="text-center">Codigo</th>
                             <th class="text-center">Nombre</th>
+                            <th class="text-center">Categoria</th>
                             <th class="text-center">Stock Minimo</th>
                             <th class="text-center">Stock Maximo</th>
                             <th class="text-center">Estado</th>
@@ -100,12 +99,9 @@
                     <tbody>
                         @forelse($productos as $producto)
                             <tr>
-                                <td class="text-center">
-                                    {{ ($productos->currentPage() - 1) * $productos->perPage() + $loop->iteration }}
-                                </td>
-                                <td class="text-center">{{ $producto->categoria->nombre }}</td>
                                 <td class="text-center">{{ $producto->codigo }}</td>
                                 <td class="text-center">{{ $producto->nombre }}</td>
+                                <td class="text-center">{{ $producto->categoria->nombre }}</td>
                                 <td class="text-center">{{ $producto->stock_minimo }}</td>
                                 <td class="text-center">{{ $producto->stock_maximo }}</td>
                                 <td class="text-center">
@@ -117,6 +113,9 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
+
+                                        <a href="{{ url('admin/maestros/productos/' . $producto->id) }}" class="rd-action"
+                                            title="Ver"><i class="fas fa-eye"></i></a>
 
                                         <a href="{{ url('admin/maestros/productos/' . $producto->id . '/edit') }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>

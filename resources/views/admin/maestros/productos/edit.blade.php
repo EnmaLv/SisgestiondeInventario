@@ -1,293 +1,298 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Editar Producto</h1>
-    <p>Bienvenido {{ auth()->user()->name }}.</p>
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Editar Producto #{{ $producto->id }}</h1>
+            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
+                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center" style="gap:14px;">
+            <div class="text-right d-none d-sm-block">
+                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <span style="font-weight:600; font-size:0.95rem;">
+                    {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                </span>
+            </div>
+
+            <div
+                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
+                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                    style="width:100%; height:100%; object-fit:cover;">
+            </div>
+        </div>
+    </div>
 @stop
+
+
 
 @section('content')
     <div class="row">
         <div class="col-md-12 m-auto">
-            <div class="card card-warning">
-                <div class="card-header">
-                    <h3 class="card-title" style="color: #fff"><b>Editar el producto</b></h3>
+            <div class="rd-card p-4">
 
-                    <div class="card-tools">
-                        <a href="{{ url('admin/maestros/productos') }}" class="btn btn-tool">
-                            <i class="fas fa-arrow-left" style="color: #fff"></i>
-                            <b style="color: #fff">Volver</b>
+                <div class="rd-card-header mb-3">
+                    <h3 class="rd-title-sm">Editar producto</h3>
+
+                    <div>
+                        <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">
+                            <i class="fas fa-arrow-left"></i> Volver
                         </a>
                     </div>
                 </div>
-                <div class="card-body" style="display: block;">
-                    <form action="{{ route('admin.maestros.productos.update', $producto->id) }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="row">
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div class="col-md-4 display: inline-block;">
-                                        <div class="form-group">
-                                            <label for="nombre">Categorias</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text inline-block"><i
-                                                            class="fas fa-tags"></i></span>
-                                                </div>
-                                                <select class="form-control" id="categoria_id" name="categoria_id">
-                                                    <option value="">Seleccione una categoría</option>
-                                                    @foreach ($categorias as $categoria)
-                                                        <option value="{{ $categoria->id }}"
-                                                            {{ old('categoria_id', $producto->categoria_id) == $categoria->id ? 'selected' : '' }}>
-                                                            {{ $categoria->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            @error('categoria_id')
-                                                <div class="alert text-danger p-0 m-0">
-                                                    <b>{{ 'Este campo es obligatorio.' }}</b>
-                                                </div>
-                                            @enderror
+
+                <form action="{{ route('admin.maestros.productos.update', $producto->id) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-9">
+
+                            <div class="row">
+
+                                {{-- Categoría --}}
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Categoría</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                            <select class="form-control rd-filter-input" id="categoria_id"
+                                                name="categoria_id">
+                                                <option value="">Seleccione una categoría</option>
+                                                @foreach ($categorias as $categoria)
+                                                    <option value="{{ $categoria->id }}"
+                                                        {{ old('categoria_id', $producto->categoria_id) == $categoria->id ? 'selected' : '' }}>
+                                                        {{ $categoria->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
+                                        @error('categoria_id')
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
+                                        @enderror
                                     </div>
-                                    <div class="form-group col-md-4" style="display: inline-block;">
-                                        <label for="codigo">Codigo del Producto</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-barcode"></i></span>
-                                            </div>
-                                            <input type="text" value="{{ old('codigo', $producto->codigo) }}"
-                                                class="form-control" id="codigo" name="codigo"
-                                                placeholder="Ingrese el código del producto">
+                                </div>
+
+                                {{-- Código --}}
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Código</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                            <input type="text" class="form-control rd-filter-input" name="codigo"
+                                                value="{{ old('codigo', $producto->codigo) }}"
+                                                placeholder="Código del producto">
                                         </div>
                                         @error('codigo')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
-                                    <div class="form-group col-md-4" style="display: inline-block;">
-                                        <label for="nombre">Nombre del Producto</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-tag"></i></span>
-                                            </div>
-                                            <input type="text" value="{{ old('nombre', $producto->nombre) }}"
-                                                class="form-control" id="nombre" name="nombre"
-                                                placeholder="Ingrese el nombre del producto">
+                                </div>
+
+                                {{-- Nombre --}}
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Nombre</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                            <input type="text" class="form-control rd-filter-input" name="nombre"
+                                                value="{{ old('nombre', $producto->nombre) }}"
+                                                placeholder="Nombre del producto">
                                         </div>
                                         @error('nombre')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="form-group col-md-12" style="display: inline-block;">
-                                        <label for="descripcion">Descripción</label>
-                                        <div class="editor-wrapper">
-                                            <textarea name="descripcion" id="descripcion">{{ old('descripcion', $producto->descripcion) }}</textarea>
-                                        </div>
-                                        @error('descripcion')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-md-2" style="display: inline-block;">
-                                        <label for="precio_compra">Precio Compra</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-money-bill-wave"></i></span>
-                                            </div>
-                                            <input type="number"
+                            </div>
+
+                            {{-- Descripción (CKEditor) --}}
+                            <div class="form-group mt-3">
+                                <label class="font-weight-bold">Descripción</label>
+                                <textarea name="descripcion" id="descripcion">{{ old('descripcion', $producto->descripcion) }}</textarea>
+                                @error('descripcion')
+                                    <div class="text-danger"><b>{{ $message }}</b></div>
+                                @enderror
+                            </div>
+
+                            <div class="row mt-3">
+
+                                {{-- Precio Compra --}}
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Precio Compra</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                            <input type="number" class="form-control rd-filter-input" name="precio_compra"
                                                 value="{{ old('precio_compra', $producto->precio_compra) }}"
-                                                class="form-control" id="precio_compra" name="precio_compra"
                                                 placeholder="$$">
                                         </div>
                                         @error('precio_compra')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
-                                    <div class="form-group col-md-2" style="display: inline-block;">
-                                        <label for="precio_venta">Precio Venta</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-money-bill-wave"></i></span>
-                                            </div>
-                                            <input type="number"
+                                </div>
+
+                                {{-- Precio Venta --}}
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Precio Venta</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                            <input type="number" class="form-control rd-filter-input" name="precio_venta"
                                                 value="{{ old('precio_venta', $producto->precio_venta) }}"
-                                                class="form-control" id="precio_venta" name="precio_venta" placeholder="$$">
+                                                placeholder="$$">
                                         </div>
                                         @error('precio_venta')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
-                                    <div class="form-group col-md-2" style="display: inline-block;">
-                                        <label for="stock_minimo">Stock Minimo</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-arrow-down"></i></span>
-                                            </div>
-                                            <input type="number"
+                                </div>
+
+                                {{-- Stock Mínimo --}}
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Stock Mínimo</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
+                                            <input type="number" class="form-control rd-filter-input"
+                                                name="stock_minimo"
                                                 value="{{ old('stock_minimo', $producto->stock_minimo) }}"
-                                                class="form-control" id="stock_minimo" name="stock_minimo"
-                                                placeholder="Minimo">
+                                                placeholder="Mínimo">
                                         </div>
                                         @error('stock_minimo')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
-                                    <div class="form-group col-md-2" style="display: inline-block;">
-                                        <label for="stock_maximo">Stock Maximo</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-arrow-up"></i></span>
-                                            </div>
-                                            <input type="number"
+                                </div>
+
+                                {{-- Stock Máximo --}}
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Stock Máximo</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
+                                            <input type="number" class="form-control rd-filter-input"
+                                                name="stock_maximo"
                                                 value="{{ old('stock_maximo', $producto->stock_maximo) }}"
-                                                class="form-control" id="stock_maximo" name="stock_maximo"
-                                                placeholder="Maximo">
+                                                placeholder="Máximo">
                                         </div>
                                         @error('stock_maximo')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="unidad_medida">Unidad Medida</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text inline-block"><i
-                                                            class="fas fa-balance-scale"></i></span>
-                                                </div>
-                                                <select class="form-control" id="unidad_medida" name="unidad_medida">
-                                                    <option value="">Seleccione una medida</option>
-                                                    <option value="U"
-                                                        {{ old('unidad_medida', $producto->unidad_medida) == 'U' ? 'selected' : '' }}>
-                                                        Unidad</option>
-                                                    <option value="KG"
-                                                        {{ old('unidad_medida', $producto->unidad_medida) == 'KG' ? 'selected' : '' }}>
-                                                        Kilogramo</option>
-                                                    <option value="G"
-                                                        {{ old('unidad_medida', $producto->unidad_medida) == 'G' ? 'selected' : '' }}>
-                                                        Gramo</option>
-                                                    <option value="L"
-                                                        {{ old('unidad_medida', $producto->unidad_medida) == 'L' ? 'selected' : '' }}>
-                                                        Litro</option>
-                                                    <option value="ML"
-                                                        {{ old('unidad_medida', $producto->unidad_medida) == 'ML' ? 'selected' : '' }}>
-                                                        Mililitro</option>
-                                                </select>
-                                            </div>
-                                            @error('unidad_medida')
-                                                <div class="alert text-danger p-0 m-0">
-                                                    <b>{{ 'Este campo es obligatorio.' }}</b>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="estado">Estado</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text inline-block"><i
-                                                            class="fas fa-toggle-on"></i></span>
-                                                </div>
-                                                <select name="estado" id="estado" class="form-control">
-                                                    <option value="">Seleccione un estado</option>
-                                                    <option value="1"
-                                                        {{ old('estado', $producto->estado) == '1' ? 'selected' : '' }}>
-                                                        Activo
-                                                    </option>
-                                                    <option value="0"
-                                                        {{ old('estado', $producto->estado) == '0' ? 'selected' : '' }}>
-                                                        Inactivo
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            @error('estado')
-                                                <div class="alert text-danger p-0 m-0">
-                                                    <b>{{ 'Este campo es obligatorio.' }}</b>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group ">
-                                            <label for="imagen">Imagen del producto</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                                </div>
-                                                <input type="file" name="imagen" id="imagen" class="form-control"
-                                                    accept="image/*" onchange="previewImage(event)">
 
-                                            </div>
-                                            <img id="imgPreview" style="width: 100%; height: auto;"
-                                                src="{{ asset('storage/' . $producto->imagen) }}" alt=""
-                                                class="img-thumbnail mb-2">
-                                            <script>
-                                                function previewImage(event) {
-                                                    const input = event.target;
-                                                    const file = input.files[0];
-                                                    if (file) {
-                                                        const reader = new FileReader();
-                                                        reader.onload = function(e) {
-                                                            const imgPreview = document.getElementById('imgPreview');
-                                                            imgPreview.src = e.target.result;
-                                                            imgPreview.style.display = 'block';
-                                                        };
-                                                        reader.readAsDataURL(file);
-                                                    }
-                                                }
-                                            </script>
-                                            @error('imagen')
-                                                <div
-                                                    class="alert
-                                                    text-danger p-0 m-0">
-                                                    <b>{{ 'Este campo es obligatorio.' }}</b>
-                                                </div>
-                                            @enderror
+                                {{-- Unidad --}}
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Unidad Medida</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
+                                            <select class="form-control rd-filter-input" name="unidad_medida">
+                                                <option value="">Seleccione</option>
+                                                <option value="U"
+                                                    {{ old('unidad_medida', $producto->unidad_medida) == 'U' ? 'selected' : '' }}>
+                                                    Unidad</option>
+                                                <option value="KG"
+                                                    {{ old('unidad_medida', $producto->unidad_medida) == 'KG' ? 'selected' : '' }}>
+                                                    Kilogramo</option>
+                                                <option value="G"
+                                                    {{ old('unidad_medida', $producto->unidad_medida) == 'G' ? 'selected' : '' }}>
+                                                    Gramo</option>
+                                                <option value="L"
+                                                    {{ old('unidad_medida', $producto->unidad_medida) == 'L' ? 'selected' : '' }}>
+                                                    Litro</option>
+                                                <option value="ML"
+                                                    {{ old('unidad_medida', $producto->unidad_medida) == 'ML' ? 'selected' : '' }}>
+                                                    Mililitro</option>
+                                            </select>
                                         </div>
+                                        @error('unidad_medida')
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- Estado --}}
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Estado</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
+                                            <select class="form-control rd-filter-input" name="estado">
+                                                <option value="">Seleccione</option>
+                                                <option value="1"
+                                                    {{ old('estado', $producto->estado) == '1' ? 'selected' : '' }}>Activo
+                                                </option>
+                                                <option value="0"
+                                                    {{ old('estado', $producto->estado) == '0' ? 'selected' : '' }}>
+                                                    Inactivo</option>
+                                            </select>
+                                        </div>
+                                        @error('estado')
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <hr>
-                        <div class="form-group">
-                            <a href="{{ url('admin/maestros/sucursales') }}"
-                                class="btn btn-secondary"><b>Cancelar</b></a>
-                            <button type="submit" class="btn btn-warning" style="color: #fff"><b>Guardar</b></button>
+
+                        {{-- Right Column — Imagen --}}
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Imagen del producto</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fas fa-image"></i></span>
+                                    <input type="file" name="imagen" id="imagen"
+                                        class="form-control rd-filter-input" accept="image/*"
+                                        onchange="previewImage(event)">
+                                </div>
+
+                                <img id="imgPreview" class="mt-2" src="{{ asset('storage/' . $producto->imagen) }}"
+                                    style="width:100%; border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,0.08);" />
+
+                                <script>
+                                    function previewImage(event) {
+                                        const file = event.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = function(e) {
+                                                document.querySelector('#imgPreview').src = e.target.result;
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }
+                                </script>
+
+                                @error('imagen')
+                                    <div class="text-danger"><b>{{ $message }}</b></div>
+                                @enderror
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
+                        <button type="submit" class="rd-btn rd-btn-warning">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
+@stop
+
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
 
 @section('css')
