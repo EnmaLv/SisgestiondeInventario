@@ -131,7 +131,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="rd-action-group">
-                                            <a class="rd-action" href="#" title="Ver"><i
+                                            <a class="rd-action" href="{{ route('admin.movimientos.registro_diario.show', $registro->id) }}" title="Ver"><i
                                                     class="fas fa-eye"></i></a>
                                         </div>
                                     </td>
@@ -378,6 +378,7 @@
             padding: 12px;
             background: #fbfdff;
             border-top: 1px solid #f3f6fb;
+            box-shadow: inset 0 6px 10px rgba(101, 114, 151, 0.1);
         }
 
         .rd-filters-form {

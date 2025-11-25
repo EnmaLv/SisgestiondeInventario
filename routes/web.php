@@ -65,6 +65,7 @@ Route::prefix('/admin/maestros/productos')->middleware('auth')->group(function (
 //Registro Diario
 Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
     Route::get('/', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
+    Route::get('/registro/{id}', [RegistroDiarioController::class, 'show'])->name('admin.movimientos.registro_diario.show');
 });
 
 

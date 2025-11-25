@@ -145,6 +145,11 @@ Breadcrumbs::for('admin.movimientos.registro_diario.index', function (Trail $tra
     $trail->push('Registro Diario', route('admin.movimientos.registro_diario.index'));
 });
 
+Breadcrumbs::for('admin.movimientos.registro_diario.show', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.registro_diario.index');
+    $trail->push('Ver Registro', route('admin.movimientos.registro_diario.show', $id));
+});
+
 // Movimientos > Sucursales por Lotes
 Breadcrumbs::for('admin.movimientos.sucursales_lotes', function (Trail $trail) {
     $trail->parent('home');
