@@ -80,7 +80,7 @@ class Registro_diario extends Model
         return $query->first();
     }
 
-    public static function showData(Array $filter = [])
+    public static function showData(Array $filter = [], bool $isPdf = false)
     {
         $query = self::relacionTable()
             ->select('registro_diario_c.*', 'persona.nombre_persona', 'persona.apellido_persona', 'pnf.nombre_pnf');

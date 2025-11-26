@@ -61,6 +61,7 @@ class RegistroDiarioController extends Controller
         return;
     }
 
+    //Reportes
     public function exportPdf(Request $request)
     {
         $filter = [];
