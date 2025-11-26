@@ -163,6 +163,19 @@
     </div>
 @stop
 
+@push('js')
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                title: '¡Hecho!',
+                text: '{{ session('success') }}',
+                icon: '{{ session('icono', 'success') }}',
+                confirmButtonText: 'Aceptar'
+            });
+        </script>
+    @endif
+
+@endpush
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">

@@ -114,7 +114,7 @@ class SucursalController extends Controller
         $sucursal = Sucursal::findOrFail($id);
         $sucursal->delete();
 
-        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sucursal eliminada exitosamente.');
+        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sucursal eliminada exitosamente.')->with('icono', 'success');
     }
 
 }
