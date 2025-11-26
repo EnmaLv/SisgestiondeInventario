@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Exports;
+
+use App\Models\Registro_diario;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+
+
+
+
+class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSize, WithMapping, WithCustomStartCell
+{
+
+    private $filtro;
+
+    public function __construct(Array $filtro)
+    {
+        $this->filtro = $filtro;
+    }
+    
+    public function map($registro): array
+    {
+        return [
+            $registro->id,
+            $registro->nombre_persona,
+            $registro->apellido_persona,
+            $registro->nombre_pnf,
+            $registro->fecha_regis_diario_c,
+        ];
+    }
+
+    //Modifica el inicio de la tabla
+    public function startCell(): string
+    {
+        return 'A1';
+    }
+
+
+    public function headings(): array
+    {
+        return [
+            'ID',
+            'Nombre',
+            'Apellido',
+            'PNF',
+            'Fecha Registro',
+        ];
+    }
+
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function collection()
+    {
+        return Registro_diario::showData($this->filtro, true);
+
+    }
+
+}
+

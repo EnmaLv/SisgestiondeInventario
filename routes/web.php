@@ -118,6 +118,7 @@ Route::get('/admin/movimientos/sucursales_lotes/{id}', [App\Http\Controllers\Inv
 Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
     Route::get('/', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
     Route::get('/export-pdf', [App\Http\Controllers\RegistroDiarioController::class, 'exportPdf'])->name('admin.movimientos.registro_diario.export_pdf');
+    Route::get('/export-excel', [App\Http\Controllers\RegistroDiarioController::class, 'exportExcel'])->name('admin.movimientos.registro_diario.export_excel');
 });
 
 //Rutas para Consultas

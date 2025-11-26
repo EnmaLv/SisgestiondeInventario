@@ -30,9 +30,9 @@
                             <button type="button" class="btn btn-primary btn-sm mr-2" data-toggle="collapse" data-target="#filtrosRegistroDiario" aria-expanded="false" aria-controls="filtrosRegistroDiario">
                                 <i class="fas fa-filter"></i> Filtros
                             </button>
-                            <button type="button" class="btn btn-success btn-sm mr-2">
+                            <a href="{{ route('admin.movimientos.registro_diario.export_excel', request()->only(['buscar','fecha_desde','fecha_hasta'])) }}" type="button" class="btn btn-success btn-sm mr-2">
                                 <i class="fas fa-file-excel"></i> Reporte Excel
-                            </button>
+                            </a>
                             <button type="button" class="btn btn-danger btn-sm" id="pdfBtn">
                                 <i class="fas fa-file-pdf"></i> Reporte PDF
                             </button>
