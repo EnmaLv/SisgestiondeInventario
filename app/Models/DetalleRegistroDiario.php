@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class DetalleRegistroDiario extends Model
+{
+    /** @use HasFactory<\Database\Factories\DetalleRegistroDiarioFactory> */
+    use HasFactory;
+    
+    protected $table = 'detalle_registro_diarios';
+
+    protected $fillable = [
+        'receta_id',
+        'cantidad_servido',
+    ];
+}

@@ -15,6 +15,6 @@ class EstadoVeSeeder extends Seeder
     {
         DB::table('estado_ve')->insert([
             'nombre_estado_ve' => 'Portuguesa',
-        ]);     
+        ]);
     }
 }

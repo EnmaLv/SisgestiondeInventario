@@ -36,6 +36,20 @@ class RegistroDiarioController extends Controller
         return view('admin.movimientos.registro_diario.index', compact('data'));
     }
 
+    public function show($id)
+    {
+        if (!$id) {
+            return redirect()->back()->with('error', 'ID no válido');
+        }
+        
+        $registro = Registro_diario::getRegister($id);
+        if (!$registro) {
+            return redirect()->back()->with('error', 'Registro no encontrado');
+        }
+        
+        return view('admin.movimientos.registro_diario.show', compact('registro'));
+    }
+
     //Funcion para verrificar si la persona esta en la bd
     public function verificarPersona(Request $request)
     {

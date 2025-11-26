@@ -38,7 +38,49 @@ class Registro_diario extends Model
             ->join('pnf', 'persona_pnf.id_pnf', '=', 'pnf.id_pnf');
     }
 
-    public static function showData(Array $filter = [], bool $isPdf = false)
+    public static function getRegister(int $id)
+    {
+
+        function formatColumn(Array $column, string $prefix){
+            // Esta función podría ser usada para formatear los nombres de las columnas con un prefijo
+            return array_map(function($col) use ($prefix) {
+                return $prefix . '.' . $col;
+            }, $column);
+        }
+        //Creamos una variable para almacenar la columnas que necesitamos
+
+        $personaColumn = formatColumn([
+            'nombre_persona',
+            'segundo_nombre_persona',
+            'apellido_persona',
+            'segundo_apellido_persona',
+            'cedula_persona',
+            'telefono_persona',
+            'genero_persona',
+            'edad_persona',
+            'fecha_nacimiento_persona',
+            'email_persona',
+        ],'persona');
+
+        $pnfColumn = formatColumn([
+            'nombre_pnf',
+        ], 'pnf');
+
+        $registroColumn = formatColumn([
+            'fecha_regis_diario_c',
+            'hora'
+        ], 'registro_diario_c');
+
+
+        //Lo unimos en un solo array
+        $colums = [...$personaColumn, ...$pnfColumn, ...$registroColumn];
+
+        $query = self::relacionTable()->select($colums)->where('registro_diario_c.id', $id);
+        
+        return $query->first();
+    }
+
+    public static function showData(Array $filter = [])
     {
         $query = self::relacionTable()
             ->select('registro_diario_c.*', 'persona.nombre_persona', 'persona.apellido_persona', 'pnf.nombre_pnf');

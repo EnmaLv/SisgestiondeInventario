@@ -380,6 +380,7 @@ return [
                 [
                     'text' => 'Sucursales por Lotes',
                     'url' => 'admin/movimientos/sucursales_lotes',
+                    'active' => ['admin/movimientos/sucursales_lotes*'],
                 ],
 
                 [

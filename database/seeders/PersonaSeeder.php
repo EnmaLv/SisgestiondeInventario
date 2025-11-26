@@ -34,5 +34,27 @@ class PersonaSeeder extends Seeder
             'fecha_inicio' => '2000-01-01',
             'fecha_fin' => '2000-01-01',
         ]);
+
+        DB::table('persona')->insert([
+            'nombre_persona' => 'Enmanuel ',
+            'segundo_nombre_persona' => 'Jesus',
+            'apellido_persona' => 'Medina',
+            'segundo_apellido_persona' => 'Barros',
+            'cedula_persona' => '31008661',
+            'telefono_persona' => '12345678',
+            'genero_persona' => 'Masculino',
+            'edad_persona' => 20,
+            'fecha_nacimiento_persona' => '2000-01-01',
+            'email_persona' => 'medina1234@gmail.com',
+            'id_perfil' => 1,
+            'id_sede' => 1,
+        ]);
+
+        DB::table('persona_pnf')->insert([
+            'id_persona' => 2,
+            'id_pnf' => 1,
+            'fecha_inicio' => '2000-01-01',
+            'fecha_fin' => '2000-01-01',
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Http\Request;
 use Livewire\Component;
 use Livewire\Attributes\Validate;
 use App\Models\Persona;
@@ -124,8 +125,28 @@ class RegisterNoti extends Component
         $this->showNotification = true;
     }
 
-    public function render()
+    public function render(Request $request)
     {
-        return view('livewire.register-noti');
+        //Recibir el valor del input
+        $buscar = $request->input("buscar");
+
+        $fecha_desde = $request->input("fecha_desde");
+        $fecha_hasta = $request->input("fecha_hasta");
+
+        $filter = [
+            "fecha_desde" => $fecha_desde ?? null,
+            "fecha_hasta" => $fecha_hasta ?? null,
+            "buscar"=> $buscar ?? null
+        ];
+
+
+
+        if ($filter != null) {
+            $data = Registro_diario::showData($filter);
+        }else{
+
+            $data = Registro_diario::showData();
+        }
+        return view('livewire.register-noti', compact('data'));
     }
 }

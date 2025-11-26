@@ -1,151 +1,142 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Nueva Compra</h1>
-    <p>Bienvenido {{ auth()->user()->name }}.</p>
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+        style="
+            background:#ffffff;
+            border-radius:16px;
+            border:1px solid #e5e7eb;
+            box-shadow:0 4px 14px rgba(0,0,0,0.06);
+        ">
+
+        {{-- Título --}}
+        <div>
+            <h1 class="m-0" style="font-size:1.5rem; color:#0f172a; font-weight:700;">
+                Crear Nueva Compra
+            </h1>
+
+            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
+                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+            </p>
+        </div>
+
+        {{-- Fecha + Imagen --}}
+        <div class="d-flex align-items-center" style="gap:14px;">
+            <div class="text-right d-none d-sm-block">
+                <small style="font-size:0.75rem; color:#94a3b8;">Hoy</small>
+                <div style="font-weight:600; font-size:0.95rem; color:#0f172a;">
+                    {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                </div>
+            </div>
+
+            <div
+                style="
+                width:46px;
+                height:46px;
+                border-radius:12px;
+                overflow:hidden;
+                box-shadow:0 4px 12px rgba(15,23,42,0.08);
+            ">
+                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                    style="width:100%; height:100%; object-fit:cover;">
+            </div>
+        </div>
+
+    </div>
 @stop
+
 
 @section('content')
     <div class="row">
-        <div class="col-md-9 m-auto">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title"><b>Crear Compra</b></h3>
+        <div class="col-md-12 m-auto">
 
-                    <div class="card-tools">
-                        <a href="{{ url('admin/movimientos/compras') }}" class="btn btn-tool">
-                            <i class="fas fa-arrow-left"></i>
-                            <b>Volver</b>
-                        </a>
-                    </div>
+            <div class="rd-card p-4">
+
+                {{-- Header interno --}}
+                <div class="rd-card-header mb-3">
+                    <h3 class="rd-title-sm">Datos de la Compra</h3>
+
+                    <a href="{{ url('admin/movimientos/compras') }}" class="rd-btn rd-btn-default">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
                 </div>
-                <div class="card-body" style="display: block;">
-                    <form action="{{ route('admin.movimientos.compras.store') }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-4 display: inline-block;">
-                                        <div class="form-group">
-                                            <label for="nombre">Proveedor</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text inline-block"><i
-                                                            class="fas fa-tags"></i></span>
-                                                </div>
-                                                <select class="form-control" id="proveedor_id" name="proveedor_id">
-                                                    <option value="">Seleccione un proveedor</option>
-                                                    @foreach ($proveedores as $proveedor)
-                                                        <option value="{{ $proveedor->id }}"
-                                                            {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
-                                                            {{ $proveedor->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            @error('proveedor_id')
-                                                <div class="alert text-danger p-0 m-0">
-                                                    <b>{{ 'Este campo es obligatorio.' }}</b>
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4" style="display: inline-block;">
-                                        <label for="codigo">Fecha de Compra</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-calendar-alt"></i></span>
-                                            </div>
-                                            <input type="datetime-local"
-                                                value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}"
-                                                class="form-control" id="fecha" name="fecha">
-                                        </div>
-                                        @error('fecha')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-4" style="display: inline-block;">
-                                        <label for="codigo">Observaciones</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-sticky-note"></i></span>
-                                            </div>
-                                            <input type="text" class="form-control" id="observaciones"
-                                                name="observaciones" placeholder="Ingrese observaciones">
-                                        </div>
-                                        @error('observaciones')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
 
+                <form action="{{ route('admin.movimientos.compras.store') }}" method="POST">
+                    @csrf
+
+                    <div class="row">
+
+                        {{-- Proveedor --}}
+                        <div class="col-md-4 mb-3">
+                            <label class="rd-label">Proveedor</label>
+                            <div class="rd-input-group">
+                                <span><i class="fas fa-user-tie"></i></span>
+                                <select name="proveedor_id" id="proveedor_id" class="form-control rd-input">
+                                    <option value="">Seleccione un proveedor</option>
+                                    @foreach ($proveedores as $proveedor)
+                                        <option value="{{ $proveedor->id }}"
+                                            {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                            {{ $proveedor->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
+                            @error('proveedor_id')
+                                <div class="rd-error">Este campo es obligatorio.</div>
+                            @enderror
                         </div>
-                        <hr>
-                        <div class="form-group">
-                            <a href="{{ url('admin/movimientos/compras') }}" class="btn btn-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Crear compra y añadir productos</button>
+
+                        {{-- Fecha --}}
+                        <div class="col-md-4 mb-3">
+                            <label class="rd-label">Fecha de Compra</label>
+                            <div class="rd-input-group">
+                                <span><i class="fas fa-calendar-alt"></i></span>
+                                <input type="datetime-local" id="fecha" name="fecha" class="form-control rd-input"
+                                    value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}">
+                            </div>
+                            @error('fecha')
+                                <div class="rd-error">Este campo es obligatorio.</div>
+                            @enderror
                         </div>
-                    </form>
-                </div>
+
+                        {{-- Observaciones --}}
+                        <div class="col-md-4 mb-3">
+                            <label class="rd-label">Observaciones</label>
+                            <div class="rd-input-group">
+                                <span><i class="fas fa-sticky-note"></i></span>
+                                <input type="text" id="observaciones" name="observaciones"
+                                    placeholder="Ingrese observaciones" class="form-control rd-input"
+                                    value="{{ old('observaciones') }}">
+                            </div>
+                            @error('observaciones')
+                                <div class="rd-error">Este campo es obligatorio.</div>
+                            @enderror
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-end" style="gap:10px;">
+                        <a href="{{ url('admin/movimientos/compras') }}" class="rd-btn rd-btn-default">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="rd-btn rd-btn-primary">
+                            Crear compra y añadir productos
+                        </button>
+                    </div>
+
+                </form>
+
             </div>
+
         </div>
     </div>
 @stop
 
+
+
 @section('css')
-    <style>
-        .ck.ck-editor {
-            width: 100% !important;
-        }
-
-        .ck.ck-editor__editable {
-            width: 100% !important;
-            min-height: 300px;
-            box-sizing: border-box;
-        }
-
-        @media (max-width: 768px) {
-            .ck.ck-editor__editable {
-                min-height: 250px;
-                padding: 10px;
-            }
-        }
-    </style>
-@stop
-@section('js')
-    <script>
-        ClassicEditor
-            .create(document.querySelector('#descripcion'), {
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', 'strikethrough', 'subscript', '|',
-                        'link', 'bulletedList', 'numberedList', '|',
-                        'outdent', 'indent', '|',
-                        'blockQuote', 'insertTable', 'mediaEmbed', '|',
-                        'undo', 'redo', '|',
-                        'footBackgroundColor', 'fontColor', 'fontSize', 'fontFamily', '|',
-                        'code', 'codeBlock', 'htmlEmbed', '|',
-                        'sourceEditing'
-                    ],
-                    shouldNotGroupWhenFull: true
-                },
-                language: 'es'
-            })
-            .then(editor => {
-                const editorEl = editor.ui.view.element;
-                editorEl.style.width = '100%';
-                editorEl.querySelector('.ck-editor__editable').style.width = '100%';
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    </script>
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop

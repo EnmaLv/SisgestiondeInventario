@@ -10,14 +10,15 @@
         @foreach ($sucursales as $sucursalLote)
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box">
-                    <a href="{{ url('/admin/movimientos/sucursales_lotes/'. $sucursalLote->id) }}">
+                    <a href="{{ url('admin/movimientos/sucursales_lotes/show/' . $sucursalLote->id) }}">
                         <span class="info-box-icon bg-info">
                             <img src="{{ url('/img/restaurante.gif') }}" alt="xd">
                         </span>
                     </a>
                     <div class="info-box-content">
-                        <a href="{{ url('/admin/movimientos/sucursales_lotes/'. $sucursalLote->id) }}">
-                            <span class="info-box-text" style="text-decoration: none; color: #000;"><b>{{ $sucursalLote->nombre }}</b></span></a>
+                        <a href="{{ url('admin/movimientos/sucursales_lotes/show/' . $sucursalLote->id) }}">
+                            <span class="info-box-text"
+                                style="text-decoration: none; color: #000;"><b>{{ $sucursalLote->nombre }}</b></span></a>
                         <span class="info-box-number">
                             {{ $sucursalLote->totalInventarioSucursalLotes }} Unidades
                         </span>
