@@ -107,6 +107,10 @@ class Registro_diario extends Model
             $query->where('registro_diario_c.fecha_regis_diario_c', '<=', $filter['fecha_hasta']);
         }
 
+        //En el caso de que los datos lo necesitos para generar un pdf
+        if($isPdf){
+            return $query->get();
+        }
 
 
         return $query->paginate(10);

@@ -52,3 +52,64 @@
     <livewire:register-noti />
 
 @stop
+
+@section('js')
+    <script>
+        const desdeDate = document.getElementById('fecha_desde');
+        const hastaDate = document.getElementById('fecha_hasta');
+
+        // Fecha actual (máximo permitido)
+        const fechaActual = new Date().toISOString().split('T')[0];
+
+        // Establecer máximo hoy para ambos campos
+        if (desdeDate) desdeDate.max = fechaActual;
+        if (hastaDate) hastaDate.max = fechaActual;
+
+
+        // Cuando cambie "desde", ajustar el mínimo de "hasta"
+        if (desdeDate && hastaDate) {
+            desdeDate.addEventListener('change', function () {
+                if (!desdeDate.value) {
+                    // Si se borra la fecha desde, quitamos la restricción mínima en hasta
+                    hastaDate.min = '';
+                    return;
+                }
+
+                // "hasta" no puede ser menor que "desde"
+                hastaDate.min = desdeDate.value;
+
+                if (hastaDate.value && hastaDate.value < desdeDate.value) {
+                    hastaDate.value = desdeDate.value;
+                }
+            });
+
+            // Cuando cambie "hasta", validar contra "desde"
+            hastaDate.addEventListener('change', function () {
+                if (!hastaDate.value || !desdeDate.value) {
+                    return;
+                }
+
+                if (hastaDate.value < desdeDate.value) {
+                    // Si el usuario pone una fecha hasta menor, movemos "desde" a esa fecha
+                    desdeDate.value = hastaDate.value;
+                }
+            });
+        }
+
+        //Script para mostrar el PdfGeneratorUtil
+        const pdfBtn = document.querySelector('#pdfBtn');
+        const pdfRoute = `{{ route('admin.movimientos.registro_diario.export_pdf') }}`;
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', function () {
+
+                const params = new URLSearchParams(window.location.search);
+                const fechaDesde = params.get('fecha_desde')?? "";
+                const fechaHasta = params.get('fecha_hasta')?? "";
+
+                const url = `${pdfRoute}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}`;
+                window.open(url, '_blank');     
+            });
+        }
+
+    </script>
+@stop
