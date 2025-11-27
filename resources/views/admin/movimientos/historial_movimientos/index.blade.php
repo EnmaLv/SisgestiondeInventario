@@ -108,6 +108,7 @@
                             <th>Producto</th>
                             <th>Lote</th>
                             <th>Cantidad</th>
+                            <th>Unidad</th>
                             <th>Sucursal</th>
                             <th>Fecha</th>
                             <th>Observación</th>
@@ -123,6 +124,7 @@
                                 <td>{{ $movimientos->producto->nombre }}</td>
                                 <td>{{ $movimientos->lote->codigo_lote }}</td>
                                 <td>{{ $movimientos->cantidad }}</td>
+                                <td>{{ $movimientos->unidad->nombre }}</td>
                                 <td>{{ $movimientos->sucursal->nombre }}</td>
                                 <td>{{ $movimientos->fecha }}</td>
                                 @if ($movimientos->observacion)

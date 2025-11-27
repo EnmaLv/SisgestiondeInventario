@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use App\Models\categoria;
+use App\Models\Categoria;
+use App\Models\Unidad;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\ProductoRequest;
@@ -42,8 +43,9 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        $categorias = categoria::all();
-        return view('admin.maestros.productos.create', compact('categorias'));
+        $categorias = Categoria::all();
+        $unidades = Unidad::all();
+        return view('admin.maestros.productos.create', compact('categorias', 'unidades'));
     }
 
     /**
@@ -51,26 +53,39 @@ class ProductoController extends Controller
      */
     public function store(ProductoRequest $request)
     {
-        //validamos los datos de la solicitud
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $producto = new Producto();
-        $producto->categoria_id = $validated['categoria_id'];
-        $producto->codigo = $validated['codigo'];
-        $producto->nombre = $validated['nombre'];
-        $producto->descripcion = $validated['descripcion'];
-        if ($request->hasFile('imagen')) {
-            $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
+            $producto = new Producto();
+            $producto->categoria_id = $validated['categoria_id'];
+            $producto->codigo = $validated['codigo'];
+            $producto->nombre = $validated['nombre'];
+            $producto->descripcion = $validated['descripcion'];
+            
+            if ($request->hasFile('imagen')) {
+                $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
+            } else {
+                $producto->imagen = 'imagenes/productos/default.png'; // Imagen por defecto
+            }
+            
+            $producto->precio_compra = $validated['precio_compra'];
+            $producto->stock_minimo = $validated['stock_minimo'];
+            $producto->stock_maximo = $validated['stock_maximo'];
+            $producto->unidad_id = $validated['unidad_id'];
+            $producto->estado = $validated['estado'] ?? true; // true por defecto
+            $producto->save();
+
+            return redirect()->route('admin.maestros.productos.index')
+                ->with('success', 'Producto creado exitosamente.')
+                ->with('icon', 'success');
+                
+        } catch (\Exception $e) {
+            \Log::error('Error al crear producto: ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al crear producto: ' . $e->getMessage());
         }
-        $producto->precio_compra = $validated['precio_compra'];
-        $producto->precio_venta = $validated['precio_venta'];
-        $producto->stock_minimo = $validated['stock_minimo'];
-        $producto->stock_maximo = $validated['stock_maximo'];
-        $producto->unidad_medida = $validated['unidad_medida'];
-        $producto->estado = $validated['estado'];
-        $producto->save();
-
-        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto creado exitosamente.')->with('icon', 'success');
     }
 
     /**
@@ -89,8 +104,9 @@ class ProductoController extends Controller
     {
         
         $producto = Producto::findOrFail($id);
-        $categorias = categoria::all();
-        return view('admin.maestros.productos.edit', compact('producto', 'categorias'));
+        $categorias = Categoria::all();
+        $unidades = Unidad::all();
+        return view('admin.maestros.productos.edit', compact('producto', 'categorias', 'unidades'));
     }
 
     /**
@@ -107,13 +123,16 @@ class ProductoController extends Controller
         $producto->descripcion = $validated['descripcion'];
         if ($request->hasFile('imagen')) {
             $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
+        } else {
+            // Mantener la imagen actual si no se sube una nueva
+            $producto->imagen = $producto->imagen;
         }
         $producto->precio_compra = $validated['precio_compra'];
-        $producto->precio_venta = $validated['precio_venta'];
         $producto->stock_minimo = $validated['stock_minimo'];
         $producto->stock_maximo = $validated['stock_maximo'];
-        $producto->unidad_medida = $validated['unidad_medida'];
-        $producto->estado = $validated['estado'];
+        $producto->unidad_id = $validated['unidad_id'];
+        $producto->categoria_id = $validated['categoria_id'];
+        $producto->estado = true;
         $producto->save();
 
         return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto actualizado exitosamente.')->with('icon', 'success');

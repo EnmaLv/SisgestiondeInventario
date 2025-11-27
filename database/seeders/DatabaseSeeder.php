@@ -16,8 +16,10 @@ class DatabaseSeeder extends Seeder
         
         \App\Models\Sucursal::factory(10)->create();
         \App\Models\Categoria::factory(10)->create();
+        \App\Models\Unidad::factory(10)->create();
         \App\Models\Producto::factory(5)->create();
         \App\Models\Proveedor::factory(10)->create();
+
         $this->call([
             EstatusSeeder::class,
             EstadoVeSeeder::class,

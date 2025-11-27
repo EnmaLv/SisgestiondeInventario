@@ -18,13 +18,17 @@ class Producto extends Model
         'descripcion',
         'imagen',
         'precio_compra',
-        'precio_venta',
         'stock_minimo',
         'stock_maximo',
-        'unidad_medida',
+        'unidad_id',
         'estado',
         'categoria_id'
     ];
+
+    public function unidad()
+    {
+        return $this->belongsTo(Unidad::class);
+    }
 
     public function categoria()
     {
@@ -44,5 +48,10 @@ class Producto extends Model
     public function detalleCompras()
     {
         return $this->hasMany(DetalleCompra::class);
+    }
+
+    public function recetaIngredientes()
+    {
+        return $this->hasMany(RecetaIngrediente::class);
     }
 }

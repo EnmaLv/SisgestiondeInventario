@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventario_sucursal_lotes', function (Blueprint $table) {
+        Schema::create('consumo_diarios', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');
-            $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
-            $table->decimal('cantidad', 14, 2)->notNull();
-
+            $table->foreignId('receta_id')
+                ->constrained('recetas')
+                ->onDelete('cascade');
+            $table->date('fecha_consumo_diario');
+            $table->integer('porciones_servidas')->notNull();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventario_sucursal_lotes');
+        Schema::dropIfExists('consumo_diarios');
     }
 };

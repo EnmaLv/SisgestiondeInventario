@@ -23,10 +23,9 @@ class ProductoFactory extends Factory
             'descripcion' => $this->faker->sentence(),
             'imagen' => $this->faker->imageUrl(640, 480, 'products'),
             'precio_compra' => $this->faker->randomFloat(2, 10, 100),
-            'precio_venta' => $this->faker->randomFloat(2, 15, 150),
             'stock_minimo' => $this->faker->numberBetween(1, 5),
             'stock_maximo' => $this->faker->numberBetween(10, 20),
-            'unidad_medida' => $this->faker->randomElement(['kg', 'g', 'l', 'ml', 'unidad']),
+            'unidad_id' => $this->faker->numberBetween(1, 10),
             'estado' => $this->faker->boolean(80),
         ];
     }

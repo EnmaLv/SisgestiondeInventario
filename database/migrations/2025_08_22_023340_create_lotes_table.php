@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('codigo_lote', 50);
             $table->date('fecha_entrada');
             $table->date('fecha_vencimiento')->nullable();
-            $table->integer('cantidad_inicial');
-            $table->integer('cantidad_actual');
+            $table->decimal('cantidad_inicial', 14, 2)->default(0);
+            $table->decimal('cantidad_actual', 14, 2)->default(0);
             $table->decimal('precio_compra', 10, 2)->nullable();
             $table->boolean('estado')->default(true);
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');

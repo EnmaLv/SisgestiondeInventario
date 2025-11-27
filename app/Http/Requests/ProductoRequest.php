@@ -26,13 +26,15 @@ class ProductoRequest extends FormRequest
             'codigo' => 'required|string|max:255',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // permitir que no venga imagen en creación
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'precio_compra' => 'required|numeric',
-            'precio_venta' => 'required|numeric',
             'stock_minimo' => 'required|integer',
             'stock_maximo' => 'required|integer',
-            'unidad_medida' => 'required',
-            'estado' => 'required|boolean',
+            'unidad_id' => 'required|exists:unidades,id',
+            // permitir que no venga estado (lo pones como hidden en el formulario o lo haces nullable)
+            'estado' => 'nullable|boolean',
         ];
     }
+
 }

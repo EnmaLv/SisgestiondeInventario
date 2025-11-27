@@ -93,6 +93,38 @@ Breadcrumbs::for('admin.maestros.proveedores.edit', function (Trail $trail, $pro
     $trail->push('Editar', route('admin.maestros.proveedores.edit', $proveedor));
 });
 
+// Maestros > Recetas
+Breadcrumbs::for('admin.maestros.recetas.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Recetas', route('admin.maestros.recetas.index'));
+});
+
+Breadcrumbs::for('admin.maestros.recetas.create', function (Trail $trail) {
+    $trail->parent('admin.maestros.recetas.index');
+    $trail->push('Crear', route('admin.maestros.recetas.create'));
+});
+
+Breadcrumbs::for('admin.maestros.recetas.edit', function (Trail $trail, $receta) {
+    $trail->parent('admin.maestros.recetas.index');
+    $trail->push('Editar', route('admin.maestros.recetas.edit', $receta));
+});
+
+// Mestros > Receta Ingredientes
+Breadcrumbs::for('admin.maestros.receta_ingredientes.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Ingredientes de Recetas', route('admin.maestros.receta_ingredientes.index'));
+});
+
+Breadcrumbs::for('admin.maestros.receta_ingredientes.create', function (Trail $trail) {
+    $trail->parent('admin.maestros.receta_ingredientes.index');
+    $trail->push('Crear', route('admin.maestros.receta_ingredientes.create'));
+});
+
+Breadcrumbs::for('admin.maestros.receta_ingredientes.edit', function (Trail $trail, $ingrediente) {
+    $trail->parent('admin.maestros.receta_ingredientes.index');
+    $trail->push('Editar', route('admin.maestros.receta_ingredientes.edit', $ingrediente));
+});
+
 // Movimientos > Compras
 Breadcrumbs::for('admin.movimientos.compras.index', function (Trail $trail) {
     $trail->parent('home');

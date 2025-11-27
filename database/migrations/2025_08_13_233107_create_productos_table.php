@@ -19,10 +19,9 @@ return new class extends Migration
             $table->text('descripcion');
             $table->string('imagen', 255);
             $table->decimal('precio_compra', 10, 2);
-            $table->decimal('precio_venta', 10, 2);
-            $table->integer('stock_minimo')->default(0);
-            $table->integer('stock_maximo')->default(0);
-            $table->string('unidad_medida', 50)->default('unidad');
+            $table->decimal('stock_minimo', 14, 2)->default(0);
+            $table->decimal('stock_maximo', 14, 2)->default(0);
+            $table->foreignId('unidad_id')->constrained('unidades')->onDelete('cascade');
             $table->boolean('estado')->default(true);
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->timestamps();

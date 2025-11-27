@@ -16,4 +16,9 @@ class Receta extends Model
         'nombre',
         'descripcion',
     ];
+
+    public function recetaIngredientes()
+    {
+        return $this->hasMany(RecetaIngrediente::class, 'recetas_id');
+    }
 }

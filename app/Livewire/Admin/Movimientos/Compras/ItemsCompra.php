@@ -21,8 +21,6 @@ class ItemsCompra extends Component
 
     public float $precioCompra;
 
-    public float $precioVenta;
-
     public $codigoLote;
 
     public $fechaVencimiento;
@@ -43,7 +41,7 @@ class ItemsCompra extends Component
         $this->compra->load('detalleCompras.producto', 'detalleCompras.lote');
         $this->totalCompra = $this->compra->detalleCompras->sum('subtotal');
 
-        $this->reset(['productoId', 'codigoLote', 'cantidad', 'precioUnitario', 'precioCompra', 'precioVenta', 'fechaVencimiento', 'totalCompra']);
+        $this->reset(['productoId', 'codigoLote', 'cantidad', 'precioUnitario', 'precioCompra', 'fechaVencimiento', 'totalCompra']);
         $this->cantidad = 1;
     }
 
@@ -60,10 +58,8 @@ class ItemsCompra extends Component
         $producto = Producto::find($value);
         if ($producto) {
             $this->precioCompra = $producto->precio_compra;
-            $this->precioVenta = $producto->precio_venta;
         } else {
             $this->precioCompra = 0;
-            $this->precioVenta = 0;
         }
     }
 
@@ -73,7 +69,8 @@ class ItemsCompra extends Component
         DB::beginTransaction();
         try {
             $producto = Producto::findOrFail($this->productoId);
-            $loteId = null;
+            $unidadId = $producto->unidad_id;
+
             $lote = Lote::create([
                 'producto_id' => $this->productoId,
                 'proveedor_id' => $this->compra->proveedor_id,
@@ -85,14 +82,14 @@ class ItemsCompra extends Component
                 'precio_compra' => $this->precioCompra,
                 'estado' => true,
             ]);
-            $loteId = $lote->id;
 
             $this->compra->detalleCompras()->create([
                 'producto_id' => $producto->id,
-                'lote_id' => $loteId,
+                'lote_id' => $lote->id,
                 'cantidad' => $this->cantidad,
                 'precio_unitario' => $this->precioCompra,
                 'subtotal' => $this->cantidad * $this->precioCompra,
+                'unidad_id' => $unidadId, // ✔️ NECESARIO
             ]);
 
             $this->compra->total = $this->compra->detalleCompras->sum('subtotal');
@@ -101,6 +98,7 @@ class ItemsCompra extends Component
             DB::commit();
             $this->cargarDatos();
             $this->aggItems();
+
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch(
@@ -110,6 +108,7 @@ class ItemsCompra extends Component
             );
         }
     }
+
 
     public function render()
     {

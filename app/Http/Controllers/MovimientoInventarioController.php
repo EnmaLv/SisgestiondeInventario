@@ -37,7 +37,7 @@ class MovimientoInventarioController extends Controller
 
         // Ejecutar consulta
         $movimiento = $query
-            ->with(['lote.producto', 'lote.proveedor'])
+            ->with(['lote.producto', 'lote.proveedor', 'sucursal', 'unidad'])
             ->orderBy('id','desc')
             ->paginate(10);
 

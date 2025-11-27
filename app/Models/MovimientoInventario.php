@@ -13,10 +13,16 @@ class MovimientoInventario extends Model
         'lote_id',
         'sucursal_id',
         'tipo_movimiento',
+        'unidad_id',
         'cantidad',
         'fecha',
         'observaciones',
     ];
+
+    public function unidad()
+    {
+        return $this->belongsTo(Unidad::class);
+    }
 
     public function producto()
     {

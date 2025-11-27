@@ -12,7 +12,7 @@
         <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
-                Productos
+                Ingredientes para Recetas Registradas
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -22,7 +22,7 @@
 
         <!-- Imagen + Fecha -->
         <div>
-            <a href="{{ url('admin/maestros/productos/create') }}" class="rd-btn rd-btn-primary">
+            <a href="{{ url('admin/maestros/receta_ingredientes/create') }}" class="rd-btn rd-btn-primary">
                 <i class="fas fa-plus"></i> Crear Nuevo
             </a>
         </div>
@@ -36,14 +36,14 @@
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Proveedores Registrados</h3>
+                    <h3 class="rd-title-sm">Ingredientes para Recetas Registradas</h3>
                 </div>
 
                 <div class="rd-actions">
-                    <form action="{{ route('admin.maestros.productos.index') }}" method="GET" class="rd-search-inline"
-                        role="search">
+                    <form action="{{ route('admin.maestros.receta_ingredientes.index') }}" method="GET"
+                        class="rd-search-inline" role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba el producto" />
+                            placeholder="Escriba la receta" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
@@ -82,56 +82,65 @@
                 </div>
             </div> --}}
 
+
             {{-- Tabla --}}
             <div id="printArea">
                 <table class="rd-table">
                     <thead>
                         <tr>
-                            <th class="text-center">Codigo</th>
+                            <th style="width:60px">#</th>
                             <th class="text-center">Nombre</th>
-                            <th class="text-center">Categoria</th>
-                            <th class="text-center">Stock Minimo</th>
-                            <th class="text-center">Stock Maximo</th>
-                            <th class="text-center">Unidad</th>
-                            <th class="text-center">Estado</th>
-                            <th class="text-center">Acciones</th>
+                            <th class="text-center">Cantidad por Porcion</th>
+                            <th style="width:150px" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($productos as $producto)
+                        @forelse($recetas as $receta)
                             <tr>
-                                <td class="text-center">{{ $producto->codigo }}</td>
-                                <td class="text-center">{{ $producto->nombre }}</td>
-                                <td class="text-center">{{ $producto->categoria->nombre }}</td>
-                                <td class="text-center">{{ $producto->stock_minimo }}</td>
-                                <td class="text-center">{{ $producto->stock_maximo }}</td>
-                                <td class="text-center">{{ $producto->unidad->nombre }}</td>
                                 <td class="text-center">
-                                    @if ($producto->estado == true)
-                                        <span class="rd-badge rd-badge-success">Activo</span>
+                                    {{ ($recetas->currentPage() - 1) * $recetas->perPage() + $loop->iteration }}
+                                </td>
+                                <td class="text-left">
+                                    <strong>{{ $receta->nombre }}</strong>
+                                    @if (!empty($receta->descripcion))
+                                        <div class="text-muted" style="font-size:.9rem;">
+                                            {{ Str::limit($receta->descripcion, 120) }}</div>
+                                    @endif
+                                </td>
+                                <td class="text-left">
+                                    @if ($receta->recetaIngredientes->isEmpty())
+                                        <em class="text-muted">No tiene ingredientes</em>
                                     @else
-                                        <span class="rd-badge rd-badge-danger">Inactivo</span>
+                                        <ul style="padding-left: 1rem; margin:0;">
+                                            @foreach ($receta->recetaIngredientes as $ing)
+                                                <li style="margin-bottom:4px;">
+                                                    {{ optional($ing->producto)->nombre ?? 'Producto eliminado' }}
+                                                    —
+                                                    <strong>{{ $ing->cantidad_porcion }}</strong>
+                                                    {{ optional($ing->unidad)->nombre ?? '' }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
 
-                                        <a href="{{ url('admin/maestros/productos/' . $producto->id) }}" class="rd-action"
-                                            title="Ver"><i class="fas fa-eye"></i></a>
-
-                                        <a href="{{ url('admin/maestros/productos/' . $producto->id . '/edit') }}"
+                                        <a href="{{ url('admin/maestros/receta_ingredientes/' . $ing->id . '/edit') }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
 
-                                        <form action="{{ url('admin/maestros/productos/' . $producto->id) }}"
+                                        <form action="{{ url('admin/maestros/receta_ingredientes/' . $ing->id) }}"
                                             method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                onclick="preguntar{{ $producto->id }}(event)"><i
-                                                    class="fas fa-trash"></i></button>
+                                                onclick="preguntar{{ $ing->id }}(event)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </form>
+
                                         <script>
-                                            function preguntar{{ $producto->id }}(event) {
+                                            function preguntar{{ $ing->id }}(event) {
                                                 event.preventDefault();
                                                 Swal.fire({
                                                     title: '¿Estás seguro?',
@@ -151,10 +160,11 @@
                                         </script>
                                     </div>
                                 </td>
+
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                                <td colspan="6" class="text-center py-4">No hay Ingredientes de Recetas</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -163,7 +173,7 @@
 
             {{-- Paginación del servidor --}}
             <div class="mt-3 d-flex justify-content-center">
-                {{ $productos->onEachSide(1)->links('components.pagination') }}
+                {{ $recetas->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>

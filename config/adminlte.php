@@ -330,6 +330,28 @@ return [
         ['header' => 'Maestros'],
 
         [
+            'text' => 'Platos',
+            'url' => 'admin/maestros/platos',
+            'icon' => 'fas fa-fw fa-hamburger',
+            'active' => ['admin/maestros/platos*'],
+            'submenu' => [
+                [
+                    'text' => 'Recetas',
+                    'url' => 'admin/maestros/recetas',
+                    'icon' => 'fas fa-fw fa-utensils',
+                    'active' => ['admin/maestros/recetas*'],
+                ],
+
+                [
+                    'text' => 'Ingredientes',
+                    'url' => 'admin/maestros/receta_ingredientes',
+                    'icon' => 'fas fa-fw fa-carrot',
+                    'active' => ['admin/maestros/receta_ingredientes*'],
+                ],
+            ],
+        ],
+
+        [
             'text' => 'Sucursales',
             'url' => 'admin/maestros/sucursales',
             'icon' => 'fas fa-fw fa-store',

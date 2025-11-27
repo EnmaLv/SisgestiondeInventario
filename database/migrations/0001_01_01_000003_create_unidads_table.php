@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventario_sucursal_lotes', function (Blueprint $table) {
+        Schema::create('unidades', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');
-            $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
-            $table->decimal('cantidad', 14, 2)->notNull();
-
+            $table->string('nombre', 30);
+            $table->string('abreviatura', 50);
+            $table->decimal('factor_a_gramo', 14, 6)->default(1);
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventario_sucursal_lotes');
+        Schema::dropIfExists('unidads');
     }
 };

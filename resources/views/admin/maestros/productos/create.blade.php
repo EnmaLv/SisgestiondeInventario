@@ -120,7 +120,7 @@
                             <div class="row mt-3">
 
                                 {{-- Precio Compra --}}
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Precio Compra</label>
                                         <div class="input-group mb-2">
@@ -134,30 +134,14 @@
                                     </div>
                                 </div>
 
-                                {{-- Precio Venta --}}
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">Precio Venta</label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                            <input type="number" class="form-control rd-filter-input" name="precio_venta"
-                                                value="{{ old('precio_venta') }}" placeholder="$$">
-                                        </div>
-                                        @error('precio_venta')
-                                            <div class="text-danger"><b>{{ $message }}</b></div>
-                                        @enderror
-                                    </div>
-                                </div>
-
                                 {{-- Stock Mínimo --}}
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Mínimo</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
-                                            <input type="number" class="form-control rd-filter-input"
-                                                name="stock_minimo" value="{{ old('stock_minimo') }}"
-                                                placeholder="Mínimo">
+                                            <input type="number" class="form-control rd-filter-input" name="stock_minimo"
+                                                value="{{ old('stock_minimo') }}" placeholder="Mínimo">
                                         </div>
                                         @error('stock_minimo')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -166,7 +150,7 @@
                                 </div>
 
                                 {{-- Stock Máximo --}}
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Máximo</label>
                                         <div class="input-group mb-2">
@@ -182,39 +166,21 @@
                                 </div>
 
                                 {{-- Unidad de Medida --}}
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Unidad de Medida</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
-                                            <select class="form-control rd-filter-input" name="unidad_medida">
-                                                <option value="">Seleccione</option>
-                                                <option value="U">Unidad</option>
-                                                <option value="KG">Kilogramo</option>
-                                                <option value="G">Gramo</option>
-                                                <option value="L">Litro</option>
-                                                <option value="ML">Mililitro</option>
+                                            <select class="form-control rd-filter-input" name="unidad_id" id="unidad_id">
+                                                <option value="">Seleccione una unidad</option>
+                                                @foreach ($unidades as $unidad)
+                                                    <option value="{{ $unidad->id }}"
+                                                        {{ old('unidad_id') == $unidad->id ? 'selected' : '' }}>
+                                                        {{ $unidad->nombre }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
-                                        @error('unidad_medida')
-                                            <div class="text-danger"><b>{{ $message }}</b></div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                {{-- Estado --}}
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">Estado</label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
-                                            <select class="form-control rd-filter-input" name="estado">
-                                                <option value="">Seleccione</option>
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
-                                            </select>
-                                        </div>
-                                        @error('estado')
+                                        @error('unidad_id')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
@@ -299,6 +265,7 @@
 @stop
 @section('js')
     <script>
+        let descripcionEditor;
         ClassicEditor
             .create(document.querySelector('#descripcion'), {
                 toolbar: {
@@ -308,16 +275,14 @@
                         'link', 'bulletedList', 'numberedList', '|',
                         'outdent', 'indent', '|',
                         'blockQuote', 'insertTable', 'mediaEmbed', '|',
-                        'undo', 'redo', '|',
-                        'footBackgroundColor', 'fontColor', 'fontSize', 'fontFamily', '|',
-                        'code', 'codeBlock', 'htmlEmbed', '|',
-                        'sourceEditing'
+                        'undo', 'redo'
                     ],
                     shouldNotGroupWhenFull: true
                 },
                 language: 'es'
             })
             .then(editor => {
+                descripcionEditor = editor;
                 const editorEl = editor.ui.view.element;
                 editorEl.style.width = '100%';
                 editorEl.querySelector('.ck-editor__editable').style.width = '100%';
@@ -325,5 +290,17 @@
             .catch(error => {
                 console.error(error);
             });
+
+        // Antes de enviar el formulario, aseguramos que el textarea tenga el contenido
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (descripcionEditor) {
+                        document.querySelector('#descripcion').value = descripcionEditor.getData();
+                    }
+                });
+            }
+        });
     </script>
 @stop

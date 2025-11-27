@@ -172,6 +172,7 @@ class CompraController extends Controller
                     'lote_id' => $lote->id,
                     'sucursal_id' => $request->sucursal_id,
                     'tipo_movimiento' => 'Entrada',
+                    'unidad_id' => $producto->unidad_id,
                     'cantidad' => $detalle->cantidad,
                     'fecha' => now(),
                 ]);

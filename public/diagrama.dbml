@@ -1,15 +1,76 @@
+Table unidades {
+  id int [pk, increment]
+  nombre varchar(30) [not null]         // 'gramo','kilogramo','unidad','ml'
+  abreviatura varchar(10) [not null]    // 'g','kg','u','ml'
+  factor_a_gramo decimal(14,6) [not null, default: 1] // gramos por unidad: g=1, kg=1000
+}
+
+Table pnf {
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  estado boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table perfil {
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  descripcion text
+  estado boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table personas {
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  segundo_nombre varchar(100)
+  apellido varchar(100) [not null]
+  segundo_apellido varchar(100)
+  cedula varchar(20) [not null, unique]
+  telefono varchar(20)
+  genero varchar(20)
+  edad int
+  fecha_nacimiento date
+  email varchar(100)
+  direccion varchar(255)
+  perfil_id int [ref: > perfil.id]
+  sucursal_id int [ref: > sucursales.id]
+  estado boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table persona_pnf {
+  id int [pk, increment]
+  persona_id int [ref: > personas.id]
+  pnf_id int [ref: > pnf.id]
+  fecha_inicio date
+  fecha_fin date
+  estado boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table estado_venezuela {
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  codigo varchar(10) [not null]
+  created_at timestamp [default: `current_timestamp`]
+}
+
 Table sucursales {
   id int [pk, increment]
   nombre varchar(100) [not null]
   direccion varchar(255)
   telefono varchar(20)
+  estado_venezuela_id int [ref: > estado_venezuela.id]
   activo boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Categorias {
   id int [pk, increment]
   nombre varchar(100) [not null]
   descripcion text
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Productos {
@@ -18,13 +79,13 @@ Table Productos {
   nombre varchar(100) [not null]
   descripcion text
   imagen varchar(255)
-  precio_compra decimal(10, 2) [not null]
-  precio_venta decimal(10, 2) [not null]
-  stock_minimo int [default: 0]
-  stock_maximo int [default: 0]
-  unidad_medida varchar(50) [not null]
+  precio_compra decimal(10,2) [not null]
+  stock_minimo decimal(14,3) [default: 0]
+  stock_maximo decimal(14,3) [default: 0]
+  unidad_id int [ref: > unidades.id] // FK a unidades (ej: kg, g, u)
   estado boolean [default: true]
   categoria_id int [ref: > Categorias.id]
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Proveedores {
@@ -35,6 +96,7 @@ Table Proveedores {
   telefono varchar(20)
   email varchar(100)
   estado boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Lotes {
@@ -42,19 +104,22 @@ Table Lotes {
   codigo_lote varchar(50) [not null]
   fecha_entrada date
   fecha_vencimiento date
-  cantidad_inicial int [not null]
-  cantidad_actual int [not null]
-  precio_compra decimal(10, 2) [null]
+  cantidad_inicial decimal(14,3) [not null]   // ej: kilos o gramos según unidad_id
+  cantidad_actual decimal(14,3) [not null]
+  precio_compra decimal(10,2)
+  unidad_id int [ref: > unidades.id]   // indica si lote mide en kg/g/unidad
   estado boolean [default: true]
   producto_id int [ref: > Productos.id]
   proveedor_id int [ref: > Proveedores.id]
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Inventario_Sucursal_Lote {
   id int [pk, increment]
   sucursal_id int [ref: > sucursales.id]
   lote_id int [ref: > Lotes.id]
-  cantidad int [not null]
+  cantidad decimal(14,3) [not null]
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Movimientos_Inventario {
@@ -62,19 +127,22 @@ Table Movimientos_Inventario {
   producto_id int [ref: > Productos.id]
   lote_id int [ref: > Lotes.id]
   sucursal_id int [ref: > sucursales.id]
-  tipo_movimiento varchar(50) [not null]
-  cantidad int [not null]
+  tipo_movimiento varchar(50) [not null] // 'COMPRA','AJUSTE_ENTRADA','CONSUMO_RECETA','AJUSTE_SALIDA'...
+  cantidad decimal(14,3) [not null]
+  unidad_id int [ref: > unidades.id]  // unidad en la que se registró el movimiento
   fecha datetime [default: `current_timestamp`]
   observaciones text
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Compras {
   id int [pk, increment]
   proveedor_id int [ref: > Proveedores.id]
   fecha datetime [default: `current_timestamp`]
-  total decimal(10, 2) [not null]
+  total decimal(10,2) [not null]
   estado varchar(50) [not null]
   observaciones text
+  created_at timestamp [default: `current_timestamp`]
 }
 
 Table Detalle_Compras {
@@ -82,7 +150,62 @@ Table Detalle_Compras {
   compra_id int [ref: > Compras.id]
   producto_id int [ref: > Productos.id]
   lote_id int [ref: > Lotes.id]
-  cantidad int [not null]
-  precio_unitario decimal(10, 2) [not null]
-  subtotal decimal(10, 2) [not null]
+  cantidad decimal(14,3) [not null]
+  unidad_id int [ref: > unidades.id]
+  precio_unitario decimal(10,2) [not null]
+  subtotal decimal(10,2) [not null]
+}
+
+Table recetas {
+  id int [pk, increment]
+  nombre varchar(100) [not null]
+  descripcion text
+  estado boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table receta_ingredientes {
+  id int [pk, increment]
+  receta_id int [ref: > recetas.id]
+  producto_id int [ref: > Productos.id]
+  cantidad_porcion decimal(12,4) [not null]  // cantidad por porción (ej 40)
+  unidad_id int [ref: > unidades.id]        // unidad de la cantidad_porcion (ej g)
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table registro_diario_c {
+  id int [pk, increment]
+  persona_id int [ref: > personas.id]
+  persona_pnf_id int [ref: > persona_pnf.id]
+  fecha date [not null]
+  hora time [not null]
+  estado boolean [default: true]
+  created_at timestamp [default: `current_timestamp`]
+  // Esta tabla registra asistencia individual (por persona). Opcional al consumo agregado.
+}
+
+Table consumo_diario {
+  id int [pk, increment]
+  receta_id int [ref: > recetas.id]
+  fecha date [not null]
+  porciones_servidas int [not null]   // p. ej. 200 arepas
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table consumo_diario_detalle {
+  id int [pk, increment]
+  consumo_diario_id int [ref: > consumo_diario.id]
+  producto_id int [ref: > Productos.id]
+  cantidad_total decimal(14,4) [not null]  // cantidad total a descontar (convertida a unidad de lote, ej gramos)
+  unidad_id int [ref: > unidades.id]    // indica unidad de cantidad_total (ej g)
+  created_at timestamp [default: `current_timestamp`]
+}
+
+Table detalle_registro_diario {
+  id int [pk, increment]
+  receta_id int [ref: > recetas.id]
+  consumo_diario_id int [ref: > consumo_diario.id]
+  cantidad_servido int [not null]
+  created_at timestamp [default: `current_timestamp`]
+  // Nota: Distingue si necesitas un detalle extra sobre qué recetas se usaron en registros individuales
 }

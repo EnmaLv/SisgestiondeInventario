@@ -94,7 +94,7 @@
                         {{-- Precios / Stock --}}
                         <div class="row">
 
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="font-weight-bold">Precio Compra</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
@@ -103,16 +103,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 mb-3">
-                                <label class="font-weight-bold">Precio Venta</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                    <input type="text" class="form-control" value="{{ $producto->precio_venta }}"
-                                        readonly>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="font-weight-bold">Stock Mínimo</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
@@ -121,7 +112,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="font-weight-bold">Stock Máximo</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
@@ -130,21 +121,12 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label class="font-weight-bold">Unidad Medida</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
-                                    <input type="text" class="form-control" value="{{ $producto->unidad_medida }}"
+                                    <input type="text" class="form-control" value="{{ $producto->unidad->nombre }}"
                                         readonly>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 mb-3">
-                                <label class="font-weight-bold">Estado</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
-                                    <input type="text" class="form-control"
-                                        value="{{ $producto->estado == 1 ? 'Activo' : 'Inactivo' }}" readonly>
                                 </div>
                             </div>
 
