@@ -151,6 +151,46 @@
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
 
+@push('css')
+    <style>
+        .rd-card .input-group {
+            border: 1px solid #d8dee9;
+            border-radius: 12px;
+            background: #f8fafc;
+            padding-inline: 8px;
+            transition: border-color .2s ease, box-shadow .2s ease;
+            overflow: hidden;
+        }
+
+        .rd-card .input-group:focus-within {
+            border-color: #7c3aed;
+            background: #ffffff;
+        }
+
+        .rd-card .input-group-text {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 1.05rem;
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+
+        .rd-card .input-group-text i {
+            width: 22px;
+            text-align: center;
+        }
+
+        .rd-card .rd-filter-input,
+        .rd-card .form-control {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding-left: 6px;
+        }
+    </style>
+@endpush
+
 
 @section('js')
     <script>
