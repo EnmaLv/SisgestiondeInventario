@@ -73,9 +73,11 @@
                     </button>
 
                     <div class="rd-export-group">
-                        <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
-                            Excel</button>
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
+                        <a href="{{ route('admin.movimientos.registro_diario.export_excel', request()->only(['buscar','fecha_desde','fecha_hasta'])) }}" 
+                            class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
+                            Excel</a>
+                            
+                        <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i class="fas fa-file-pdf"></i>
                             PDF</button>
                     </div>
                 </div>
@@ -131,7 +133,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="rd-action-group">
-                                            <a class="rd-action" href="#" title="Ver"><i
+                                            <a class="rd-action" href="{{ route('admin.movimientos.registro_diario.show', $registro->id) }}" title="Ver"><i
                                                     class="fas fa-eye"></i></a>
                                         </div>
                                     </td>
@@ -257,6 +259,12 @@
             color: #fff;
         }
 
+        /* Mantiene el mismo estilo al hacer hover para el botón de exportar Excel */
+        .rd-btn-success:hover {
+            background: #10b981;
+            color: #fff;
+        }
+
         .rd-btn-danger {
             background: #ef4444;
             color: #fff;
@@ -378,6 +386,7 @@
             padding: 12px;
             background: #fbfdff;
             border-top: 1px solid #f3f6fb;
+            box-shadow: inset 0 6px 10px rgba(101, 114, 151, 0.1);
         }
 
         .rd-filters-form {
@@ -628,5 +637,21 @@
                 }
             });
         }
+
+        //Script para mostrar el PdfGeneratorUtil
+        const pdfBtn = document.querySelector('#pdfBtn');
+        const pdfRoute = `{{ route('admin.movimientos.registro_diario.export_pdf') }}`;
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', function () {
+
+                const params = new URLSearchParams(window.location.search);
+                const fechaDesde = params.get('fecha_desde')?? "";
+                const fechaHasta = params.get('fecha_hasta')?? "";
+
+                const url = `${pdfRoute}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}`;
+                window.open(url, '_blank');     
+            });
+        }
+
     </script>
 @endpush

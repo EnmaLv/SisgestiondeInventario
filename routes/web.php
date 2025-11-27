@@ -65,6 +65,7 @@ Route::prefix('/admin/maestros/productos')->middleware('auth')->group(function (
 //Registro Diario
 Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
     Route::get('/', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
+    Route::get('/registro/{id}', [RegistroDiarioController::class, 'show'])->name('admin.movimientos.registro_diario.show');
 });
 
 
@@ -125,7 +126,11 @@ Route::get('/admin/movimientos/sucursales_lotes/show/{id}', [App\Http\Controller
 Route::get('/admin/movimientos/historial_movimientos', [App\Http\Controllers\MovimientoInventarioController::class, 'index'])->name('admin.movimientos.historial_movimientos.index')->middleware('auth');
 
 // Registro diario
-Route::get('/admin/movimientos/registro_diario', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index')->middleware('auth');
+Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
+    Route::get('/export-pdf', [App\Http\Controllers\RegistroDiarioController::class, 'exportPdf'])->name('admin.movimientos.registro_diario.export_pdf');
+    Route::get('/export-excel', [App\Http\Controllers\RegistroDiarioController::class, 'exportExcel'])->name('admin.movimientos.registro_diario.export_excel');
+});
 
 //Rutas para Consultas
 Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');
