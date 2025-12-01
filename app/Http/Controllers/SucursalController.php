@@ -12,28 +12,13 @@ class SucursalController extends Controller
      */
     public function index(Request $request)
     {
-        $buscar = $request->input('buscar');
-        $activo = $request->input('activo');
-
-        $query = Sucursal::query();
-
-        if ($buscar) {
-            $query->where(function($q) use ($buscar) {
-                $q->where('nombre','like', "%{$buscar}%")
-                ->orWhere('direccion','like', "%{$buscar}%")
-                ->orWhere('telefono','like', "%{$buscar}%");
-            });
-        }
-
-        if ($activo !== null && $activo !== '') {
-            $query->where('activo', (int)$activo);
-        }
-
-        $sucursales = $query->orderBy('id','desc')->paginate(10);
+        $sucursales = Sucursal::listarSucursales(
+            $request->input('buscar'),
+            $request->input('activo')
+        );
 
         return view('admin.maestros.sucursales.index', compact('sucursales'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -49,20 +34,18 @@ class SucursalController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre'    => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
-            'telefono' => 'required|string|max:20',
-            'activo' => 'required|boolean',
+            'telefono'  => 'required|string|max:20',
+            'activo'    => 'required|boolean',
         ]);
 
-        $sucursal = new Sucursal();
-        $sucursal->nombre = $validated['nombre'];
-        $sucursal->direccion = $validated['direccion'];
-        $sucursal->telefono = $validated['telefono'];
-        $sucursal->activo = $validated['activo'];
-        $sucursal->save();
+        Sucursal::crearSucursal($validated);
 
-        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sucursal creada exitosamente.')->with('icono', 'success');
+        return redirect()
+            ->route('admin.maestros.sucursales.index')
+            ->with('success', 'Sucursal creada exitosamente.')
+            ->with('icono', 'success');
     }
 
     /**
@@ -70,8 +53,18 @@ class SucursalController extends Controller
      */
     public function show($id)
     {
-        $sucursal = Sucursal::findOrFail($id);
-        return view('admin.maestros.sucursales.show', compact('sucursal'));
+        $sucursal = Sucursal::obtenerSucursalConInventario($id);
+        
+        if (!$sucursal) {
+            return redirect()
+                ->route('admin.maestros.sucursales.index')
+                ->with('error', 'Sucursal no encontrada.')
+                ->with('icono', 'error');
+        }
+
+        $estadisticas = Sucursal::obtenerEstadisticas($id);
+
+        return view('admin.maestros.sucursales.show', compact('sucursal', 'estadisticas'));
     }
 
     /**
@@ -79,7 +72,15 @@ class SucursalController extends Controller
      */
     public function edit($id)
     {
-        $sucursal = Sucursal::findOrFail($id);
+        $sucursal = Sucursal::obtenerSucursal($id);
+        
+        if (!$sucursal) {
+            return redirect()
+                ->route('admin.maestros.sucursales.index')
+                ->with('error', 'Sucursal no encontrada.')
+                ->with('icono', 'error');
+        }
+
         return view('admin.maestros.sucursales.edit', compact('sucursal'));
     }
 
@@ -88,22 +89,19 @@ class SucursalController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $sucursal = Sucursal::findOrFail($id);
-
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre'    => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
-            'telefono' => 'required|string|max:20',
-            'activo' => 'required|boolean',
+            'telefono'  => 'required|string|max:20',
+            'activo'    => 'required|boolean',
         ]);
 
-        $sucursal->nombre = $validated['nombre'];
-        $sucursal->direccion = $validated['direccion'];
-        $sucursal->telefono = $validated['telefono'];
-        $sucursal->activo = $validated['activo'];
-        $sucursal->save();
+        Sucursal::actualizarSucursal($id, $validated);
 
-        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sucursal actualizada exitosamente.')->with('icono', 'success');
+        return redirect()
+            ->route('admin.maestros.sucursales.index')
+            ->with('success', 'Sucursal actualizada exitosamente.')
+            ->with('icono', 'success');
     }
 
     /**
@@ -111,10 +109,63 @@ class SucursalController extends Controller
      */
     public function destroy($id)
     {
-        $sucursal = Sucursal::findOrFail($id);
-        $sucursal->delete();
+        // Verificar si tiene inventario o movimientos
+        if (Sucursal::tieneInventario($id)) {
+            return redirect()
+                ->route('admin.maestros.sucursales.index')
+                ->with('error', 'No se puede eliminar la sucursal porque tiene inventario asociado.')
+                ->with('icono', 'error');
+        }
 
-        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sucursal eliminada exitosamente.')->with('icono', 'success');
+        if (Sucursal::tieneMovimientos($id)) {
+            return redirect()
+                ->route('admin.maestros.sucursales.index')
+                ->with('error', 'No se puede eliminar la sucursal porque tiene movimientos de inventario.')
+                ->with('icono', 'error');
+        }
+
+        Sucursal::eliminarSucursal($id);
+
+        return redirect()
+            ->route('admin.maestros.sucursales.index')
+            ->with('success', 'Sucursal eliminada exitosamente.')
+            ->with('icono', 'success');
     }
 
+    /**
+     * Exportar sucursales a CSV
+     */
+    public function exportCsv(Request $request)
+    {
+        $rows = Sucursal::exportarCSV(
+            $request->input('buscar'),
+            $request->input('activo')
+        );
+
+        $filename = 'sucursales_' . date('Ymd_His') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function() use ($rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['ID', 'Nombre', 'Dirección', 'Teléfono', 'Estado']);
+            
+            foreach ($rows as $row) {
+                fputcsv($out, [
+                    $row->id,
+                    $row->nombre,
+                    $row->direccion,
+                    $row->telefono,
+                    $row->activo ? 'Activo' : 'Inactivo'
+                ]);
+            }
+            
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

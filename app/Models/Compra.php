@@ -79,12 +79,50 @@ class Compra extends Model
     }
 
     // OBTENER COMPRA (con detalles)
+    // Agregar al modelo Compra
+    public static function obtenerDetallesCompra($compra_id)
+    {
+        return DB::table('detalle_compras')
+            ->join('productos', 'productos.id', '=', 'detalle_compras.producto_id')
+            ->join('lotes', 'lotes.id', '=', 'detalle_compras.lote_id')
+            ->join('unidades', 'unidades.id', '=', 'detalle_compras.unidad_id')
+            ->where('detalle_compras.compra_id', $compra_id)
+            ->select(
+                'detalle_compras.*',
+                'productos.nombre as producto_nombre',
+                'productos.codigo as producto_codigo',
+                'lotes.codigo_lote',
+                'lotes.fecha_vencimiento',
+                'unidades.nombre as unidad_nombre',
+                'unidades.abreviatura as unidad_abreviatura'
+            )
+            ->get();
+    }
+
+    public static function obtenerSucursalDestino($compra_id)
+    {
+        return DB::table('movimiento_inventarios')
+            ->join('sucursals', 'sucursals.id', '=', 'movimiento_inventarios.sucursal_id')
+            ->join('detalle_compras', 'detalle_compras.lote_id', '=', 'movimiento_inventarios.lote_id')
+            ->where('detalle_compras.compra_id', $compra_id)
+            ->select('sucursals.id', 'sucursals.nombre')
+            ->first();
+    }
+
     public static function obtenerCompra($id)
     {
         return DB::table('compras')
-            ->where('id', $id)
+            ->join('proveedors', 'proveedors.id', '=', 'compras.proveedor_id')
+            ->select(
+                'compras.*',
+                'proveedors.nombre AS proveedor_nombre',
+                'proveedors.empresa AS proveedor_empresa',
+                'proveedors.id AS proveedor_id'
+            )
+            ->where('compras.id', $id)
             ->first();
     }
+
 
     // ELIMINAR COMPRA CON SUS DETALLES Y LOTES
     public static function eliminarCompra($id)

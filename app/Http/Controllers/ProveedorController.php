@@ -12,24 +12,10 @@ class ProveedorController extends Controller
      */
     public function index(Request $request)
     {
-        $buscar = $request->input('buscar');
-        $activo = $request->input('estado');
-
-        $query = Proveedor::query();
-
-        if ($buscar) {
-            $query->where(function($q) use ($buscar) {
-                
-                $q->where('empresa','like', "%{$buscar}%")
-                ->orWhere('nombre','like', "%{$buscar}%");
-            });
-        }
-
-        if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int)$activo);
-        }
-
-        $proveedores = $query->orderBy('id','desc')->paginate(10);
+        $proveedores = Proveedor::listarProveedores(
+            $request->input('buscar'),
+            $request->input('estado')
+        );
         
         return view('admin.maestros.proveedores.index', compact('proveedores'));
     }
@@ -48,23 +34,19 @@ class ProveedorController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'empresa' => 'required|string|max:255',
+            'empresa'   => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
-            'nombre' => 'required|string|max:255',
-            'telefono' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'nombre'    => 'required|string|max:255',
+            'telefono'  => 'required|string|max:255',
+            'email'     => 'required|email|max:255|unique:proveedors,email',
         ]);
 
-        $proveedor = new Proveedor();
-        $proveedor->empresa = $validated['empresa'];
-        $proveedor->direccion = $validated['direccion'];
-        $proveedor->nombre = $validated['nombre'];
-        $proveedor->telefono = $validated['telefono'];
-        $proveedor->email = $validated['email'];
-        $proveedor->estado = true;
-        $proveedor->save();
+        Proveedor::crearProveedor($validated);
 
-        return redirect()->route('admin.maestros.proveedores.index')->with('success', 'Proveedor creado exitosamente.')->with('icono', 'success');
+        return redirect()
+            ->route('admin.maestros.proveedores.index')
+            ->with('success', 'Proveedor creado exitosamente.')
+            ->with('icono', 'success');
     }
 
     /**
@@ -72,7 +54,15 @@ class ProveedorController extends Controller
      */
     public function show($id)
     {
-        $proveedor = Proveedor::findOrFail($id);
+        $proveedor = Proveedor::obtenerProveedorConCompras($id);
+        
+        if (!$proveedor) {
+            return redirect()
+                ->route('admin.maestros.proveedores.index')
+                ->with('error', 'Proveedor no encontrado.')
+                ->with('icono', 'error');
+        }
+
         return view('admin.maestros.proveedores.show', compact('proveedor'));
     }
 
@@ -81,7 +71,15 @@ class ProveedorController extends Controller
      */
     public function edit($id)
     {
-        $proveedor = Proveedor::findOrFail($id);
+        $proveedor = Proveedor::obtenerProveedor($id);
+        
+        if (!$proveedor) {
+            return redirect()
+                ->route('admin.maestros.proveedores.index')
+                ->with('error', 'Proveedor no encontrado.')
+                ->with('icono', 'error');
+        }
+
         return view('admin.maestros.proveedores.edit', compact('proveedor'));
     }
 
@@ -90,25 +88,20 @@ class ProveedorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $proveedor = Proveedor::findOrFail($id);
-
         $validated = $request->validate([
-            'empresa' => 'required|string|max:255',
+            'empresa'   => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
-            'nombre' => 'required|string|max:255',
-            'telefono' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'nombre'    => 'required|string|max:255',
+            'telefono'  => 'required|string|max:255',
+            'email'     => 'required|email|max:255|unique:proveedors,email,' . $id,
         ]);
 
-        $proveedor->empresa = $validated['empresa'];
-        $proveedor->direccion = $validated['direccion'];
-        $proveedor->nombre = $validated['nombre'];
-        $proveedor->telefono = $validated['telefono'];
-        $proveedor->email = $validated['email'];
-        $proveedor->save();
+        Proveedor::actualizarProveedor($id, $validated);
 
-        return redirect()->route('admin.maestros.proveedores.index')->with('success', 'Proveedor actualizado exitosamente.')->with('icono', 'success');
-        
+        return redirect()
+            ->route('admin.maestros.proveedores.index')
+            ->with('success', 'Proveedor actualizado exitosamente.')
+            ->with('icono', 'success');
     }
 
     /**
@@ -116,9 +109,19 @@ class ProveedorController extends Controller
      */
     public function destroy($id)
     {
-        $proveedor = Proveedor::findOrFail($id);
-        $proveedor->delete();
+        // Verificar si tiene compras antes de eliminar
+        if (Proveedor::tieneCompras($id)) {
+            return redirect()
+                ->route('admin.maestros.proveedores.index')
+                ->with('error', 'No se puede eliminar el proveedor porque tiene compras asociadas.')
+                ->with('icono', 'error');
+        }
 
-        return redirect()->route('admin.maestros.proveedores.index')->with('success', 'Proveedor eliminado exitosamente.')->with('icono', 'success');
+        Proveedor::eliminarProveedor($id);
+
+        return redirect()
+            ->route('admin.maestros.proveedores.index')
+            ->with('success', 'Proveedor eliminado exitosamente.')
+            ->with('icono', 'success');
     }
 }

@@ -13,23 +13,10 @@ class CategoriaController extends Controller
      */
     public function index(Request $request)
     {
-        $buscar = $request->input('buscar');
-        $activo = $request->input('estado');
-
-        $query = Categoria::query();
-
-        if ($buscar) {
-            $query->where(function($q) use ($buscar) {
-                
-                $q->Where('nombre','like', "%{$buscar}%");
-            });
-        }
-
-        if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int)$activo);
-        }
-
-        $categorias = $query->orderBy('id','desc')->paginate(10);
+        $categorias = Categoria::listarCategorias(
+            $request->input('buscar'),
+            $request->input('estado')
+        );
 
         return view('admin.maestros.categorias.index', compact('categorias'));
     }
@@ -47,16 +34,14 @@ class CategoriaController extends Controller
      */
     public function store(CategoriaRequest $request)
     {
-        //Validamos los datos de la solicitud
         $validated = $request->validated();
 
+        Categoria::crearCategoria($validated);
 
-        $categoria = new Categoria();
-        $categoria->nombre = $validated['nombre'];
-        $categoria->descripcion = $validated['descripcion'];
-        $categoria->save();
-
-        return redirect()->route('admin.maestros.categorias.index')->with('mensaje', 'Categoría creada exitosamente.')->with('icono', 'success');
+        return redirect()
+            ->route('admin.maestros.categorias.index')
+            ->with('mensaje', 'Categoría creada exitosamente.')
+            ->with('icono', 'success');
     }
 
     /**
@@ -64,7 +49,15 @@ class CategoriaController extends Controller
      */
     public function show($id)
     {
-        $categoria = Categoria::findOrFail($id);
+        $categoria = Categoria::obtenerCategoriaConProductos($id);
+        
+        if (!$categoria) {
+            return redirect()
+                ->route('admin.maestros.categorias.index')
+                ->with('mensaje', 'Categoría no encontrada.')
+                ->with('icono', 'error');
+        }
+
         return view('admin.maestros.categorias.show', compact('categoria'));
     }
 
@@ -73,7 +66,15 @@ class CategoriaController extends Controller
      */
     public function edit($id)
     {
-        $categoria = Categoria::findOrFail($id);
+        $categoria = Categoria::obtenerCategoria($id);
+        
+        if (!$categoria) {
+            return redirect()
+                ->route('admin.maestros.categorias.index')
+                ->with('mensaje', 'Categoría no encontrada.')
+                ->with('icono', 'error');
+        }
+
         return view('admin.maestros.categorias.edit', compact('categoria'));
     }
 
@@ -82,15 +83,14 @@ class CategoriaController extends Controller
      */
     public function update(CategoriaRequest $request, $id)
     {
-        $categoria = Categoria::findOrFail($id);
-
         $validated = $request->validated();
 
-        $categoria->nombre = $validated['nombre'];
-        $categoria->descripcion = $validated['descripcion'];
-        $categoria->save();
+        Categoria::actualizarCategoria($id, $validated);
 
-        return redirect()->route('admin.maestros.categorias.index')->with('mensaje', 'Categoría actualizada exitosamente.')->with('icono', 'success');
+        return redirect()
+            ->route('admin.maestros.categorias.index')
+            ->with('mensaje', 'Categoría actualizada exitosamente.')
+            ->with('icono', 'success');
     }
 
     /**
@@ -98,9 +98,21 @@ class CategoriaController extends Controller
      */
     public function destroy($id)
     {
-        $categoria = Categoria::findOrFail($id);
-        $categoria->delete();
+        // Verificar si tiene productos antes de eliminar
+        if (Categoria::tieneProductos($id)) {
+            $cantidad = Categoria::contarProductos($id);
+            
+            return redirect()
+                ->route('admin.maestros.categorias.index')
+                ->with('mensaje', "No se puede eliminar la categoría porque tiene {$cantidad} producto(s) asociado(s).")
+                ->with('icono', 'error');
+        }
 
-        return redirect()->route('admin.maestros.categorias.index')->with('mensaje', 'Categoría eliminada exitosamente.')->with('icono', 'success');
+        Categoria::eliminarCategoria($id);
+
+        return redirect()
+            ->route('admin.maestros.categorias.index')
+            ->with('mensaje', 'Categoría eliminada exitosamente.')
+            ->with('icono', 'success');
     }
 }

@@ -74,7 +74,7 @@
                                             </div>
                                             <input type="text" class="form-control" id="proveedor_id" name="proveedor_id"
                                                 placeholder="Seleccione proveedor"
-                                                value="{{ old('proveedor_id', $compra->proveedor->nombre) }}" readonly>
+                                                value="{{ old('proveedor_id', $compra->proveedor_nombre) }}" readonly>
 
 
                                         </div>
@@ -188,7 +188,7 @@
                     <div class="row">
                         <div class="col-md-12">
 
-                            @if ($compra->detalleCompras->count() > 0)
+                            @if ($detalles->count() > 0)
                                 <h2>Items de Compra</h2>
                                 <table class="table table-bordered">
                                     <thead>
@@ -201,13 +201,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($compra->detalleCompras as $detalle)
+                                        @foreach ($detalles as $detalle)
                                             <tr>
-                                                <td>{{ $detalle->producto->nombre }}</td>
-                                                <td>{{ $detalle->lote->codigo_lote }}</td>
-                                                <td>{{ $detalle->cantidad }}</td>
-                                                <td>{{ $detalle->precio_unitario }}</td>
-                                                <td>{{ $detalle->subtotal }}</td>
+                                                <td>{{ $detalle->producto_nombre }}</td>
+                                                <td>{{ $detalle->codigo_lote }}</td>
+                                                <td>{{ $detalle->cantidad }} {{ $detalle->unidad_abreviatura }}</td>
+                                                <td>${{ number_format($detalle->precio_unitario, 2) }}</td>
+                                                <td>${{ number_format($detalle->subtotal, 2) }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

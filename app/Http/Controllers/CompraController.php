@@ -55,7 +55,10 @@ class CompraController extends Controller
     public function show($id)
     {
         $compra = Compra::obtenerCompra($id);
-        return view('admin.movimientos.compras.show', compact('compra'));
+        $sucursal_destino = Compra::obtenerSucursalDestino($id);
+        $detalles = Compra::obtenerDetallesCompra($id);
+        
+        return view('admin.movimientos.compras.show', compact('compra', 'sucursal_destino', 'detalles'));
     }
 
     public function destroy($id)

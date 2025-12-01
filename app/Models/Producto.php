@@ -130,7 +130,7 @@ class Producto extends Model
      */
     public static function obtenerProducto($id)
     {
-        return DB::table('productos')
+        $producto = DB::table('productos')
             ->select(
                 'productos.*',
                 'categorias.nombre as categoria_nombre',
@@ -141,7 +141,22 @@ class Producto extends Model
             ->leftJoin('unidades', 'productos.unidad_id', '=', 'unidades.id')
             ->where('productos.id', $id)
             ->first();
+
+        if (!$producto) return null;
+
+        // Crear objetos para mantener compatibilidad con las vistas
+        $producto->categoria = (object)[
+            'nombre' => $producto->categoria_nombre
+        ];
+
+        $producto->unidad = (object)[
+            'nombre'       => $producto->unidad_nombre,
+            'abreviatura'  => $producto->unidad_abreviatura
+        ];
+
+        return $producto;
     }
+
 
     /**
      * Actualizar producto por id (recibe array validado)
