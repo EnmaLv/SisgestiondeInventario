@@ -40,21 +40,29 @@ class Compra extends Model
     // LISTAR COMPRAS CON FILTROS
     public static function listarCompras($buscar, $activo)
     {
-        $query = DB::table('compras');
+        $query = DB::table('compras')
+            ->join('proveedors', 'proveedors.id', '=', 'compras.proveedor_id')
+            ->select(
+                'compras.*',
+                'proveedors.empresa as proveedor_empresa',
+                'proveedors.id as proveedor_id'
+            );
 
         if ($buscar) {
             $query->where(function ($q) use ($buscar) {
-                $q->where('codigo', 'like', "%{$buscar}%")
-                  ->orWhere('nombre', 'like', "%{$buscar}%");
+                $q->where('proveedors.empresa', 'like', "%{$buscar}%")
+                ->orWhere('compras.id', 'like', "%{$buscar}%");
             });
         }
 
         if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int) $activo);
+            $query->where('compras.estado', (int) $activo);
         }
 
-        return $query->orderBy('id', 'desc')->paginate(10);
+        return $query->orderBy('compras.id', 'desc')->paginate(10);
     }
+
+
 
     // CREAR COMPRA
     public static function crearCompra($data)

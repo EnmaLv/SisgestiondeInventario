@@ -21,7 +21,7 @@ class CompraController extends Controller
 
     public function create()
     {
-        $datos = (new \App\Models\Compra())->getDatosFormulario();
+        $datos = (new Compra())->getDatosFormulario();
 
         return view('admin.movimientos.compras.create', $datos);
     }
@@ -29,7 +29,7 @@ class CompraController extends Controller
 
     public function edit($id)
     {
-        $compra = \App\Models\Compra::findOrFail($id);
+        $compra = Compra::findOrFail($id);
 
         $datos = $compra->getDatosFormulario();
 

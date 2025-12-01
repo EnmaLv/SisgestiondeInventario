@@ -19,33 +19,20 @@ class ProductoController extends Controller
         $buscar = $request->input('buscar');
         $activo = $request->input('estado');
 
-        $query = Producto::query();
-
-        if ($buscar) {
-            $query->where(function($q) use ($buscar) {
-                
-                $q->where('codigo','like', "%{$buscar}%")
-                ->orWhere('nombre','like', "%{$buscar}%");
-            });
-        }
-
-        if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int)$activo);
-        }
-
-        $productos = $query->orderBy('id','desc')->paginate(10);
+        // Usa el método del modelo (query builder encapsulado)
+        $productos = \App\Models\Producto::listarProductos($buscar, $activo, 10);
 
         return view('admin.maestros.productos.index', compact('productos'));
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $categorias = Categoria::all();
-        $unidades = Unidad::all();
-        return view('admin.maestros.productos.create', compact('categorias', 'unidades'));
+        $datos = \App\Models\Producto::getDatosFormulario();
+        return view('admin.maestros.productos.create', $datos);
     }
 
     /**
@@ -53,62 +40,26 @@ class ProductoController extends Controller
      */
     public function store(ProductoRequest $request)
     {
-        try {
-            $validated = $request->validated();
+        $validated = $request->validated();
 
-            // Obtener categoría
-            $categoria = Categoria::findOrFail($validated['categoria_id']);
-
-            // Crear código automático
-            $codigo = strtoupper(
-                substr($categoria->nombre, 0, 3) . '-' .
-                substr($validated['nombre'], 0, 3) . '-' .
-                rand(100, 999)
-            );
-
-            // Reemplazar código
-            $validated['codigo'] = $codigo;
-
-            $producto = new Producto();
-            $producto->categoria_id = $validated['categoria_id'];
-            $producto->codigo = $validated['codigo'];
-            $producto->nombre = $validated['nombre'];
-            $producto->descripcion = $validated['descripcion'];
-            
-            if ($request->hasFile('imagen')) {
-                $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
-            } else {
-                $producto->imagen = 'imagenes/productos/default.png';
-            }
-            
-            $producto->precio_compra = $validated['precio_compra'];
-            $producto->stock_minimo = $validated['stock_minimo'];
-            $producto->stock_maximo = $validated['stock_maximo'];
-            $producto->unidad_id = $validated['unidad_id'];
-            $producto->estado = $validated['estado'] ?? true;
-
-            $producto->save();
-
-            return redirect()->route('admin.maestros.productos.index')
-                ->with('success', 'Producto creado exitosamente.')
-                ->with('icon', 'success');
-                
-        } catch (\Exception $e) {
-            \Log::error('Error al crear producto: ' . $e->getMessage());
-            
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Error al crear producto: ' . $e->getMessage());
+        // Manejo de imagen (el controlador gestiona el filesystem)
+        if ($request->hasFile('imagen')) {
+            $path = $request->file('imagen')->store('imagenes/productos', 'public');
+            $validated['imagen'] = $path;
+        } else {
+            $validated['imagen'] = 'imagenes/productos/default.png';
         }
+
+        // Delegar creación al modelo (query builder)
+        $productoId = Producto::crearProducto($validated);
+
+        return redirect()->route('admin.maestros.productos.index')
+            ->with('success', 'Producto creado exitosamente.');
     }
 
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $producto = Producto::findOrFail($id);
+        $producto = Producto::obtenerProducto($id);
         return view('admin.maestros.productos.show', compact('producto'));
     }
 
@@ -117,11 +68,12 @@ class ProductoController extends Controller
      */
     public function edit($id)
     {
-        
         $producto = Producto::findOrFail($id);
-        $categorias = Categoria::all();
-        $unidades = Unidad::all();
-        return view('admin.maestros.productos.edit', compact('producto', 'categorias', 'unidades'));
+        $datos = Producto::getDatosFormulario();
+
+        return view('admin.maestros.productos.edit', array_merge($datos, [
+            'producto' => $producto
+        ]));
     }
 
     /**
@@ -129,38 +81,21 @@ class ProductoController extends Controller
      */
     public function update(ProductoRequest $request, $id)
     {
-        $producto = Producto::findOrFail($id);
-
         $validated = $request->validated();
 
-        $producto->codigo = $validated['codigo'];
-        $producto->nombre = $validated['nombre'];
-        $producto->descripcion = $validated['descripcion'];
         if ($request->hasFile('imagen')) {
-            $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
-        } else {
-            // Mantener la imagen actual si no se sube una nueva
-            $producto->imagen = $producto->imagen;
+            $path = $request->file('imagen')->store('imagenes/productos', 'public');
+            $validated['imagen'] = $path;
         }
-        $producto->precio_compra = $validated['precio_compra'];
-        $producto->stock_minimo = $validated['stock_minimo'];
-        $producto->stock_maximo = $validated['stock_maximo'];
-        $producto->unidad_id = $validated['unidad_id'];
-        $producto->categoria_id = $validated['categoria_id'];
-        $producto->estado = true;
-        $producto->save();
 
-        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto actualizado exitosamente.')->with('icon', 'success');
+        Producto::actualizarProducto($id, $validated);
+
+        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto actualizado exitosamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        $producto = Producto::findOrFail($id);
-        $producto->delete();
-
-        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto eliminado exitosamente.')->with('icon', 'success');
+        Producto::eliminarProducto($id);
+        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto eliminado exitosamente.');
     }
 }

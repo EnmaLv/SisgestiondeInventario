@@ -101,7 +101,7 @@
                                 <td class="text-center">
                                     {{ ($compras->currentPage() - 1) * $compras->perPage() + $loop->iteration }}
                                 </td>
-                                <td>{{ $compra->proveedor->empresa }}</td>
+                                <td>{{ $compra->proveedor_empresa }}</td>
                                 <td>{{ $compra->fecha }}</td>
                                 <td>{{ $compra->total }}</td>
                                 <td class="text-center">
@@ -130,13 +130,13 @@
                                                 @method('DELETE')
 
                                                 <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                    onclick="preguntar{{ $compra->proveedor->id }}(event)">
+                                                    onclick="preguntar{{ $compra->proveedor_id }}(event)">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
 
                                             <script>
-                                                function preguntar{{ $compra->proveedor->id }}(event) {
+                                                function preguntar{{ $compra->proveedor_id }}(event) {
                                                     event.preventDefault();
 
                                                     Swal.fire({
