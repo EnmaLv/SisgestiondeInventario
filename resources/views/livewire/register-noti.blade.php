@@ -26,9 +26,7 @@
                                 @endforeach
                             </select>
 
-                            @error('desayuno_del_dia')
-                                <div class="rd-error mt-2">{{ $message }}</div>
-                            @enderror
+
                         </div>
                     </div>
 
@@ -40,13 +38,12 @@
                             <input type="number" name="cantidad_servido" id="cantidad_servido"
                                 wire:model="cantidad_servido"
                                 class="rd-input @error('cantidad_servido') rd-input-error @enderror" placeholder="Cant."
-                                @disabled($desayuno_del_dia) min="0"/>
+                                @disabled($desayuno_del_dia) min="0" />
 
-                            @error('cantidad_servido')
-                                <div class="rd-error mt-2">{{ $message }}</div>
-                            @enderror
+
                         </div>
                     </div>
+
 
                     <div class="col-md-12 d-flex mt-2 justify-content-end">
                         <button class="rd-btn rd-btn-primary w-90" type="submit" aria-label="Guardar desayuno"
@@ -55,19 +52,31 @@
                             Guardar Desayuno
                         </button>
                     </div>
+                    @error('cantidad_servido')
+                        <div class="rd-error mt-2">No hay suficiente stock</div>
+                    @enderror
+                    @error('desayuno_del_dia')
+                        <div class="rd-error mt-2">Registre los ingredientes para continuar</div>
+                    @enderror
 
                     @if (!$horarioPermitido)
-                        <div style="display: flex; align-items: center; padding: 1rem; margin-top: 1rem; background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0.375rem; margin-inline: auto;">
+                        <div
+                            style="display: flex; align-items: center; padding: 1rem; margin-top: 1rem; background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0.375rem; margin-inline: auto;">
                             <div style="flex-shrink: 0;">
-                                <svg style="width: 1.5rem; height: 1.5rem; color: #ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <svg style="width: 1.5rem; height: 1.5rem; color: #ef4444;" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                             <div style="margin-left: 0.75rem;">
-                                <h3 style="margin: 0; font-size: 0.875rem; font-weight: 500; color: #991b1b;">Horario no permitido</h3>
+                                <h3 style="margin: 0; font-size: 0.875rem; font-weight: 500; color: #991b1b;">Horario no
+                                    permitido</h3>
                                 <div style="margin-top: 0.25rem; font-size: 0.875rem; color: #b91c1c;">
-                                    <p style="margin: 0.25rem 0;">El registro de comedor solo está disponible de 12:00 AM a 12:00 PM.</p>
-                                    <p style="margin: 0.25rem 0 0;">Por favor, inténtalo de nuevo dentro del horario establecido.</p>
+                                    <p style="margin: 0.25rem 0;">El registro de comedor solo está disponible de 12:00
+                                        AM a 12:00 PM.</p>
+                                    <p style="margin: 0.25rem 0 0;">Por favor, inténtalo de nuevo dentro del horario
+                                        establecido.</p>
                                 </div>
                             </div>
                         </div>
@@ -160,14 +169,15 @@
                                     class="fas fa-search"></i></button>
                         </form>
 
-                        <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                            aria-controls="filters" title="Filtros">
+                        <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters"
+                            aria-expanded="false" aria-controls="filters" title="Filtros">
                             <i class="fas fa-filter"></i>
                         </button>
 
                         <div class="rd-export-group">
                             <a href="{{ route('admin.movimientos.registro_diario.export_excel', request()->only(['buscar', 'fecha_desde', 'fecha_hasta'])) }}"
-                                class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
+                                class="rd-btn rd-btn-success" title="Exportar Excel"><i
+                                    class="fas fa-file-excel"></i>
                                 Excel</a>
 
                             <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i

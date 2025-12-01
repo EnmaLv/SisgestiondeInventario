@@ -51,7 +51,7 @@ class RegisterNoti extends Component
         $registroHoy = DetalleRegistroDiario::whereDate('created_at', $hoy)->first();
 
         $hora = now()->format('H:i');
-        $this->horarioPermitido = $hora >= '00:00' && $hora <= '12:00';
+        $this->horarioPermitido = $hora >= '09:00' && $hora <= '22:00';
 
         if ($registroHoy) {
             // Ya existe → bloquear y cargar los datos
@@ -70,8 +70,8 @@ class RegisterNoti extends Component
     {
         $hora = now()->format('H:i');
 
-        if (!($hora >= '00:00' && $hora <= '12:00')) {
-            $this->addError('hora', 'Solo puede registrar desayuno entre 12:00am y 12:00pm.');
+        if (!($hora >= '09:00' && $hora <= '22:00')) {
+            $this->addError('hora', 'Solo puede registrar desayuno entre 09:00am y 10:00pm.');
             return;
         }
 
