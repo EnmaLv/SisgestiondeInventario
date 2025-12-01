@@ -114,7 +114,7 @@
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-toggle-on"></i></span>
                             <select name="activo" class="rd-input">
-                                <option value="">Seleccione...</option>
+                                <option value="" selected disabled>Seleccione...</option>
                                 <option value="1" {{ $sucursal->activo == '1' ? 'selected' : '' }}>Activo</option>
                                 <option value="0" {{ $sucursal->activo == '0' ? 'selected' : '' }}>Inactivo</option>
                             </select>

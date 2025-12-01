@@ -212,3 +212,11 @@
         min-width: 140px;
     }
 }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
