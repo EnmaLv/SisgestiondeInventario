@@ -25,7 +25,7 @@ class ProductoFactory extends Factory
             'precio_compra' => $this->faker->randomFloat(2, 10, 100),
             'stock_minimo' => $this->faker->numberBetween(1, 5),
             'stock_maximo' => $this->faker->numberBetween(10, 20),
-            'unidad_id' => $this->faker->numberBetween(1, 10),
+            'unidad_id' => $this->faker->numberBetween(1, 4),
             'estado' => $this->faker->boolean(80),
         ];
     }

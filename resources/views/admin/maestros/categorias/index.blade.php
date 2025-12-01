@@ -100,7 +100,11 @@
                                 <td class="text-center">
                                     {{ ($categorias->currentPage() - 1) * $categorias->perPage() + $loop->iteration }}</td>
                                 <td class="text-center">{{ $categoria->nombre }}</td>
-                                <td class="text-center">{{ $categoria->descripcion }}</td>
+                                @if ($categoria->descripcion)
+                                    <td class="text-center">{{ $categoria->descripcion }}</td>
+                                @else
+                                    <td class="text-center">Ninguna</td>
+                                @endif
                                 <td class="text-center">
                                     @if ($categoria->estado)
                                         <span class="rd-badge rd-badge-success">Activo</span>

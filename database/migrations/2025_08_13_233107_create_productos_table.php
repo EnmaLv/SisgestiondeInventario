@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->string('codigo', 50)->unique();
             $table->string('nombre', 100);
-            $table->text('descripcion');
-            $table->string('imagen', 255);
+            $table->text('descripcion')->nullable();
+            $table->string('imagen', 255)->nullable();
             $table->decimal('precio_compra', 10, 2);
             $table->decimal('stock_minimo', 14, 2)->default(0);
             $table->decimal('stock_maximo', 14, 2)->default(0);

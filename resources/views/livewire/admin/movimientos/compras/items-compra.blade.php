@@ -162,8 +162,7 @@
                     enviar el correo al proveedor.</span>
             @else
                 <a style="float: right" href="{{ route('admin.movimientos.compras.enviarCorreo', $compra) }}"
-                    class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar Correo al
-                    Proveedor</a>
+                    class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar Correo a Compras</a>
             @endif
         </div>
     </div>

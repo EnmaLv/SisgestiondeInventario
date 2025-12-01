@@ -333,19 +333,19 @@ return [
 
         [
             'text' => 'Platos del Día',
-            'icon' => 'fas fa-utensils text-primary',
+            'icon' => 'fas fa-utensils ',
             'active' => ['admin/maestros/platos*'],
             'submenu' => [
                 [
                     'text' => 'Recetas',
                     'url' => 'admin/maestros/recetas',
-                    'icon' => 'fas fa-book-open text-info',
+                    'icon' => 'fas fa-book-open ',
                     'active' => ['admin/maestros/recetas*'],
                 ],
                 [
                     'text' => 'Ingredientes',
                     'url' => 'admin/maestros/receta_ingredientes',
-                    'icon' => 'fas fa-carrot text-warning',
+                    'icon' => 'fas fa-carrot ',
                     'active' => ['admin/maestros/receta_ingredientes*'],
                 ],
             ]
@@ -354,28 +354,28 @@ return [
         [
             'text' => 'Sede y Anexos',
             'url' => 'admin/maestros/sucursales',
-            'icon' => 'fas fa-store text-primary',
+            'icon' => 'fas fa-store ',
             'active' => ['admin/maestros/sucursales*'],
         ],
 
         [
             'text' => 'Categorías de Productos',
             'url' => 'admin/maestros/categorias',
-            'icon' => 'fas fa-tags text-success',
+            'icon' => 'fas fa-tags ',
             'active' => ['admin/maestros/categorias*'],
         ],
 
         [
             'text' => 'Productos y Alimentos',
             'url' => 'admin/maestros/productos',
-            'icon' => 'fas fa-box text-secondary',
+            'icon' => 'fas fa-box ',
             'active' => ['admin/maestros/productos*'],
         ],
 
         [
             'text' => 'Proveedores',
             'url' => 'admin/maestros/proveedores',
-            'icon' => 'fas fa-truck text-orange',
+            'icon' => 'fas fa-truck ',
             'active' => ['admin/maestros/proveedores*'],
         ],
 
@@ -400,30 +400,30 @@ return [
         [
             'text' => 'Registrar Compras',
             'url' => 'admin/movimientos/compras',
-            'icon' => 'fas fa-shopping-cart text-success',
+            'icon' => 'fas fa-shopping-cart ',
             'active' => ['admin/movimientos/compras*'],
         ],
 
         [
             'text' => 'Inventario',
-            'icon' => 'fas fa-warehouse text-warning',
+            'icon' => 'fas fa-warehouse ',
             'active' => ['admin/movimientos/inventario*'],
             'submenu' => [
                 [
                     'text' => 'Lotes',
                     'url' => 'admin/movimientos/lotes',
-                    'icon' => 'fas fa-boxes text-secondary',
+                    'icon' => 'fas fa-boxes ',
                 ],
                 [
                     'text' => 'Existencias por Sucursal',
                     'url' => 'admin/movimientos/sucursales_lotes',
-                    'icon' => 'fas fa-store-alt text-primary',
+                    'icon' => 'fas fa-store-alt ',
                     'active' => ['admin/movimientos/sucursales_lotes*'],
                 ],
                 [
                     'text' => 'Historial de Cambios',
                     'url' => 'admin/movimientos/historial_movimientos',
-                    'icon' => 'fas fa-clipboard-list text-info',
+                    'icon' => 'fas fa-clipboard-list ',
                 ],
             ]
         ],
@@ -431,7 +431,7 @@ return [
         [
             'text' => 'Registro Diario de Comidas',
             'url' => 'admin/movimientos/registro_diario',
-            'icon' => 'fas fa-concierge-bell text-primary',
+            'icon' => 'fas fa-concierge-bell ',
             'active' => ['admin/movimientos/registro_diario*'],
         ],
 
@@ -444,7 +444,7 @@ return [
         [
             'text' => 'Reportes Generales',
             'url' => 'admin/consultas/reportes',
-            'icon' => 'fas fa-file-alt text-info',
+            'icon' => 'fas fa-file-alt ',
         ], */
 
 
