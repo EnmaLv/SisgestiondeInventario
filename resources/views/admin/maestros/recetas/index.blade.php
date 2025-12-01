@@ -100,7 +100,11 @@
                                 <td class="text-center">
                                     {{ ($recetas->currentPage() - 1) * $recetas->perPage() + $loop->iteration }}</td>
                                 <td class="text-center">{{ $receta->nombre }}</td>
-                                <td class="text-center">{{ $receta->descripcion }}</td>
+                                @if ($receta->descripcion)
+                                    <td class="text-center">{{ $receta->descripcion }}</td>
+                                @else
+                                    <td class="text-center">Ninguna</td>
+                                @endif
                                 <td class="text-center">
                                     @if ($receta->estado)
                                         <span class="rd-badge rd-badge-success">Activo</span>

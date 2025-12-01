@@ -16,4 +16,9 @@ class DetalleRegistroDiario extends Model
         'receta_id',
         'cantidad_servido',
     ];
+
+    public function receta()
+    {
+        return $this->belongsTo(Receta::class, 'receta_id');
+    }
 }

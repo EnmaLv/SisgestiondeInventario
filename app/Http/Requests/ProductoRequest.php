@@ -23,9 +23,9 @@ class ProductoRequest extends FormRequest
     {
         return [
             'categoria_id' => 'required|exists:categorias,id',
-            'codigo' => 'required|string|max:255',
+            'codigo' => 'nullable|string|max:255',
             'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string',
+            'descripcion' => 'nullable|string',
             // permitir que no venga imagen en creación
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'precio_compra' => 'required|numeric',

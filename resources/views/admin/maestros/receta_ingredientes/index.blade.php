@@ -91,7 +91,7 @@
                             <th style="width:60px">#</th>
                             <th class="text-center">Nombre</th>
                             <th class="text-center">Cantidad por Porcion</th>
-                            <th style="width:150px" class="text-center">Acciones</th>
+                            {{-- <th style="width:150px" class="text-center">Acciones</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -100,18 +100,19 @@
                                 <td class="text-center">
                                     {{ ($recetas->currentPage() - 1) * $recetas->perPage() + $loop->iteration }}
                                 </td>
-                                <td class="text-left">
+                                <td class="text-center">
                                     <strong>{{ $receta->nombre }}</strong>
                                     @if (!empty($receta->descripcion))
                                         <div class="text-muted" style="font-size:.9rem;">
                                             {{ Str::limit($receta->descripcion, 120) }}</div>
                                     @endif
                                 </td>
-                                <td class="text-left">
+                                <td class="text-center">
                                     @if ($receta->recetaIngredientes->isEmpty())
                                         <em class="text-muted">No tiene ingredientes</em>
                                     @else
-                                        <ul style="padding-left: 1rem; margin:0;">
+                                        <ul
+                                            style="padding-left: 1rem; margin:0 auto; text-decoration: none; list-style: none;">
                                             @foreach ($receta->recetaIngredientes as $ing)
                                                 <li style="margin-bottom:4px;">
                                                     {{ optional($ing->producto)->nombre ?? 'Producto eliminado' }}
@@ -126,10 +127,10 @@
                                 <td class="text-center">
                                     <div class="rd-action-group">
 
-                                        <a href="{{ url('admin/maestros/receta_ingredientes/' . $ing->id . '/edit') }}"
-                                            class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
+                                        {{-- <a href="{{ route('admin.maestros.receta_ingredientes.edit', $ing->id) }}"
+                                            class="rd-action" title="Editar"><i class="fas fa-edit"></i></a> --}}
 
-                                        <form action="{{ url('admin/maestros/receta_ingredientes/' . $ing->id) }}"
+                                        {{-- <form action="{{ url('admin/maestros/receta_ingredientes/' . $ing->id) }}"
                                             method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
@@ -137,9 +138,9 @@
                                                 onclick="preguntar{{ $ing->id }}(event)">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
 
-                                        <script>
+                                        {{-- <script>
                                             function preguntar{{ $ing->id }}(event) {
                                                 event.preventDefault();
                                                 Swal.fire({
@@ -157,7 +158,7 @@
                                                     }
                                                 });
                                             }
-                                        </script>
+                                        </script> --}}
                                     </div>
                                 </td>
 

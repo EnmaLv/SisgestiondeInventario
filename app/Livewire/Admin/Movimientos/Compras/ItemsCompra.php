@@ -45,40 +45,102 @@ class ItemsCompra extends Component
         $this->cantidad = 1;
     }
 
+    // ----------------------
+    // Ajusta las reglas: codigoLote puede ser nullable (se genera si no viene)
+    // ----------------------
     protected $rules = [
         'productoId' => 'required|exists:productos,id',
-        'codigoLote' => 'required|string|max:50',
+        'codigoLote' => 'nullable|string|max:50',
         'cantidad' => 'required|integer|min:1',
         'precioCompra' => 'required|numeric|min:0',
         'fechaVencimiento' => 'required|date|after:today',
     ];
 
+    // ----------------------
+    // Cuando cambie producto -> cargar precio y generar código de lote
+    // ----------------------
     public function updatedproductoId($value)
     {
-        $producto = Producto::find($value);
+        $producto = Producto::with('categoria')->find($value);
         if ($producto) {
             $this->precioCompra = $producto->precio_compra;
+            // Generar un código de lote sugerido automáticamente
+            $this->codigoLote = $this->generateCodigoLote($producto);
         } else {
             $this->precioCompra = 0;
+            $this->codigoLote = null;
         }
     }
 
+    /**
+     * Genera un código de lote legible:
+     * formato: PRD-YYYYMMDD-XXX
+     * PRD = 3 letras del nombre del producto
+     * XXX = número random 3 dígitos (si ya existe, se regenera)
+     */
+    protected function generateCodigoLote(Producto $producto): string
+    {
+        // 3 letras del nombre del producto, solo alfanumérico
+        $prod = $producto->nombre ?? 'PROD';
+        $prodPart = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $prod), 0, 3));
+
+        // Año actual
+        $year = now()->format('Y');
+
+        // Día juliano (001 - 365/366)
+        $julianDay = now()->format('z') + 1; // z = 0–365, por eso +1
+        $julian = str_pad($julianDay, 3, '0', STR_PAD_LEFT);
+
+        // Construir código base
+        $codigo = "{$julian}-{$year}-{$prodPart}";
+
+        // Garantizar unicidad
+        $contador = 1;
+        $codigoFinal = $codigo;
+
+        while (Lote::where('codigo_lote', $codigoFinal)->exists()) {
+            $codigoFinal = "{$codigo}-{$contador}";
+            $contador++;
+        }
+
+        return $codigoFinal;
+    }
+
+
+    // ----------------------
+    // Nuevo agregarItems (reemplaza el original)
+    // ----------------------
     public function agregarItems()
     {
+        // Si no hay producto seleccionado, la validación lo atrapará
+        // pero generamos lote por si el usuario lo borró manualmente
+        $producto = Producto::find($this->productoId);
+        if (!$producto) {
+            $this->dispatch('mostrar-alerta', icono: 'error', mensaje: 'Seleccione un producto válido.');
+            return;
+        }
+
+        // Asegurarse que siempre haya un codigo de lote (auto)
+        if (empty($this->codigoLote)) {
+            $this->codigoLote = $this->generateCodigoLote($producto);
+        }
+
+        // validamos (codigoLote es nullable, pero ya lo tenemos)
         $this->validate();
+
         DB::beginTransaction();
         try {
-            $producto = Producto::findOrFail($this->productoId);
             $unidadId = $producto->unidad_id;
 
+            // Crear lote con cantidad inicial = cantidad (opcional: dejar 0 y sumar en finalización)
             $lote = Lote::create([
                 'producto_id' => $this->productoId,
                 'proveedor_id' => $this->compra->proveedor_id,
                 'codigo_lote' => $this->codigoLote,
                 'fecha_entrada' => now()->toDateString(),
                 'fecha_vencimiento' => $this->fechaVencimiento,
-                'cantidad_inicial' => 0,
-                'cantidad_actual' => 0,
+                'cantidad_inicial' => $this->cantidad,      // puedes poner 0 si prefieres
+                'cantidad_actual' => $this->cantidad,
                 'precio_compra' => $this->precioCompra,
                 'estado' => true,
             ]);
@@ -89,16 +151,18 @@ class ItemsCompra extends Component
                 'cantidad' => $this->cantidad,
                 'precio_unitario' => $this->precioCompra,
                 'subtotal' => $this->cantidad * $this->precioCompra,
-                'unidad_id' => $unidadId, // ✔️ NECESARIO
+                'unidad_id' => $unidadId,
             ]);
 
+            // recalcular total (si quieres hacerlo inmediatamente sobre la relación cargada)
+            $this->compra->load('detalleCompras'); // refrescar relación
             $this->compra->total = $this->compra->detalleCompras->sum('subtotal');
             $this->compra->save();
 
             DB::commit();
-            $this->cargarDatos();
-            $this->aggItems();
 
+            $this->cargarDatos();
+            $this->aggItems(); // notificación
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch(
@@ -108,6 +172,8 @@ class ItemsCompra extends Component
             );
         }
     }
+
+
 
 
     public function render()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Registro_diario;
+use App\Models\Receta;
 use App\Models\Persona; 
 use App\Utilities\PdfGeneratorUtil;
 use App\Exports\RegistroDiarioExport;
@@ -33,7 +34,9 @@ class RegistroDiarioController extends Controller
 
             $data = Registro_diario::showData();
         }
-        return view('admin.movimientos.registro_diario.index', compact('data'));
+
+        $comidas = Receta::all();
+        return view('admin.movimientos.registro_diario.index', compact('data', 'comidas'));
     }
 
     public function show($id)

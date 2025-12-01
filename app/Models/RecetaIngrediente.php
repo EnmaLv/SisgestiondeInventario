@@ -20,6 +20,12 @@ class RecetaIngrediente extends Model
     ];
 
     // Relaciones
+
+    public function registro_diario()
+    {
+        return $this->hasMany(Registro_diario::class);
+    }
+    
     public function receta()
     {
         return $this->belongsTo(Receta::class, 'recetas_id');

@@ -137,7 +137,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4">No hay sucursales</td>
+                                <td colspan="9" class="text-center py-4">No hay Lotes</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -157,8 +157,8 @@
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
     <style>
         /* ===========================
-                                                           RD FILTER INPUT
-                                                           =========================== */
+                                                               RD FILTER INPUT
+                                                               =========================== */
         .rd-filter-input {
             width: 100%;
             background: #ffffff;

@@ -81,9 +81,8 @@
                                         <label class="font-weight-bold">Código</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                            <input type="text" value="{{ old('codigo') }}"
-                                                class="form-control rd-filter-input" name="codigo"
-                                                placeholder="Código del producto">
+                                            <input type="text" class="form-control" value="Se generará automáticamente"
+                                                disabled>
                                         </div>
                                         @error('codigo')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -155,9 +154,8 @@
                                         <label class="font-weight-bold">Stock Máximo</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
-                                            <input type="number" class="form-control rd-filter-input"
-                                                name="stock_maximo" value="{{ old('stock_maximo') }}"
-                                                placeholder="Máximo">
+                                            <input type="number" class="form-control rd-filter-input" name="stock_maximo"
+                                                value="{{ old('stock_maximo') }}" placeholder="Máximo">
                                         </div>
                                         @error('stock_maximo')
                                             <div class="text-danger"><b>{{ $message }}</b></div>

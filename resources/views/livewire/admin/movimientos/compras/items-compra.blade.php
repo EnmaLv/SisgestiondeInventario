@@ -31,7 +31,7 @@
                         <span class="input-group-text inline-block"><i class="fas fa-box"></i></span>
                     </div>
                     <input type="text" wire:model="codigoLote" class="form-control" id="lote" name="lote"
-                        placeholder="Ingrese el lote" value="{{ old('lote', $compra->lote) }}">
+                        placeholder="Código de lote" readonly>
                 </div>
                 @error('codigoLote')
                     <div class="alert text-danger p-0 m-0">
@@ -40,6 +40,7 @@
                 @enderror
             </div>
         </div>
+
 
         <div class="col-md-2">
             <div class="form-group">

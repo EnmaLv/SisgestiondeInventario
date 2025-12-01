@@ -56,6 +56,19 @@ class ProductoController extends Controller
         try {
             $validated = $request->validated();
 
+            // Obtener categoría
+            $categoria = Categoria::findOrFail($validated['categoria_id']);
+
+            // Crear código automático
+            $codigo = strtoupper(
+                substr($categoria->nombre, 0, 3) . '-' .
+                substr($validated['nombre'], 0, 3) . '-' .
+                rand(100, 999)
+            );
+
+            // Reemplazar código
+            $validated['codigo'] = $codigo;
+
             $producto = new Producto();
             $producto->categoria_id = $validated['categoria_id'];
             $producto->codigo = $validated['codigo'];
@@ -65,14 +78,15 @@ class ProductoController extends Controller
             if ($request->hasFile('imagen')) {
                 $producto->imagen = $request->file('imagen')->store('imagenes/productos', 'public');
             } else {
-                $producto->imagen = 'imagenes/productos/default.png'; // Imagen por defecto
+                $producto->imagen = 'imagenes/productos/default.png';
             }
             
             $producto->precio_compra = $validated['precio_compra'];
             $producto->stock_minimo = $validated['stock_minimo'];
             $producto->stock_maximo = $validated['stock_maximo'];
             $producto->unidad_id = $validated['unidad_id'];
-            $producto->estado = $validated['estado'] ?? true; // true por defecto
+            $producto->estado = $validated['estado'] ?? true;
+
             $producto->save();
 
             return redirect()->route('admin.maestros.productos.index')
@@ -87,6 +101,7 @@ class ProductoController extends Controller
                 ->with('error', 'Error al crear producto: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Display the specified resource.

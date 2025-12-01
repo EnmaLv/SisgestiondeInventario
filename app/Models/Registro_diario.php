@@ -19,6 +19,10 @@ class Registro_diario extends Model
 
     public $timestamps = false;
 
+    public function receta_ingrediente()
+    {
+        return $this->belongsTo(RecetaIngrediente::class);
+    }
 
     public function persona()
     {
@@ -74,7 +78,6 @@ class Registro_diario extends Model
 
         //Lo unimos en un solo array
         $colums = [...$personaColumn, ...$pnfColumn, ...$registroColumn];
-
         $query = self::relacionTable()->select($colums)->where('registro_diario_c.id', $id);
         
         return $query->first();

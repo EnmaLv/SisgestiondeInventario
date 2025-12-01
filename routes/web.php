@@ -90,12 +90,9 @@ Route::delete('/admin/maestros/recetas/{receta}', [App\Http\Controllers\RecetaCo
 Route::get('/admin/maestros/receta_ingredientes', [App\Http\Controllers\RecetaIngredienteController::class, 'index'])->name('admin.maestros.receta_ingredientes.index')->middleware('auth');
 Route::get('/admin/maestros/receta_ingredientes/create', [App\Http\Controllers\RecetaIngredienteController::class, 'create'])->name('admin.maestros.receta_ingredientes.create')->middleware('auth');
 Route::post('/admin/maestros/receta_ingredientes/store', [App\Http\Controllers\RecetaIngredienteController::class, 'store'])->name('admin.maestros.receta_ingredientes.store')->middleware('auth');
-Route::get('admin/maestros/receta_ingredientes/receta/{receta}/edit', [RecetaIngredienteController::class, 'editByReceta'])
-    ->name('admin.maestros.receta_ingredientes.edit_by_receta');
-
-Route::put('admin/maestros/receta_ingredientes/receta/{receta}', [RecetaIngredienteController::class, 'updateByReceta'])
-    ->name('admin.maestros.receta_ingredientes.update_by_receta');
-Route::delete('/admin/maestros/receta_ingredientes/{recetaIngrediente}', [App\Http\Controllers\RecetaIngredienteController::class, 'destroy'])->name('admin.maestros.receta_ingredientes.destroy')->middleware('auth');
+Route::get('/admin/maestros/receta_ingredientes/{id}/edit', [App\Http\Controllers\RecetaIngredienteController::class, 'edit'])->name('admin.maestros.receta_ingredientes.edit')->middleware('auth');
+Route::put('admin/maestros/receta_ingredientes/receta/{id}', [App\Http\Controllers\RecetaIngredienteController::class, 'update'])->name('admin.maestros.receta_ingredientes.update');
+Route::delete('/admin/maestros/receta_ingredientes/{id}', [App\Http\Controllers\RecetaIngredienteController::class, 'destroy'])->name('admin.maestros.receta_ingredientes.destroy')->middleware('auth');
 
 //Rutas para Movimientos
 

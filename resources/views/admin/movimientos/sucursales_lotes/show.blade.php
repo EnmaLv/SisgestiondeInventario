@@ -128,7 +128,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                                <td colspan="7" class="text-center py-4">No hay registros</td>
                             </tr>
                         @endforelse
                     </tbody>

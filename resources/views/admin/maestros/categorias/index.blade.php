@@ -146,7 +146,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                                <td colspan="5" class="text-center py-4">No hay categorias</td>
                             </tr>
                         @endforelse
                     </tbody>

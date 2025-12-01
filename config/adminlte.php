@@ -299,7 +299,8 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
+
+        // 🔍 Barra superior
         [
             'type' => 'navbar-search',
             'text' => 'Buscar',
@@ -310,155 +311,167 @@ return [
             'topnav_right' => true,
         ],
 
-        // Sidebar items:
+        // 🔍 Buscador lateral
         [
             'type' => 'sidebar-menu-search',
             'text' => 'Buscar',
         ],
-        /* [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ], */
-        /* [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ], */
-        ['header' => 'Maestros'],
+
+        /* ---------------------------------------------------
+        | 🍽️ ÁREA DE MENÚ Y ALIMENTOS
+        | (Antes: "Maestros")
+        --------------------------------------------------- */
+        ['header' => '------------------------------------',
+            'classes' => 'text-white',
+        ],
+        ['header' => '🍽️ GESTIÓN DE ALIMENTOS',
+            'classes' => 'text-white',
+        ],
+        ['header' => '------------------------------------',
+            'classes' => 'text-white',
+        ],
 
         [
-            'text' => 'Platos',
-            'url' => 'admin/maestros/platos',
-            'icon' => 'fas fa-fw fa-hamburger',
+            'text' => 'Platos del Día',
+            'icon' => 'fas fa-utensils text-primary',
             'active' => ['admin/maestros/platos*'],
             'submenu' => [
                 [
                     'text' => 'Recetas',
                     'url' => 'admin/maestros/recetas',
-                    'icon' => 'fas fa-fw fa-utensils',
+                    'icon' => 'fas fa-book-open text-info',
                     'active' => ['admin/maestros/recetas*'],
                 ],
-
                 [
                     'text' => 'Ingredientes',
                     'url' => 'admin/maestros/receta_ingredientes',
-                    'icon' => 'fas fa-fw fa-carrot',
+                    'icon' => 'fas fa-carrot text-warning',
                     'active' => ['admin/maestros/receta_ingredientes*'],
                 ],
-            ],
+            ]
         ],
 
         [
-            'text' => 'Sucursales',
+            'text' => 'Sede y Anexos',
             'url' => 'admin/maestros/sucursales',
-            'icon' => 'fas fa-fw fa-store',
+            'icon' => 'fas fa-store text-primary',
             'active' => ['admin/maestros/sucursales*'],
         ],
 
         [
-            'text' => 'Categorías',
+            'text' => 'Categorías de Productos',
             'url' => 'admin/maestros/categorias',
-            'icon' => 'fas fa-fw fa-tags',
+            'icon' => 'fas fa-tags text-success',
             'active' => ['admin/maestros/categorias*'],
         ],
 
         [
-            'text' => 'Productos',
+            'text' => 'Productos y Alimentos',
             'url' => 'admin/maestros/productos',
-            'icon' => 'fas fa-fw fa-box',
+            'icon' => 'fas fa-box text-secondary',
             'active' => ['admin/maestros/productos*'],
         ],
 
         [
             'text' => 'Proveedores',
             'url' => 'admin/maestros/proveedores',
-            'icon' => 'fas fa-fw fa-truck',
+            'icon' => 'fas fa-truck text-orange',
             'active' => ['admin/maestros/proveedores*'],
         ],
 
-        ['header' => 'Movimientos'],
+
+        /* ---------------------------------------------------
+        | 📦 INVENTARIO Y COMPRAS
+        | (Antes: "Movimientos")
+        --------------------------------------------------- */
+        [
+            'header' => '------------------------------------',
+            'classes' => 'text-white',
+        ],
+        [
+            'header' => '📦 INVENTARIO Y COMPRAS',
+            'classes' => 'text-white',
+        ],
+        [
+            'header' => '------------------------------------',
+            'classes' => 'text-white',
+        ],
 
         [
-            'text' => 'Compras',
+            'text' => 'Registrar Compras',
             'url' => 'admin/movimientos/compras',
-            'icon' => 'fas fa-fw fa-shopping-cart',
+            'icon' => 'fas fa-shopping-cart text-success',
             'active' => ['admin/movimientos/compras*'],
         ],
 
         [
             'text' => 'Inventario',
-            'url' => 'admin/movimientos/inventario',
-            'icon' => 'fas fa-fw fa-boxes',
+            'icon' => 'fas fa-warehouse text-warning',
             'active' => ['admin/movimientos/inventario*'],
             'submenu' => [
                 [
                     'text' => 'Lotes',
                     'url' => 'admin/movimientos/lotes',
+                    'icon' => 'fas fa-boxes text-secondary',
                 ],
-
                 [
-                    'text' => 'Sucursales por Lotes',
+                    'text' => 'Existencias por Sucursal',
                     'url' => 'admin/movimientos/sucursales_lotes',
+                    'icon' => 'fas fa-store-alt text-primary',
                     'active' => ['admin/movimientos/sucursales_lotes*'],
                 ],
-
                 [
-                    'text' => 'Historial de Movimientos',
+                    'text' => 'Historial de Cambios',
                     'url' => 'admin/movimientos/historial_movimientos',
+                    'icon' => 'fas fa-clipboard-list text-info',
                 ],
-            ],
+            ]
         ],
 
         [
-            'text' => 'Gestion de Comedor',
+            'text' => 'Registro Diario de Comidas',
             'url' => 'admin/movimientos/registro_diario',
-            'icon' => 'fas fa-utensils',
+            'icon' => 'fas fa-concierge-bell text-primary',
             'active' => ['admin/movimientos/registro_diario*'],
         ],
 
-        ['header' => 'Consultas'],
+
+        /* ---------------------------------------------------
+        | 📊 REPORTES
+        --------------------------------------------------- */
+        /* ['header' => '📊 REPORTES Y CONSULTAS'],
+
         [
-            'text' => 'Reportes',
+            'text' => 'Reportes Generales',
             'url' => 'admin/consultas/reportes',
-            'icon' => 'fas fa-fw fa-file',
-        ],
+            'icon' => 'fas fa-file-alt text-info',
+        ], */
 
-        ['header' => 'Configuración'],
+
+        /* ---------------------------------------------------
+        | ⚙️ CONFIGURACIÓN
+        --------------------------------------------------- */
+        /* ['header' => '⚙️ CONFIGURACIÓN DEL SISTEMA'],
 
         [
-            'text' => 'Ajustes',
+            'text' => 'Preferencias del Sistema',
             'url' => 'admin/configuracion',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-cog text-secondary',
         ],
         [
-            'text' => 'Indexar',
+            'text' => 'Indexar Datos',
             'url' => 'admin/configuracion/indexar',
-            'icon' => 'fas fa-fw fa-search',
+            'icon' => 'fas fa-search text-dark',
         ],
+
         [
             'text' => 'Salir',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-ban',
-        ],
-        /* [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
+            'url' => 'logout',
+            'icon' => 'fas fa-sign-out-alt text-danger',
         ], */
     ],
+
+
 
     /*
     |--------------------------------------------------------------------------

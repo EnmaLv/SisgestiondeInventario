@@ -3,7 +3,7 @@
 @section('content_header')
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Editar Ingredientes de Receta</h1>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Ingredientes de Receta</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
                 Bienvenido <strong>{{ auth()->user()->name }}</strong>.
             </p>
@@ -33,7 +33,7 @@
             <div class="rd-card p-4">
 
                 <div class="rd-card-header mb-3">
-                    <h3 class="rd-title-sm">Modificar los campos del formulario</h3>
+                    <h3 class="rd-title-sm">Agregar ingredientes a la receta</h3>
 
                     <div>
                         <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default">
@@ -42,10 +42,8 @@
                     </div>
                 </div>
 
-                <form action="{{ route('admin.maestros.receta_ingredientes.update', $recetaIngrediente->id) }}"
-                    method="POST">
+                <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST">
                     @csrf
-                    @method('PUT')
 
                     <div class="row">
                         {{-- Receta --}}
@@ -59,7 +57,7 @@
 
                                         @foreach ($recetas as $receta)
                                             <option value="{{ $receta->id }}"
-                                                {{ old('recetas_id', $recetaIngrediente->recetas_id) == $receta->id ? 'selected' : '' }}>
+                                                {{ old('recetas_id') == $receta->id ? 'selected' : '' }}>
                                                 {{ $receta->nombre }}
                                             </option>
                                         @endforeach
@@ -73,7 +71,7 @@
 
                         {{-- Selector producto + cantidad + unidad --}}
                         <div class="col-md-6">
-                            <label class="font-weight-bold">Editar ingredientes</label>
+                            <label class="font-weight-bold">Agregar ingredientes</label>
                             <div class="d-flex gap-2 mb-2">
                                 <div style="flex:1">
                                     <select class="form-control rd-filter-input" id="producto_select">
@@ -107,29 +105,9 @@
                                 </div>
                             </div>
 
-                            {{-- Lista visual (precargada) --}}
+                            {{-- Lista visual --}}
                             <ul id="listaProductos" class="list-group">
-
-                                {{-- Ingrediente actual --}}
-                                <li class="list-group-item d-flex justify-content-between align-items-center"
-                                    id="prod_{{ $recetaIngrediente->producto->id }}">
-                                    <div>
-                                        <strong>{{ $recetaIngrediente->producto->nombre }}</strong> —
-                                        {{ $recetaIngrediente->cantidad_porcion }}
-                                        {{ $recetaIngrediente->unidad->nombre }}
-                                    </div>
-                                    <div>
-                                        <input type="hidden" name="producto_id[]"
-                                            value="{{ $recetaIngrediente->producto->id }}">
-                                        <input type="hidden" name="cantidad_porcion[]"
-                                            value="{{ $recetaIngrediente->cantidad_porcion }}">
-                                        <input type="hidden" name="unidad_id[]"
-                                            value="{{ $recetaIngrediente->unidad_id }}">
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="this.closest('li').remove();">X</button>
-                                    </div>
-                                </li>
-
+                                {{-- Lista vacía al crear --}}
                             </ul>
 
                             {{-- Errores --}}
@@ -154,7 +132,7 @@
                         <a href="{{ url('admin/maestros/receta_ingredientes') }}"
                             class="rd-btn rd-btn-default">Cancelar</a>
                         <button type="submit" class="rd-btn rd-btn-primary ml-2">
-                            <i class="fas fa-check"></i> Actualizar
+                            <i class="fas fa-check"></i> Crear
                         </button>
                     </div>
                 </form>
@@ -180,30 +158,27 @@
             const lista = document.getElementById('listaProductos');
 
             function crearItem(prodId, prodNombre, cantidad, unidadId, unidadNombre) {
-
                 const li = document.createElement('li');
                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
                 li.id = 'prod_' + prodId;
 
                 li.innerHTML = `
-            <div>
-                <strong>${prodNombre}</strong> — ${cantidad} ${unidadNombre}
-            </div>
-            <div>
-                <input type="hidden" name="producto_id[]" value="${prodId}">
-                <input type="hidden" name="cantidad_porcion[]" value="${cantidad}">
-                <input type="hidden" name="unidad_id[]" value="${unidadId}">
-                <button type="button" class="btn btn-danger btn-sm">X</button>
-            </div>
-        `;
+                <div>
+                    <strong>${prodNombre}</strong> — ${cantidad} ${unidadNombre}
+                </div>
+                <div>
+                    <input type="hidden" name="producto_id[]" value="${prodId}">
+                    <input type="hidden" name="cantidad_porcion[]" value="${cantidad}">
+                    <input type="hidden" name="unidad_id[]" value="${unidadId}">
+                    <button type="button" class="btn btn-danger btn-sm">X</button>
+                </div>
+            `;
 
                 li.querySelector('button').addEventListener('click', () => li.remove());
-
                 return li;
             }
 
             btnAgregar.addEventListener('click', function() {
-
                 const prodId = selectProd.value;
                 const prodNombre = selectProd.options[selectProd.selectedIndex]?.text || '';
                 const cantidad = cantidadInput.value;
