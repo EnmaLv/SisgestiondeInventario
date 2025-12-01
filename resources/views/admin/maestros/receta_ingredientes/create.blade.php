@@ -53,7 +53,7 @@
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
                                     <select class="form-control rd-filter-input" name="recetas_id" id="recetas_id">
-                                        <option value="">Seleccione una receta</option>
+                                        <option value="" selected disabled>Seleccione una receta</option>
 
                                         @foreach ($recetas as $receta)
                                             <option value="{{ $receta->id }}"
@@ -74,34 +74,45 @@
                             <label class="font-weight-bold">Agregar ingredientes</label>
                             <div class="d-flex gap-2 mb-2">
                                 <div style="flex:1">
-                                    <select class="form-control rd-filter-input" id="producto_select">
-                                        <option value="">Seleccione un producto</option>
-                                        @foreach ($productos as $producto)
-                                            <option value="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}">
-                                                {{ $producto->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text"><i class="fas fa-box"></i></span>
+                                        <select class="form-control rd-filter-input" id="producto_select">
+                                            <option value="" selected disabled>Seleccione un producto</option>
+                                            @foreach ($productos as $producto)
+                                                <option value="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}">
+                                                    {{ $producto->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div style="width:140px">
-                                    <input type="number" step="any" min="0" id="cantidad_input"
-                                        class="form-control" placeholder="Cantidad">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                        <input type="number" step="any" min="0" id="cantidad_input"
+                                            class="form-control" placeholder="Cantidad">
+                                    </div>
                                 </div>
 
                                 <div style="width:180px">
-                                    <select class="form-control" id="unidad_select">
-                                        <option value="">Unidad</option>
-                                        @foreach ($unidades as $unidad)
-                                            <option value="{{ $unidad->id }}" data-nombre="{{ $unidad->nombre }}">
-                                                {{ $unidad->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                                        <select class="form-control" id="unidad_select">
+                                            <option value="" selected disabled>Unidad</option>
+                                            @foreach ($unidades as $unidad)
+                                                <option value="{{ $unidad->id }}" data-nombre="{{ $unidad->nombre }}">
+                                                    {{ $unidad->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div style="width:120px">
-                                    <button type="button" class="btn rd-btn-primary" id="agregarProducto">Agregar</button>
+                                    <button type="button" class="btn btn-primary" id="agregarProducto" style="height: 38px;">
+                                        <i class="fas fa-plus"></i> Agregar
+                                    </button>
                                 </div>
                             </div>
 
@@ -146,7 +157,77 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
+@push('css')
+    <style>
+        .rd-card .input-group {
+            border: 1px solid #d8dee9;
+            border-radius: 12px;
+            padding-inline: 8px;
+            transition: border-color .2s ease, box-shadow .2s ease;
+            overflow: hidden;
+        }
 
+        .rd-card .input-group:focus-within {
+            border-color: #7c3aed;
+            background: #ffffff;
+        }
+
+        .rd-card .input-group-text {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 1.05rem;
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+
+        .rd-card .input-group-text i {
+            width: 22px;
+            text-align: center;
+        }
+
+        .rd-card .rd-filter-input,
+        .rd-card .form-control {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding-left: 6px;
+        }
+
+        .rd-card textarea.form-control {
+            border: 1px solid #d8dee9;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .rd-card textarea.form-control:focus {
+            border-color: #7c3aed;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            outline: none;
+        }
+
+        /* Para el caso de textarea dentro de un input-group */
+        .rd-card .input-group textarea.form-control {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding-left: 6px;
+            min-height: 38px;
+            resize: none;
+        }
+
+        .rd-card .input-group:focus-within textarea.form-control {
+            background: transparent;
+        }
+
+
+    </style>
+@endpush
 
 @section('js')
     <script>

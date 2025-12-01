@@ -61,8 +61,11 @@
             Swal.fire({
                 icon: '{{ session('icono') }}',
                 title: '{{ session('mensaje') }}',
+                @if(session('texto'))
+                    text: '{{ session('texto') }}',
+                @endif
                 showConfirmButton: false,
-                timer: 2000
+                timer: 3000
             });
         @endif
     </script>

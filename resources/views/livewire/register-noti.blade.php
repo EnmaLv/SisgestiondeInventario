@@ -20,7 +20,7 @@
                             <select id="desayuno" wire:model="desayuno_del_dia"
                                 class="rd-input @error('desayuno_del_dia') rd-input-error  @enderror"
                                 @disabled($desayuno_del_dia)>
-                                <option value="">Seleccione una opción</option>
+                                <option value="" selected disabled>Seleccione una opción</option>
                                 @foreach ($comidas as $comida)
                                     <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
                                 @endforeach
@@ -37,10 +37,10 @@
                         <div class="rd-input-group">
                             <label for="cantidad_servido" class="sr-only">Cantidad servida</label>
 
-                            <input type="text" name="cantidad_servido" id="cantidad_servido"
+                            <input type="number" name="cantidad_servido" id="cantidad_servido"
                                 wire:model="cantidad_servido"
                                 class="rd-input @error('cantidad_servido') rd-input-error @enderror" placeholder="Cant."
-                                inputmode="numeric" @disabled($desayuno_del_dia) />
+                                @disabled($desayuno_del_dia) min="0"/>
 
                             @error('cantidad_servido')
                                 <div class="rd-error mt-2">{{ $message }}</div>
@@ -56,6 +56,22 @@
                         </button>
                     </div>
 
+                    @if (!$horarioPermitido)
+                        <div style="display: flex; align-items: center; padding: 1rem; margin-top: 1rem; background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0.375rem; margin-inline: auto;">
+                            <div style="flex-shrink: 0;">
+                                <svg style="width: 1.5rem; height: 1.5rem; color: #ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div style="margin-left: 0.75rem;">
+                                <h3 style="margin: 0; font-size: 0.875rem; font-weight: 500; color: #991b1b;">Horario no permitido</h3>
+                                <div style="margin-top: 0.25rem; font-size: 0.875rem; color: #b91c1c;">
+                                    <p style="margin: 0.25rem 0;">El registro de comedor solo está disponible de 12:00 AM a 12:00 PM.</p>
+                                    <p style="margin: 0.25rem 0 0;">Por favor, inténtalo de nuevo dentro del horario establecido.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </form>
         </div>

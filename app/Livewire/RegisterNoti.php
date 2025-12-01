@@ -33,6 +33,8 @@ class RegisterNoti extends Component
     public $cantidad_servido = null;
     public $desayuno_registrado = false;
     public $desayuno_del_dia = null;
+
+    public $horarioPermitido;
     
 
 
@@ -49,7 +51,7 @@ class RegisterNoti extends Component
         $registroHoy = DetalleRegistroDiario::whereDate('created_at', $hoy)->first();
 
         $hora = now()->format('H:i');
-        $horarioPermitido = $hora >= '00:00' && $hora <= '12:00';
+        $this->horarioPermitido = $hora >= '00:00' && $hora <= '12:00';
 
         if ($registroHoy) {
             // Ya existe → bloquear y cargar los datos
@@ -58,7 +60,7 @@ class RegisterNoti extends Component
             $this->cantidad_servido = $registroHoy->cantidad_servido;
         } else {
             // Aún no existe → permitir solo si está en horario
-            $this->desayuno_registrado = !$horarioPermitido; // si NO está en horario → bloquear
+            $this->desayuno_registrado = !$this->horarioPermitido; // si NO está en horario → bloquear
         }
     }
 

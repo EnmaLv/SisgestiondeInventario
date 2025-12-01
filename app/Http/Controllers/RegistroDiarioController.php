@@ -14,6 +14,15 @@ class RegistroDiarioController extends Controller
 {
     public function index(Request $request)
     {
+        //No dejar que se vea la pagina sin un desayuno registrado
+        // $hayReceta = Receta::first("id");
+        
+        // if (!$hayReceta) {
+        //     return redirect()->back()->with('mensaje', 'No hay recetas registradas')
+        //     ->with('icono', 'error')
+        //     ->with('texto', 'No hay recetas registradas, Intenta agregar una receta.');
+        // }
+        
         //Recibir el valor del input
         $buscar = $request->input("buscar");
 
