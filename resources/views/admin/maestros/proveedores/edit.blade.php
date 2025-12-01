@@ -139,7 +139,7 @@
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
                                     <select name="estado" class="form-control rd-filter-input">
-                                        <option value="">Seleccione un estado</option>
+                                        <option selected disabled>Seleccione un estado</option>
                                         <option value="1"
                                             {{ old('estado', $proveedor->estado) == '1' ? 'selected' : '' }}>
                                             Activo
