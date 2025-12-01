@@ -66,6 +66,9 @@
                                 @error('recetas_id')
                                     <div class="text-danger"><b>{{ $message }}</b></div>
                                 @enderror
+                                @if($recetas->isEmpty())
+                                    <div>No tienes recetas registradas, <a href="{{ route('admin.maestros.recetas.create') }}">preciona aqui</a> para crear una receta.</div>
+                                @endif
                             </div>
                         </div>
 
@@ -110,11 +113,14 @@
                                 </div>
 
                                 <div style="width:120px">
-                                    <button type="button" class="btn btn-primary" id="agregarProducto" style="height: 38px;">
+                                    <button type="button" class="btn btn-primary" id="agregarProducto" style="height: 38px;" @disabled($recetas->isEmpty() || $productos->isEmpty()) style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
                                         <i class="fas fa-plus"></i> Agregar
                                     </button>
                                 </div>
                             </div>
+                            @if($productos->isEmpty())
+                                <div>No tienes productos registrados, <a href="{{ route('admin.maestros.productos.create') }}">preciona aqui</a> para crear un producto.</div>
+                            @endif
 
                             {{-- Lista visual --}}
                             <ul id="listaProductos" class="list-group">
@@ -142,7 +148,7 @@
                     <div class="mt-4 d-flex justify-content-end">
                         <a href="{{ url('admin/maestros/receta_ingredientes') }}"
                             class="rd-btn rd-btn-default">Cancelar</a>
-                        <button type="submit" class="rd-btn rd-btn-primary ml-2">
+                        <button type="submit" class="rd-btn rd-btn-primary ml-2" @disabled($recetas->isEmpty() || $productos->isEmpty()) style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
                             <i class="fas fa-check"></i> Crear
                         </button>
                     </div>

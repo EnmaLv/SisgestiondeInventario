@@ -81,6 +81,9 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @if ($proveedores->isEmpty())
+                                <div class="pt-2">No tienes proveedores registrados, <a href="{{ route('admin.maestros.proveedores.create') }}">agrega uno</a></div>
+                            @endif
                             @error('proveedor_id')
                                 <div class="rd-error">Este campo es obligatorio.</div>
                             @enderror
@@ -122,7 +125,7 @@
                             Cancelar
                         </a>
 
-                        <button type="submit" class="rd-btn rd-btn-primary">
+                        <button type="submit" class="rd-btn rd-btn-primary" @disabled($proveedores->isEmpty()) style="@if ($proveedores->isEmpty()) opacity: 0.5!important; cursor: not-allowed; @endif">
                             Crear compra y añadir productos
                         </button>
                     </div>
