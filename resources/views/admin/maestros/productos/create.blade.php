@@ -60,7 +60,7 @@
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                             <select class="form-control rd-filter-input" id="categoria_id"
                                                 name="categoria_id">
-                                                <option selected disabled>Seleccione una categoría</option>
+                                                <option value="">Seleccione una categoría</option>
                                                 @foreach ($categorias as $categoria)
                                                     <option value="{{ $categoria->id }}"
                                                         {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
@@ -125,7 +125,7 @@
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                             <input type="number" class="form-control rd-filter-input" name="precio_compra"
-                                                value="{{ old('precio_compra') }}" placeholder="$$" min="0">
+                                                value="{{ old('precio_compra') }}" placeholder="$$">
                                         </div>
                                         @error('precio_compra')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -133,20 +133,20 @@
                                     </div>
                                 </div>
 
-                                {{-- Precio Venta --}}
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">Precio Venta</label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                            <input type="number" class="form-control rd-filter-input" name="precio_venta"
-                                                value="{{ old('precio_venta') }}" placeholder="$$" min="0">
-                                        </div>
-                                        @error('precio_venta')
-                                            <div class="text-danger"><b>{{ $message }}</b></div>
-                                        @enderror
-                                    </div>
-                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                                 {{-- Stock Mínimo --}}
                                 <div class="col-md-3">
@@ -154,9 +154,9 @@
                                         <label class="font-weight-bold">Stock Mínimo</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
-                                            <input type="number" class="form-control rd-filter-input"
-                                                name="stock_minimo" value="{{ old('stock_minimo') }}" min="1"
-                                                placeholder="Mínimo">
+                                            <input type="number" class="form-control rd-filter-input" name="stock_minimo"
+                                                value="{{ old('stock_minimo') }}" placeholder="Mínimo">
+
                                         </div>
                                         @error('stock_minimo')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -170,9 +170,8 @@
                                         <label class="font-weight-bold">Stock Máximo</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
-                                            <input type="number" class="form-control rd-filter-input"
-                                                name="stock_maximo" value="{{ old('stock_maximo') }}"
-                                                placeholder="Máximo">
+                                            <input type="number" class="form-control rd-filter-input" name="stock_maximo"
+                                                value="{{ old('stock_maximo') }}" placeholder="Máximo">
                                         </div>
                                         @error('stock_maximo')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -186,34 +185,34 @@
                                         <label class="font-weight-bold">Unidad de Medida</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
-                                            <select class="form-control rd-filter-input" name="unidad_medida">
-                                                <option selected disabled>Seleccione</option>
-                                                <option value="U">Unidad</option>
-                                                <option value="KG">Kilogramo</option>
-                                                <option value="G">Gramo</option>
-                                                <option value="L">Litro</option>
-                                                <option value="ML">Mililitro</option>
-                                            </select>
-                                        </div>
-                                        @error('unidad_medida')
-                                            <div class="text-danger"><b>{{ $message }}</b></div>
-                                        @enderror
-                                    </div>
-                                </div>
+                                            <select class="form-control rd-filter-input" name="unidad_id" id="unidad_id">
+                                                <option value="">Seleccione una unidad</option>
+                                                @foreach ($unidades as $unidad)
+                                                    <option value="{{ $unidad->id }}"
+                                                        {{ old('unidad_id') == $unidad->id ? 'selected' : '' }}>
+                                                        {{ $unidad->nombre }}</option>
+                                                @endforeach
 
-                                {{-- Estado --}}
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">Estado</label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
-                                            <select class="form-control rd-filter-input" name="estado">
-                                                <option selected disabled>Seleccione</option>
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                             </select>
                                         </div>
-                                        @error('estado')
+                                        @error('unidad_id')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
@@ -259,7 +258,7 @@
 
                     <hr>
 
-                    <div class="d-flex justify-content-end gap-2" style="gap: 15px">
+                    <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
                         <button type="submit" class="rd-btn rd-btn-primary">
                             <i class="fas fa-check"></i> Crear
@@ -271,61 +270,13 @@
         </div>
     </div>
 @stop
-@push('css')
+@section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-@endpush
+@stop
 
 
-@push('css')
+@section('css')
     <style>
-        .rd-card .input-group {
-            border: 1px solid #d8dee9;
-            border-radius: 12px;
-            background: #f8fafc;
-            padding-inline: 8px;
-            transition: border-color .2s ease, box-shadow .2s ease;
-            overflow: hidden;
-        }
-
-        .rd-card .input-group:focus-within {
-            border-color: #7c3aed;
-            background: #ffffff;
-        }
-
-        .rd-card .input-group-text {
-            background: transparent;
-            border: none;
-            color: #64748b;
-            font-size: 1.05rem;
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-
-        .rd-card .input-group-text i {
-            width: 22px;
-            text-align: center;
-        }
-
-        .rd-card .rd-filter-input,
-        .rd-card .form-control {
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            padding-left: 6px;
-        }
-
-        .rd-card .rd-filter-input:focus,
-        .rd-card .form-control:focus {
-            border: none;
-            box-shadow: none;
-        }
-
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
         .ck.ck-editor {
             width: 100% !important;
         }
@@ -343,7 +294,7 @@
             }
         }
     </style>
-@endpush
+@stop
 @section('js')
     <script>
         let descripcionEditor;
