@@ -303,11 +303,11 @@
     }
 
     /* Estilos para grupos de entrada */
-    .rd-input-group {
+    .rd-card .rd-input-group {
         margin-bottom: 1.25rem;
     }
 
-    .input-group {
+    .rd-card .input-group {
         border: 1px solid #d8dee9;
         border-radius: 12px;
         padding-inline: 8px;
@@ -334,8 +334,8 @@
     }
 
     /* Estilos para inputs */
-    .form-control,
-    .form-select {
+    .rd-card .form-control,
+    .rd-card .form-select {
         border: none;
         background: transparent;
         box-shadow: none;

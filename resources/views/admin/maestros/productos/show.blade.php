@@ -31,7 +31,7 @@
     <div class="row">
         <div class="col-md-12">
 
-            <div class="rd-card p-4">
+            <div class="rd-card p-4 card-body">
 
                 {{-- Header --}}
                 <div class="rd-card-header mb-3">
@@ -98,7 +98,7 @@
                                 <label class="font-weight-bold">Precio Compra</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                    <input type="text" class="form-control" value="{{ $producto->precio_compra }}"
+                                    <input type="text" class="form-control" value="{{ $producto->precio_compra }}.BS"
                                         readonly>
                                 </div>
                             </div>
@@ -230,7 +230,7 @@
         margin-bottom: 1.25rem;
     }
 
-    .input-group {
+    .card-body .input-group {
         border: 1px solid #d8dee9;
         background-color: #ebebeb;
         border-radius: 12px;
@@ -244,7 +244,7 @@
         box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
     }
 
-    .input-group-text {
+    .card-body .input-group-text {
         background: transparent;
         border: none;
         color: #64748b;
@@ -258,8 +258,8 @@
     }
 
     /* Estilos para inputs */
-    .form-control,
-    .form-select {
+    .card-body .form-control,
+    .card-body .form-select {
         border: none;
         background: transparent;
         box-shadow: none;
