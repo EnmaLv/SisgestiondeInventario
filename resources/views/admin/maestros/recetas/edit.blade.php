@@ -93,3 +93,73 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
+
+@push('css')
+    <style>
+        .rd-card .input-group {
+            border: 1px solid #d8dee9;
+            border-radius: 12px;
+            padding-inline: 8px;
+            transition: border-color .2s ease, box-shadow .2s ease;
+            overflow: hidden;
+        }
+
+        .rd-card .input-group:focus-within {
+            border-color: #7c3aed;
+            background: #ffffff;
+        }
+
+        .rd-card .input-group-text {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 1.05rem;
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+
+        .rd-card .input-group-text i {
+            width: 22px;
+            text-align: center;
+        }
+
+        .rd-card .rd-filter-input,
+        .rd-card .form-control {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding-left: 6px;
+        }
+
+        .rd-card textarea.form-control {
+            border: 1px solid #d8dee9;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .rd-card textarea.form-control:focus {
+            border-color: #7c3aed;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            outline: none;
+        }
+
+        /* Para el caso de textarea dentro de un input-group */
+        .rd-card .input-group textarea.form-control {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding-left: 6px;
+            min-height: 38px;
+            resize: none;
+        }
+
+        .rd-card .input-group:focus-within textarea.form-control {
+            background: transparent;
+        }
+    </style>
+@endpush
