@@ -47,7 +47,7 @@
 
                     <div class="row">
                         {{-- Receta --}}
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label class="font-weight-bold">Recetas</label>
                                 <div class="input-group mb-2">
@@ -66,14 +66,16 @@
                                 @error('recetas_id')
                                     <div class="text-danger"><b>{{ $message }}</b></div>
                                 @enderror
-                                @if($recetas->isEmpty())
-                                    <div>No tienes recetas registradas, <a href="{{ route('admin.maestros.recetas.create') }}">preciona aqui</a> para crear una receta.</div>
+                                @if ($recetas->isEmpty())
+                                    <div>No tienes recetas registradas, <a
+                                            href="{{ route('admin.maestros.recetas.create') }}">preciona aqui</a> para crear
+                                        una receta.</div>
                                 @endif
                             </div>
                         </div>
 
                         {{-- Selector producto + cantidad + unidad --}}
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <label class="font-weight-bold">Agregar ingredientes</label>
                             <div class="d-flex gap-2 mb-2">
                                 <div style="flex:1">
@@ -113,13 +115,17 @@
                                 </div>
 
                                 <div style="width:120px">
-                                    <button type="button" class="btn btn-primary" id="agregarProducto" style="height: 38px;" @disabled($recetas->isEmpty() || $productos->isEmpty()) style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
+                                    <button type="button" class="btn btn-primary" id="agregarProducto"
+                                        style="height: 38px;" @disabled($recetas->isEmpty() || $productos->isEmpty())
+                                        style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
                                         <i class="fas fa-plus"></i> Agregar
                                     </button>
                                 </div>
                             </div>
-                            @if($productos->isEmpty())
-                                <div>No tienes productos registrados, <a href="{{ route('admin.maestros.productos.create') }}">preciona aqui</a> para crear un producto.</div>
+                            @if ($productos->isEmpty())
+                                <div>No tienes productos registrados, <a
+                                        href="{{ route('admin.maestros.productos.create') }}">preciona aqui</a> para crear
+                                    un producto.</div>
                             @endif
 
                             {{-- Lista visual --}}
@@ -148,7 +154,8 @@
                     <div class="mt-4 d-flex justify-content-end">
                         <a href="{{ url('admin/maestros/receta_ingredientes') }}"
                             class="rd-btn rd-btn-default">Cancelar</a>
-                        <button type="submit" class="rd-btn rd-btn-primary ml-2" @disabled($recetas->isEmpty() || $productos->isEmpty()) style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
+                        <button type="submit" class="rd-btn rd-btn-primary ml-2" @disabled($recetas->isEmpty() || $productos->isEmpty())
+                            style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
                             <i class="fas fa-check"></i> Crear
                         </button>
                     </div>
@@ -230,8 +237,6 @@
         .rd-card .input-group:focus-within textarea.form-control {
             background: transparent;
         }
-
-
     </style>
 @endpush
 

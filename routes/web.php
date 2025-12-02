@@ -60,6 +60,7 @@ Route::prefix('/admin/maestros/productos')->middleware('auth')->group(function (
     Route::get('/{producto}/edit', [ProductoController::class, 'edit'])->name('admin.maestros.productos.edit');
     Route::put('/{producto}', [ProductoController::class, 'update'])->name('admin.maestros.productos.update');
     Route::delete('/{producto}', [ProductoController::class, 'destroy'])->name('admin.maestros.productos.destroy');
+    Route::put('/{producto}/activar', [ProductoController::class, 'activar'])->name('admin.maestros.productos.activar');
 });
 
 //Registro Diario

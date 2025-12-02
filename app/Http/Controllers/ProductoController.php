@@ -94,4 +94,10 @@ class ProductoController extends Controller
         Producto::eliminarProducto($id);
         return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto eliminado exitosamente.');
     }
+
+    public function activar($id)
+    {
+        Producto::activarProducto($id);
+        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto activado exitosamente.');
+    }
 }

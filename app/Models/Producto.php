@@ -282,6 +282,16 @@ class Producto extends Model
             ]);
     }
 
+    public static function activarProducto($id)
+    {
+        return DB::table('productos')
+            ->where('id', $id)
+            ->update([
+                'estado' => 1,
+                'updated_at' => now()
+            ]);
+    }
+
     /**
      * Genera un código único para el producto basado en su categoría y nombre.
      *

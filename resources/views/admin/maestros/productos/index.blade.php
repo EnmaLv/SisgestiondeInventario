@@ -120,33 +120,65 @@
                                         <a href="{{ url('admin/maestros/productos/' . $producto->id . '/edit') }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
 
-                                        <form action="{{ url('admin/maestros/productos/' . $producto->id) }}"
-                                            method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                onclick="preguntar{{ $producto->id }}(event)"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </form>
-                                        <script>
-                                            function preguntar{{ $producto->id }}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Estás seguro?',
-                                                    text: "No podrás deshacer esta acción",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Sí, eliminar',
-                                                    cancelButtonText: 'Cancelar'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        event.target.form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
+                                        @if ($producto->estado == true)
+                                            <form action="{{ url('admin/maestros/productos/' . $producto->id) }}"
+                                                method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="rd-action rd-action-danger btn-delete"
+                                                    onclick="preguntar{{ $producto->id }}(event)"><i
+                                                        class="fas fa-trash"></i></button>
+                                            </form>
+                                            <script>
+                                                function preguntar{{ $producto->id }}(event) {
+                                                    event.preventDefault();
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "No podrás deshacer esta acción",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, eliminar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            event.target.form.submit();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
+                                        @else
+                                            <form
+                                                action="{{ url('admin/maestros/productos/' . $producto->id . '/activar') }}"
+                                                method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="rd-action rd-action-success btn-delete"
+                                                    onclick="preguntar{{ $producto->id }}(event)"><i
+                                                        class="fas fa-check"></i></button>
+                                            </form>
+                                            <script>
+                                                function preguntar{{ $producto->id }}(event) {
+                                                    event.preventDefault();
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "Desea activar el producto?",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, activar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            event.target.form.submit();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
+                                        @endif
+
                                     </div>
                                 </td>
                             </tr>
@@ -272,6 +304,14 @@
 
         .rd-action-danger {
             color: #dc2626;
+        }
+
+        .rd-action-success {
+            color: #49e622;
+        }
+
+        .rd-action-success:hover {
+            background: #e2fee2;
         }
 
         .rd-action-danger:hover {

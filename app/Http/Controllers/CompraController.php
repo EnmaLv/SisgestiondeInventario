@@ -53,7 +53,9 @@ class CompraController extends Controller
     public function edit($id)
     {
         // Busca la compra o falla con error 404 si no existe
-        $compra = Compra::findOrFail($id);
+        $compra = Compra::with(['compraDetalles' => function ($query) {
+            $query->with(['producto', 'lote']); // Cargar relación con producto y lote
+        }, 'proveedor'])->findOrFail($id);
 
         // Obtiene los datos necesarios para el formulario de edición
         $datos = $compra->getDatosFormulario();

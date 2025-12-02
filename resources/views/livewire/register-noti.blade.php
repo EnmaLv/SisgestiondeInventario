@@ -85,16 +85,17 @@
                         <div class="rd-alert rd-alert-error" role="alert">
                             <div class="rd-alert-icon">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                             </div>
                             <div class="rd-alert-content">
                                 <h4 class="rd-alert-title">¡Error!</h3>
-                                <ul class="rd-alert-list">
-                                    @foreach ($errors->all() as $error)
-                                        <h4>{{ $error }}</h3>
-                                    @endforeach
-                                </ul>
+                                    <ul class="rd-alert-list">
+                                        @foreach ($errors->all() as $error)
+                                            <h4>{{ $error }}</h3>
+                                        @endforeach
+                                    </ul>
                             </div>
                         </div>
                     @endif
@@ -110,172 +111,173 @@
 
     @if (!$desayuno_del_dia)
         <p>Registre un desayuno para continuar</p>
+    @elseif (!$horarioPermitido)
+        <p></p>
     @endif
-        <!-- Formulario de registro diario -->
-        <div class="rd-grid" @if (!$desayuno_del_dia) style="display: none;" @endif>
+    <!-- Formulario de registro diario -->
+    <div class="rd-grid" @if (!$desayuno_del_dia || !$horarioPermitido) style="display: none;" @endif>
 
-            <!-- Left: Cedula buscador -->
-            <div class="rd-card rd-card-search">
-                <div class="rd-card-header">
-                    <h2 class="rd-title">Registro Diario</h2>
-                    <p class="rd-sub">Busca rápido por cédula y registra la entrada</p>
-                </div>
+        <!-- Left: Cedula buscador -->
+        <div class="rd-card rd-card-search">
+            <div class="rd-card-header">
+                <h2 class="rd-title">Registro Diario</h2>
+                <p class="rd-sub">Busca rápido por cédula y registra la entrada</p>
+            </div>
 
-                <div class="rd-card-body">
-                    <form wire:submit.prevent="save" class="rd-search-form" autocomplete="off">
-                        @csrf
-                        <div class="rd-input-group">
-                            <label for="cedula" class="sr-only">Cédula</label>
-                            <input type="tel" id="cedula" wire:model.defer="cedula"
-                                class="rd-input @error('cedula') rd-input-error @enderror" placeholder="Ej: 12345678"
-                                maxlength="8" inputmode="numeric" autofocus />
-                            <button class="rd-btn rd-btn-primary" type="submit" aria-label="Buscar">Buscar</button>
-                        </div>
-
-                        @error('cedula')
-                            <div class="rd-error mt-2">{{ $message }}</div>
-                        @enderror
-                    </form>
-
-                    <!-- Notificación como toast (Livewire controla showNotification) -->
-                    <div class="rd-toast-holder">
-                        @if ($showNotification && isset($notification['message']))
-                            <div class="rd-toast rd-toast-{{ $notification['type'] ?? 'info' }}" role="status"
-                                aria-live="polite">
-                                <div class="rd-toast-body">
-                                    @php
-                                        if ($notification['type'] == 'success') {
-                                            $type = 'exito';
-                                        } else {
-                                            $type = 'error';
-                                        }
-                                    @endphp
-                                    <strong>{{ ucfirst($type) }}</strong>
-                                    <span>{{ $notification['message'] }}</span>
-                                </div>
-                                <button class="rd-toast-close" aria-label="Cerrar"
-                                    wire:click="$set('showNotification', false)">×</button>
-                            </div>
-                        @endif
+            <div class="rd-card-body">
+                <form wire:submit.prevent="save" class="rd-search-form" autocomplete="off">
+                    @csrf
+                    <div class="rd-input-group">
+                        <label for="cedula" class="sr-only">Cédula</label>
+                        <input type="tel" id="cedula" wire:model.defer="cedula"
+                            class="rd-input @error('cedula') rd-input-error @enderror" placeholder="Ej: 12345678"
+                            maxlength="8" inputmode="numeric" autofocus />
+                        <button class="rd-btn rd-btn-primary" type="submit" aria-label="Buscar">Buscar</button>
                     </div>
-                </div>
 
-                <div class="rd-card-footer">
-                    <small class="text-muted">Mantén tu cédula a mano</small>
+                    @error('cedula')
+                        <div class="rd-error mt-2">{{ $message }}</div>
+                    @enderror
+                </form>
+
+                <!-- Notificación como toast (Livewire controla showNotification) -->
+                <div class="rd-toast-holder">
+                    @if ($showNotification && isset($notification['message']))
+                        <div class="rd-toast rd-toast-{{ $notification['type'] ?? 'info' }}" role="status"
+                            aria-live="polite">
+                            <div class="rd-toast-body">
+                                @php
+                                    if ($notification['type'] == 'success') {
+                                        $type = 'exito';
+                                    } else {
+                                        $type = 'error';
+                                    }
+                                @endphp
+                                <strong>{{ ucfirst($type) }}</strong>
+                                <span>{{ $notification['message'] }}</span>
+                            </div>
+                            <button class="rd-toast-close" aria-label="Cerrar"
+                                wire:click="$set('showNotification', false)">×</button>
+                        </div>
+                    @endif
                 </div>
             </div>
 
+            <div class="rd-card-footer">
+                <small class="text-muted">Mantén tu cédula a mano</small>
+            </div>
+        </div>
 
 
 
 
-            <!-- Right: Buscador, filtros y tabla -->
-            <div class="rd-card rd-card-list">
-                <div class="rd-card-header rd-header-space">
-                    <div>
-                        <h3 class="rd-title-sm">Registros</h3>
-                        <p class="rd-sub-sm">Últimos movimientos del día</p>
+
+        <!-- Right: Buscador, filtros y tabla -->
+        <div class="rd-card rd-card-list">
+            <div class="rd-card-header rd-header-space">
+                <div>
+                    <h3 class="rd-title-sm">Registros</h3>
+                    <p class="rd-sub-sm">Últimos movimientos del día</p>
+                </div>
+
+                <div class="rd-actions">
+                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                        class="rd-search-inline" role="search">
+                        <input name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+                            placeholder="Nombre, apellido o PNF" id="search" />
+                        <button class="rd-icon-btn" type="submit" title="Buscar"><i
+                                class="fas fa-search"></i></button>
+                    </form>
+
+                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
+                        aria-controls="filters" title="Filtros">
+                        <i class="fas fa-filter"></i>
+                    </button>
+
+                    <div class="rd-export-group">
+                        <a href="{{ route('admin.movimientos.registro_diario.export_excel', request()->only(['buscar', 'fecha_desde', 'fecha_hasta'])) }}"
+                            class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
+                            Excel</a>
+
+                        <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i
+                                class="fas fa-file-pdf"></i>
+                            PDF</button>
                     </div>
+                </div>
+            </div>
 
-                    <div class="rd-actions">
-                        <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
-                            class="rd-search-inline" role="search">
-                            <input name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                                placeholder="Nombre, apellido o PNF" id="search" />
-                            <button class="rd-icon-btn" type="submit" title="Buscar"><i
-                                    class="fas fa-search"></i></button>
-                        </form>
-
-                        <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters"
-                            aria-expanded="false" aria-controls="filters" title="Filtros">
-                            <i class="fas fa-filter"></i>
-                        </button>
-
-                        <div class="rd-export-group">
-                            <a href="{{ route('admin.movimientos.registro_diario.export_excel', request()->only(['buscar', 'fecha_desde', 'fecha_hasta'])) }}"
-                                class="rd-btn rd-btn-success" title="Exportar Excel"><i
-                                    class="fas fa-file-excel"></i>
-                                Excel</a>
-
-                            <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i
-                                    class="fas fa-file-pdf"></i>
-                                PDF</button>
+            <div class="collapse" id="filters">
+                <div class="rd-filters">
+                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                        class="rd-filters-form">
+                        <div class="rd-filter-row">
+                            <label>Desde</label>
+                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
                         </div>
-                    </div>
+                        <div class="rd-filter-row">
+                            <label>Hasta</label>
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input"
+                                max="{{ date('Y-m-d') }}" />
+                        </div>
+                        <div class="rd-filter-actions">
+                            <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
+                            <button type="button" class="rd-btn rd-btn-default"
+                                onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
+                        </div>
+                    </form>
                 </div>
+            </div>
 
-                <div class="collapse" id="filters">
-                    <div class="rd-filters">
-                        <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
-                            class="rd-filters-form">
-                            <div class="rd-filter-row">
-                                <label>Desde</label>
-                                <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
-                            </div>
-                            <div class="rd-filter-row">
-                                <label>Hasta</label>
-                                <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input"
-                                    max="{{ date('Y-m-d') }}" />
-                            </div>
-                            <div class="rd-filter-actions">
-                                <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
-                                <button type="button" class="rd-btn rd-btn-default"
-                                    onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="rd-card-body rd-list-body">
-                    <div class="rd-list">
-                        <table class="rd-table">
-                            <thead>
+            <div class="rd-card-body rd-list-body">
+                <div class="rd-list">
+                    <table class="rd-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>PNF</th>
+                                <th>Registrado</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($data as $registro)
                                 <tr>
-                                    <th>#</th>
-                                    <th>Nombre</th>
-                                    <th>Apellido</th>
-                                    <th>PNF</th>
-                                    <th>Registrado</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td>{{ $registro->nombre_persona }}</td>
+                                    <td>{{ $registro->apellido_persona }}</td>
+                                    <td>{{ $registro->nombre_pnf }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($registro->fecha_regis_diario_c)->format('d/m/Y') }}
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="rd-badge rd-badge-success">Aprobado</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="rd-action-group">
+                                            <a class="rd-action"
+                                                href="{{ route('admin.movimientos.registro_diario.show', $registro->id) }}"
+                                                title="Ver"><i class="fas fa-eye"></i></a>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($data as $registro)
-                                    <tr>
-                                        <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td>{{ $registro->nombre_persona }}</td>
-                                        <td>{{ $registro->apellido_persona }}</td>
-                                        <td>{{ $registro->nombre_pnf }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($registro->fecha_regis_diario_c)->format('d/m/Y') }}
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="rd-badge rd-badge-success">Aprobado</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="rd-action-group">
-                                                <a class="rd-action"
-                                                    href="{{ route('admin.movimientos.registro_diario.show', $registro->id) }}"
-                                                    title="Ver"><i class="fas fa-eye"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4">No hay registros</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">No hay registros</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
-                    <!-- Paginación (si aplica) -->
-                    <div class="rd-pagination">
-                        {{ $data->appends(request()->query())->links() }}
-                    </div>
+                <!-- Paginación (si aplica) -->
+                <div class="rd-pagination">
+                    {{ $data->appends(request()->query())->links() }}
                 </div>
             </div>
         </div>
+    </div>
 </div>
 
 @push('css')
