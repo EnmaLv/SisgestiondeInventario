@@ -94,7 +94,7 @@ class Compra extends Model
 
             'sucursales' => DB::table('sucursals')
                 ->select('id', 'nombre')
-                ->where('estado', 1) // Solo sucursales activas
+                ->where('activo', 1) // Solo sucursales activas
                 ->orderBy('nombre')
                 ->get(),
         ];
