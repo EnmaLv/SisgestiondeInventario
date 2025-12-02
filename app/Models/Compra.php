@@ -232,6 +232,34 @@ class Compra extends Model
             ->first();
     }
 
+    public static function obtenerTodosDetallesCompras($buscar , $estado)
+    {
+        $query = DB::table('detalle_compras')
+            ->join('productos', 'productos.id', '=', 'detalle_compras.producto_id')
+            ->join('compras', 'compras.id', '=', 'detalle_compras.compra_id')
+            ->join('proveedors', 'proveedors.id', '=', 'compras.proveedor_id')
+            ->join('unidades', 'unidades.id', '=', 'detalle_compras.unidad_id')
+            ->select(
+                'detalle_compras.*',
+                'compras.fecha',
+                'proveedors.empresa as proveedor_empresa',
+                'productos.nombre as producto_nombre',
+                'unidades.nombre as unidad_nombre',
+                'unidades.abreviatura as unidad_abreviatura'
+            )
+            ->orderBy('detalle_compras.id');
+
+            if($estado){
+                $query->where('detalle_compras.estado', $estado);
+            }
+
+            if($buscar){
+                $query->where('detalle_compras.id', 'like', "%{$buscar}%");
+            }
+
+            return $query->get();
+    }
+
 
     /**
      * Elimina una compra y todos sus registros relacionados de manera segura.

@@ -55,7 +55,7 @@
                     <div class="rd-export-group">
                         <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
                             Excel</button>
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
+                        <button class="rd-btn rd-btn-danger" id="pdfBtn" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
                             PDF</button>
                     </div>
                 </div>
@@ -188,4 +188,18 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+@stop
+
+@section('js')
+    <script>
+        const pdfBtn = document.querySelector('#pdfBtn');
+        const pdfRoute = `{{ route('admin.movimientos.compras.export_pdf') }}`;
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', function() {
+
+                const url = `${pdfRoute}`;
+                window.open(url, '_blank');
+            });
+        }
+    </script>
 @stop
