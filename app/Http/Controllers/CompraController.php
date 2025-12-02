@@ -6,6 +6,7 @@ use App\Models\Compra;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CompraProveedorMail;
+use App\Utilities\PdfGeneratorUtil;
 
 /**
  * Controlador para gestionar las operaciones relacionadas con las compras
@@ -164,5 +165,57 @@ class CompraController extends Controller
         return back()
             ->with('mensaje', 'Correo enviado')
             ->with('icono', 'success');
+    }
+
+
+
+    public function exportPdf(Request $request)
+    {
+// 1. Obtener la lista plana de todos los detalles desde tu función estática
+    $itemsPlano = Compra::obtenerTodosDetallesCompras(
+        $request->buscar,
+        $request->estado
+    );
+
+    // Si la colección está vacía, no hay nada que reportar
+    if ($itemsPlano->isEmpty()) {
+        return back()->with('error', 'No se encontraron datos para el reporte.');
+    }
+
+    // 2. AGRUPAR los ítems por el campo 'compra_id'
+    // Esto crea una colección donde la clave es el ID de la compra (ej: '3') 
+    // y el valor es otra colección con todos los ítems que pertenecen a ese ID.
+    $comprasAgrupadas = $itemsPlano->groupBy('compra_id');
+
+    // 3. TRANSFORMAR la colección agrupada a un formato de Compra principal con sus Detalles
+    $compras = $comprasAgrupadas->map(function ($items, $compraId) {
+        // Tomamos el primer ítem para obtener los datos que son comunes (cabecera de la compra)
+        $primerItem = $items->first();
+        
+        // Calculamos el total de la compra sumando los subtotales de sus ítems
+        $totalCompra = $items->sum('subtotal');
+        
+        // Estructura final que la vista Blade puede iterar
+        return (object) [
+            'id'                  => $compraId,
+            'fecha'               => $primerItem->fecha,
+            'proveedor_empresa'   => $primerItem->proveedor_empresa,
+            'created_at'          => $primerItem->created_at,
+            'total'               => $totalCompra,
+            'observaciones'       => null, 
+            'detalles'            => $items->all() 
+        ];
+    })->values();
+
+    $datos = [
+        'compras' => $compras, // ¡Esta es la colección agrupada que usará tu vista!
+        'buscar' => $request->buscar,
+        'estado' => $request->estado
+    ];
+
+        // dd($compras);
+
+        return PdfGeneratorUtil::ShowPdf('pdf.compra',$datos , "Compras");
+
     }
 }
