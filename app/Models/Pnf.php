@@ -15,6 +15,7 @@ class Pnf extends Model
 
 
 
+
     public function personaPnf()
     {
         return $this->hasMany(PersonaPnf::class, 'id_pnf');

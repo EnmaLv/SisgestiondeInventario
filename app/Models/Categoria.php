@@ -6,18 +6,39 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Categoria extends Model  // ← Con mayúscula
+/**
+ * Modelo que representa una categoría de productos en el sistema de inventario.
+ * 
+ * Este modelo maneja todas las operaciones relacionadas con las categorías,
+ * incluyendo la relación con los productos y consultas comunes.
+ */
+class Categoria extends Model
 {
     use HasFactory;
 
+    /**
+     * Nombre de la tabla asociada al modelo.
+     *
+     * @var string
+     */
     protected $table = 'categorias';
 
+    /**
+     * Atributos que son asignables masivamente.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'nombre',
-        'descripcion',
-        'estado',
+        'nombre',       // Nombre de la categoría
+        'descripcion',  // Descripción detallada de la categoría
+        'estado',       // Estado de la categoría (activo/inactivo)
     ];
 
+    /**
+     * Obtiene los productos asociados a esta categoría.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function productos()
     {
         return $this->hasMany(Producto::class, 'categoria_id');
@@ -26,7 +47,11 @@ class Categoria extends Model  // ← Con mayúscula
     // ========== MÉTODOS ESTÁTICOS CON QUERY BUILDER ==========
 
     /**
-     * Listar categorías con filtros
+     * Obtiene una lista paginada de categorías con opciones de filtrado.
+     *
+     * @param  string|null  $buscar  Término de búsqueda para filtrar por nombre
+     * @param  int|string|null  $activo  Filtro por estado (1 = activo, 0 = inactivo)
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public static function listarCategorias($buscar = null, $activo = null)
     {
@@ -45,7 +70,10 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Crear una nueva categoría
+     * Crea una nueva categoría en la base de datos.
+     *
+     * @param  array  $data  Datos de la categoría a crear
+     * @return int  ID de la categoría recién creada
      */
     public static function crearCategoria(array $data)
     {
@@ -59,7 +87,10 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Obtener una categoría por ID
+     * Obtiene una categoría por su ID.
+     *
+     * @param  int  $id  ID de la categoría a buscar
+     * @return object|null  Objeto con los datos de la categoría o null si no se encuentra
      */
     public static function obtenerCategoria($id)
     {
@@ -69,7 +100,11 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Actualizar una categoría
+     * Actualiza los datos de una categoría existente.
+     *
+     * @param  int  $id  ID de la categoría a actualizar
+     * @param  array  $data  Nuevos datos para la categoría
+     * @return int  Número de registros actualizados (0 o 1)
      */
     public static function actualizarCategoria($id, array $data)
     {
@@ -83,7 +118,11 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Eliminar una categoría
+     * Elimina una categoría de la base de datos.
+     *
+     * @param  int  $id  ID de la categoría a eliminar
+     * @return int  Número de registros eliminados (0 o 1)
+     * @throws \Exception Si la categoría no puede ser eliminada
      */
     public static function eliminarCategoria($id)
     {
@@ -93,7 +132,11 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Cambiar estado de la categoría
+     * Cambia el estado de una categoría (activo/inactivo).
+     *
+     * @param  int  $id  ID de la categoría
+     * @param  bool  $estado  Nuevo estado (true = activo, false = inactivo)
+     * @return int  Número de registros actualizados (0 o 1)
      */
     public static function cambiarEstado($id, $estado)
     {
@@ -106,7 +149,10 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Obtener categoría con sus productos
+     * Obtiene una categoría junto con todos sus productos activos.
+     *
+     * @param  int  $id  ID de la categoría
+     * @return object|null  Objeto con los datos de la categoría y sus productos, o null si no se encuentra
      */
     public static function obtenerCategoriaConProductos($id)
     {
@@ -120,7 +166,7 @@ class Categoria extends Model  // ← Con mayúscula
                 ->where('estado', 1)
                 ->select('id', 'codigo', 'nombre', 'precio_compra', 'estado')
                 ->get();
-            
+
             $categoria->cantidad_productos = $categoria->productos->count();
         }
 
@@ -128,7 +174,10 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Verificar si la categoría tiene productos
+     * Verifica si una categoría tiene productos asociados.
+     *
+     * @param  int  $id  ID de la categoría
+     * @return bool  true si tiene productos, false en caso contrario
      */
     public static function tieneProductos($id)
     {
@@ -138,7 +187,10 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Contar productos por categoría
+     * Cuenta la cantidad de productos asociados a una categoría.
+     *
+     * @param  int  $id  ID de la categoría
+     * @return int  Número de productos en la categoría
      */
     public static function contarProductos($id)
     {
@@ -148,7 +200,9 @@ class Categoria extends Model  // ← Con mayúscula
     }
 
     /**
-     * Obtener todas las categorías activas (para selects)
+     * Obtiene todas las categorías activas para usar en menús desplegables.
+     *
+     * @return \Illuminate\Support\Collection  Colección de categorías activas con ID y nombre
      */
     public static function obtenerCategoriasActivas()
     {

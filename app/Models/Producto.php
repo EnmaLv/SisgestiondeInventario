@@ -7,42 +7,120 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * Modelo que representa un producto en el sistema de inventario.
+ * 
+ * Este modelo maneja todas las operaciones relacionadas con los productos,
+ * incluyendo relaciones con categorías, unidades, lotes y movimientos de inventario.
+ */
 class Producto extends Model
 {
     use HasFactory;
 
+    /**
+     * Nombre de la tabla asociada al modelo.
+     *
+     * @var string
+     */
     protected $table = 'productos';
 
+    /**
+     * Atributos que son asignables masivamente.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'codigo',
-        'nombre',
-        'descripcion',
-        'imagen',
-        'precio_compra',
-        'stock_minimo',
-        'stock_maximo',
-        'unidad_id',
-        'estado',
-        'categoria_id'
+        'codigo',          // Código único del producto
+        'nombre',          // Nombre del producto
+        'descripcion',     // Descripción detallada
+        'imagen',          // Ruta de la imagen del producto
+        'precio_compra',   // Precio de compra del producto
+        'stock_minimo',    // Nivel mínimo de inventario
+        'stock_maximo',    // Nivel máximo de inventario
+        'unidad_id',       // ID de la unidad de medida
+        'estado',          // Estado del producto (activo/inactivo)
+        'categoria_id'     // ID de la categoría a la que pertenece
     ];
-// (Mantén tus relaciones Eloquent si las necesitas en otras partes)
-    public function unidad() { return $this->belongsTo(Unidad::class); }
-    public function categoria() { return $this->belongsTo(Categoria::class); }
-    public function lotes() { return $this->hasMany(Lote::class); }
-    public function movimientos() { return $this->hasMany(MovimientoInventario::class); }
-    public function detalleCompras() { return $this->hasMany(DetalleCompra::class); }
-    public function recetaIngredientes() { return $this->hasMany(RecetaIngrediente::class); }
+    /*
+    |--------------------------------------------------------------------------
+    | RELACIONES
+    |--------------------------------------------------------------------------
+    */
 
     /**
-     * Listar productos usando Query Builder pero devolviendo objetos
-     * compatibles con la vista (categoria->nombre y unidad->nombre).
+     * Obtiene la unidad de medida del producto.
      *
-     * @param string|null $buscar
-     * @param int|string|null $activo
-     * @param int $perPage
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public static function listarProductos($buscar = null, $activo = null, $perPage = 10)
+    public function unidad()
+    {
+        return $this->belongsTo(Unidad::class);
+    }
+
+    /**
+     * Obtiene la categoría a la que pertenece el producto.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
+
+    /**
+     * Obtiene los lotes asociados al producto.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function lotes()
+    {
+        return $this->hasMany(Lote::class);
+    }
+
+    /**
+     * Obtiene los movimientos de inventario del producto.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function movimientos()
+    {
+        return $this->hasMany(MovimientoInventario::class);
+    }
+
+    /**
+     * Obtiene los detalles de compra del producto.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function detalleCompras()
+    {
+        return $this->hasMany(DetalleCompra::class);
+    }
+
+    /**
+     * Obtiene los ingredientes de receta que usan este producto.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function recetaIngredientes()
+    {
+        return $this->hasMany(RecetaIngrediente::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MÉTODOS DE CONSULTA
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Obtiene una lista paginada de productos con información relacionada.
+     *
+     * Este método realiza una consulta optimizada utilizando Query Builder y devuelve
+     * los resultados formateados para ser compatibles con las vistas existentes.
+     *
+     */
+    public static function listarProductos($buscar = null, $activo = 1, $perPage = 10)
     {
         $query = DB::table('productos')
             ->leftJoin('categorias', 'productos.categoria_id', '=', 'categorias.id')
@@ -56,26 +134,24 @@ class Producto extends Model
         if (!empty($buscar)) {
             $query->where(function ($q) use ($buscar) {
                 $q->where('productos.codigo', 'like', "%{$buscar}%")
-                  ->orWhere('productos.nombre', 'like', "%{$buscar}%");
+                    ->orWhere('productos.nombre', 'like', "%{$buscar}%");
             });
         }
 
+        // Aplicar filtro de estado si se especifica
         if ($activo !== null && $activo !== '') {
-            // si tu campo estado es booleano en la BD, conviértelo a int
             $query->where('productos.estado', (int)$activo);
+        } else {
+            // Por defecto, mostrar solo activos
+            $query->where('productos.estado', 1);
         }
 
         $paginador = $query->orderBy('productos.id', 'desc')->paginate($perPage);
 
         // Transformar la colección para añadir objetos "categoria" y "unidad"
         $paginador->getCollection()->transform(function ($item) {
-            // $item es stdClass; añadimos propiedades con objetos para mantener compatibilidad con la vista
             $item->categoria = (object) ['nombre' => $item->categoria_nombre ?? null];
             $item->unidad = (object) ['nombre' => $item->unidad_nombre ?? null];
-
-            // opcional: eliminar campos extra si quieres
-            // unset($item->categoria_nombre, $item->unidad_nombre);
-
             return $item;
         });
 
@@ -83,19 +159,22 @@ class Producto extends Model
     }
 
     /**
-     * Datos para formularios create/edit
+     * Obtiene los datos necesarios para los formularios de creación y edición.
+     *
      */
     public static function getDatosFormulario()
     {
         return [
-            'categorias' => DB::table('categorias')->select('id','nombre')->get(),
-            'unidades'   => DB::table('unidades')->select('id','nombre')->get(),
+            'categorias' => DB::table('categorias')->select('id', 'nombre')->get(),
+            'unidades'   => DB::table('unidades')->select('id', 'nombre')->get(),
         ];
     }
 
     /**
-     * Crear producto (recibe array ya validado).
-     * Devuelve el id insertado.
+     * Crea un nuevo producto en la base de datos.
+     *
+     * Si no se proporciona un código, se genera automáticamente basado en la categoría y nombre.
+     *
      */
     public static function crearProducto(array $data)
     {
@@ -126,7 +205,10 @@ class Producto extends Model
     }
 
     /**
-     * Obtener producto por id (con nombres relacionados si los necesitas)
+     * Obtiene un producto por su ID con información relacionada.
+     *
+     * Incluye datos de la categoría y unidad de medida asociadas.
+     *
      */
     public static function obtenerProducto($id)
     {
@@ -159,7 +241,7 @@ class Producto extends Model
 
 
     /**
-     * Actualizar producto por id (recibe array validado)
+     * Actualiza los datos de un producto existente.
      */
     public static function actualizarProducto($id, array $data)
     {
@@ -186,16 +268,29 @@ class Producto extends Model
     }
 
     /**
-     * Eliminar producto (simple)
+     * Elimina un producto de la base de datos.
+     *
+     * Nota: Asegúrate de manejar las restricciones de clave foránea.
      */
     public static function eliminarProducto($id)
     {
-        return DB::table('productos')->where('id', $id)->delete();
+        return DB::table('productos')
+            ->where('id', $id)
+            ->update([
+                'estado' => 0,
+                'updated_at' => now()
+            ]);
     }
 
     /**
-     * Generar código legible: mezcla de categoría + producto + sufijo único
-     * Ej: CAT-NOM-YYYYMMDD-XXX o similar.
+     * Genera un código único para el producto basado en su categoría y nombre.
+     *
+     * El formato generado es: PRF-CAT-NOM-XXXXXX
+     * Donde:
+     * - PRF: Prefijo 'PRD'
+     * - CAT: Primeras 3 letras de la categoría en mayúsculas
+     * - NOM: Primeras 3 letras del nombre en mayúsculas
+     * - XXXXXX: 6 caracteres aleatorios alfanuméricos
      */
     protected static function generarCodigoProducto($categoriaNombre, $nombreProducto)
     {

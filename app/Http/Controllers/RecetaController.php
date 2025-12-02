@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Receta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RecetaController extends Controller
 {
@@ -13,24 +14,26 @@ class RecetaController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $activo = $request->input('estado');
+        $activo = $request->input('activo', 1); // Cambiado de 'estado' a 'activo'
 
         $query = Receta::query();
 
         if ($buscar) {
-            $query->where(function($q) use ($buscar) {
-                
-                $q->Where('nombre','like', "%{$buscar}%");
+            $query->where(function ($q) use ($buscar) {
+                $q->where('nombre', 'like', "%{$buscar}%");
             });
         }
 
         if ($activo !== null && $activo !== '') {
             $query->where('estado', (int)$activo);
+        } else {
+            // Por defecto, mostrar solo activos
+            $query->where('estado', 1);
         }
 
-        $recetas = $query->orderBy('id','desc')->paginate(10);
+        $recetas = $query->orderBy('id', 'desc')->paginate(10);
 
-        return view('admin.maestros.recetas.index', compact('recetas'));
+        return view('admin.maestros.recetas.index', compact('recetas', 'buscar', 'activo'));
     }
 
     /**
@@ -58,7 +61,7 @@ class RecetaController extends Controller
         $receta->estado = true; //Activo por defecto
         $receta->save();
 
-        return redirect()->route('admin.maestros.recetas.index')->with('mensaje', 'Receta creada exitosamente.')->with('icono', 'success');   
+        return redirect()->route('admin.maestros.recetas.index')->with('mensaje', 'Receta creada exitosamente.')->with('icono', 'success');
     }
 
     /**
@@ -93,9 +96,7 @@ class RecetaController extends Controller
      */
     public function destroy($id)
     {
-        $receta = Receta::findOrFail($id);
-        
-        $receta->delete();
+        Receta::eliminarReceta($id);
         return redirect()->route('admin.maestros.recetas.index')->with('mensaje', 'Receta eliminada exitosamente.')->with('icono', 'success');
     }
 }

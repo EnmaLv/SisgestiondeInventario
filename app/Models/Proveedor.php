@@ -39,20 +39,21 @@ class Proveedor extends Model
     public static function listarProveedores($buscar = null, $activo = null)
     {
         $query = DB::table('proveedors')
-            ->select(
-                'proveedors.*'
-            );
+            ->select('proveedors.*');
 
         if ($buscar) {
-            $query->where(function($q) use ($buscar) {
+            $query->where(function ($q) use ($buscar) {
                 $q->where('empresa', 'like', "%{$buscar}%")
-                  ->orWhere('nombre', 'like', "%{$buscar}%")
-                  ->orWhere('email', 'like', "%{$buscar}%");
+                    ->orWhere('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('email', 'like', "%{$buscar}%");
             });
         }
 
         if ($activo !== null && $activo !== '') {
             $query->where('estado', (int)$activo);
+        } else {
+            // Por defecto, mostrar solo activos
+            $query->where('estado', 1);
         }
 
         return $query->orderBy('id', 'desc')->paginate(10);
@@ -109,7 +110,10 @@ class Proveedor extends Model
     {
         return DB::table('proveedors')
             ->where('id', $id)
-            ->delete();
+            ->update([
+                'estado' => 0,
+                'updated_at' => now()
+            ]);
     }
 
     /**

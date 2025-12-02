@@ -16,12 +16,8 @@ class ProductoController extends Controller
      */
     public function index(Request $request)
     {
-        $buscar = $request->input('buscar');
-        $activo = $request->input('estado');
-
-        // Usa el método del modelo (query builder encapsulado)
-        $productos = \App\Models\Producto::listarProductos($buscar, $activo, 10);
-
+        $activo = $request->input('activo', 1); // Por defecto muestra solo activos
+        $productos = Producto::listarProductos($request->buscar, $activo);
         return view('admin.maestros.productos.index', compact('productos'));
     }
 

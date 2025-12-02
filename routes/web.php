@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\RegistroDiarioController;  
+use App\Http\Controllers\RegistroDiarioController;
 
 
 Route::get('/', function () {
@@ -136,6 +136,3 @@ Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController:
 Route::get('/admin/configuracion', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.configuracion.index')->middleware('auth');
 
 Route::get('/admin/configuracion/indexar', [App\Http\Controllers\IndexarController::class, 'index'])->name('admin.configuracion.indexar.index')->middleware('auth');
-
-
-

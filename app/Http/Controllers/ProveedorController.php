@@ -14,9 +14,9 @@ class ProveedorController extends Controller
     {
         $proveedores = Proveedor::listarProveedores(
             $request->input('buscar'),
-            $request->input('estado')
+            $request->input('activo', 1)  // Por defecto 1 (activos)
         );
-        
+
         return view('admin.maestros.proveedores.index', compact('proveedores'));
     }
 
@@ -55,7 +55,7 @@ class ProveedorController extends Controller
     public function show($id)
     {
         $proveedor = Proveedor::obtenerProveedorConCompras($id);
-        
+
         if (!$proveedor) {
             return redirect()
                 ->route('admin.maestros.proveedores.index')
@@ -72,7 +72,7 @@ class ProveedorController extends Controller
     public function edit($id)
     {
         $proveedor = Proveedor::obtenerProveedor($id);
-        
+
         if (!$proveedor) {
             return redirect()
                 ->route('admin.maestros.proveedores.index')

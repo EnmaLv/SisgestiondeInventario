@@ -61,26 +61,23 @@
                 </div>
             </div>
 
-            {{-- <div class="collapse" id="filters">
+            <div class="collapse" id="filters">
                 <div class="rd-filters">
-                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
-                        class="rd-filters-form">
-                        <div class="rd-filter-row">
-                            <label>Desde</label>
-                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
+                    <div class="d-flex gap-3 align-items-center mb-3">
+                        <span class="font-weight-bold" style="margin-right:5px;">Filtrar por estado:</span>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->except('activo'), ['activo' => 1])) }}"
+                                class="btn {{ request('activo', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
+                                Activos
+                            </a>
+                            <a href="{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->except('activo'), ['activo' => 0])) }}"
+                                class="btn {{ request('activo', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
+                                Inactivos
+                            </a>
                         </div>
-                        <div class="rd-filter-row">
-                            <label>Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" />
-                        </div>
-                        <div class="rd-filter-row rd-filter-actions">
-                            <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
-                            <button type="button" class="rd-btn rd-btn-default"
-                                onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div> --}}
+            </div>
 
 
             {{-- Tabla --}}
@@ -183,4 +180,123 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+    <style>
+        /* Filtros */
+        .rd-filters {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+
+        /* Botones de acción */
+        .rd-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .rd-search-inline {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .rd-search-input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #e6eef6;
+            min-width: 200px;
+        }
+
+        .rd-icon-btn {
+            background: #fff;
+            border: 1px solid #e6eef6;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #374151;
+            transition: all 0.2s;
+        }
+
+        .rd-icon-btn:hover {
+            background: #f8f9fa;
+        }
+
+        /* Tabla */
+        .rd-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .rd-table th {
+            background: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #4b5563;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .rd-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        /* Badges de estado */
+        .rd-badge {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .rd-badge-success {
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+
+        .rd-badge-danger {
+            background-color: #fef2f2;
+            color: #b91c1c;
+        }
+
+        /* Acciones */
+        .rd-action-group {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .rd-action {
+            padding: 6px;
+            border-radius: 6px;
+            color: #4b5563;
+            transition: all 0.2s;
+        }
+
+        .rd-action:hover {
+            background: #f3f4f6;
+        }
+
+        .rd-action-danger {
+            color: #dc2626;
+        }
+
+        .rd-action-danger:hover {
+            background: #fee2e2;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .rd-actions {
+                flex-wrap: wrap;
+            }
+
+            .rd-search-input {
+                min-width: 150px;
+            }
+        }
+    </style>
 @stop

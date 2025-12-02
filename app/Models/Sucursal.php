@@ -6,24 +6,34 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+// Modelo para gestionar las sucursales del sistema
 class Sucursal extends Model
 {
     use HasFactory;
 
+    // Nombre de la tabla en la base de datos
     protected $table = 'sucursals';
 
+    // Campos que pueden ser llenados masivamente
     protected $fillable = [
-        'nombre',
-        'direccion',
-        'telefono',
-        'activo',
+        'nombre',     // Nombre de la sucursal
+        'direccion',  // Dirección física
+        'telefono',   // Número de teléfono
+        'activo',     // Estado de la sucursal (activo/inactivo)
     ];
 
+    // Conversión de tipos de datos
+    protected $casts = [
+        'activo' => 'boolean'  // Convierte el campo activo a booleano
+    ];
+
+    // Relación con InventarioSucursalLote
     public function inventarioSucursalLotes()
     {
         return $this->hasMany(InventarioSucursalLote::class);
     }
 
+    // Relación con MovimientoInventario
     public function movimientos()
     {
         return $this->hasMany(MovimientoInventario::class);
@@ -32,45 +42,51 @@ class Sucursal extends Model
     // ========== MÉTODOS ESTÁTICOS CON QUERY BUILDER ==========
 
     /**
-     * Listar sucursales con filtros
+     * Obtiene un listado paginado de sucursales con opción de búsqueda y filtro por estado
      */
     public static function listarSucursales($buscar = null, $activo = null)
     {
         $query = DB::table('sucursals')
             ->select('sucursals.*');
 
+        // Aplicar filtro de búsqueda si se proporciona
         if ($buscar) {
-            $query->where(function($q) use ($buscar) {
+            $query->where(function ($q) use ($buscar) {
                 $q->where('nombre', 'like', "%{$buscar}%")
-                  ->orWhere('direccion', 'like', "%{$buscar}%")
-                  ->orWhere('telefono', 'like', "%{$buscar}%");
+                    ->orWhere('direccion', 'like', "%{$buscar}%")
+                    ->orWhere('telefono', 'like', "%{$buscar}%");
             });
         }
 
+        // Filtrar por estado activo/inactivo si se especifica
         if ($activo !== null && $activo !== '') {
             $query->where('activo', (int)$activo);
+        } else {
+            // Por defecto, mostrar solo activos
+            $query->where('activo', 1);
         }
 
+        // Ordenar por ID y paginar los resultados (10 por página)
         return $query->orderBy('id', 'desc')->paginate(10);
     }
 
     /**
-     * Crear una nueva sucursal
+     * Crea una nueva sucursal en la base de datos
      */
     public static function crearSucursal(array $data)
     {
         return DB::table('sucursals')->insertGetId([
-            'nombre'     => $data['nombre'],
-            'direccion'  => $data['direccion'],
-            'telefono'   => $data['telefono'],
-            'activo'     => $data['activo'],
-            'created_at' => now(),
-            'updated_at' => now(),
+            'nombre'     => $data['nombre'],        // Nombre de la sucursal
+            'direccion'  => $data['direccion'],     // Dirección completa
+            'telefono'   => $data['telefono'],      // Número de contacto
+            'activo'     => $data['activo'],        // Estado activo/inactivo
+            'created_at' => now(),                 // Fecha de creación
+            'updated_at' => now()                  // Fecha de actualización
         ]);
     }
 
     /**
-     * Obtener una sucursal por ID
+     * Obtiene una sucursal por su ID
      */
     public static function obtenerSucursal($id)
     {
@@ -80,33 +96,37 @@ class Sucursal extends Model
     }
 
     /**
-     * Actualizar una sucursal
+     * Actualiza los datos de una sucursal existente
      */
     public static function actualizarSucursal($id, array $data)
     {
         return DB::table('sucursals')
             ->where('id', $id)
             ->update([
-                'nombre'     => $data['nombre'],
-                'direccion'  => $data['direccion'],
-                'telefono'   => $data['telefono'],
-                'activo'     => $data['activo'],
-                'updated_at' => now(),
+                'nombre'     => $data['nombre'],        // Nuevo nombre
+                'direccion'  => $data['direccion'],     // Nueva dirección
+                'telefono'   => $data['telefono'],      // Nuevo teléfono
+                'activo'     => $data['activo'],        // Nuevo estado
+                'updated_at' => now()                  // Actualizar fecha de modificación
             ]);
     }
 
     /**
-     * Eliminar una sucursal
+     * Elimina una sucursal de la base de datos
+     * Nota: Se debe verificar antes que no tenga inventario ni movimientos
      */
     public static function eliminarSucursal($id)
     {
         return DB::table('sucursals')
             ->where('id', $id)
-            ->delete();
+            ->update([
+                'activo' => 0,
+                'updated_at' => now()
+            ]);
     }
 
     /**
-     * Cambiar estado de la sucursal
+     * Cambia el estado de una sucursal
      */
     public static function cambiarEstado($id, $activo)
     {
@@ -119,7 +139,7 @@ class Sucursal extends Model
     }
 
     /**
-     * Obtener sucursal con inventario
+     * Obtiene los datos básicos de una sucursal con su inventario
      */
     public static function obtenerSucursalConInventario($id)
     {
@@ -151,7 +171,8 @@ class Sucursal extends Model
     }
 
     /**
-     * Verificar si la sucursal tiene inventario
+     * Verifica si una sucursal tiene productos en inventario
+     * Devuelve true si hay al menos un producto con cantidad mayor a 0
      */
     public static function tieneInventario($id)
     {
@@ -162,7 +183,8 @@ class Sucursal extends Model
     }
 
     /**
-     * Verificar si la sucursal tiene movimientos
+     * Verifica si una sucursal tiene registros de movimientos de inventario
+     * Útil para prevenir la eliminación de sucursales con historial
      */
     public static function tieneMovimientos($id)
     {
@@ -172,7 +194,7 @@ class Sucursal extends Model
     }
 
     /**
-     * Obtener todas las sucursales activas (para selects)
+     * Obtiene todas las sucursales activas para selects
      */
     public static function obtenerSucursalesActivas()
     {
@@ -184,7 +206,7 @@ class Sucursal extends Model
     }
 
     /**
-     * Obtener estadísticas de la sucursal
+     * Obtiene estadísticas de la sucursal
      */
     public static function obtenerEstadisticas($id)
     {
@@ -195,12 +217,12 @@ class Sucursal extends Model
                 ->where('isl.cantidad', '>', 0)
                 ->distinct('lotes.producto_id')
                 ->count('lotes.producto_id'),
-            
+
             'total_lotes' => DB::table('inventario_sucursal_lotes')
                 ->where('sucursal_id', $id)
                 ->where('cantidad', '>', 0)
                 ->count(),
-            
+
             'movimientos_mes' => DB::table('movimiento_inventarios')
                 ->where('sucursal_id', $id)
                 ->whereMonth('fecha', date('m'))
@@ -210,18 +232,20 @@ class Sucursal extends Model
     }
 
     /**
-     * Exportar sucursales a CSV
+     * Genera una colección de sucursales para exportar a CSV
+     * Acepta filtros de búsqueda y estado
      */
     public static function exportarCSV($buscar = null, $activo = null)
     {
         $query = DB::table('sucursals')
             ->select('id', 'nombre', 'direccion', 'telefono', 'activo');
 
+        // Aplicar filtros si se proporcionan
         if ($buscar) {
-            $query->where(function($q) use ($buscar) {
+            $query->where(function ($q) use ($buscar) {
                 $q->where('nombre', 'like', "%{$buscar}%")
-                  ->orWhere('direccion', 'like', "%{$buscar}%")
-                  ->orWhere('telefono', 'like', "%{$buscar}%");
+                    ->orWhere('direccion', 'like', "%{$buscar}%")
+                    ->orWhere('telefono', 'like', "%{$buscar}%");
             });
         }
 

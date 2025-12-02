@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Receta extends Model
 {
@@ -25,5 +26,15 @@ class Receta extends Model
     public function detalleRegistroDiarios()
     {
         return $this->hasMany(DetalleRegistroDiario::class, 'receta_id');
+    }
+
+    public static function eliminarReceta($id)
+    {
+        return DB::table('recetas')
+            ->where('id', $id)
+            ->update([
+                'estado' => 0,
+                'updated_at' => now()
+            ]);
     }
 }
