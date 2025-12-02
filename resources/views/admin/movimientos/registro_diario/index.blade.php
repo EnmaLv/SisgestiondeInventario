@@ -49,8 +49,7 @@
 
 @section('content')
 
+    @include('components.alert')
     <livewire:register-noti />
 
 @stop
-
-

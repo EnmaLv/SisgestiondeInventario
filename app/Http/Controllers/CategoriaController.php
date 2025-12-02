@@ -57,9 +57,7 @@ class CategoriaController extends Controller
 
         // Redirigir con mensaje de éxito
         return redirect()
-            ->route('admin.maestros.categorias.index')
-            ->with('mensaje', 'Categoría creada exitosamente.')
-            ->with('icono', 'success');
+            ->route('admin.maestros.categorias.index')->with('success', 'Categoría creada exitosamente.');
     }
 
     /**
@@ -127,9 +125,7 @@ class CategoriaController extends Controller
 
         // Redirigir con mensaje de éxito
         return redirect()
-            ->route('admin.maestros.categorias.index')
-            ->with('mensaje', 'Categoría actualizada exitosamente.')
-            ->with('icono', 'success');
+            ->route('admin.maestros.categorias.index')->with('success', 'Categoría actualizada exitosamente.');
     }
 
     /**
@@ -148,7 +144,7 @@ class CategoriaController extends Controller
             // Redirigir con mensaje de error si hay productos asociados
             return redirect()
                 ->route('admin.maestros.categorias.index')
-                ->with('mensaje', "No se puede eliminar la categoría porque tiene {$cantidad} producto(s) asociado(s).")
+                ->with('error', "No se puede eliminar la categoría porque tiene {$cantidad} producto(s) asociado(s).")
                 ->with('icono', 'error');
         }
 
@@ -158,7 +154,6 @@ class CategoriaController extends Controller
         // Redirigir con mensaje de éxito
         return redirect()
             ->route('admin.maestros.categorias.index')
-            ->with('mensaje', 'Categoría eliminada exitosamente.')
-            ->with('icono', 'success');
+            ->with('success', 'Categoría eliminada exitosamente.');
     }
 }
