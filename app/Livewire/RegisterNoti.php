@@ -21,10 +21,10 @@ class RegisterNoti extends Component
     #[Validate('required|numeric|min:7', message: ['required' => 'La cédula es requerida', 'numeric' => 'La cédula debe ser un número', 'min' => 'La cédula debe tener al menos 7 dígitos'])]
     public $cedula = '';
 
-    
+
     public $showNotification = false;
 
-    public $notification = [    
+    public $notification = [
         'type' => 'success',
         'message' => ''
     ];
@@ -35,7 +35,7 @@ class RegisterNoti extends Component
     public $desayuno_del_dia = null;
 
     public $horarioPermitido;
-    
+
 
 
     public function mount()
@@ -51,7 +51,7 @@ class RegisterNoti extends Component
         $registroHoy = DetalleRegistroDiario::whereDate('created_at', $hoy)->first();
 
         $hora = now()->format('H:i');
-        $this->horarioPermitido = $hora >= '09:00' && $hora <= '22:00';
+        $this->horarioPermitido = $hora >= '00:00' && $hora <= '22:00';
 
         if ($registroHoy) {
             // Ya existe → bloquear y cargar los datos
@@ -70,8 +70,8 @@ class RegisterNoti extends Component
     {
         $hora = now()->format('H:i');
 
-        if (!($hora >= '09:00' && $hora <= '22:00')) {
-            $this->addError('hora', 'Solo puede registrar desayuno entre 09:00am y 10:00pm.');
+        if (!($hora >= '00:00' && $hora <= '22:00')) {
+            $this->addError('hora', 'Solo puede registrar desayuno entre 12:00am y 12:00pm.');
             return;
         }
 
@@ -101,7 +101,7 @@ class RegisterNoti extends Component
             $receta = Receta::with('recetaIngredientes.producto')->find($this->desayuno_del_dia);
 
             // SUCURSAL FIJA
-            $sucursalId = 1; 
+            $sucursalId = 1;
 
             // PROCESAR CADA INGREDIENTE
             foreach ($receta->recetaIngredientes as $ingrediente) {
@@ -110,9 +110,9 @@ class RegisterNoti extends Component
 
                 // TRAER LOTES FIFO
                 $lotes = Lote::where('producto_id', $ingrediente->producto_id)
-                            ->where('cantidad_actual', '>', 0)
-                            ->orderBy('fecha_entrada', 'asc')
-                            ->get();
+                    ->where('cantidad_actual', '>', 0)
+                    ->orderBy('fecha_entrada', 'asc')
+                    ->get();
 
                 $cantidadPendiente = $total_descontar;
 
@@ -151,7 +151,7 @@ class RegisterNoti extends Component
                         'producto_id'    => $ingrediente->producto_id,
                         'lote_id'        => $lote->id,
                         'sucursal_id'    => $sucursalId,
-                        'tipo_movimiento'=> 'SALIDA',
+                        'tipo_movimiento' => 'SALIDA',
                         'unidad_id'      => $ingrediente->unidad_id,
                         'cantidad'       => $tomar,
                         'fecha'          => now(),
@@ -171,7 +171,6 @@ class RegisterNoti extends Component
 
             $this->desayuno_registrado = true;
             $this->dispatch('notify-saved');
-
         } catch (Exception $e) {
             DB::rollBack();
             $this->addError('inventario', $e->getMessage());
@@ -181,7 +180,7 @@ class RegisterNoti extends Component
 
 
 
-    
+
 
 
     public function save()
@@ -210,7 +209,7 @@ class RegisterNoti extends Component
             //Valida que la persona no se haya registrado hoy
             $is_register = Registro_diario::where('id_persona', $persona->id_persona)->where('fecha_regis_diario_c', date('Y-m-d'))->exists();
 
-            if($is_register){
+            if ($is_register) {
                 //retornamos un mensaje de erro
                 $this->notification = [
                     'type' => 'danger',
@@ -229,15 +228,15 @@ class RegisterNoti extends Component
                 return;
             }
 
-            try{
+            try {
                 //Iniciamos las transacciones
                 DB::beginTransaction();
                 $personaPnf = PersonaPnf::where('id_persona_pnf', $persona->id_persona)->first();
-                   
+
                 //Insertamos el registro diario
                 DB::table('registro_diario_c')->insert([
                     'id_persona' => $persona->id_persona,
-                    'id_persona_pnf' => $personaPnf->id_persona_pnf ,
+                    'id_persona_pnf' => $personaPnf->id_persona_pnf,
                     'fecha_regis_diario_c' => date('Y-m-d'),
                     'hora' => date('H:i:s'),
                 ]);
@@ -247,7 +246,7 @@ class RegisterNoti extends Component
 
                 //Aplicamos en la base de datos
                 DB::commit();
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 DB::rollBack();
                 //retornamos un mensaje de error
                 $this->notification = [
@@ -262,7 +261,7 @@ class RegisterNoti extends Component
                 //hacemos un evento para recuperar los datos
                 $this->dispatch('cedula-validada', datos: $DatosHistorial);
             }
-            
+
             //retornamos un mensaje de exito
             $this->notification = [
                 'type' => 'success',
@@ -282,10 +281,10 @@ class RegisterNoti extends Component
                 'message' => 'No se encontró un registro para la cédula: ' . $this->cedula
             ];
         }
-        
+
         $this->showNotification();
         $this->cedula = '';
-        
+
         // Ocultar la notificación después de 5 segundos
         $this->dispatch('notify-saved');
     }
@@ -319,5 +318,4 @@ class RegisterNoti extends Component
             'comidas' => $comidas,
         ]);
     }
-
 }

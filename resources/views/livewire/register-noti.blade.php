@@ -81,6 +81,23 @@
                             </div>
                         </div>
                     @endif
+                    @if ($errors->any())
+                        <div class="rd-alert rd-alert-error" role="alert">
+                            <div class="rd-alert-icon">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div class="rd-alert-content">
+                                <h4 class="rd-alert-title">¡Error!</h3>
+                                <ul class="rd-alert-list">
+                                    @foreach ($errors->all() as $error)
+                                        <h4>{{ $error }}</h3>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </form>
         </div>
@@ -93,9 +110,9 @@
 
     @if (!$desayuno_del_dia)
         <p>Registre un desayuno para continuar</p>
-    @else
+    @endif
         <!-- Formulario de registro diario -->
-        <div class="rd-grid">
+        <div class="rd-grid" @if (!$desayuno_del_dia) style="display: none;" @endif>
 
             <!-- Left: Cedula buscador -->
             <div class="rd-card rd-card-search">
@@ -259,7 +276,6 @@
                 </div>
             </div>
         </div>
-    @endif
 </div>
 
 @push('css')
@@ -636,6 +652,63 @@
             overflow: hidden;
             clip: rect(0, 0, 0, 0);
             border: 0;
+        }
+
+
+        .rd-alert {
+            display: flex;
+            align-items: flex-start;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid;
+            transition: all 0.3s ease;
+        }
+
+        .rd-alert-error {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            border-left: 4px solid #ef4444;
+        }
+
+        .rd-alert-icon {
+            flex-shrink: 0;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .rd-alert-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .rd-alert-error .rd-alert-icon svg {
+            color: #ef4444;
+        }
+
+        .rd-alert-content {
+            flex: 1 1 0%;
+        }
+
+        .rd-alert-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .rd-alert-list {
+            list-style-type: disc;
+            padding-left: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .rd-alert-error .rd-alert-title {
+            color: #991b1b;
+        }
+
+        .rd-alert-error .rd-alert-list {
+            color: #b91c1c;
         }
     </style>
 @endpush
