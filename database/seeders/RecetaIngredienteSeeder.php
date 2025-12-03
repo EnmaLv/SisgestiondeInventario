@@ -11,17 +11,17 @@ class RecetaIngredienteSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['recetas_id' => 1, 'producto_id' => 7,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 1, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 2, 'producto_id' => 14, 'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 2, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 3, 'producto_id' => 2,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 3, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
+            ['recetas_id' => 1, 'producto_id' => 7,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 1, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 2, 'producto_id' => 14, 'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 2, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 3, 'producto_id' => 2,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 3, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
             ['recetas_id' => 4, 'producto_id' => 6,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
-            ['recetas_id' => 4, 'producto_id' => 16,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 4, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 5, 'producto_id' => 15, 'cantidad_porcion' => 40.00, 'unidad_id' => 2],
-            ['recetas_id' => 5, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 2],
+            ['recetas_id' => 4, 'producto_id' => 16,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 4, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 5, 'producto_id' => 15, 'cantidad_porcion' => 40.00, 'unidad_id' => 1],
+            ['recetas_id' => 5, 'producto_id' => 1,  'cantidad_porcion' => 40.00, 'unidad_id' => 1],
         ];
 
         foreach ($data as $item) {
