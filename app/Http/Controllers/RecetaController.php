@@ -61,7 +61,7 @@ class RecetaController extends Controller
         $receta->estado = true; //Activo por defecto
         $receta->save();
 
-        return redirect()->route('admin.maestros.recetas.index')->with('mensaje', 'Receta creada exitosamente.');
+        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta creada exitosamente.');
     }
 
     /**
@@ -88,7 +88,7 @@ class RecetaController extends Controller
         $receta->descripcion = $validated['descripcion'];
         $receta->save();
 
-        return redirect()->route('admin.maestros.recetas.index')->with('mensaje', 'Receta actualizada exitosamente.');
+        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta actualizada exitosamente.');
     }
 
     /**
@@ -97,7 +97,7 @@ class RecetaController extends Controller
     public function destroy($id)
     {
         Receta::eliminarReceta($id);
-        return redirect()->route('admin.maestros.recetas.index')->with('mensaje', 'Receta eliminada exitosamente.');
+        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta eliminada exitosamente.');
     }
 
     public function activar($id)

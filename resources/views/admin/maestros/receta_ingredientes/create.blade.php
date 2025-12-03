@@ -95,7 +95,7 @@
                                 <div style="width:140px">
                                     <div class="input-group mb-2">
                                         <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
-                                        <input type="number" step="any" min="0" id="cantidad_input"
+                                        <input type="number" step="any" min="0" id="cantidad_porcion"
                                             class="form-control" placeholder="Cantidad">
                                     </div>
                                 </div>
@@ -244,7 +244,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const selectProd = document.getElementById('producto_select');
-            const cantidadInput = document.getElementById('cantidad_input');
+            const cantidadInput = document.getElementById('cantidad_porcion');
             const unidadSelect = document.getElementById('unidad_select');
             const btnAgregar = document.getElementById('agregarProducto');
             const lista = document.getElementById('listaProductos');

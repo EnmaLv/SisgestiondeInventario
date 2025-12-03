@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('recetas_id')->constrained('recetas')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
-            $table->decimal('cantidad_porcion', 14, 3)->notNull();
-            $table->decimal('cantidad_gramos', 14, 3)->notNull();
+            $table->decimal('cantidad_porcion', 14, 2)->notNull();
+            $table->decimal('cantidad_gramos', 14, 2);
             $table->foreignId('unidad_id')->constrained('unidades')->onDelete('cascade');
             $table->timestamps();
         });

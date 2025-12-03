@@ -56,8 +56,11 @@ class RecetaIngredienteController extends Controller
             'producto_id' => 'required|array|min:1',
             'producto_id.*' => 'required|exists:productos,id',
 
-            'cantidad_porcion' => 'required|array',
-            'cantidad_porcion.*' => 'required|numeric|min:0.0001',
+            'cantidad_porcion' => 'nullable|array',
+            'cantidad_porcion.*' => 'nullable|numeric',
+
+            'cantidad_gramos' => 'nullable|array',
+            'cantidad_gramos.*' => 'nullable|numeric',
 
             'unidad_id' => 'required|array',
             'unidad_id.*' => 'required|exists:unidades,id',

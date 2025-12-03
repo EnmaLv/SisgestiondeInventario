@@ -16,6 +16,7 @@ class RecetaIngrediente extends Model
         'recetas_id',
         'producto_id',
         'cantidad_porcion',
+        'cantidad_gramos',
         'unidad_id',
     ];
 
@@ -25,7 +26,7 @@ class RecetaIngrediente extends Model
     {
         return $this->hasMany(Registro_diario::class);
     }
-    
+
     public function receta()
     {
         return $this->belongsTo(Receta::class, 'recetas_id');
