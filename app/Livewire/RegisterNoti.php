@@ -21,7 +21,6 @@ class RegisterNoti extends Component
     #[Validate('required|numeric|min:7', message: ['required' => 'La cédula es requerida', 'numeric' => 'La cédula debe ser un número', 'min' => 'La cédula debe tener al menos 7 dígitos'])]
     public $cedula = '';
 
-
     public $showNotification = false;
 
     public $notification = [
@@ -33,8 +32,10 @@ class RegisterNoti extends Component
     public $cantidad_servido = null;
     public $desayuno_registrado = false;
     public $desayuno_del_dia = null;
-
     public $horarioPermitido;
+
+    public $alertInventario = null;
+    public $alertLimite = null;
 
 
 
@@ -54,15 +55,16 @@ class RegisterNoti extends Component
         $this->horarioPermitido = $hora >= '00:00' && $hora <= '22:00';
 
         if ($registroHoy) {
-            // Ya existe → bloquear y cargar los datos
+            // Ya existe → bloquear inputs
             $this->desayuno_registrado = true;
             $this->desayuno_del_dia = $registroHoy->receta_id;
             $this->cantidad_servido = $registroHoy->cantidad_servido;
         } else {
-            // Aún no existe → permitir solo si está en horario
-            $this->desayuno_registrado = !$this->horarioPermitido; // si NO está en horario → bloquear
+            // No existe desayuno todavía
+            $this->desayuno_registrado = false;
         }
     }
+
 
 
 
@@ -72,6 +74,7 @@ class RegisterNoti extends Component
 
         if (!($hora >= '00:00' && $hora <= '22:00')) {
             $this->addError('hora', 'Solo puede registrar desayuno entre 12:00am y 12:00pm.');
+            $this->desayuno_registrado = false;
             return;
         }
 
@@ -84,6 +87,7 @@ class RegisterNoti extends Component
 
         if (DetalleRegistroDiario::whereDate('created_at', $hoy)->exists()) {
             $this->addError('existe', 'El desayuno de hoy ya fue registrado.');
+            $this->desayuno_registrado = false;
             return;
         }
 
@@ -169,7 +173,7 @@ class RegisterNoti extends Component
                 }
 
                 if ($pendiente > 0) {
-                    throw new Exception("No hay suficiente inventario para {$ingrediente->producto->nombre}");
+                    throw new Exception("No hay suficiente inventario para esta receta");
                 }
             }
 
@@ -177,10 +181,21 @@ class RegisterNoti extends Component
             DB::commit();
 
             $this->desayuno_registrado = true;
-            $this->dispatch('notify-saved');
+            $this->dispatch('swal', [
+                'title' => '¡Desayuno registrado!',
+                'text'  => 'El desayuno del día fue guardado correctamente.',
+                'icon'  => 'success'
+            ]);
         } catch (Exception $e) {
             DB::rollBack();
-            $this->addError('inventario', $e->getMessage());
+            // Aquí se activa el mensaje
+            $this->alertInventario = $e->getMessage();
+            $this->dispatch('notify-inventario');
+
+            $this->desayuno_registrado = false;
+
+            // Mostrar notificación
+            $this->showNotification = true;
             return;
         }
     }
@@ -199,6 +214,26 @@ class RegisterNoti extends Component
                 'message' => 'Debe seleccionar el desayuno y la cantidad antes de registrar estudiantes.'
             ];
             $this->showNotification();
+            return;
+        }
+
+        // 🚨 Validación de límite de raciones
+        $detalleHoy = DetalleRegistroDiario::whereDate('created_at', date('Y-m-d'))->first();
+
+        if (!$detalleHoy) {
+            $this->notification = [
+                'type' => 'danger',
+                'message' => 'Debe registrar el desayuno y la cantidad servida antes de registrar estudiantes.'
+            ];
+            $this->showNotification();
+            return;
+        }
+
+        $registradosHoy = Registro_diario::where('fecha_regis_diario_c', date('Y-m-d'))->count();
+
+        if ($registradosHoy >= $detalleHoy->cantidad_servido) {
+            $this->alertLimite = "Ya se alcanzó el límite de {$detalleHoy->cantidad_servido} raciones. No se pueden registrar más estudiantes.";
+            $this->dispatch('notify-limite');
             return;
         }
 

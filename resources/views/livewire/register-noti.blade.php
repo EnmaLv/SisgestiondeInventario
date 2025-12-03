@@ -1,17 +1,15 @@
 <div class="rd-wrapper">
+    @include('components.alert')
     <!-- Formulario único para desayuno + cantidad -->
     <div class="rd-card rd-card-desayuno mb-4 col-md-12 text-center mx-auto">
         <div class="rd-card-header">
             <h2 class="rd-title">Desayuno del día</h2>
             <p class="rd-sub">Selecciona el desayuno de hoy y registra la cantidad servida</p>
         </div>
-
         <div class="rd-card-body">
             <form wire:submit.prevent="saveDesayuno" class="rd-search-form" autocomplete="off">
                 @csrf
-
                 <div class="row g-3">
-
                     <!-- SELECT: Desayuno -->
                     <div class="col-md-6">
                         <div class="rd-input-group">
@@ -19,14 +17,12 @@
 
                             <select id="desayuno" wire:model="desayuno_del_dia"
                                 class="rd-input @error('desayuno_del_dia') rd-input-error  @enderror"
-                                @disabled($desayuno_del_dia)>
+                                @disabled($desayuno_registrado)>
                                 <option value="">Seleccione una opción</option>
                                 @foreach ($comidas as $comida)
                                     <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
                                 @endforeach
                             </select>
-
-
                         </div>
                     </div>
 
@@ -38,9 +34,7 @@
                             <input type="number" name="cantidad_servido" id="cantidad_servido"
                                 wire:model="cantidad_servido"
                                 class="rd-input @error('cantidad_servido') rd-input-error @enderror" placeholder="Cant."
-                                @disabled($desayuno_del_dia) min="0" />
-
-
+                                @disabled($desayuno_registrado) min="0" />
                         </div>
                     </div>
 
@@ -52,12 +46,19 @@
                             Guardar Desayuno
                         </button>
                     </div>
-                    @error('cantidad_servido')
-                        <div class="rd-error mt-2 mr-2">No hay suficiente stock</div>
-                    @enderror
-                    @error('desayuno_del_dia')
-                        <div class="rd-error mt-2">Registre los ingredientes para continuar</div>
-                    @enderror
+                    <div class="rd-error mt-2" style="font-size: 1rem; text-align: left;">
+                        @error('cantidad_servido')
+                            <p>Ingrese una cantidad valida</p>
+                        @enderror
+                        @error('desayuno_del_dia')
+                            <p>Seleccione un desayuno</p>
+                        @enderror
+                        @if ($showNotification && $notification['type'] == 'danger')
+                            <div class="rd-error mt-3 text-center" style="font-size: 1rem;">
+                                {{ 'No hay suficiente inventario para esta receta' }}
+                            </div>
+                        @endif
+                    </div>
 
                     @if (!$horarioPermitido)
                         <div
@@ -109,13 +110,13 @@
     </div>
 
 
-    @if (!$desayuno_del_dia)
+    @if (!$desayuno_registrado)
         <p>Registre un desayuno para continuar</p>
     @elseif (!$horarioPermitido)
         <p></p>
     @endif
     <!-- Formulario de registro diario -->
-    <div class="rd-grid" @if (!$desayuno_del_dia || !$horarioPermitido) style="display: none;" @endif>
+    <div class="rd-grid" @if (!$desayuno_del_dia || !$horarioPermitido || !$desayuno_registrado) style="display: none;" @endif>
 
         <!-- Left: Cedula buscador -->
         <div class="rd-card rd-card-search">
@@ -167,10 +168,6 @@
                 <small class="text-muted">Mantén tu cédula a mano</small>
             </div>
         </div>
-
-
-
-
 
         <!-- Right: Buscador, filtros y tabla -->
         <div class="rd-card rd-card-list">
@@ -720,6 +717,16 @@
 @push('js')
     <script>
         document.addEventListener('livewire:initialized', () => {
+            Livewire.on('swal', data => {
+                Swal.fire({
+                    title: data.title,
+                    text: data.text,
+                    icon: data.icon,
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        });
+        document.addEventListener('livewire:initialized', () => {
             let isNotificationVisible = false;
             let hideTimeout = null;
 
@@ -744,6 +751,22 @@
                 if (hideTimeout) {
                     clearTimeout(hideTimeout);
                 }
+            });
+
+            Livewire.on('notify-inventario', () => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Inventario insuficiente',
+                    text: @this.get('alertInventario'),
+                });
+            });
+
+            Livewire.on('notify-limite', () => {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Límite alcanzado',
+                    text: @this.get('alertLimite'),
+                });
             });
         });
 
