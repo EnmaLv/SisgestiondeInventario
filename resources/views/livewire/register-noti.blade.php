@@ -20,7 +20,7 @@
                             <select id="desayuno" wire:model="desayuno_del_dia"
                                 class="rd-input @error('desayuno_del_dia') rd-input-error  @enderror"
                                 @disabled($desayuno_del_dia)>
-                                <option value="" selected disabled>Seleccione una opción</option>
+                                <option value="">Seleccione una opción</option>
                                 @foreach ($comidas as $comida)
                                     <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
                                 @endforeach

@@ -77,7 +77,7 @@
                             Cancelar
                         </a>
 
-                        <button type="submit" class="rd-btn rd-btn-warning" style="color:white;">
+                        <button type="submit" class="rd-btn rd-btn-primary" style="color:white;">
                             <i class="fas fa-save"></i> Guardar cambios
                         </button>
                     </div>

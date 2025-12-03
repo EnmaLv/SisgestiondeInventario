@@ -206,8 +206,8 @@
                                                 <td>{{ $detalle->producto_nombre }}</td>
                                                 <td>{{ $detalle->codigo_lote }}</td>
                                                 <td>{{ $detalle->cantidad }} {{ $detalle->unidad_abreviatura }}</td>
-                                                <td>{{ number_format($detalle->precio_unitario, 2) }}.BS</td>
-                                                <td>{{ number_format($detalle->subtotal, 2) }}.BS</td>
+                                                <td>{{ number_format($detalle->precio_unitario, 2, ',', '.') }}.BS</td>
+                                                <td>{{ number_format($detalle->subtotal, 2, ',', '.') }}.BS</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -218,7 +218,7 @@
                                 <h4>No hay productos agregados a la compra.</h4>
 
                             @endif
-                            <h3 align="right"><b>Total de la Compra: </b>{{ $compra->total }}.BS</h3>
+                            <h3 align="right"><b>Total de la Compra: </b>{{ number_format($compra->total, 2, ',', '.') }}.BS</h3>
 
                         </div>
                     </div>

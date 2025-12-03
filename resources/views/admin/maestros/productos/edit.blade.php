@@ -232,7 +232,7 @@
 
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
-                        <button type="submit" class="rd-btn rd-btn-warning">
+                        <button type="submit" class="rd-btn rd-btn-primary">
                             <i class="fas fa-save"></i> Guardar Cambios
                         </button>
                     </div>
