@@ -115,7 +115,7 @@
                                                 <li style="margin-bottom:4px;">
                                                     {{ optional($ing->producto)->nombre ?? 'Producto eliminado' }}
                                                     —
-                                                    <strong>{{ $ing->cantidad_porcion }}</strong>
+                                                    <strong>{{ round($ing->cantidad_porcion) }}</strong>
                                                     {{ optional($ing->unidad)->nombre ?? '' }}
                                                 </li>
                                             @endforeach

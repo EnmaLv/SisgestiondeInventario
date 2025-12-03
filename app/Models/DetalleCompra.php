@@ -13,11 +13,12 @@ class DetalleCompra extends Model
         'producto_id',
         'lote_id',
         'cantidad',
+        'cantidad_gramos',
         'unidad_id',
         'precio_unitario',
         'subtotal',
     ];
-    
+
 
     public function compra()
     {

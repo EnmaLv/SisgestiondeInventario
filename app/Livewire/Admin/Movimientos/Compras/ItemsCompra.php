@@ -8,18 +8,19 @@ use App\Models\Lote;
 use App\Models\Producto;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\NullableType;
 
 class ItemsCompra extends Component
 {
     public Compra $compra;
 
-    public int $productoId;
+    public ?int $productoId = null;
 
     public int $cantidad = 1;
 
-    public float $precioUnitario;
+    public ?float $precioUnitario = null;
 
-    public float $precioCompra;
+    public ?float $precioCompra = null;
 
     public $codigoLote;
 
@@ -41,7 +42,7 @@ class ItemsCompra extends Component
         $this->compra->load('detalleCompras.producto', 'detalleCompras.lote');
         $this->totalCompra = $this->compra->detalleCompras->sum('subtotal');
 
-        $this->reset(['productoId', 'codigoLote', 'cantidad', 'precioUnitario', 'precioCompra', 'fechaVencimiento', 'totalCompra']);
+        $this->reset(['productoId', 'codigoLote', 'cantidad', 'precioUnitario', 'precioCompra', 'fechaVencimiento']);
         $this->cantidad = 1;
     }
 
@@ -131,6 +132,14 @@ class ItemsCompra extends Component
         DB::beginTransaction();
         try {
             $unidadId = $producto->unidad_id;
+            $unidad = DB::table('unidades')->where('id', $producto->unidad_id)->first();
+            $factor = $unidad->factor_a_gramo ?? 1;
+
+            $pesoUnidad = $producto->peso_contenido;  // ya está en gramos
+            $cantidadGramos = $this->cantidad * $pesoUnidad;
+
+
+
 
             // Crear lote con cantidad inicial = cantidad (opcional: dejar 0 y sumar en finalización)
             $lote = Lote::create([
@@ -140,7 +149,7 @@ class ItemsCompra extends Component
                 'fecha_entrada' => now()->toDateString(),
                 'fecha_vencimiento' => $this->fechaVencimiento,
                 'cantidad_inicial' => $this->cantidad,      // puedes poner 0 si prefieres
-                'cantidad_actual' => $this->cantidad,
+                'cantidad_actual' => $cantidadGramos,
                 'precio_compra' => $this->precioCompra,
                 'estado' => true,
             ]);
@@ -149,6 +158,7 @@ class ItemsCompra extends Component
                 'producto_id' => $producto->id,
                 'lote_id' => $lote->id,
                 'cantidad' => $this->cantidad,
+                'cantidad_gramos' => $cantidadGramos,
                 'precio_unitario' => $this->precioCompra,
                 'subtotal' => $this->cantidad * $this->precioCompra,
                 'unidad_id' => $unidadId,
@@ -172,6 +182,8 @@ class ItemsCompra extends Component
             );
         }
     }
+
+
 
 
 

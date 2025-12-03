@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('precio_compra', 10, 2);
             $table->decimal('stock_minimo', 14, 2)->default(0);
             $table->decimal('stock_maximo', 14, 2)->default(0);
+            $table->decimal('peso_contenido', 14, 2)->default(0);
             $table->foreignId('unidad_id')->constrained('unidades')->onDelete('cascade');
             $table->boolean('estado')->default(true);
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');

@@ -107,7 +107,8 @@
                             <th style="width:60px">#</th>
                             <th>Codigo de Lote</th>
                             <th>Producto</th>
-                            <th>Cantidad Actual</th>
+                            <th>Cantidad (U)</th>
+                            <th>Cantidad (g)</th>
                             <th>Fecha Entrada</th>
                             <th>Fecha Vencimiento</th>
                             <th>Proveedor</th>
@@ -122,6 +123,7 @@
                                 <td>{{ $lotesucursal->lote->codigo_lote }}</td>
                                 <td>{{ $lotesucursal->lote->producto->nombre }}</td>
                                 <td>{{ $lotesucursal->cantidad }}</td>
+                                <td>{{ $lotesucursal->cantidad_gramos }}</td>
                                 <td>{{ $lotesucursal->lote->fecha_entrada }}</td>
                                 <td>{{ $lotesucursal->lote->fecha_vencimiento }}</td>
                                 <td>{{ $lotesucursal->lote->proveedor->nombre }}</td>

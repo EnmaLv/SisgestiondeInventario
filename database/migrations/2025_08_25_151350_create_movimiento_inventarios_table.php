@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');
             $table->string('tipo_movimiento', 50);
             $table->decimal('cantidad', 14, 2)->notNull();
+            $table->decimal('cantidad_gramos', 14, 2)->notNull();
             $table->foreignId('unidad_id')->constrained('unidades')->onDelete('cascade');
             $table->timestamp('fecha')->useCurrent();
             $table->text('observaciones')->nullable();

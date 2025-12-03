@@ -12,6 +12,7 @@ class InventarioSucursalLote extends Model
         'sucursal_id',
         'lote_id',
         'cantidad',
+        'cantidad_gramos',
     ];
 
     public function sucursal()

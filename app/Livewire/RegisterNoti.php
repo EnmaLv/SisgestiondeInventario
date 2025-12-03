@@ -106,66 +106,73 @@ class RegisterNoti extends Component
             // PROCESAR CADA INGREDIENTE
             foreach ($receta->recetaIngredientes as $ingrediente) {
 
-                $total_descontar = $ingrediente->cantidad_porcion * $this->cantidad_servido;
+                // Total en gramos a descontar
+                $totalDescontarGramos = $ingrediente->cantidad_porcion * $this->cantidad_servido;
 
-                // TRAER LOTES FIFO
-                $lotes = Lote::where('producto_id', $ingrediente->producto_id)
-                    ->where('cantidad_actual', '>', 0)
-                    ->orderBy('fecha_entrada', 'asc')
+                // Peso de una unidad del producto (en gramos)
+                $pesoUnidad = $ingrediente->producto->peso_contenido;
+
+                if ($pesoUnidad <= 0) {
+                    throw new Exception("El producto {$ingrediente->producto->nombre} no tiene peso_contenido definido.");
+                }
+
+                // LOTES FIFO (por sucursal)
+                $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
+                    ->whereHas('lote', function ($q) use ($ingrediente) {
+                        $q->where('producto_id', $ingrediente->producto_id);
+                    })
+                    ->where('cantidad_gramos', '>', 0)
+                    ->orderBy('id', 'asc')
                     ->get();
 
-                $cantidadPendiente = $total_descontar;
+                $pendiente = $totalDescontarGramos;
 
-                foreach ($lotes as $lote) {
+                foreach ($lotes as $inv) {
 
-                    if ($cantidadPendiente <= 0) break;
+                    if ($pendiente <= 0) break;
 
-                    // Referencia al inventario por lote de la SUCURSAL
-                    $inventarioSucursal = InventarioSucursalLote::where('lote_id', $lote->id)
-                        ->where('sucursal_id', $sucursalId)
-                        ->first();
+                    // Gramos disponibles en este lote
+                    $dispGramos = $inv->cantidad_gramos;
 
-                    if (!$inventarioSucursal || $inventarioSucursal->cantidad <= 0) {
-                        continue; // pasa al siguiente lote
-                    }
+                    // Tomar lo menor entre lo que falta y lo disponible
+                    $tomarGramos = min($pendiente, $dispGramos);
 
-                    // Cantidad disponible en sucursal
-                    $dispSucursal = $inventarioSucursal->cantidad;
+                    // Descontar gramos
+                    $inv->cantidad_gramos -= $tomarGramos;
 
-                    // Cantidad disponible total del lote
-                    $dispLote = $lote->cantidad_actual;
+                    // Recalcular unidades: unidades = floor( gramos / peso_unitario )
+                    $inv->cantidad = floor($inv->cantidad_gramos / $pesoUnidad);
 
-                    // TOMAR LO QUE SE PUEDA DEL LOTE
-                    $tomar = min($cantidadPendiente, $dispSucursal, $dispLote);
+                    $inv->save();
 
-                    // Actualizar LOTE
-                    $lote->cantidad_actual -= $tomar;
+                    // Descontar del LOTE original también
+                    $lote = $inv->lote;
+                    $lote->cantidad_inicial = $inv->cantidad;
+                    $lote->cantidad_actual = $inv->cantidad_gramos;
                     $lote->save();
 
-                    // Actualizar INVENTARIO DE LA SUCURSAL
-                    $inventarioSucursal->cantidad -= $tomar;
-                    $inventarioSucursal->save();
-
-                    // REGISTRAR MOVIMIENTO
+                    // Registrar movimiento
                     MovimientoInventario::create([
                         'producto_id'    => $ingrediente->producto_id,
                         'lote_id'        => $lote->id,
                         'sucursal_id'    => $sucursalId,
                         'tipo_movimiento' => 'SALIDA',
                         'unidad_id'      => $ingrediente->unidad_id,
-                        'cantidad'       => $tomar,
+                        'cantidad'       => $inv->cantidad,
+                        'cantidad_gramos' => $tomarGramos,
                         'fecha'          => now(),
-                        'observaciones'  => 'Consumo por desayuno: ' . $receta->nombre
+                        'observaciones'  => 'Consumo por receta: ' . $receta->nombre
                     ]);
 
-                    // Reducir lo que falta por descontar
-                    $cantidadPendiente -= $tomar;
+                    // actualizar lo que falta por descontar
+                    $pendiente -= $tomarGramos;
                 }
 
-                if ($cantidadPendiente > 0) {
-                    throw new Exception("Inventario insuficiente en la sucursal para el producto: {$ingrediente->producto->nombre}");
+                if ($pendiente > 0) {
+                    throw new Exception("No hay suficiente inventario para {$ingrediente->producto->nombre}");
                 }
             }
+
 
             DB::commit();
 

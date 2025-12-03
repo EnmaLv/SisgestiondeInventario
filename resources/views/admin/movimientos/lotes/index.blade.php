@@ -106,7 +106,8 @@
                             <th>Fecha Entrada</th>
                             <th>Fecha Vencimiento</th>
                             <th>Dias Restantes</th>
-                            <th>Cantidad Actual</th>
+                            <th>Cantidad (U)</th>
+                            <th>Cantidad (g)</th>
                             <th>Estado</th>
                         </tr>
                     </thead>
@@ -124,6 +125,7 @@
                                 <td>
                                     {{ round($lote->days_to_expire) }} días
                                 </td>
+                                <td>{{ round($lote->cantidad_inicial) }}</td>
                                 <td>{{ $lote->cantidad_actual }}</td>
                                 <td>
                                     @if ($lote->is_expired)
@@ -157,8 +159,8 @@
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
     <style>
         /* ===========================
-                                                               RD FILTER INPUT
-                                                               =========================== */
+                                                                               RD FILTER INPUT
+                                                                               =========================== */
         .rd-filter-input {
             width: 100%;
             background: #ffffff;

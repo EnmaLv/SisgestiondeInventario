@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre', 30);
             $table->string('abreviatura', 50);
-            $table->decimal('factor_a_gramo', 14, 4)->default(1);
+            $table->decimal('factor_a_gramo', 14, 3)->default(1);
             $table->timestamps();
         });
     }

@@ -44,7 +44,7 @@
 
         <div class="col-md-2">
             <div class="form-group">
-                <label for="cantidad">Cantidad</label>
+                <label for="cantidad">Cantidad (U)</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text inline-block"><i class="fas fa-plus"></i></span>
@@ -127,7 +127,8 @@
                         <tr>
                             <th>Producto</th>
                             <th>Código de Lote</th>
-                            <th>Cantidad</th>
+                            <th>Cantidad (U)</th>
+                            <th>Cantidad (g)</th>
                             <th>Precio Unitario</th>
                             <th>Subtotal</th>
                             <th>Acciones</th>
@@ -138,7 +139,8 @@
                             <tr>
                                 <td>{{ $detalle->producto->nombre }}</td>
                                 <td>{{ $detalle->lote->codigo_lote }}</td>
-                                <td>{{ $detalle->cantidad }}</td>
+                                <td>{{ round($detalle->cantidad) }}</td>
+                                <td>{{ $detalle->cantidad_gramos }}</td>
                                 <td>{{ $detalle->precio_unitario }} .BS</td>
                                 <td>{{ $detalle->subtotal }} .BS</td>
                                 <td>

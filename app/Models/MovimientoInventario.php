@@ -15,6 +15,7 @@ class MovimientoInventario extends Model
         'tipo_movimiento',
         'unidad_id',
         'cantidad',
+        'cantidad_gramos',
         'fecha',
         'observaciones',
     ];

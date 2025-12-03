@@ -232,7 +232,7 @@ class Compra extends Model
             ->first();
     }
 
-    public static function obtenerTodosDetallesCompras($buscar , $estado)
+    public static function obtenerTodosDetallesCompras($buscar, $estado)
     {
         $query = DB::table('detalle_compras')
             ->join('productos', 'productos.id', '=', 'detalle_compras.producto_id')
@@ -249,15 +249,15 @@ class Compra extends Model
             )
             ->orderBy('detalle_compras.id');
 
-            if($estado){
-                $query->where('detalle_compras.estado', $estado);
-            }
+        if ($estado) {
+            $query->where('detalle_compras.estado', $estado);
+        }
 
-            if($buscar){
-                $query->where('detalle_compras.id', 'like', "%{$buscar}%");
-            }
+        if ($buscar) {
+            $query->where('detalle_compras.id', 'like', "%{$buscar}%");
+        }
 
-            return $query->get();
+        return $query->get();
     }
 
 
@@ -334,13 +334,15 @@ class Compra extends Model
                     DB::table('inventario_sucursal_lotes')
                         ->where('id', $inventario->id)
                         ->update([
-                            'cantidad' => $inventario->cantidad + $detalle->cantidad
+                            'cantidad'         => $inventario->cantidad + $detalle->cantidad, // unidades
+                            'cantidad_gramos'  => $inventario->cantidad_gramos + $detalle->cantidad_gramos // gramos
                         ]);
                 } else {
                     DB::table('inventario_sucursal_lotes')->insert([
                         'lote_id'      => $detalle->lote_id,
                         'sucursal_id'  => $sucursal_id,
-                        'cantidad'     => $detalle->cantidad
+                        'cantidad'     => $detalle->cantidad,
+                        'cantidad_gramos'     => $detalle->cantidad_gramos
                     ]);
                 }
 
@@ -352,6 +354,7 @@ class Compra extends Model
                     'tipo_movimiento' => 'ENTRADA',
                     'unidad_id'       => $detalle->unidad_id,
                     'cantidad'        => $detalle->cantidad,
+                    'cantidad_gramos'        => $detalle->cantidad_gramos,
                     'fecha'           => now(),
                 ]);
             }

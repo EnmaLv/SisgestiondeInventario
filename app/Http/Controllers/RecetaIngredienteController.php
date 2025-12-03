@@ -70,6 +70,10 @@ class RecetaIngredienteController extends Controller
                 $cantidad = $validated['cantidad_porcion'][$index] ?? null;
                 $unidadId = $validated['unidad_id'][$index] ?? null;
 
+                $unidad = Unidad::find($unidadId);
+                $cantidadGramos = $cantidad * $unidad->factor_a_gramo;
+
+
                 // seguridad: saltar si faltan datos
                 if (!$cantidad || !$unidadId) continue;
 
@@ -77,6 +81,7 @@ class RecetaIngredienteController extends Controller
                     'recetas_id' => $validated['recetas_id'],
                     'producto_id' => $productoId,
                     'cantidad_porcion' => $cantidad,
+                    'cantidad_gramos' => $cantidadGramos,
                     'unidad_id' => $unidadId,
                 ]);
             }
@@ -93,10 +98,10 @@ class RecetaIngredienteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit($recetaId)
     {
         $recetaIngrediente = RecetaIngrediente::with(['producto', 'unidad', 'receta'])
-            ->findOrFail($id);
+            ->findOrFail($recetaId);
 
         $recetas = Receta::all();
         $productos = Producto::all();
@@ -115,7 +120,7 @@ class RecetaIngredienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $recetaId)
     {
         $validated = $request->validate([
             'recetas_id' => 'required|exists:recetas,id',
@@ -142,12 +147,17 @@ class RecetaIngredienteController extends Controller
                 $cantidad = $validated['cantidad_porcion'][$index] ?? null;
                 $unidadId = $validated['unidad_id'][$index] ?? null;
 
+                $unidad = Unidad::find($unidadId);
+                $cantidadGramos = $cantidad * $unidad->factor_a_gramo;
+
+
                 if (!$cantidad || !$unidadId) continue;
 
                 RecetaIngrediente::create([
                     'recetas_id' => $recetaId,
                     'producto_id' => $productoId,
                     'cantidad_porcion' => $cantidad,
+                    'cantidad_gramos' => $cantidadGramos,
                     'unidad_id' => $unidadId,
                 ]);
             }

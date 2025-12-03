@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');
             $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
             $table->decimal('cantidad', 14, 2)->notNull();
+            $table->decimal('cantidad_gramos', 14, 2)->notNull();
 
             $table->timestamps();
         });

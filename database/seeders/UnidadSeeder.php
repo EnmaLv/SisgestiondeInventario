@@ -14,11 +14,10 @@ class UnidadSeeder extends Seeder
     public function run(): void
     {
         DB::table('unidades')->insert([
-            ['nombre' => 'Gramo', 'abreviatura' => 'g', 'factor_a_gramo' => 0.001],
-            ['nombre' => 'Kilo', 'abreviatura' => 'Kg', 'factor_a_gramo' => 1.000],
-            ['nombre' => 'Mililitro', 'abreviatura' => 'Ml', 'factor_a_gramo' => 0.001],
-            ['nombre' => 'Litro', 'abreviatura' => 'Lt', 'factor_a_gramo' => 1.000]
+            ['nombre' => 'Gramo', 'abreviatura' => 'g', 'factor_a_gramo' => 1],
+            ['nombre' => 'Kilo', 'abreviatura' => 'Kg', 'factor_a_gramo' => 1000],
+            ['nombre' => 'Mililitro', 'abreviatura' => 'Ml', 'factor_a_gramo' => 1],
+            ['nombre' => 'Litro', 'abreviatura' => 'Lt', 'factor_a_gramo' => 1000]
         ]);
-
     }
 }
