@@ -126,7 +126,7 @@
                 </div>
 
                 {{-- Botones --}}
-                <div class="mt-4 d-flex gap-2">
+                <div class="mt-4 d-flex gap-2 justify-content-end">
                     <a href="{{ url('admin/maestros/sucursales') }}" class="rd-btn rd-btn-default">
                         Cancelar
                     </a>

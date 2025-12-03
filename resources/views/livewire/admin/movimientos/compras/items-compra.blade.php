@@ -121,7 +121,7 @@
         <div class="col-md-12">
 
             @if ($compra->detalleCompras->count() > 0)
-                <h2>Items de Compra</h2>
+                <h2 class="my-4">Detalles de la Orden de Compra</h2>
                 <table class="table table-bordered">
                     <thead>
                         <tr>

@@ -69,4 +69,5 @@
             });
         @endif
     </script>
+    <script src="{{ asset('js/validation_global.js') }}"></script>
 @stop
