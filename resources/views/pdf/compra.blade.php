@@ -116,7 +116,7 @@
 <body>
 
     <div class="title">
-        <h1>REPORTE DE COMPRAS DETALLADO Y ACUMULADO</h1>
+        <h1>REPORTE DE COMPRAS DETALLADO</h1>
         <p>Documento generado el: **{{ now()->format('d-m-Y H:i:s') }}**</p>
     </div>
 
@@ -177,6 +177,27 @@
                 <span class="total-valor">{{ number_format($compra->total, 2, ',', '.') }}BS </span>
             </div>
         </div>
+        <script type="text/php">
+        if (isset($pdf)) {
+            $pdf->page_script('
+                $text = __("Pagina :pageNum", ["pageNum" => $PAGE_NUM]);
+                $font = null;
+                $size = 9;
+                $color = array(0,0,0);
+                $word_space = 0.0;  //  default
+                $char_space = 0.0;  //  default
+                $angle = 0.0;   //  default
+ 
+                // Compute text width to center correctly
+                $textWidth = $fontMetrics->getTextWidth($text, $font, $size);
+ 
+                $x = ($pdf->get_width() - $textWidth) / 2;
+                $y = $pdf->get_height() - 35;
+ 
+                $pdf->text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
+            ');
+        }
+    </script>
     @empty
         <div style="text-align: center; padding: 50px;">
             <p style="font-size: 14pt; color: #005691;">No se encontraron registros de compras con los filtros
