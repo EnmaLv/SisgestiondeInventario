@@ -147,6 +147,27 @@
                         </td>
                         <td>Aprobado</td>
                     </tr>
+                    <script type="text/php">
+                        if (isset($pdf)) {
+                            $pdf->page_script('
+                                $text = __("Pagina :pageNum", ["pageNum" => $PAGE_NUM]);
+                                $font = null;
+                                $size = 9;
+                                $color = array(0,0,0);
+                                $word_space = 0.0;  //  default
+                                $char_space = 0.0;  //  default
+                                $angle = 0.0;   //  default
+                
+                                // Compute text width to center correctly
+                                $textWidth = $fontMetrics->getTextWidth($text, $font, $size);
+                
+                                $x = ($pdf->get_width() - $textWidth) / 2;
+                                $y = $pdf->get_height() - 35;
+                
+                                $pdf->text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
+                            ');
+                        }
+                    </script>
                 @endforeach
             </tbody>
         </table>
