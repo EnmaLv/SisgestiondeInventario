@@ -86,7 +86,7 @@
                                 <label class="font-weight-bold">Descripción</label>
                                 <div class="p-3"
                                     style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; min-height:140px;">
-                                    {!! $producto->descripcion !!}
+                                    {!! $producto->descripcion ?? 'Sin Descripción' !!}
                                 </div>
                             </div>
                         </div>
@@ -140,9 +140,13 @@
                         <label class="font-weight-bold">Imagen del Producto</label>
 
                         <div class="rd-card p-2" style="border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
-
+                            @if ($producto->imagen)
                             <img src="{{ asset('storage/' . $producto->imagen) }}" alt="Imagen del producto"
                                 style="width:100%; height:auto; border-radius:10px; object-fit:cover;">
+                                
+                            @else
+                                <h4>No hay imagen disponible</h3>
+                            @endif
 
                         </div>
 

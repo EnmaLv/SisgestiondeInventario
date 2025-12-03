@@ -81,7 +81,7 @@
                             </div>
                         </div>
                     @endif
-                    @if ($errors->any())
+                    @if ($errors->has('hora'))
                         <div class="rd-alert rd-alert-error" role="alert">
                             <div class="rd-alert-icon">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
