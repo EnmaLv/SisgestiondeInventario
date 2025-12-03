@@ -92,7 +92,7 @@ class ProductoController extends Controller
     public function destroy($id)
     {
         Producto::eliminarProducto($id);
-        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto eliminado exitosamente.');
+        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto inactivado exitosamente.');
     }
 
     public function activar($id)

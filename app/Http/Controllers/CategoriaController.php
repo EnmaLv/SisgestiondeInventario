@@ -25,7 +25,7 @@ class CategoriaController extends Controller
         // Obtener las categorías con los filtros aplicados
         $categorias = Categoria::listarCategorias(
             $request->input('buscar'),  // Término de búsqueda opcional
-            $request->input('estado')   // Filtro de estado opcional (activo/inactivo)
+            $request->input('estado', 1)   // Filtro de estado opcional (activo/inactivo)
         );
 
         return view('admin.maestros.categorias.index', compact('categorias'));
@@ -155,5 +155,11 @@ class CategoriaController extends Controller
         return redirect()
             ->route('admin.maestros.categorias.index')
             ->with('success', 'Categoría eliminada exitosamente.');
+    }
+
+    public function activar($id)
+    {
+        Categoria::activarCategoria($id);
+        return redirect()->route('admin.maestros.categorias.index')->with('success', 'Categoria activada exitosamente.');
     }
 }

@@ -135,12 +135,12 @@
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "No podrás deshacer esta acción",
+                                                        text: "Estará inactivo hasta nuevo aviso",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
                                                         cancelButtonColor: '#d33',
-                                                        confirmButtonText: 'Sí, eliminar',
+                                                        confirmButtonText: 'Sí, inactivar',
                                                         cancelButtonText: 'Cancelar'
                                                     }).then((result) => {
                                                         if (result.isConfirmed) {

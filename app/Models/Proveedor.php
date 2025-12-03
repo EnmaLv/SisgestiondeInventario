@@ -116,6 +116,16 @@ class Proveedor extends Model
             ]);
     }
 
+    public static function activarProveedor($id)
+    {
+        return DB::table('proveedors')
+            ->where('id', $id)
+            ->update([
+                'estado' => 1,
+                'updated_at' => now()
+            ]);
+    }
+
     /**
      * Cambiar estado del proveedor (soft delete)
      */

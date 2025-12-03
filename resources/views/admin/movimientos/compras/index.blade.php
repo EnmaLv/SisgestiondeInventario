@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
+    @include('components.alert')
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
         style="
             background: #ffffff;
@@ -55,7 +56,8 @@
                     <div class="rd-export-group">
                         <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
                             Excel</button>
-                        <button class="rd-btn rd-btn-danger" id="pdfBtn" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
+                        <button class="rd-btn rd-btn-danger" id="pdfBtn" title="Exportar PDF"><i
+                                class="fas fa-file-pdf"></i>
                             PDF</button>
                     </div>
                 </div>

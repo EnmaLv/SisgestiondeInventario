@@ -14,7 +14,7 @@ class ProveedorController extends Controller
     {
         $proveedores = Proveedor::listarProveedores(
             $request->input('buscar'),
-            $request->input('activo', 1)  // Por defecto 1 (activos)
+            $request->input('estado', 1)  // Por defecto 1 (activos)
         );
 
         return view('admin.maestros.proveedores.index', compact('proveedores'));
@@ -44,9 +44,7 @@ class ProveedorController extends Controller
         Proveedor::crearProveedor($validated);
 
         return redirect()
-            ->route('admin.maestros.proveedores.index')
-            ->with('success', 'Proveedor creado exitosamente.')
-            ->with('icono', 'success');
+            ->route('admin.maestros.proveedores.index')->with('success', 'Proveedor creado exitosamente.');
     }
 
     /**
@@ -100,8 +98,7 @@ class ProveedorController extends Controller
 
         return redirect()
             ->route('admin.maestros.proveedores.index')
-            ->with('success', 'Proveedor actualizado exitosamente.')
-            ->with('icono', 'success');
+            ->with('success', 'Proveedor actualizado exitosamente.');
     }
 
     /**
@@ -113,15 +110,18 @@ class ProveedorController extends Controller
         if (Proveedor::tieneCompras($id)) {
             return redirect()
                 ->route('admin.maestros.proveedores.index')
-                ->with('error', 'No se puede eliminar el proveedor porque tiene compras asociadas.')
-                ->with('icono', 'error');
+                ->with('error', 'No se puede eliminar el proveedor porque tiene compras asociadas.');
         }
 
         Proveedor::eliminarProveedor($id);
 
         return redirect()
-            ->route('admin.maestros.proveedores.index')
-            ->with('success', 'Proveedor eliminado exitosamente.')
-            ->with('icono', 'success');
+            ->route('admin.maestros.proveedores.index')->with('success', 'Proveedor eliminado exitosamente.');
+    }
+
+    public function activar($id)
+    {
+        Proveedor::activarProveedor($id);
+        return redirect()->route('admin.maestros.proveedores.index')->with('success', 'Categoria activada exitosamente.');
     }
 }

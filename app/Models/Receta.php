@@ -37,4 +37,14 @@ class Receta extends Model
                 'updated_at' => now()
             ]);
     }
+
+    public static function activarReceta($id)
+    {
+        return DB::table('recetas')
+            ->where('id', $id)
+            ->update([
+                'estado' => 1,
+                'updated_at' => now()
+            ]);
+    }
 }

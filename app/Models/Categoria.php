@@ -53,7 +53,7 @@ class Categoria extends Model
      * @param  int|string|null  $activo  Filtro por estado (1 = activo, 0 = inactivo)
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public static function listarCategorias($buscar = null, $activo = null)
+    public static function listarCategorias($buscar = null, $estado = null)
     {
         $query = DB::table('categorias')
             ->select('categorias.*');
@@ -62,8 +62,8 @@ class Categoria extends Model
             $query->where('nombre', 'like', "%{$buscar}%");
         }
 
-        if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int)$activo);
+        if ($estado !== null && $estado !== '') {
+            $query->where('estado', (int)$estado);
         }
 
         return $query->orderBy('id', 'desc')->paginate(10);
@@ -128,7 +128,10 @@ class Categoria extends Model
     {
         return DB::table('categorias')
             ->where('id', $id)
-            ->delete();
+            ->update([
+                'estado' => 0,
+                'updated_at' => now()
+            ]);
     }
 
     /**
@@ -138,13 +141,14 @@ class Categoria extends Model
      * @param  bool  $estado  Nuevo estado (true = activo, false = inactivo)
      * @return int  Número de registros actualizados (0 o 1)
      */
-    public static function cambiarEstado($id, $estado)
+
+    public static function activarCategoria($id)
     {
         return DB::table('categorias')
             ->where('id', $id)
             ->update([
-                'estado'     => $estado,
-                'updated_at' => now(),
+                'estado' => 1,
+                'updated_at' => now()
             ]);
     }
 

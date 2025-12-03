@@ -37,7 +37,7 @@
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Sucursales Registradas</h3>
+                    <h3 class="rd-title-sm">Categorias Registradas</h3>
                 </div>
 
                 <div class="rd-actions">
@@ -67,12 +67,12 @@
                     <div class="d-flex gap-3 align-items-center mb-3">
                         <span class="font-weight-bold" style="margin-right:5px; ">Filtrar por estado:</span>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 1])) }}"
-                                class="btn {{ request('activo', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
+                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}"
+                                class="btn {{ request('estado', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
                                 Activos
                             </a>
-                            <a href="{{ route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 0])) }}"
-                                class="btn {{ request('activo', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
+                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}"
+                                class="btn {{ request('estado', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
                                 Inactivos
                             </a>
                         </div>
@@ -116,33 +116,64 @@
                                         <a href="{{ url('admin/maestros/categorias/' . $categoria->id . '/edit') }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
 
-                                        <form action="{{ url('admin/maestros/categorias/' . $categoria->id) }}"
-                                            method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                onclick="preguntar{{ $categoria->id }}(event)"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </form>
-                                        <script>
-                                            function preguntar{{ $categoria->id }}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Estás seguro?',
-                                                    text: "No podrás deshacer esta acción",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Sí, eliminar',
-                                                    cancelButtonText: 'Cancelar'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        event.target.form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
+                                        @if ($categoria->estado == true)
+                                            <form action="{{ url('admin/maestros/categorias/' . $categoria->id) }}"
+                                                method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="rd-action rd-action-danger btn-delete"
+                                                    onclick="preguntar{{ $categoria->id }}(event)"><i
+                                                        class="fas fa-trash"></i></button>
+                                            </form>
+                                            <script>
+                                                function preguntar{{ $categoria->id }}(event) {
+                                                    event.preventDefault();
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "Estará inactivo hasta nuevo aviso",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, inactivar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            event.target.form.submit();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
+                                        @else
+                                            <form
+                                                action="{{ url('admin/maestros/categorias/' . $categoria->id . '/activar') }}"
+                                                method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="rd-action rd-action-success btn-delete"
+                                                    onclick="preguntar{{ $categoria->id }}(event)"><i
+                                                        class="fas fa-check"></i></button>
+                                            </form>
+                                            <script>
+                                                function preguntar{{ $categoria->id }}(event) {
+                                                    event.preventDefault();
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "Desea activar el producto?",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, activar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            event.target.form.submit();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

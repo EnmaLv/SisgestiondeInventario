@@ -7,6 +7,7 @@ use App\Models\Receta;
 use App\Models\Producto;
 use App\Models\Unidad;
 use App\Models\RecetaIngrediente;
+use Illuminate\Support\Facades\DB;
 
 class RecetaIngredienteController extends Controller
 {
@@ -14,22 +15,22 @@ class RecetaIngredienteController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-        {
-            $buscar = $request->input('buscar');
+    {
+        $buscar = $request->input('buscar');
 
-            // Consulta base: cargar recetas con ingredientes y productos
-            $query = Receta::with(['recetaIngredientes.producto', 'recetaIngredientes.unidad']);
+        // Consulta base: cargar recetas con ingredientes y productos
+        $query = Receta::with(['recetaIngredientes.producto', 'recetaIngredientes.unidad']);
 
-            // Buscador por nombre de receta
-            if ($buscar) {
-                $query->where('nombre', 'like', "%{$buscar}%");
-            }
-
-            // Paginamos recetas (no ingredientes)
-            $recetas = $query->orderBy('id', 'desc')->paginate(10);
-
-            return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar'));
+        // Buscador por nombre de receta
+        if ($buscar) {
+            $query->where('nombre', 'like', "%{$buscar}%");
         }
+
+        // Paginamos recetas (no ingredientes)
+        $recetas = $query->orderBy('id', 'desc')->paginate(10);
+
+        return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar'));
+    }
 
 
     /**
@@ -63,7 +64,7 @@ class RecetaIngredienteController extends Controller
         ]);
 
         // Guardar múltiples ingredientes en transacción
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             foreach ($validated['producto_id'] as $index => $productoId) {
                 $cantidad = $validated['cantidad_porcion'][$index] ?? null;
@@ -80,10 +81,10 @@ class RecetaIngredienteController extends Controller
                 ]);
             }
 
-            \DB::commit();
+            DB::commit();
             return redirect()->route('admin.maestros.receta_ingredientes.index')->with('success', 'Ingredientes agregados correctamente.');
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
         }
     }

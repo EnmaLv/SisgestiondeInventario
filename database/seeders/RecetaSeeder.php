@@ -18,9 +18,7 @@ class RecetaSeeder extends Seeder
             ['nombre' => 'Arepa Con Salchicha', 'descripcion' => null,  'estado' => 1],
             ['nombre' => 'Arepa Con Mortadela', 'descripcion' => null,  'estado' => 1],
             ['nombre' => 'Arepa Con Mantequilla y Queso', 'descripcion' => null,  'estado' => 1],
-            ['nombre' => 'Arepa Con Pollo', 'descripcion' => null,  'estado' => 1],
-            ['nombre' => 'Arepa Con Carne Mechada', 'descripcion' => null,  'estado' => 1],
-            ['nombre' => 'Arepa Con Jamon y Queso', 'descripcion' => null,  'estado' => 1],
+            ['nombre' => 'Arepa Con Pollo', 'descripcion' => null,  'estado' => 1]
         ]);
     }
 }

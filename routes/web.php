@@ -35,6 +35,7 @@ Route::prefix('/admin/maestros/categorias')->group(function () {
     Route::put('/{categoria}', [CategoriaController::class, 'update'])->name('admin.maestros.categorias.update');
     //Eliminar una categoria especifica
     Route::delete('/{categoria}', [CategoriaController::class, 'destroy'])->name('admin.maestros.categorias.destroy');
+    Route::put('/{categoria}/activar', [CategoriaController::class, 'activar'])->name('admin.maestros.productos.activar');
 })->middleware('auth');
 
 
@@ -48,6 +49,7 @@ Route::prefix('/admin/maestros/sucursales')->middleware('auth')->group(function 
     Route::get('/{sucursal}/edit', [SucursalController::class, 'edit'])->name('admin.maestros.sucursales.edit');
     Route::put('/{sucursal}', [SucursalController::class, 'update'])->name('admin.maestros.sucursales.update');
     Route::delete('/{id}', [SucursalController::class, 'destroy'])->name('admin.maestros.sucursales.destroy');
+    Route::put('/{sucursal}/activar', [SucursalController::class, 'activar'])->name('admin.maestros.sucursales.activar');
 });
 
 //Productos
@@ -78,7 +80,7 @@ Route::get('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\Prov
 Route::get('/admin/maestros/proveedores/{proveedor}/edit', [App\Http\Controllers\ProveedorController::class, 'edit'])->name('admin.maestros.proveedores.edit')->middleware('auth');
 Route::put('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'update'])->name('admin.maestros.proveedores.update')->middleware('auth');
 Route::delete('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'destroy'])->name('admin.maestros.proveedores.destroy')->middleware('auth');
-
+Route::put('/admin/maestros/proveedores/{proveedor}/activar', [App\Http\Controllers\ProveedorController::class, 'activar'])->name('admin.maestros.proveedores.activar');
 //Recetas
 Route::get('/admin/maestros/recetas', [App\Http\Controllers\RecetaController::class, 'index'])->name('admin.maestros.recetas.index')->middleware('auth');
 Route::get('/admin/maestros/recetas/create', [App\Http\Controllers\RecetaController::class, 'create'])->name('admin.maestros.recetas.create')->middleware('auth');
@@ -86,6 +88,7 @@ Route::post('/admin/maestros/recetas/store', [App\Http\Controllers\RecetaControl
 Route::get('/admin/maestros/recetas/{receta}/edit', [App\Http\Controllers\RecetaController::class, 'edit'])->name('admin.maestros.recetas.edit')->middleware('auth');
 Route::put('/admin/maestros/recetas/{receta}', [App\Http\Controllers\RecetaController::class, 'update'])->name('admin.maestros.recetas.update')->middleware('auth');
 Route::delete('/admin/maestros/recetas/{receta}', [App\Http\Controllers\RecetaController::class, 'destroy'])->name('admin.maestros.recetas.destroy')->middleware('auth');
+Route::put('/admin/maestros/recetas/{receta}/activar', [App\Http\Controllers\RecetaController::class, 'activar'])->name('admin.maestros.recetas.activar');
 
 //Receta Ingredientes
 Route::get('/admin/maestros/receta_ingredientes', [App\Http\Controllers\RecetaIngredienteController::class, 'index'])->name('admin.maestros.receta_ingredientes.index')->middleware('auth');

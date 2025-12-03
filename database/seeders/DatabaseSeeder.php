@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        
-        
+
+
         $this->call([
             EstatusSeeder::class,
             EstadoVeSeeder::class,
@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             SedeSeeder::class,
             PersonaSeeder::class,
             ProductoSeeder::class,
+            RecetaIngredienteSeeder::class,
         ]);
 
         \App\Models\Proveedor::factory(1)->create();
@@ -38,6 +39,5 @@ class DatabaseSeeder extends Seeder
             'email' => 'medina.enma1234@gmail.com',
             'password' => bcrypt('31008661'),
         ]);
-
     }
 }

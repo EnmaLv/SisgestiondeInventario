@@ -128,13 +128,13 @@ class Sucursal extends Model
     /**
      * Cambia el estado de una sucursal
      */
-    public static function cambiarEstado($id, $activo)
+    public static function activarSucursal($id)
     {
         return DB::table('sucursals')
             ->where('id', $id)
             ->update([
-                'activo'     => $activo,
-                'updated_at' => now(),
+                'activo' => 1,
+                'updated_at' => now()
             ]);
     }
 

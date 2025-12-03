@@ -138,6 +138,12 @@ class SucursalController extends Controller
             ->with('icono', 'success');
     }
 
+    public function activar($id)
+    {
+        Sucursal::activarSucursal($id);
+        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Categoria activada exitosamente.');
+    }
+
     // Exporta el listado de sucursales a un archivo CSV
     public function exportCsv(Request $request)
     {
