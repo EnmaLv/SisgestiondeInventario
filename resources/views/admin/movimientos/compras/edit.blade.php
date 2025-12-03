@@ -190,7 +190,7 @@
                                                         class="fas fa-tags"></i></span>
                                             </div>
                                             <select class="form-control" id="sucursal_id" name="sucursal_id">
-                                                <option value="">Seleccione una sucursal</option>
+                                                <option value="" selected disabled>Seleccione una sucursal</option>
                                                 @foreach ($sucursales as $sucursal)
                                                     <option value="{{ $sucursal->id }}"
                                                         {{ old('sucursal_id') == $sucursal->id ? 'selected' : '' }}>
@@ -221,6 +221,204 @@
 
 
 @stop
+
+@push('css')
+<style>
+    /* Estilos base para las tarjetas */
+    .rd-card {
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        border: 1px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Header de la tarjeta */
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a202c;
+        margin: 0;
+    }
+
+    /* Estilos para los grupos de formulario */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #4a5568;
+        font-size: 0.875rem;
+    }
+
+    /* Estilos para los inputs */
+    .input-group {
+        border: 1px solid #d8dee9;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+    }
+
+    .input-group-text {
+        background: transparent;
+        border: none;
+        color: #64748b;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .form-control {
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        padding: 0.5rem 0.75rem;
+        height: auto;
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    /* Estilos para la tabla */
+    .table {
+        width: 100%;
+        margin-bottom: 1.5rem;
+        background-color: #fff;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #4a5568;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+        color: #4a5568;
+    }
+
+    /* Botones */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background-color: #f1f5f9;
+        color: #4b5563;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .card-tools {
+    margin-left: auto; /* Empuja el botón a la derecha */
+    display: flex;
+    align-items: center;
+    }
+
+    .btn i {
+        margin-right: 0.5rem;
+    }
+
+    .btn-primary {
+        background-color: #0069d9;
+        color: white;
+        border: none;
+    }
+
+
+    .btn-tool {
+        background: transparent;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-tool:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .table {
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+
+    /* Estilos para mensajes de error */
+    .alert.alert-danger {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Mejoras visuales para el contenedor principal */
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Estilos para el encabezado personalizado */
+    .content-header {
+        padding: 1.5rem 1.5rem 0;
+    }
+
+    /* Ajustes para la imagen de perfil */
+    .profile-image {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
+</style>
+@endpush
 
 @section('css')
     @livewireStyles

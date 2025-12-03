@@ -218,7 +218,7 @@
                                 <h4>No hay productos agregados a la compra.</h4>
 
                             @endif
-                            <h3><b>Total de la Compra: </b>{{ $compra->total }}.BS</h3>
+                            <h3 align="right"><b>Total de la Compra: </b>{{ $compra->total }}.BS</h3>
 
                         </div>
                     </div>

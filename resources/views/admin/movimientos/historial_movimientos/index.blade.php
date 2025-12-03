@@ -120,7 +120,27 @@
                                 <td class="text-center">
                                     {{ ($movimiento->currentPage() - 1) * $movimiento->perPage() + $loop->iteration }}
                                 </td>
-                                <td>{{ $movimientos->tipo_movimiento }}</td>
+                                @php
+                                    $tipoEntrada = $movimientos->tipo_movimiento == 'ENTRADA' ? true : false;
+                                @endphp
+                                <td class="text-center">
+                                    @if($tipoEntrada)
+                                    <span class="text-success rd-badge rd-badge-success d-inline-flex align-items-center">
+                                            <svg class="me-1 text-success" width="16" height="16" fill="currentColor" viewBox="0 2 16 16">
+                                                <path d="M8 14a.75.75 0 0 1-.53-.22l-4-4a.75.75 0 0 1 1.06-1.06L8 11.69l3.47-3.47a.75.75 0 1 1 1.06 1.06l-4 4A.75.75 0 0 1 8 14z"/>
+                                            </svg>
+                                            {{ $movimientos->tipo_movimiento }}
+                                        </span>
+                                    @else
+
+                                        <span class="text-danger rd-badge rd-badge-danger d-inline-flex align-items-center">
+                                        <svg class="me-1 text-danger" width="16" height="16" fill="currentColor" viewBox="0 -3 16 16">
+                                            <path d="M8 2a.75.75 0 0 1 .53.22l4 4a.75.75 0 0 1-1.06 1.06L8 4.31 4.53 7.78a.75.75 0 0 1-1.06-1.06l4-4A.75.75 0 0 1 8 2z"/>
+                                        </svg>
+                                            {{ $movimientos->tipo_movimiento }}
+                                        </span>
+                                    @endif
+                                </td>
                                 <td>{{ $movimientos->producto->nombre }}</td>
                                 <td>{{ $movimientos->lote->codigo_lote }}</td>
                                 <td>{{ $movimientos->cantidad }}</td>
@@ -154,3 +174,25 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
+
+@push('css')
+    <style>
+         /* Badges de estado */
+        .rd-badge {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .rd-badge-success {
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+
+        .rd-badge-danger {
+            background-color: #fef2f2;
+            color: #b91c1c;
+        }
+    </style>
+@endpush

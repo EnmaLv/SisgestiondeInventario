@@ -8,7 +8,7 @@
                         <span class="input-group-text inline-block"><i class="fas fa-box"></i></span>
                     </div>
                     <select name="nombre" wire:model.live="productoId" id="nombre" class="form-control select2">
-                        <option value="">Seleccione un producto</option>
+                        <option value="" disabled selected>Seleccione un producto</option>
                         @foreach ($productos as $producto)
                             <option value="{{ $producto->id }}">{{ $producto->codigo }} -
                                 {{ $producto->nombre }}</option>
@@ -50,7 +50,7 @@
                         <span class="input-group-text inline-block"><i class="fas fa-plus"></i></span>
                     </div>
                     <input type="number" class="form-control" id="cantidad" wire:model="cantidad" name="cantidad"
-                        placeholder="Ingrese cantidad" value="{{ old('cantidad', $compra->cantidad) }}">
+                        placeholder="Ingrese cantidad" value="{{ old('cantidad', $compra->cantidad) }}" min="0">
                 </div>
                 @error('cantidad')
                     <div class="alert text-danger p-0 m-0">
@@ -69,7 +69,7 @@
                     </div>
                     <input type="number" wire:model="precioCompra" class="form-control" id="precioCompra"
                         name="precio_compra" placeholder="Ingrese precio de compra"
-                        value="{{ old('precio_compra', $compra->precio_compra) }}">
+                        value="{{ old('precio_compra', $compra->precio_compra) }}" min="0">
                 </div>
                 @error('precioCompra')
                     <div class="alert text-danger p-0 m-0">
@@ -88,7 +88,7 @@
                     </div>
                     <input type="date" wire:model="fechaVencimiento" class="form-control" id="fecha"
                         name="fecha" placeholder="Ingrese fecha de vencimiento"
-                        value="{{ old('fecha', $compra->fecha) }}">
+                        value="{{ old('fecha', $compra->fecha) }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                 </div>
                 @error('fechaVencimiento')
                     <div class="alert text-danger p-0 m-0">
@@ -139,8 +139,8 @@
                                 <td>{{ $detalle->producto->nombre }}</td>
                                 <td>{{ $detalle->lote->codigo_lote }}</td>
                                 <td>{{ $detalle->cantidad }}</td>
-                                <td>{{ $detalle->precio_unitario }}</td>
-                                <td>{{ $detalle->subtotal }}</td>
+                                <td>{{ $detalle->precio_unitario }} .BS</td>
+                                <td>{{ $detalle->subtotal }} .BS</td>
                                 <td>
                                     <button class="btn btn-danger" wire:click="eliminarItem({{ $detalle->id }})"><i
                                             class="fas fa-trash"></i></button>
@@ -155,7 +155,7 @@
                 <h4>No hay productos agregados a la compra.</h4>
 
             @endif
-            <h3 style="display: inline-block"><b>Total de la Compra: </b>{{ $compra->total }}</h3>
+            <h3 style="display: inline-block"><b>Total de la Compra: </b>{{ $compra->total }} .BS</h3>
             @if ($compra->detalleCompras->count() == 0)
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">*Agregue
                     productos para
