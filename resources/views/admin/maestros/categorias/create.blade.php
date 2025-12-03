@@ -65,7 +65,7 @@
                             placeholder="Ingrese la descripción de la categoría" style="resize:none;">{{ old('descripcion') }}</textarea>
                     </div>
 
-                    <div class="mt-4 d-flex justify-content-between">
+                    <div class="mt-4 d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/maestros/categorias') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>

@@ -53,7 +53,7 @@
                         </button>
                     </div>
                     @error('cantidad_servido')
-                        <div class="rd-error mt-2">No hay suficiente stock</div>
+                        <div class="rd-error mt-2 mr-2">No hay suficiente stock</div>
                     @enderror
                     @error('desayuno_del_dia')
                         <div class="rd-error mt-2">Registre los ingredientes para continuar</div>
