@@ -103,7 +103,7 @@
                                 </td>
                                 <td>{{ $compra->proveedor_empresa }}</td>
                                 <td>{{ $compra->fecha }}</td>
-                                <td>{{ $compra->total }}</td>
+                                <td>{{ number_format($compra->total, 2, ',', '.') }} .BS</td>
                                 <td class="text-center">
                                     @if ($compra->estado == 'Pendiente')
                                         <span class="rd-badge rd-badge-danger">Pendiente</span>
