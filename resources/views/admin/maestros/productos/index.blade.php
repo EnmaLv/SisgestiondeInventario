@@ -54,12 +54,7 @@
                         <i class="fas fa-filter"></i>
                     </button>
 
-                    <div class="rd-export-group">
-                        <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
-                            Excel</button>
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
-                            PDF</button>
-                    </div>
+
                 </div>
             </div>
 

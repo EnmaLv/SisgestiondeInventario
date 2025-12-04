@@ -83,7 +83,7 @@
                         </div>
                         <div class="rd-filter-row" style="display: inline-block;">
                             <label>Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" />
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" max="{{ now()->format('Y-m-d') }}"/>
                         </div>
                         <div class="rd-filter-row rd-filter-actions" style="display: inline-block; vertical-align: bottom;">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
