@@ -64,7 +64,7 @@
 
         <div class="col-md-2">
             <div class="form-group">
-                <label for="precioCompra">Precio Compra</label>
+                <label for="precioCompra">Precio Compra(.BS)</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text inline-block"><i class="fas fa-dollar-sign"></i></span>
@@ -90,7 +90,7 @@
                     </div>
                     <input @disabled($compra->estado == 'Enviado al proveedor') type="date" wire:model="fechaVencimiento"
                         class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de vencimiento"
-                        value="{{ old('fecha', $compra->fecha) }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                        value="{{ old('fecha', $compra->fecha) }}" min="{{ \Carbon\Carbon::now()->addDays(1)->format('Y-m-d') }}">
                 </div>
                 @error('fechaVencimiento')
                     <div class="alert text-danger p-0 m-0">

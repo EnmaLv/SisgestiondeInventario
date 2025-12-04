@@ -103,10 +103,14 @@
                                     @if ($receta->recetaIngredientes->isEmpty())
                                         <em class="text-muted">No tiene ingredientes</em>
                                     @else
-                                        <ul
-                                            style="padding-left: 1rem; margin:0 auto; text-decoration: none; list-style: none;">
-                                            @foreach ($receta->recetaIngredientes as $ing)
-                                                <li style="margin-bottom:4px;">
+                                        @php
+                                            $ingredientes = $receta->recetaIngredientes;
+                                            $totalIngredientes = count($ingredientes);
+                                            $showMore = $totalIngredientes > 3;
+                                        @endphp
+                                        <ul id="receta-{{ $receta->id }}" class="ingredientes-list" style="padding-left: 1rem; margin:0 auto; text-decoration: none; list-style: none;">
+                                            @foreach ($ingredientes as $index => $ing)
+                                                <li class="ingrediente-item @if($showMore && $index >= 3) d-none @endif" style="margin-bottom:4px;">
                                                     {{ optional($ing->producto)->nombre ?? 'Producto eliminado' }}
                                                     —
                                                     <strong>{{ round($ing->cantidad_porcion) }}</strong>
@@ -114,6 +118,46 @@
                                                 </li>
                                             @endforeach
                                         </ul>
+                                        @if($showMore)
+                                            <button type="button" class="btn btn-link p-0 ver-mas-btn" data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
+                                                Ver más...
+                                            </button>
+                                            <button type="button" class="btn btn-link p-0 ver-menos-btn d-none" data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
+                                                Ver menos
+                                            </button>
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    const recipeId = '{{ $receta->id }}';
+                                                    const verMasBtn = document.querySelector(`.ver-mas-btn[data-recipiente-id="${recipeId}"]`);
+                                                    const verMenosBtn = document.querySelector(`.ver-menos-btn[data-recipiente-id="${recipeId}"]`);
+                                                    const items = document.querySelectorAll(`#receta-${recipeId} .ingrediente-item`);
+                                                    
+                                                    if (verMasBtn) {
+                                                        verMasBtn.addEventListener('click', function() {
+                                                            items.forEach((item, index) => {
+                                                                if (index >= 3) {
+                                                                    item.classList.remove('d-none');
+                                                                }
+                                                            });
+                                                            verMasBtn.classList.add('d-none');
+                                                            if (verMenosBtn) verMenosBtn.classList.remove('d-none');
+                                                        });
+                                                    }
+                                                    
+                                                    if (verMenosBtn) {
+                                                        verMenosBtn.addEventListener('click', function() {
+                                                            items.forEach((item, index) => {
+                                                                if (index >= 3) {
+                                                                    item.classList.add('d-none');
+                                                                }
+                                                            });
+                                                            if (verMasBtn) verMasBtn.classList.remove('d-none');
+                                                            verMenosBtn.classList.add('d-none');
+                                                        });
+                                                    }
+                                                });
+                                            </script>
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="text-center">
