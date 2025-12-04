@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             PersonaSeeder::class,
             ProductoSeeder::class,
             RecetaIngredienteSeeder::class,
+            PrecioProductoSeeder::class,
         ]);
 
         \App\Models\Proveedor::factory(1)->create();

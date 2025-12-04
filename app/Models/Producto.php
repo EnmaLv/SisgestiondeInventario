@@ -67,6 +67,11 @@ class Producto extends Model
         return $this->belongsTo(Categoria::class);
     }
 
+    public function precioProducto()
+    {
+        return $this->hasOne(PrecioProducto::class);
+    }
+
     /**
      * Obtiene los lotes asociados al producto.
      *

@@ -144,7 +144,7 @@
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
                                             <input type="number" class="form-control rd-filter-input" name="stock_minimo"
-                                                value="{{ old('stock_minimo', $producto->stock_minimo) }}"
+                                                value="{{ round(old('stock_minimo', $producto->stock_minimo)) }}"
                                                 placeholder="Mínimo" min="0">
                                         </div>
                                         @error('stock_minimo')
@@ -161,7 +161,7 @@
                                             <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
                                             <input type="number" class="form-control rd-filter-input"
                                                 name="stock_maximo"
-                                                value="{{ old('stock_maximo', $producto->stock_maximo) }}"
+                                                value="{{ round(old('stock_maximo', $producto->stock_maximo)) }}"
                                                 placeholder="Máximo" min="0">
                                         </div>
                                         @error('stock_maximo')

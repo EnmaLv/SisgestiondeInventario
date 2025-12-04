@@ -17,19 +17,26 @@ class RecetaIngredienteController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
+        $activo = $request->input('activo', 1); // Cambiado de 'estado' a 'activo'
 
-        // Consulta base: cargar recetas con ingredientes y productos
-        $query = Receta::with(['recetaIngredientes.producto', 'recetaIngredientes.unidad']);
+        $query = RecetaIngrediente::query();
 
-        // Buscador por nombre de receta
         if ($buscar) {
-            $query->where('nombre', 'like', "%{$buscar}%");
+            $query->where(function ($q) use ($buscar) {
+                $q->where('recetas_id', 'like', "%{$buscar}%");
+            });
         }
 
-        // Paginamos recetas (no ingredientes)
-        $recetas = $query->orderBy('id', 'desc')->where('estado', true)->paginate(10);
+        if ($activo !== null && $activo !== '') {
+            $query->where('activo', (int)$activo);
+        } else {
+            // Por defecto, mostrar solo activos
+            $query->where('activo', 1);
+        }
 
-        return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar'));
+        $recetas = $query->orderBy('id', 'desc')->paginate(10);
+
+        return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar', 'activo'));
     }
 
 
