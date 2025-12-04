@@ -61,12 +61,12 @@
                     <div class="d-flex gap-3 align-items-center mb-3">
                         <span class="font-weight-bold" style="margin-right:5px;">Filtrar por estado:</span>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->except('activo'), ['activo' => 1])) }}"
-                                class="btn {{ request('activo', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
+                            <a href="{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->except('estado'), ['estado' => 1])) }}"
+                                class="btn {{ request('estado', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
                                 Activos
                             </a>
-                            <a href="{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->except('activo'), ['activo' => 0])) }}"
-                                class="btn {{ request('activo', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
+                            <a href="{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->except('estado'), ['estado' => 0])) }}"
+                                class="btn {{ request('estado', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
                                 Inactivos
                             </a>
                         </div>
@@ -108,9 +108,11 @@
                                             $totalIngredientes = count($ingredientes);
                                             $showMore = $totalIngredientes > 3;
                                         @endphp
-                                        <ul id="receta-{{ $receta->id }}" class="ingredientes-list" style="padding-left: 1rem; margin:0 auto; text-decoration: none; list-style: none;">
+                                        <ul id="receta-{{ $receta->id }}" class="ingredientes-list"
+                                            style="padding-left: 1rem; margin:0 auto; text-decoration: none; list-style: none;">
                                             @foreach ($ingredientes as $index => $ing)
-                                                <li class="ingrediente-item @if($showMore && $index >= 3) d-none @endif" style="margin-bottom:4px;">
+                                                <li class="ingrediente-item @if ($showMore && $index >= 3) d-none @endif"
+                                                    style="margin-bottom:4px;">
                                                     {{ optional($ing->producto)->nombre ?? 'Producto eliminado' }}
                                                     —
                                                     <strong>{{ round($ing->cantidad_porcion) }}</strong>
@@ -118,11 +120,13 @@
                                                 </li>
                                             @endforeach
                                         </ul>
-                                        @if($showMore)
-                                            <button type="button" class="btn btn-link p-0 ver-mas-btn" data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
+                                        @if ($showMore)
+                                            <button type="button" class="btn btn-link p-0 ver-mas-btn"
+                                                data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
                                                 Ver más...
                                             </button>
-                                            <button type="button" class="btn btn-link p-0 ver-menos-btn d-none" data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
+                                            <button type="button" class="btn btn-link p-0 ver-menos-btn d-none"
+                                                data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
                                                 Ver menos
                                             </button>
                                             <script>
@@ -131,7 +135,7 @@
                                                     const verMasBtn = document.querySelector(`.ver-mas-btn[data-recipiente-id="${recipeId}"]`);
                                                     const verMenosBtn = document.querySelector(`.ver-menos-btn[data-recipiente-id="${recipeId}"]`);
                                                     const items = document.querySelectorAll(`#receta-${recipeId} .ingrediente-item`);
-                                                    
+
                                                     if (verMasBtn) {
                                                         verMasBtn.addEventListener('click', function() {
                                                             items.forEach((item, index) => {
@@ -143,7 +147,7 @@
                                                             if (verMenosBtn) verMenosBtn.classList.remove('d-none');
                                                         });
                                                     }
-                                                    
+
                                                     if (verMenosBtn) {
                                                         verMenosBtn.addEventListener('click', function() {
                                                             items.forEach((item, index) => {

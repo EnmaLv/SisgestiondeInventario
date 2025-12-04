@@ -17,26 +17,26 @@ class RecetaIngredienteController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $activo = $request->input('activo', 1); // Cambiado de 'estado' a 'activo'
+        $estado = $request->input('estado', 1); // Cambiado de 'estado' a 'estado'
 
-        $query = RecetaIngrediente::query();
+        $query = Receta::with('recetaIngredientes');
 
         if ($buscar) {
             $query->where(function ($q) use ($buscar) {
-                $q->where('recetas_id', 'like', "%{$buscar}%");
+                $q->where('nombre', 'like', "%{$buscar}%");
             });
         }
 
-        if ($activo !== null && $activo !== '') {
-            $query->where('activo', (int)$activo);
+        if ($estado !== null && $estado !== '') {
+            $query->where('estado', (int)$estado);
         } else {
-            // Por defecto, mostrar solo activos
-            $query->where('activo', 1);
+            // Por defecto, mostrar solo estados
+            $query->where('estado', 1);
         }
 
         $recetas = $query->orderBy('id', 'desc')->paginate(10);
 
-        return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar', 'activo'));
+        return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar', 'estado'));
     }
 
 

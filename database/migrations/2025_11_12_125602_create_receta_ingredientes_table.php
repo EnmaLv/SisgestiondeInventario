@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('cantidad_porcion', 14, 2)->notNull();
             $table->decimal('cantidad_gramos', 14, 2);
             $table->foreignId('unidad_id')->constrained('unidades')->onDelete('cascade');
+            $table->integer('estado')->default(1);
             $table->timestamps();
         });
     }

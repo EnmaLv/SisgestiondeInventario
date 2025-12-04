@@ -18,6 +18,7 @@ class RecetaIngrediente extends Model
         'cantidad_porcion',
         'cantidad_gramos',
         'unidad_id',
+        'estado',
     ];
 
     // Relaciones
