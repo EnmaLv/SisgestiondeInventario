@@ -350,7 +350,7 @@ class RegisterNoti extends Component
         ];
 
         $data = Registro_diario::showData($filter);
-        $comidas = Receta::all();
+        $comidas = Receta::orderBy('id', 'desc')->where('estado', true)->get();
 
 
         // envía también $buscar a la vista (evita "undefined variable")

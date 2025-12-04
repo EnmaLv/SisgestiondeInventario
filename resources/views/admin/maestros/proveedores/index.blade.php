@@ -121,19 +121,21 @@
 
                                         @if ($proveedor->estado == true)
                                             <form action="{{ url('admin/maestros/proveedores/' . $proveedor->id) }}"
-                                                method="POST" style="display:inline;">
+                                                method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                    onclick="preguntar{{ $proveedor->id }}(event)"><i
-                                                        class="fas fa-trash"></i></button>
+                                                    onclick="confirmDelete(event, this)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </form>
+
                                             <script>
-                                                function preguntar{{ $proveedor->id }}(event) {
+                                                function confirmDelete(event, button) {
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Estará inactivo hasta nuevo aviso",
+                                                        text: "Desea inactivar el proveedor?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -142,7 +144,7 @@
                                                         cancelButtonText: 'Cancelar'
                                                     }).then((result) => {
                                                         if (result.isConfirmed) {
-                                                            event.target.form.submit();
+                                                            button.closest('form').submit();
                                                         }
                                                     });
                                                 }
@@ -150,19 +152,21 @@
                                         @else
                                             <form
                                                 action="{{ url('admin/maestros/proveedores/' . $proveedor->id . '/activar') }}"
-                                                method="POST" style="display:inline;">
+                                                method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit" class="rd-action rd-action-success btn-delete"
-                                                    onclick="preguntar{{ $proveedor->id }}(event)"><i
-                                                        class="fas fa-check"></i></button>
+                                                    onclick="confirmDelete(event, this)">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
                                             </form>
+
                                             <script>
-                                                function preguntar{{ $proveedor->id }}(event) {
+                                                function confirmDelete(event, button) {
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea activar el producto?",
+                                                        text: "Desea activar el proveedor?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -171,7 +175,7 @@
                                                         cancelButtonText: 'Cancelar'
                                                     }).then((result) => {
                                                         if (result.isConfirmed) {
-                                                            event.target.form.submit();
+                                                            button.closest('form').submit();
                                                         }
                                                     });
                                                 }

@@ -127,32 +127,30 @@
                                                 class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
 
                                             <form action="{{ url('admin/movimientos/compras/' . $compra->id) }}"
-                                                method="POST" style="display:inline;">
+                                                method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-
                                                 <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                    onclick="preguntar{{ $compra->proveedor_id }}(event)">
+                                                    onclick="confirmDelete(event, this)">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
 
                                             <script>
-                                                function preguntar{{ $compra->proveedor_id }}(event) {
+                                                function confirmDelete(event, button) {
                                                     event.preventDefault();
-
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "No podrás deshacer esta acción",
+                                                        text: "Desea inactivar la compra?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
                                                         cancelButtonColor: '#d33',
-                                                        confirmButtonText: 'Sí, eliminar',
+                                                        confirmButtonText: 'Sí, inactivar',
                                                         cancelButtonText: 'Cancelar'
                                                     }).then((result) => {
                                                         if (result.isConfirmed) {
-                                                            event.target.closest('form').submit();
+                                                            button.closest('form').submit();
                                                         }
                                                     });
                                                 }

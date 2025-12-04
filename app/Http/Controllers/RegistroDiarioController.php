@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Registro_diario;
 use App\Models\Receta;
-use App\Models\Persona; 
+use App\Models\Persona;
 use App\Utilities\PdfGeneratorUtil;
 use App\Exports\RegistroDiarioExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,13 +16,13 @@ class RegistroDiarioController extends Controller
     {
         //No dejar que se vea la pagina sin un desayuno registrado
         // $hayReceta = Receta::first("id");
-        
+
         // if (!$hayReceta) {
         //     return redirect()->back()->with('mensaje', 'No hay recetas registradas')
         //     ->with('icono', 'error')
         //     ->with('texto', 'No hay recetas registradas, Intenta agregar una receta.');
         // }
-        
+
         //Recibir el valor del input
         $buscar = $request->input("buscar");
 
@@ -32,20 +32,19 @@ class RegistroDiarioController extends Controller
         $filter = [
             "fecha_desde" => $fecha_desde ?? null,
             "fecha_hasta" => $fecha_hasta ?? null,
-            "buscar"=> $buscar ?? null
+            "buscar" => $buscar ?? null
         ];
 
 
 
         if ($filter != null) {
             $data = Registro_diario::showData($filter);
-        }else{
+        } else {
 
             $data = Registro_diario::showData();
         }
 
-        $comidas = Receta::all();
-        return view('admin.movimientos.registro_diario.index', compact('data', 'comidas'));
+        return view('admin.movimientos.registro_diario.index', compact('data'));
     }
 
     public function show($id)
@@ -53,12 +52,12 @@ class RegistroDiarioController extends Controller
         if (!$id) {
             return redirect()->back()->with('error', 'ID no válido');
         }
-        
+
         $registro = Registro_diario::getRegister($id);
         if (!$registro) {
             return redirect()->back()->with('error', 'Registro no encontrado');
         }
-        
+
         return view('admin.movimientos.registro_diario.show', compact('registro'));
     }
 
@@ -86,8 +85,8 @@ class RegistroDiarioController extends Controller
 
 
         $filter = [
-            'fecha_desde'=> $fecha_desde,
-            'fecha_hasta'=> $fecha_hasta,
+            'fecha_desde' => $fecha_desde,
+            'fecha_hasta' => $fecha_hasta,
         ];
 
 
@@ -98,17 +97,17 @@ class RegistroDiarioController extends Controller
             'registros' => $register,
             'fecha_desde' => $fecha_desde,
             'fecha_hasta' => $fecha_hasta
-        ]; 
+        ];
 
-        return PdfGeneratorUtil::ShowPdf('pdf.registro_diario',$datos , "Registro Diario");
-    }   
+        return PdfGeneratorUtil::ShowPdf('pdf.registro_diario', $datos, "Registro Diario");
+    }
 
     public function exportExcel(Request $request)
     {
 
         $fileName = "registro_diario";
         //Verificamos primero si resivimos algun filtro de la peticion
-        if(!$request->all()){
+        if (!$request->all()) {
 
             return Excel::download(new RegistroDiarioExport([]), $fileName . ".xlsx");
         }
@@ -120,8 +119,5 @@ class RegistroDiarioController extends Controller
         ];
 
         return Excel::download(new RegistroDiarioExport($filtros), $fileName . "_" . $filtros['fecha_desde'] . "_" . $filtros['fecha_hasta'] . ".xlsx");
-
-
-
     }
 }

@@ -31,6 +31,7 @@
 @stop
 
 @section('content')
+    @include('components.alert')
     <div class="rd-card rd-card-full">
 
         <div class="rd-card-body">
@@ -115,19 +116,21 @@
 
                                         @if ($sucursal->activo == true)
                                             <form action="{{ url('admin/maestros/sucursales/' . $sucursal->id) }}"
-                                                method="POST" style="display:inline;">
+                                                method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                    onclick="preguntar{{ $sucursal->id }}(event)"><i
-                                                        class="fas fa-trash"></i></button>
+                                                    onclick="confirmDelete(event, this)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </form>
+
                                             <script>
-                                                function preguntar{{ $sucursal->id }}(event) {
+                                                function confirmDelete(event, button) {
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Estará inactivo hasta nuevo aviso",
+                                                        text: "Desea inactivar la sucursal?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -136,7 +139,7 @@
                                                         cancelButtonText: 'Cancelar'
                                                     }).then((result) => {
                                                         if (result.isConfirmed) {
-                                                            event.target.form.submit();
+                                                            button.closest('form').submit();
                                                         }
                                                     });
                                                 }
@@ -144,19 +147,21 @@
                                         @else
                                             <form
                                                 action="{{ url('admin/maestros/sucursales/' . $sucursal->id . '/activar') }}"
-                                                method="POST" style="display:inline;">
+                                                method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit" class="rd-action rd-action-success btn-delete"
-                                                    onclick="preguntar{{ $sucursal->id }}(event)"><i
-                                                        class="fas fa-check"></i></button>
+                                                    onclick="confirmDelete(event, this)">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
                                             </form>
+
                                             <script>
-                                                function preguntar{{ $sucursal->id }}(event) {
+                                                function confirmDelete(event, button) {
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea activar el producto?",
+                                                        text: "Desea activar la sucursal?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -165,7 +170,7 @@
                                                         cancelButtonText: 'Cancelar'
                                                     }).then((result) => {
                                                         if (result.isConfirmed) {
-                                                            event.target.form.submit();
+                                                            button.closest('form').submit();
                                                         }
                                                     });
                                                 }
