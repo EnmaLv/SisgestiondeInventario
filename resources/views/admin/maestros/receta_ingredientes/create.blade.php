@@ -241,8 +241,11 @@
 @endpush
 
 @section('js')
+    @include('components.alert')
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             const selectProd = document.getElementById('producto_select');
             const cantidadInput = document.getElementById('cantidad_porcion');
             const unidadSelect = document.getElementById('unidad_select');
@@ -271,23 +274,56 @@
             }
 
             btnAgregar.addEventListener('click', function() {
+
                 const prodId = selectProd.value;
                 const prodNombre = selectProd.options[selectProd.selectedIndex]?.text || '';
                 const cantidad = cantidadInput.value;
                 const unidadId = unidadSelect.value;
                 const unidadNombre = unidadSelect.options[unidadSelect.selectedIndex]?.text || '';
 
-                if (!prodId) return alert('Seleccione un producto.');
-                if (!cantidad || Number(cantidad) <= 0) return alert('Ingrese una cantidad válida.');
-                if (!unidadId) return alert('Seleccione una unidad.');
+                // VALIDACIONES CON SWEETALERT
+                if (!prodId) {
+                    return Swal.fire({
+                        icon: 'warning',
+                        title: 'Seleccione un producto',
+                        confirmButtonColor: '#7c3aed'
+                    });
+                }
 
+                if (!cantidad || Number(cantidad) <= 0) {
+                    return Swal.fire({
+                        icon: 'warning',
+                        title: 'Ingrese una cantidad válida',
+                        confirmButtonColor: '#7c3aed'
+                    });
+                }
+
+                if (!unidadId) {
+                    return Swal.fire({
+                        icon: 'warning',
+                        title: 'Seleccione una unidad',
+                        confirmButtonColor: '#7c3aed'
+                    });
+                }
+
+                // Crear item en la lista
                 const item = crearItem(prodId, prodNombre, cantidad, unidadId, unidadNombre);
                 lista.appendChild(item);
 
+                // Limpiar
                 selectProd.selectedIndex = 0;
                 cantidadInput.value = '';
                 unidadSelect.selectedIndex = 0;
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Ingrediente agregado',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+
             });
+
         });
     </script>
 @endsection

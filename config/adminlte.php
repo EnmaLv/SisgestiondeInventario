@@ -317,20 +317,6 @@ return [
             'text' => 'Buscar',
         ],
 
-        /* ---------------------------------------------------
-        | 🍽️ ÁREA DE MENÚ Y ALIMENTOS
-        | (Antes: "Maestros")
-        --------------------------------------------------- */
-        ['header' => '------------------------------------',
-            'classes' => 'text-white',
-        ],
-        ['header' => '🍽️ GESTIÓN DE ALIMENTOS',
-            'classes' => 'text-white',
-        ],
-        ['header' => '------------------------------------',
-            'classes' => 'text-white',
-        ],
-
         [
             'text' => 'Platos del Día',
             'icon' => 'fas fa-utensils ',
@@ -377,24 +363,6 @@ return [
             'url' => 'admin/maestros/proveedores',
             'icon' => 'fas fa-truck ',
             'active' => ['admin/maestros/proveedores*'],
-        ],
-
-
-        /* ---------------------------------------------------
-        | 📦 INVENTARIO Y COMPRAS
-        | (Antes: "Movimientos")
-        --------------------------------------------------- */
-        [
-            'header' => '------------------------------------',
-            'classes' => 'text-white',
-        ],
-        [
-            'header' => '📦 INVENTARIO Y COMPRAS',
-            'classes' => 'text-white',
-        ],
-        [
-            'header' => '------------------------------------',
-            'classes' => 'text-white',
         ],
 
         [

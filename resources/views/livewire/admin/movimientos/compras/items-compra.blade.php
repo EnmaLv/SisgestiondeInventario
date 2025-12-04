@@ -7,8 +7,9 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text inline-block"><i class="fas fa-box"></i></span>
                     </div>
-                    <select name="nombre" wire:model.live="productoId" id="nombre" class="form-control select2">
-                        <option value="" >Seleccione un producto</option>
+                    <select @disabled($compra->estado == 'Enviado al proveedor') name="nombre" wire:model.live="productoId" id="nombre"
+                        class="form-control select2">
+                        <option value="">Seleccione un producto</option>
                         @foreach ($productos as $producto)
                             <option value="{{ $producto->id }}">{{ $producto->codigo }} -
                                 {{ $producto->nombre }}</option>
@@ -49,8 +50,9 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text inline-block"><i class="fas fa-plus"></i></span>
                     </div>
-                    <input type="number" class="form-control" id="cantidad" wire:model="cantidad" name="cantidad"
-                        placeholder="Ingrese cantidad" value="{{ old('cantidad', $compra->cantidad) }}" min="0">
+                    <input @disabled($compra->estado == 'Enviado al proveedor') type="number" class="form-control" id="cantidad"
+                        wire:model="cantidad" name="cantidad" placeholder="Ingrese cantidad"
+                        value="{{ old('cantidad', $compra->cantidad) }}" min="0">
                 </div>
                 @error('cantidad')
                     <div class="alert text-danger p-0 m-0">
@@ -67,8 +69,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text inline-block"><i class="fas fa-dollar-sign"></i></span>
                     </div>
-                    <input type="number" wire:model="precioCompra" class="form-control" id="precioCompra"
-                        name="precio_compra" placeholder="Ingrese precio de compra"
+                    <input @disabled($compra->estado == 'Enviado al proveedor') type="number" wire:model="precioCompra" class="form-control"
+                        id="precioCompra" name="precio_compra" placeholder="Ingrese precio de compra"
                         value="{{ old('precio_compra', $compra->precio_compra) }}" min="0">
                 </div>
                 @error('precioCompra')
@@ -86,8 +88,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text inline-block"><i class="fas fa-calendar-alt"></i></span>
                     </div>
-                    <input type="date" wire:model="fechaVencimiento" class="form-control" id="fecha"
-                        name="fecha" placeholder="Ingrese fecha de vencimiento"
+                    <input @disabled($compra->estado == 'Enviado al proveedor') type="date" wire:model="fechaVencimiento"
+                        class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de vencimiento"
                         value="{{ old('fecha', $compra->fecha) }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                 </div>
                 @error('fechaVencimiento')
@@ -100,7 +102,10 @@
         <div class="col-md-1">
             <div style="height: 31px;"></div>
             <div class="form-group">
-                <button class="btn btn-primary" type="submit" wire:click="agregarItems">Agregar</button>
+                @if ($compra->estado == 'Enviado al proveedor')
+                @else
+                    <button class="btn btn-primary" type="submit" wire:click="agregarItems">Agregar</button>
+                @endif
             </div>
         </div>
 
@@ -144,7 +149,8 @@
                                 <td>{{ number_format($detalle->precio_unitario, 2, ',', '.') }} .BS</td>
                                 <td>{{ number_format($detalle->subtotal, 2, ',', '.') }} .BS</td>
                                 <td>
-                                    <button class="btn btn-danger" wire:click="eliminarItem({{ $detalle->id }})"><i
+                                    <button @disabled($compra->estado == 'Enviado al proveedor') class="btn btn-danger"
+                                        wire:click="eliminarItem({{ $detalle->id }})"><i
                                             class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
@@ -157,15 +163,21 @@
                 <h4>No hay productos agregados a la compra.</h4>
 
             @endif
-            <h3 style="display: inline-block"><b>Total de la Compra: </b>{{ number_format($compra->total, 2, ',', '.') }} .BS</h3>
+            <h3 style="display: inline-block"><b>Total de la Compra:
+                </b>{{ number_format($compra->total, 2, ',', '.') }} .BS</h3>
             @if ($compra->detalleCompras->count() == 0)
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">*Agregue
                     productos para
                     enviar el correo al proveedor.</span>
+            @elseif ($compra->estado == 'Enviado al proveedor')
+                <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">Ya fue hecho el
+                    pedido</span>
             @else
                 <a style="float: right" href="{{ route('admin.movimientos.compras.enviarCorreo', $compra) }}"
                     class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar Correo a Compras</a>
             @endif
         </div>
     </div>
+</div>
+
 </div>
