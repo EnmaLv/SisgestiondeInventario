@@ -302,11 +302,6 @@ return [
 
         // 🔍 Barra superior
         [
-            'type' => 'navbar-search',
-            'text' => 'Buscar',
-            'topnav_right' => true,
-        ],
-        [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
@@ -315,6 +310,10 @@ return [
         [
             'type' => 'sidebar-menu-search',
             'text' => 'Buscar',
+        ],
+        [
+            'header' => 'Gestion de Comedor y Recetas',
+            'classes' => 'text-bold'
         ],
 
         [
@@ -343,6 +342,10 @@ return [
             'icon' => 'fas fa-store ',
             'active' => ['admin/maestros/sucursales*'],
         ],
+        [
+            'header' => 'Catálogo y Suministros',
+            'classes' => 'text-bold'
+        ],
 
         [
             'text' => 'Categorías de Productos',
@@ -363,6 +366,11 @@ return [
             'url' => 'admin/maestros/proveedores',
             'icon' => 'fas fa-truck ',
             'active' => ['admin/maestros/proveedores*'],
+        ],
+
+        [
+            'header' => 'Movimientos y Control de Stock',
+        'classes' => 'text-bold'
         ],
 
         [
@@ -388,19 +396,26 @@ return [
                     'icon' => 'fas fa-store-alt ',
                     'active' => ['admin/movimientos/sucursales_lotes*'],
                 ],
-                [
-                    'text' => 'Historial de Cambios',
-                    'url' => 'admin/movimientos/historial_movimientos',
-                    'icon' => 'fas fa-clipboard-list ',
-                ],
             ]
         ],
+
+        [
+            'header' => 'Registros y Consumo',
+            'classes' => 'text-bold'
+        ],
+        
 
         [
             'text' => 'Registro Diario de Comidas',
             'url' => 'admin/movimientos/registro_diario',
             'icon' => 'fas fa-concierge-bell ',
             'active' => ['admin/movimientos/registro_diario*'],
+        ],
+
+        [
+            'text' => 'Historial de Inventario',
+            'url' => 'admin/movimientos/historial_movimientos',
+            'icon' => 'fas fa-clipboard-list ',
         ],
 
 
