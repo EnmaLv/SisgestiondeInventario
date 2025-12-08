@@ -20,7 +20,7 @@ class Receta extends Model
 
     public function recetaIngredientes()
     {
-        return $this->hasMany(RecetaIngrediente::class, 'recetas_id');
+        return $this->hasMany(RecetaIngrediente::class, 'recetas_id', 'id');
     }
 
     public function detalleRegistroDiarios()

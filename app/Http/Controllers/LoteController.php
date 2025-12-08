@@ -23,8 +23,7 @@ class LoteController extends Controller
 
         if ($buscar) {
             $query->where(function ($q) use ($buscar) {
-                $q->where('codigo', 'like', "%{$buscar}%")
-                ->orWhere('nombre', 'like', "%{$buscar}%");
+                $q->where('codigo_lote', 'like', "%{$buscar}%");
             });
         }
 
@@ -55,9 +54,9 @@ class LoteController extends Controller
         $proveedores = Proveedor::all();
         $detalleCompras = DetalleCompra::all();
 
-        return view('admin.movimientos.lotes.index',
+        return view(
+            'admin.movimientos.lotes.index',
             compact('lotes', 'productos', 'proveedores', 'detalleCompras')
         );
     }
-
 }

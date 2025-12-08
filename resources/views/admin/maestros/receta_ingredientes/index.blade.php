@@ -170,35 +170,68 @@
                                         {{-- <a href="{{ route('admin.maestros.receta_ingredientes.edit', $ing->id) }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a> --}}
 
-                                        {{-- <form action="{{ url('admin/maestros/receta_ingredientes/' . $ing->id) }}"
-                                            method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                onclick="preguntar{{ $ing->id }}(event)">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form> --}}
+                                        @if ($receta->estado == true)
+                                            <form action="{{ url('admin/maestros/receta_ingredientes/' . $receta->id) }}"
+                                                method="POST" class="form-delete" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="rd-action rd-action-danger btn-delete"
+                                                    onclick="confirmDelete(event, this)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
 
-                                        {{-- <script>
-                                            function preguntar{{ $ing->id }}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Estás seguro?',
-                                                    text: "No podrás deshacer esta acción",
-                                                    icon: 'warning',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Sí, eliminar',
-                                                    cancelButtonText: 'Cancelar'
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        event.target.form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script> --}}
+                                            <script>
+                                                function confirmDelete(event, button) {
+                                                    event.preventDefault();
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "Desea inactivar la receta con ingredientes?",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, inactivar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            button.closest('form').submit();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
+                                        @else
+                                            <form
+                                                action="{{ url('admin/maestros/receta_ingredientes/' . $receta->id . '/activar') }}"
+                                                method="POST" class="form-delete" style="display:inline;">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="rd-action rd-action-success btn-delete"
+                                                    onclick="confirmDelete(event, this)">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+
+                                            <script>
+                                                function confirmDelete(event, button) {
+                                                    event.preventDefault();
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "Desea activar la receta con ingredientes?",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, activar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            button.closest('form').submit();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
+                                        @endif
                                     </div>
                                 </td>
 

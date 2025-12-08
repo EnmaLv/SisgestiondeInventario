@@ -98,6 +98,7 @@ Route::post('/admin/maestros/receta_ingredientes/store', [App\Http\Controllers\R
 Route::get('/admin/maestros/receta_ingredientes/{id}/edit', [App\Http\Controllers\RecetaIngredienteController::class, 'edit'])->name('admin.maestros.receta_ingredientes.edit')->middleware('auth');
 Route::put('admin/maestros/receta_ingredientes/receta/{id}', [App\Http\Controllers\RecetaIngredienteController::class, 'update'])->name('admin.maestros.receta_ingredientes.update');
 Route::delete('/admin/maestros/receta_ingredientes/{id}', [App\Http\Controllers\RecetaIngredienteController::class, 'destroy'])->name('admin.maestros.receta_ingredientes.destroy')->middleware('auth');
+Route::put('admin/maestros/receta_ingredientes/{id}/activar', [App\Http\Controllers\RecetaIngredienteController::class, 'activar'])->name('admin.maestros.receta_ingredientes.activar');
 
 //Rutas para Movimientos
 

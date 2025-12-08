@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class RecetaIngrediente extends Model
 {
@@ -30,7 +31,7 @@ class RecetaIngrediente extends Model
 
     public function receta()
     {
-        return $this->belongsTo(Receta::class, 'recetas_id');
+        return $this->belongsTo(Receta::class, 'recetas_id', 'id');
     }
 
     public function producto()
@@ -41,5 +42,25 @@ class RecetaIngrediente extends Model
     public function unidad()
     {
         return $this->belongsTo(Unidad::class);
+    }
+
+    public static function eliminarReceta($id)
+    {
+        return DB::table('receta_ingredientes')
+            ->where('id', $id)
+            ->update([
+                'estado' => 0,
+                'updated_at' => now()
+            ]);
+    }
+
+    public static function activarReceta($id)
+    {
+        return DB::table('receta_ingredientes')
+            ->where('id', $id)
+            ->update([
+                'estado' => 1,
+                'updated_at' => now()
+            ]);
     }
 }

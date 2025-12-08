@@ -37,14 +37,14 @@
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Proveedores Registrados</h3>
+                    <h3 class="rd-title-sm">Compras Registradas</h3>
                 </div>
 
                 <div class="rd-actions">
                     <form action="{{ route('admin.movimientos.compras.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba el proveedor" />
+                            placeholder="Escriba la compra" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 

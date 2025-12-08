@@ -187,9 +187,13 @@ class RecetaIngredienteController extends Controller
      */
     public function destroy($id)
     {
-        $ingrediente = RecetaIngrediente::findOrFail($id);
-        $ingrediente->delete();
+        Receta::eliminarReceta($id);
+        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta eliminada exitosamente.');
+    }
 
-        return redirect()->route('admin.maestros.receta_ingredientes.index')->with('success', 'Ingrediente de receta eliminado exitosamente.');
+    public function activar($id)
+    {
+        Receta::activarReceta($id);
+        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Categoria activada exitosamente.');
     }
 }
