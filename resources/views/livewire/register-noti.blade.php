@@ -63,7 +63,7 @@
                     @if (!$horarioPermitido)
                         <div
                             style="display: flex; align-items: center; padding: 1rem; margin-top: 1rem; background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0.375rem; margin-inline: auto;">
-                            <div style="flex-shrink: 0;">
+                            <div style="shrink: 0;">
                                 <svg style="width: 1.5rem; height: 1.5rem; color: #ef4444;" fill="none"
                                     stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -3014,8 +3014,8 @@
                 function isSizeAffectingCSSProperty(propertyName) {
                     if (!_initialized)
                         return true;
-                    var flexGrow = 'flex-grow';
-                    var flexShrink = 'flex-shrink';
+                    var flexGrow = 'grow';
+                    var flexShrink = 'shrink';
                     var flexBasis = 'flex-basis';
                     var affectingPropsX = [
                         _strWidth,
