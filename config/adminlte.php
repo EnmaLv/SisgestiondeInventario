@@ -403,6 +403,12 @@ return [
             'header' => 'Registros y Consumo',
             'classes' => 'text-bold'
         ],
+        [
+            'text' => 'Registro Comida',
+            'url' => 'admin/movimientos/registro_comida',
+            'icon' => 'fas fa-clipboard-check ',
+            'active' => ['admin/movimientos/registro_comida*'],
+        ],
         
 
         [

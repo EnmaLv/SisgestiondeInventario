@@ -1,70 +1,130 @@
-<div class="rd-wrapper">
-    <!-- Formulario de registro diario -->
-    <div class="rd-grid">
-        <!-- Left: Cedula buscador -->
-        <div class="rd-card rd-card-search">
-            <div class="rd-card-header">
-                <h2 class="rd-title">Registro Diario</h2>
-                <p class="rd-sub">Busca rápido por cédula y registra la entrada</p>
-            </div>
+ <div class="rd-wrapper">
+    @include('components.alert')
+    <!-- Formulario único para desayuno + cantidad -->
+    <div class="rd-card rd-card-desayuno mb-4 col-md-12 text-center mx-auto">
+        <div class="rd-card-header">
+            <h2 class="rd-title">Desayuno del día</h2>
+            <p class="rd-sub">Selecciona el desayuno de hoy y registra la cantidad servida</p>
+        </div>
+        <div class="rd-card-body">
+            <form wire:submit.prevent="saveDesayuno" class="rd-search-form" autocomplete="off">
+                @csrf
+                <div class="row g-3">
+                    <!-- SELECT: Desayuno -->
+                    <div class="col-md-6">
+                        <div class="rd-input-group">
+                            <label for="desayuno" class="sr-only">Desayuno</label>
 
-            <div class="rd-card-body">
-                <form wire:submit.prevent="save" class="rd-search-form" autocomplete="off">
-                    @csrf
-                    <div class="rd-input-group">
-                        <label for="cedula" class="sr-only">Cédula</label>
-                        <input type="tel" id="cedula" wire:model.defer="cedula"
-                            class="rd-input @error('cedula') rd-input-error @enderror" placeholder="Ej: 12345678"
-                            maxlength="8" inputmode="numeric" autofocus />
-                        <button class="rd-btn rd-btn-primary" type="submit" aria-label="Buscar">Buscar</button>
+                            <select id="desayuno" wire:model="desayuno_del_dia"
+                                class="rd-input @error('desayuno_del_dia') rd-input-error  @enderror"
+                                @disabled($desayuno_registrado)>
+                                <option value="">Seleccione una opción</option>
+                                @foreach ($comidas as $comida)
+                                    <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
-                    @error('cedula')
-                        <div class="rd-error mt-2">{{ $message }}</div>
-                    @enderror
-                </form>
+                    <!-- INPUT: Cantidad -->
+                    <div class="col-md-6">
+                        <div class="rd-input-group">
+                            <label for="cantidad_servido" class="sr-only">Cantidad servida</label>
 
-                <!-- Notificación como toast (Livewire controla showNotification) -->
-                <div class="rd-toast-holder">
-                    @if ($showNotification && isset($notification['message']))
-                        <div class="rd-toast rd-toast-{{ $notification['type'] ?? 'info' }}" role="status"
-                            aria-live="polite">
-                            <div class="rd-toast-body">
-                                @php
-                                    if ($notification['type'] == 'success') {
-                                        $type = 'exito';
-                                    } else {
-                                        $type = 'error';
-                                    }
-                                @endphp
-                                <strong>{{ ucfirst($type) }}</strong>
-                                <span>{{ $notification['message'] }}</span>
+                            <input type="number" name="cantidad_servido" id="cantidad_servido"
+                                wire:model="cantidad_servido"
+                                class="rd-input @error('cantidad_servido') rd-input-error @enderror" placeholder="Cant."
+                                @disabled($desayuno_registrado) min="0" />
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12 d-flex mt-2 justify-content-end">
+                        <button class="rd-btn rd-btn-primary w-90" type="submit" aria-label="Guardar desayuno"
+                            @disabled($desayuno_registrado)
+                            style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif">
+                            Guardar Desayuno
+                        </button>
+                    </div>
+                    <div class="rd-error mt-2" style="font-size: 1rem; text-align: left;">
+                        @error('cantidad_servido')
+                            <p>Ingrese una cantidad valida</p>
+                        @enderror
+                        @error('desayuno_del_dia')
+                            <p>Seleccione un desayuno</p>
+                        @enderror
+                        @if ($showNotification && $notification['type'] == 'danger')
+                            <div class="rd-error mt-3 text-center" style="font-size: 1rem;">
+                                {{ 'No hay suficiente inventario para esta receta' }}
                             </div>
-                            <button class="rd-toast-close" aria-label="Cerrar"
-                                wire:click="$set('showNotification', false)">×</button>
+                        @endif
+                    </div>
+
+                    @if (!$horarioPermitido)
+                        <div
+                            style="display: flex; align-items: center; padding: 1rem; margin-top: 1rem; background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0.375rem; margin-inline: auto;">
+                            <div style="flex-shrink: 0;">
+                                <svg style="width: 1.5rem; height: 1.5rem; color: #ef4444;" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div style="margin-left: 0.75rem;">
+                                <h3 style="margin: 0; font-size: 0.875rem; font-weight: 500; color: #991b1b;">Horario no
+                                    permitido</h3>
+                                <div style="margin-top: 0.25rem; font-size: 0.875rem; color: #b91c1c;">
+                                    <p style="margin: 0.25rem 0;">El registro de comedor solo está disponible de 12:00
+                                        AM a 12:00 PM.</p>
+                                    <p style="margin: 0.25rem 0 0;">Por favor, inténtalo de nuevo dentro del horario
+                                        establecido.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($errors->has('hora'))
+                        <div class="rd-alert rd-alert-error" role="alert">
+                            <div class="rd-alert-icon">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div class="rd-alert-content">
+                                <h4 class="rd-alert-title">¡Error!</h3>
+                                    <ul class="rd-alert-list">
+                                        @foreach ($errors->all() as $error)
+                                            <h4>{{ $error }}</h3>
+                                        @endforeach
+                                    </ul>
+                            </div>
                         </div>
                     @endif
                 </div>
-            </div>
-
-            <div class="rd-card-footer">
-                <small class="text-muted">Mantén tu cédula a mano</small>
-            </div>
+            </form>
         </div>
+
+        <div class="rd-card-footer">
+            <small class="text-muted">Una vez guardado, no se podrá modificar</small>
+        </div>
+    </div>
+
+    <!-- Formulario de registro diario -->
+    <div>
 
         <!-- Right: Buscador, filtros y tabla -->
         <div class="rd-card rd-card-list">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Registros</h3>
+                    <h3 class="rd-title-sm">Registros De Comidas</h3>
                     <p class="rd-sub-sm">Últimos movimientos del día</p>
                 </div>
 
                 <div class="rd-actions">
-                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                    <form action="" method="GET"
                         class="rd-search-inline" role="search">
                         <input name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Nombre, apellido o PNF" id="search" />
+                            placeholder="Nombre de comida" id="search" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i
                                 class="fas fa-search"></i></button>
                     </form>
@@ -74,21 +134,12 @@
                         <i class="fas fa-filter"></i>
                     </button>
 
-                    <div class="rd-export-group">
-                        <a href="{{ route('admin.movimientos.registro_diario.export_excel', request()->only(['buscar', 'fecha_desde', 'fecha_hasta'])) }}"
-                            class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
-                            Excel</a>
-
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i
-                                class="fas fa-file-pdf"></i>
-                            PDF</button>
-                    </div>
                 </div>
             </div>
 
             <div class="collapse" id="filters">
                 <div class="rd-filters">
-                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                    <form action="" method="GET"
                         class="rd-filters-form">
                         <div class="rd-filter-row">
                             <label>Desde</label>
@@ -114,32 +165,18 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>PNF</th>
+                                <th>Nombre Comida</th>
+                                <th>Cantidad</th>
                                 <th>Registrado</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($data as $registro)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td>{{ $registro->nombre_persona }}</td>
-                                    <td>{{ $registro->apellido_persona }}</td>
-                                    <td>{{ $registro->nombre_pnf }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($registro->fecha_regis_diario_c)->format('d/m/Y') }}
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="rd-badge rd-badge-success">Aprobado</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="rd-action-group">
-                                            <a class="rd-action"
-                                                href="{{ route('admin.movimientos.registro_diario.show', $registro->id) }}"
-                                                title="Ver"><i class="fas fa-eye"></i></a>
-                                        </div>
+                                    <td>{{ $registro->receta->nombre }}</td>
+                                    <td>{{ $registro->cantidad_servido }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($registro->created_at)->format('d/m/Y') }}
                                     </td>
                                 </tr>
                             @empty
@@ -187,7 +224,6 @@
         /* Reset pequeño para este componente */
         .rd-wrapper {
             padding: 18px 12px;
-            min-height: calc(100vh - 240px);
         }
 
         .rd-grid {
@@ -654,59 +690,6 @@
             });
         });
 
-        // Evento para el input de cédula
-        const inputCedula = document.getElementById('cedula');
-        const inputSearch = document.getElementById('search');
-
-        if (inputCedula) {
-            let blockCedulaFocus = false;
-
-            const focusCedulaSafely = () => {
-                if (blockCedulaFocus) return;
-                inputCedula.focus({
-                    preventScroll: true
-                });
-            };
-
-            // Focus inicial
-            focusCedulaSafely();
-
-            if (inputSearch) {
-                inputSearch.addEventListener('focus', () => {
-                    blockCedulaFocus = true;
-                });
-                inputSearch.addEventListener('blur', () => {
-                    blockCedulaFocus = false;
-                    focusCedulaSafely();
-                });
-            }
-
-            // Escuchar click en el contenedor principal
-            const root = document.querySelector('.content-wrapper') || document.body;
-            root.addEventListener('click', (event) => {
-                if (inputSearch && (event.target === inputSearch || inputSearch.contains(event.target))) {
-                    return;
-                }
-                focusCedulaSafely();
-            });
-
-            // Re-enfocar cuando la ventana retorne, respetando el focus del search
-            window.addEventListener('focus', () => {
-                focusCedulaSafely();
-            });
-        }
-
-        //Limites del input
-        inputCedula.addEventListener('input', function(e) {
-            // Remover caracteres no numéricos
-            this.value = this.value.replace(/[^0-9]/g, '');
-
-            // Limitar a 8 dígitos máximo
-            if (this.value.length > 8) {
-                this.value = this.value.slice(0, 8);
-            }
-        });
-
         const desdeDate = document.getElementById('fecha_desde');
         const hastaDate = document.getElementById('fecha_hasta');
 
@@ -745,21 +728,6 @@
                     // Si el usuario pone una fecha hasta menor, movemos "desde" a esa fecha
                     desdeDate.value = hastaDate.value;
                 }
-            });
-        }
-
-        //Script para mostrar el PdfGeneratorUtil
-        const pdfBtn = document.querySelector('#pdfBtn');
-        const pdfRoute = `{{ route('admin.movimientos.registro_diario.export_pdf') }}`;
-        if (pdfBtn) {
-            pdfBtn.addEventListener('click', function() {
-
-                const params = new URLSearchParams(window.location.search);
-                const fechaDesde = params.get('fecha_desde') ?? "";
-                const fechaHasta = params.get('fecha_hasta') ?? "";
-
-                const url = `${pdfRoute}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}`;
-                window.open(url, '_blank');
             });
         }
     </script>

@@ -49,7 +49,79 @@
 
 @section('content')
 
-    @include('components.alert')
-    <livewire:register-noti />
+    <div class="rd-section-wrapper">
+        {{-- Ahoremos un blur a esta seccion en el caso de que no se haya seleccionado una comida --}}
+        @if (!$receta_diario)
+            <div class="rd-blur">
+                <div class="rd-blur-content">
+                    <h2 class="rd-blur-title">Debes seleccionar una comida</h2>
+                    <p class="rd-blur-text">Selecciona primero la comida del día y la cantidad servida para poder
+                        registrar
+                        a los estudiantes.</p>
+                    <a href="{{ route('admin.movimientos.registro_comida.index') }}" type="button" class="rd-btn rd-btn-primary rd-blur-btn">Ir a la sección de comida</a>
+                </div>
+            </div>
+        @endif
+
+        @include('components.alert')
+        <livewire:register-noti />
+    </div>
 
 @stop
+
+@push('css')
+    <style>
+        .rd-section-wrapper {
+            position: relative;
+            width: 100%;
+
+        }
+
+
+        .rd-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.274);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            padding: 16px;
+            border-radius: 14px
+        }
+
+        .rd-blur-content {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 24px 22px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.116);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            text-align: center;
+        }
+
+        .rd-blur-title {
+            margin: 0 0 8px 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .rd-blur-text {
+            margin: 0 0 18px 0;
+            font-size: 0.95rem;
+            color: #4b5563;
+        }
+
+        .rd-blur-btn {
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+    </style>
+@endpush
