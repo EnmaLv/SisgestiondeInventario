@@ -5,7 +5,7 @@
         <div class="rd-card rd-card-search">
             <div class="rd-card-header">
                 <h2 class="rd-title">Registro Diario</h2>
-                <p class="rd-sub">Busca rápido por cédula y registra la entrada</p>
+                <p class="rd-sub">Escanea el código de barras del carnet para registrar la entrada</p>
             </div>
 
             <div class="rd-card-body">
@@ -16,8 +16,13 @@
                         <input type="tel" id="cedula" wire:model.defer="cedula"
                             class="rd-input @error('cedula') rd-input-error @enderror" placeholder="Ej: 12345678"
                             maxlength="8" inputmode="numeric" autofocus />
+
                         <button class="rd-btn rd-btn-primary" type="submit" aria-label="Buscar">Buscar</button>
                     </div>
+                    <small class="text-muted d-block mt-1">
+                        Solo números, máximo 8 dígitos. <br/>
+                        También puedes escribir el número manualmente si es necesario.
+                    </small>
 
                     @error('cedula')
                         <div class="rd-error mt-2">{{ $message }}</div>
@@ -47,8 +52,8 @@
                 </div>
             </div>
 
-            <div class="rd-card-footer">
-                <small class="text-muted">Mantén tu cédula a mano</small>
+            <div class="rd-card-footer text-center">
+                <small class="text-muted">Mantén tu carnet a mano</small>
             </div>
         </div>
 
