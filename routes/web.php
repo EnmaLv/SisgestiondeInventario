@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\RegistroDiarioController;
+use App\Http\Controllers\DetalleRegistroDiarioController;
 
 
 Route::get('/', function () {
@@ -134,6 +135,10 @@ Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(f
     Route::get('/', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
     Route::get('/export-pdf', [App\Http\Controllers\RegistroDiarioController::class, 'exportPdf'])->name('admin.movimientos.registro_diario.export_pdf');
     Route::get('/export-excel', [App\Http\Controllers\RegistroDiarioController::class, 'exportExcel'])->name('admin.movimientos.registro_diario.export_excel');
+});
+
+Route::prefix('admin/movimientos/registro_comida')->middleware('auth')->group(function () {
+    Route::get('/',[DetalleRegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_comida.index');
 });
 
 //Rutas para Consultas

@@ -9,6 +9,7 @@ use App\Models\Persona;
 use App\Utilities\PdfGeneratorUtil;
 use App\Exports\RegistroDiarioExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\DetalleRegistroDiario;
 
 class RegistroDiarioController extends Controller
 {
@@ -37,6 +38,9 @@ class RegistroDiarioController extends Controller
 
 
 
+        //Enviamos si hay un desayuno registrado para ese dia
+        $receta_diario = DetalleRegistroDiario::whereDate('created_at', now())->exists();
+
         if ($filter != null) {
             $data = Registro_diario::showData($filter);
         } else {
@@ -44,7 +48,7 @@ class RegistroDiarioController extends Controller
             $data = Registro_diario::showData();
         }
 
-        return view('admin.movimientos.registro_diario.index', compact('data'));
+        return view('admin.movimientos.registro_diario.index', compact('data', 'receta_diario'));
     }
 
     public function show($id)

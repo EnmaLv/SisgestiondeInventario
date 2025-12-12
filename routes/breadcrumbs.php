@@ -199,6 +199,11 @@ Breadcrumbs::for('admin.movimientos.historial_movimientos.index', function (Trai
     $trail->push('Historial de Movimientos', route('admin.movimientos.historial_movimientos.index'));
 });
 
+Breadcrumbs::for('admin.movimientos.registro_comida.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Registro Comida', route('admin.movimientos.registro_comida.index'));
+});
+
 // Consultas > Reportes
 Breadcrumbs::for('admin.consultas.reportes.index', function (Trail $trail) {
     $trail->parent('home');
