@@ -15,9 +15,12 @@ use App\Models\InventarioSucursalLote;
 use App\Models\MovimientoInventario;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Livewire\WithPagination;
 
 class RegisterNoti extends Component
 {
+    use WithPagination;
+
     #[Validate('required|numeric|min:7', message: ['required' => 'La cédula es requerida', 'numeric' => 'La cédula debe ser un número', 'min' => 'La cédula debe tener al menos 7 dígitos'])]
     public $cedula = '';
 
@@ -64,9 +67,6 @@ class RegisterNoti extends Component
             $this->desayuno_registrado = false;
         }
     }
-
-
-
 
     public function saveDesayuno()
     {
@@ -199,11 +199,6 @@ class RegisterNoti extends Component
             return;
         }
     }
-
-
-
-
-
 
     public function save()
     {

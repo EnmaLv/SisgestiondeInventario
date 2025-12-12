@@ -162,9 +162,7 @@ class CompraController extends Controller
         Mail::to($proveedorEmail)->send(new CompraProveedorMail($compra));
 
         // Redirige a la página anterior con un mensaje de éxito
-        return back()
-            ->with('mensaje', 'Correo enviado')
-            ->with('icono', 'success');
+        return back()->with('success', 'Correo enviado exitosamente.');
     }
 
 

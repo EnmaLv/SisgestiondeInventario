@@ -12,7 +12,7 @@
         {{-- Título --}}
         <div>
             <h1 class="m-0" style="font-size:1.5rem; color:#0f172a; font-weight:700;">
-                Crear Nueva Compra
+                Crear Nueva Requisicion
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -54,7 +54,7 @@
 
                 {{-- Header interno --}}
                 <div class="rd-card-header mb-3">
-                    <h3 class="rd-title-sm">Datos de la Compra</h3>
+                    <h3 class="rd-title-sm">Datos de la Requisicion</h3>
 
                     <a href="{{ url('admin/movimientos/compras') }}" class="rd-btn rd-btn-default">
                         <i class="fas fa-arrow-left"></i> Volver
@@ -82,7 +82,8 @@
                                 </select>
                             </div>
                             @if ($proveedores->isEmpty())
-                                <div class="pt-2">No tienes proveedores registrados, <a href="{{ route('admin.maestros.proveedores.create') }}">agrega uno</a></div>
+                                <div class="pt-2">No tienes proveedores registrados, <a
+                                        href="{{ route('admin.maestros.proveedores.create') }}">agrega uno</a></div>
                             @endif
                             @error('proveedor_id')
                                 <div class="rd-error">Este campo es obligatorio.</div>
@@ -91,7 +92,7 @@
 
                         {{-- Fecha --}}
                         <div class="col-md-4 mb-3">
-                            <label class="rd-label">Fecha de Compra</label>
+                            <label class="rd-label">Fecha de la Requisicion</label>
                             <div class="rd-input-group">
                                 <span><i class="fas fa-calendar-alt"></i></span>
                                 <input type="datetime-local" id="fecha" name="fecha" class="form-control rd-input"
@@ -125,8 +126,9 @@
                             Cancelar
                         </a>
 
-                        <button type="submit" class="rd-btn rd-btn-primary" @disabled($proveedores->isEmpty()) style="@if ($proveedores->isEmpty()) opacity: 0.5!important; cursor: not-allowed; @endif">
-                            Crear compra y añadir productos
+                        <button type="submit" class="rd-btn rd-btn-primary" @disabled($proveedores->isEmpty())
+                            style="@if ($proveedores->isEmpty()) opacity: 0.5!important; cursor: not-allowed; @endif">
+                            Crear Requisicion
                         </button>
                     </div>
 

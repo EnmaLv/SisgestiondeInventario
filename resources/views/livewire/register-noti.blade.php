@@ -267,11 +267,11 @@
                         </tbody>
                     </table>
                 </div>
-
                 <!-- Paginación (si aplica) -->
-                <div class="rd-pagination">
-                    {{ $data->appends(request()->query())->links() }}
+                <div class="mt-3 d-flex justify-content-center">
+                    {{ $data->onEachSide(1)->links('components.pagination-livewire') }}
                 </div>
+                {{-- <livewire:paginacion-reusable /> --}}
             </div>
         </div>
     </div>

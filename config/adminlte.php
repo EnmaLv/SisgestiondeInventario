@@ -370,11 +370,11 @@ return [
 
         [
             'header' => 'Movimientos y Control de Stock',
-        'classes' => 'text-bold'
+            'classes' => 'text-bold'
         ],
 
         [
-            'text' => 'Registrar Compras',
+            'text' => 'Ordenar Requisicion',
             'url' => 'admin/movimientos/compras',
             'icon' => 'fas fa-shopping-cart ',
             'active' => ['admin/movimientos/compras*'],
@@ -403,7 +403,7 @@ return [
             'header' => 'Registros y Consumo',
             'classes' => 'text-bold'
         ],
-        
+
 
         [
             'text' => 'Registro Diario de Comidas',
@@ -615,6 +615,22 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js',
+                ],
+            ],
+        ],
+
+        'Flatpickr' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/flatpickr',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
                 ],
             ],
         ],

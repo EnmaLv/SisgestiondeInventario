@@ -81,30 +81,13 @@
             </div>
         </div>
 
-        <div class="col-md-2">
-            <div class="form-group">
-                <label for="fecha">Fecha de Vencimiento</label>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text inline-block"><i class="fas fa-calendar-alt"></i></span>
-                    </div>
-                    <input @disabled($compra->estado == 'Enviado al proveedor') type="date" wire:model="fechaVencimiento"
-                        class="form-control" id="fecha" name="fecha" placeholder="Ingrese fecha de vencimiento"
-                        value="{{ old('fecha', $compra->fecha) }}" min="{{ \Carbon\Carbon::now()->addDays(1)->format('Y-m-d') }}">
-                </div>
-                @error('fechaVencimiento')
-                    <div class="alert text-danger p-0 m-0">
-                        <b>{{ 'Este campo es obligatorio.' }}</b>
-                    </div>
-                @enderror
-            </div>
-        </div>
         <div class="col-md-1">
             <div style="height: 31px;"></div>
             <div class="form-group">
                 @if ($compra->estado == 'Enviado al proveedor')
                 @else
-                    <button class="btn btn-primary" type="submit" wire:click="agregarItems">Agregar</button>
+                    <button class="btn btn-primary disabled:opacity-25" type="submit" wire:click="agregarItems"
+                        wire:loading.attr="disabled">Agregar</button>
                 @endif
             </div>
         </div>
@@ -126,7 +109,7 @@
         <div class="col-md-12">
 
             @if ($compra->detalleCompras->count() > 0)
-                <h2 class="my-4">Detalles de la Orden de Compra</h2>
+                <h2 class="my-4">Detalles de la Requisicion</h2>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -149,8 +132,8 @@
                                 <td>{{ number_format($detalle->precio_unitario, 2, ',', '.') }} .BS</td>
                                 <td>{{ number_format($detalle->subtotal, 2, ',', '.') }} .BS</td>
                                 <td>
-                                    <button @disabled($compra->estado == 'Enviado al proveedor') class="btn btn-danger"
-                                        wire:click="eliminarItem({{ $detalle->id }})"><i
+                                    <button @disabled($compra->estado == 'Enviado al proveedor') class="btn btn-danger disabled:opacity-25"
+                                        wire:click="eliminarItem({{ $detalle->id }})" wire:loading.attr="disabled"><i
                                             class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
@@ -160,24 +143,39 @@
 
                 <hr>
             @else
-                <h4>No hay productos agregados a la compra.</h4>
+                <h4>No hay productos agregados a la Requsicion.</h4>
 
             @endif
-            <h3 style="display: inline-block"><b>Total de la Compra:
+            <h3 style="display: inline-block"><b>Total de la Requisicion:
                 </b>{{ number_format($compra->total, 2, ',', '.') }} .BS</h3>
             @if ($compra->detalleCompras->count() == 0)
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">*Agregue
                     productos para
-                    enviar el correo al proveedor.</span>
+                    enviar a compras.</span>
             @elseif ($compra->estado == 'Enviado al proveedor')
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">Ya fue hecho el
                     pedido</span>
             @else
-                <a style="float: right" href="{{ route('admin.movimientos.compras.enviarCorreo', $compra) }}"
-                    class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar Correo a Compras</a>
+                <button class="btn btn-primary" style="float:right" onclick="confirmarEnvio({{ $compra->id }})">
+                    <i class="fas fa-paper-plane"></i> Enviar Correo a Compras
+                </button>
+                <script>
+                    function confirmarEnvio(id) {
+                        Swal.fire({
+                            title: "¿Quieres enviar el correo a compras?",
+                            text: "Luego de enviarlo no podrás agregar más productos, ni enviar otro correo.",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Sí, enviar",
+                            cancelButtonText: "Cancelar"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = `/admin/movimientos/compras/${id}/enviar-correo`;
+                            }
+                        });
+                    }
+                </script>
             @endif
         </div>
     </div>
-</div>
-
 </div>

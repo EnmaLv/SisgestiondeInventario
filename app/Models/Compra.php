@@ -114,7 +114,7 @@ class Compra extends Model
      * @param  int|string|null  $activo  Filtro por estado (1 = activo, 0 = inactivo, null = todos)
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public static function listarCompras($buscar, $activo)
+    public static function listarCompras($buscar, $estado)
     {
         // Construir la consulta base con join a proveedores
         $query = DB::table('compras')
@@ -122,24 +122,22 @@ class Compra extends Model
             ->select(
                 'compras.*',
                 'proveedors.empresa as proveedor_empresa',
+                'proveedors.nombre as proveedor_nombre',
                 'proveedors.id as proveedor_id'
             );
 
-        // Aplicar filtro de búsqueda si se proporciona
-        if ($buscar) {
-            $query->where(function ($q) use ($buscar) {
-                $q->where('proveedors.empresa', 'like', "%{$buscar}%")
-                    ->orWhere('compras.id', 'like', "%{$buscar}%");
-            });
-        }
+        $buscar = $query->where(function ($q) use ($buscar) {
+            $q->where('proveedors.empresa', 'like', "%{$buscar}%")
+                ->orWhere('compras.id', 'like', "%{$buscar}%");
+        });
 
         // Aplicar filtro de estado si se proporciona
-        if ($activo !== null && $activo !== '') {
-            $query->where('compras.estado', (int) $activo);
+        if ($estado !== null && $estado !== '') {
+            $query->where('compras.estado', (int) $estado);
         }
 
         // Ordenar por ID de forma descendente y paginar
-        return $query->orderBy('compras.id', 'desc')->paginate(10);
+        return $query->orderBy('compras.id', 'desc')->paginate(2);
     }
 
 

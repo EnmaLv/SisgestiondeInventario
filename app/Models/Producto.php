@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Livewire\WithPagination;
 
 /**
  * Modelo que representa un producto en el sistema de inventario.
@@ -16,6 +17,7 @@ use Illuminate\Support\Str;
 class Producto extends Model
 {
     use HasFactory;
+    use WithPagination;
 
     /**
      * Nombre de la tabla asociada al modelo.

@@ -54,7 +54,7 @@ class ItemsCompra extends Component
         'codigoLote' => 'nullable|string|max:50',
         'cantidad' => 'required|integer|min:1',
         'precioCompra' => 'required|numeric|min:0',
-        'fechaVencimiento' => 'required|date|after:today',
+        'fechaVencimiento' => 'nullable|date|after:today',
     ];
 
     // ----------------------
@@ -147,7 +147,7 @@ class ItemsCompra extends Component
                 'proveedor_id' => $this->compra->proveedor_id,
                 'codigo_lote' => $this->codigoLote,
                 'fecha_entrada' => now()->toDateString(),
-                'fecha_vencimiento' => $this->fechaVencimiento,
+                'fecha_vencimiento' => null,
                 'cantidad_inicial' => $this->cantidad,      // puedes poner 0 si prefieres
                 'cantidad_actual' => $cantidadGramos,
                 'precio_compra' => $this->precioCompra,
