@@ -662,6 +662,8 @@
         const inputCedula = document.getElementById('cedula');
         const inputSearch = document.getElementById('search');
 
+        //No cargar el script si esta en blur
+         const bgBlur 
         if (inputCedula) {
             let blockCedulaFocus = false;
 
