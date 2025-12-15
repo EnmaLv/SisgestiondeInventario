@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('detalle_registro_diarios', function (Blueprint $table) {
             $table->id();
             $table->foreignId('receta_id')->constrained('recetas')->onDelete('cascade');
-            $table->integer('cantidad_servido');
+            $table->bigInteger('cantidad_servido');
             $table->timestamps();
         });
     }
