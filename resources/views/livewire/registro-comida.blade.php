@@ -9,49 +9,96 @@
         <div class="rd-card-body">
             <form wire:submit.prevent="saveDesayuno" class="rd-search-form" autocomplete="off">
                 @csrf
+            {{-- Contenedor principal para todas las entradas --}}
                 <div class="row g-3">
-                    <!-- SELECT: Desayuno -->
-                    <div class="col-md-6">
-                        <div class="rd-input-group">
-                            <label for="desayuno" class="sr-only">Desayuno</label>
 
-                            <select id="desayuno" wire:model="desayuno_del_dia"
-                                class="rd-input @error('desayuno_del_dia') rd-input-error  @enderror"
-                                @disabled($desayuno_registrado)>
-                                <option value="">Seleccione una opción</option>
-                                @foreach ($comidas as $comida)
-                                    <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
-                                @endforeach
-                            </select>
+                    {{-- ITERACIÓN SOBRE LOS DESAYUNOS AGREGADOS --}}
+                    @foreach ($desayunos_agregados as $index => $desayuno)
+                        <div class="col-12 fade-in">
+                            <div class="row g-3 align-items-center">
+                                
+                                {{-- SELECT: Desayuno (Columna 1: 50% del ancho) --}}
+                                <div class="col-md-5">
+                                    <div class="rd-input-group">
+                                        <label for="desayuno_{{ $index }}" class="sr-only">Desayuno #{{ $index + 1 }}</label>
+                                        <select id="desayuno_{{ $index }}" 
+                                            wire:model="desayunos_agregados.{{ $index }}.receta_id"
+                                            class="rd-input @error('desayunos_agregados.' . $index . '.receta_id') rd-input-error @enderror"
+                                            @disabled($desayuno_registrado)>
+                                            <option value="">Seleccione una opción</option>
+                                            @foreach ($comidas as $comida)
+                                                <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- CONTENEDOR AGRUPADO: Cantidad + Eliminar (Columna 2: 50% del ancho) --}}
+                                <div class="col-md-7">
+                                    <div class="d-flex align-items-center">
+                                        
+                                        {{-- INPUT: Cantidad (Ocupa la mayor parte de esta columna) --}}
+                                        <div class="rd-input-group mr-2"> 
+                                            <label for="cantidad_{{ $index }}" class="sr-only">Cant. #{{ $index + 1 }}</label>
+                                            <input type="number" id="cantidad_{{ $index }}"
+                                                wire:model="desayunos_agregados.{{ $index }}.cantidad"
+                                                class="rd-input @error('desayunos_agregados.' . $index . '.cantidad') rd-input-error @enderror" 
+                                                placeholder="Cant." min="1"
+                                                @disabled($desayuno_registrado) />
+                                        </div>
+                                        
+                                        {{-- Botón de Eliminar (Pequeño, solo visible si hay más de una entrada) --}}
+                                        @if(count($desayunos_agregados) > 1 && !$desayuno_registrado)
+                                            <button type="button" wire:click="removeDesayuno({{ $index }})" 
+                                                class="rd-btn rd-btn-eliminar ml-auto"> 
+                                                Eliminar
+                                            </button>
+                                        @endif
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- INPUT: Cantidad -->
-                    <div class="col-md-6">
-                        <div class="rd-input-group">
-                            <label for="cantidad_servido" class="sr-only">Cantidad servida</label>
-
-                            <input type="number" name="cantidad_servido" id="cantidad_servido"
-                                wire:model="cantidad_servido"
-                                class="rd-input @error('cantidad_servido') rd-input-error @enderror" placeholder="Cant."
-                                @disabled($desayuno_registrado) min="0" />
-                        </div>
-                    </div>
+                            
+                        {{-- Separador entre filas --}}
+                        @if(!$loop->last)
+                            <div class="col-12"><hr class="my-3"></div> 
+                        @endif
+                    @endforeach
 
 
-                    <div class="col-md-12 d-flex mt-2 justify-content-end">
-                        <button class="rd-btn rd-btn-primary w-90" type="submit" aria-label="Guardar desayuno"
+                    {{-- BOTONES DE ACCIÓN --}}
+                    <div class="col-md-12 d-flex mt-4 justify-content-end align-items-center">
+                        
+                        {{-- Botón para agregar más --}}
+                        <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif" class="rd-btn rd-btn-agregar mr-4" @disabled($desayuno_registrado)>
+                            Agregar Desayuno
+                        </button>
+
+                        {{-- Botón principal de Guardar --}}
+                        <button class="rd-btn rd-btn-primary w-90" type="submit" aria-label="Guardar desayunos"
                             @disabled($desayuno_registrado)
                             style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif">
-                            Guardar Desayuno
+                            Guardar Desayunos
                         </button>
                     </div>
+
                     <div class="rd-error mt-2" style="font-size: 1rem; text-align: left;">
+                        {{-- Literalmente las seccionde los errores --}}
+                        @error('desayunos_agregados.' . $index . '.receta_id') 
+                            <span class="text-danger">{{ $message }}</span> 
+                        @enderror
+                        @error('desayunos_agregados.' . $index . '.cantidad') 
+                            <span class="text-danger">{{ $message }}</span> 
+                        @enderror
                         @error('cantidad_servido')
                             <p>Ingrese una cantidad valida</p>
                         @enderror
-                        @error('desayuno_del_dia')
-                            <p>Seleccione un desayuno</p>
+                        @error('general')
+                            <p>{{ $message }}</p>
+                        @enderror
+                        @error('duplicado')
+                            <p>{{ $message }}</p>
                         @enderror
                         @if ($showNotification && $notification['type'] == 'danger')
                             <div class="rd-error mt-3 text-center" style="font-size: 1rem;">
@@ -317,6 +364,27 @@
             color: #fff;
         }
 
+        .rd-btn-agregar {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #dddddd;
+
+            &:hover {
+                background: #f2f2f2;
+            }
+        }
+
+        .rd-btn-eliminar{
+            border: 1px solid #d33a3a;
+            background: transparent;
+            &:hover{
+                background: #d33a3a;
+                color: white;
+                transition: background .25s ease;
+
+            }
+        }
+
         .rd-btn-success {
             background: #10b981;
             color: #fff;
@@ -540,6 +608,19 @@
             padding: 12px 8px;
             display: flex;
             justify-content: center;
+        }
+
+        .fade-in{
+            animation: fadeIn 0.25s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity: 0;
+            }
+            to{
+                opacity: 1;
+            }
         }
 
         /* Responsive */

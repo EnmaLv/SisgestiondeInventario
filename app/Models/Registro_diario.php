@@ -118,6 +118,6 @@ class Registro_diario extends Model
         }
 
 
-        return $query->paginate(1);
+        return $query->paginate(10);
     }
 }

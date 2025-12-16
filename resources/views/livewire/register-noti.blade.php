@@ -662,54 +662,58 @@
         const inputCedula = document.getElementById('cedula');
         const inputSearch = document.getElementById('search');
 
-        if (inputCedula) {
-            let blockCedulaFocus = false;
-
-            const focusCedulaSafely = () => {
-                if (blockCedulaFocus) return;
-                inputCedula.focus({
-                    preventScroll: true
-                });
-            };
-
-            // Focus inicial
-            focusCedulaSafely();
-
-            if (inputSearch) {
-                inputSearch.addEventListener('focus', () => {
-                    blockCedulaFocus = true;
-                });
-                inputSearch.addEventListener('blur', () => {
-                    blockCedulaFocus = false;
+        //No cargar el script si esta en blur
+        const bgBlur = document.querySelector(".rd-blur");
+        if (!bgBlur) {
+            if (inputCedula) {
+                let blockCedulaFocus = false;
+    
+                const focusCedulaSafely = () => {
+                    if (blockCedulaFocus) return;
+                    inputCedula.focus({
+                        preventScroll: true
+                    });
+                };
+    
+                // Focus inicial
+                focusCedulaSafely();
+    
+                if (inputSearch) {
+                    inputSearch.addEventListener('focus', () => {
+                        blockCedulaFocus = true;
+                    });
+                    inputSearch.addEventListener('blur', () => {
+                        blockCedulaFocus = false;
+                        focusCedulaSafely();
+                    });
+                }
+    
+                // Escuchar click en el contenedor principal
+                const root = document.querySelector('.content-wrapper') || document.body;
+                root.addEventListener('click', (event) => {
+                    if (inputSearch && (event.target === inputSearch || inputSearch.contains(event.target))) {
+                        return;
+                    }
                     focusCedulaSafely();
                 });
+    
+                // Re-enfocar cuando la ventana retorne, respetando el focus del search
+                window.addEventListener('focus', () => {
+                    focusCedulaSafely();
+                });
+                //Limites del input
+                inputCedula.addEventListener('input', function(e) {
+                    // Remover caracteres no numéricos
+                    this.value = this.value.replace(/[^0-9]/g, '');
+        
+                    // Limitar a 8 dígitos máximo
+                    if (this.value.length > 8) {
+                        this.value = this.value.slice(0, 8);
+                    }
+                });
             }
-
-            // Escuchar click en el contenedor principal
-            const root = document.querySelector('.content-wrapper') || document.body;
-            root.addEventListener('click', (event) => {
-                if (inputSearch && (event.target === inputSearch || inputSearch.contains(event.target))) {
-                    return;
-                }
-                focusCedulaSafely();
-            });
-
-            // Re-enfocar cuando la ventana retorne, respetando el focus del search
-            window.addEventListener('focus', () => {
-                focusCedulaSafely();
-            });
         }
 
-        //Limites del input
-        inputCedula.addEventListener('input', function(e) {
-            // Remover caracteres no numéricos
-            this.value = this.value.replace(/[^0-9]/g, '');
-
-            // Limitar a 8 dígitos máximo
-            if (this.value.length > 8) {
-                this.value = this.value.slice(0, 8);
-            }
-        });
 
         const desdeDate = document.getElementById('fecha_desde');
         const hastaDate = document.getElementById('fecha_hasta');

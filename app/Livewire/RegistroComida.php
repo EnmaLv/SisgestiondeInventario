@@ -5,12 +5,8 @@ namespace App\Livewire;
 use Illuminate\Http\Request;
 use Livewire\Component;
 use Livewire\Attributes\Validate;
-use App\Models\Persona;
-use App\Models\PersonaPnf;
-use App\Models\Registro_diario;
-use App\Models\DetalleRegistroDiario;
 use App\Models\Receta;
-use App\Models\Lote;
+use App\Models\DetalleRegistroDiario;
 use App\Models\InventarioSucursalLote;
 use App\Models\MovimientoInventario;
 use Illuminate\Support\Facades\DB;
@@ -18,189 +14,223 @@ use Exception;
 
 class RegistroComida extends Component
 {
+    // --- PROPIEDADES NUEVAS (Para el manejo de arrays) ---
+    public $desayunos_agregados = []; // Array de entradas: [['receta_id' => 1, 'cantidad' => 10], ...]
 
+    // --- PROPIEDADES EXISTENTES ---
     public $showNotification = false;
-
-    public $notification = [
-        'type' => 'success',
-        'message' => ''
-    ];
-
-    public $receta_id = null;
-    public $cantidad_servido = null;
-    public $desayuno_registrado = false;
-    public $desayuno_del_dia = null;
+    public $notification = ['type' => 'success', 'message' => ''];
+    public $desayuno_registrado = false; // Indica si ya se registró algo hoy
     public $horarioPermitido;
-
     public $alertInventario = null;
     public $alertLimite = null;
-
 
 
     public function mount()
     {
         $this->checkDesayunoStatus();
+        // Inicializa siempre con al menos una fila vacía
+        if (empty($this->desayunos_agregados)) {
+            $this->addDesayuno();
+        }
     }
 
     public function checkDesayunoStatus()
     {
         $hoy = now()->toDateString();
-
-        // Buscar desayuno guardado hoy
-        $registroHoy = DetalleRegistroDiario::whereDate('created_at', $hoy)->first();
+        $registroHoy = DetalleRegistroDiario::whereDate('created_at', $hoy)->exists();
 
         $hora = now()->format('H:i');
         $this->horarioPermitido = $hora >= '00:00' && $hora <= '22:00';
+        $this->desayuno_registrado = $registroHoy;
 
-        if ($registroHoy) {
-            // Ya existe → bloquear inputs
-            $this->desayuno_registrado = true;
-            $this->desayuno_del_dia = $registroHoy->receta_id;
-            $this->cantidad_servido = $registroHoy->cantidad_servido;
-        } else {
-            // No existe desayuno todavía
-            $this->desayuno_registrado = false;
+        // Si ya está registrado, carga los detalles para mostrarlos deshabilitados
+        if ($this->desayuno_registrado) {
+            $detalles = DetalleRegistroDiario::whereDate('created_at', $hoy)->get(['receta_id', 'cantidad_servido']);
+            $this->desayunos_agregados = $detalles->map(function ($item) {
+                return ['receta_id' => $item->receta_id, 'cantidad' => $item->cantidad_servido];
+            })->toArray();
         }
     }
 
+    // --- NUEVOS MÉTODOS PARA EL MANEJO DINÁMICO ---
 
-
-
-    public function saveDesayuno()
+    public function addDesayuno()
     {
+        // Solo permitir agregar si no está registrado
+        if ($this->desayuno_registrado) {
+             session()->flash('warning', 'El desayuno ya fue registrado y no se pueden agregar más items.');
+             return;
+        }
+
+        $this->desayunos_agregados[] = [
+            'receta_id' => null,
+            'cantidad' => null,
+        ];
+    }
+
+    public function removeDesayuno($index)
+    {
+        if ($this->desayuno_registrado) return;
+
+        // Livewire necesita que el índice exista
+        if (isset($this->desayunos_agregados[$index])) {
+            unset($this->desayunos_agregados[$index]);
+            // Reindexar la matriz
+            $this->desayunos_agregados = array_values($this->desayunos_agregados);
+        }
+
+        // Si al eliminar se queda sin entradas, agregamos una por defecto
+        if (empty($this->desayunos_agregados)) {
+            $this->addDesayuno();
+        }
+    }
+
+    // --- MODIFICACIÓN DEL MÉTODO DE GUARDADO ---
+
+    public function saveDesayuno() // Nombre modificado
+    {
+        // Validar hora
         $hora = now()->format('H:i');
-
         if (!($hora >= '00:00' && $hora <= '22:00')) {
-            $this->addError('hora', 'Solo puede registrar desayuno entre 12:00am y 12:00pm.');
-            $this->desayuno_registrado = false;
+            $this->addError('hora', 'Solo puede registrar desayuno entre 00:00am y 22:00pm.');
             return;
         }
 
-        $this->validate([
-            'desayuno_del_dia' => 'required|numeric',
-            'cantidad_servido' => 'required|numeric|min:1'
-        ]);
-
-        $hoy = now()->toDateString();
-
-        if (DetalleRegistroDiario::whereDate('created_at', $hoy)->exists()) {
+        // Validar si ya existe un registro para hoy
+        if (DetalleRegistroDiario::whereDate('created_at', now()->toDateString())->exists()) {
             $this->addError('existe', 'El desayuno de hoy ya fue registrado.');
-            $this->desayuno_registrado = false;
             return;
         }
+
+        // 1. VALIDACIÓN DINÁMICA DE ARRAYS
+        $rules = [];
+        $messages = [];
+        
+        // Verifica que la lista no esté vacía
+        if (empty(array_filter($this->desayunos_agregados, fn($d) => $d['receta_id'] !== null))) {
+            $this->addError('general', 'Debe seleccionar al menos un desayuno con su cantidad.');
+            return;
+        }
+
+        foreach ($this->desayunos_agregados as $index => $desayuno) {
+            $rules['desayunos_agregados.' . $index . '.receta_id'] = 'required|numeric|exists:recetas,id';
+            $rules['desayunos_agregados.' . $index . '.cantidad'] = 'required|numeric|min:1';
+            
+            $messages['desayunos_agregados.' . $index . '.receta_id.required'] = "Seleccione una opción para el Desayuno #" . ($index + 1);
+            $messages['desayunos_agregados.' . $index . '.cantidad.required'] = "Ingrese la cantidad para el Desayuno #" . ($index + 1);
+            $messages['desayunos_agregados.' . $index . '.cantidad.min'] = "La cantidad debe ser 1 o superior para el Desayuno #" . ($index + 1);
+        }
+
+        // 2. Validación de Duplicados (Mejorada)
+        $recetaIds = array_filter(array_column($this->desayunos_agregados, 'receta_id')); // Filtra IDs nulos
+
+        if (!empty($recetaIds) && count($recetaIds) !== count(array_unique($recetaIds))) {
+            $this->addError('duplicado', 'No puede seleccionar la misma receta más de una vez. Por favor, elimine el registro duplicado.');
+            return;
+        }
+        
+        // Validación final
+        $this->validate($rules, $messages);
+
 
         DB::beginTransaction();
 
         try {
+            $sucursalId = 1; // Sucursal fija
 
-            // GUARDAR EL DESAYUNO DEL DÍA
-            $detalle = DetalleRegistroDiario::create([
-                'receta_id' => $this->desayuno_del_dia,
-                'cantidad_servido' => $this->cantidad_servido,
-            ]);
+            // 3. PROCESAR CADA REGISTRO DE DESAYUNO EN EL ARRAY
+            foreach ($this->desayunos_agregados as $registro) {
+                
+                $recetaId = $registro['receta_id'];
+                $cantidadServido = $registro['cantidad'];
+                
+                // GUARDAR EL DETALLE DEL DESAYUNO
+                DetalleRegistroDiario::create([
+                    'receta_id' => $recetaId,
+                    'cantidad_servido' => $cantidadServido,
+                ]);
 
-            // CARGAR LA RECETA Y SUS INGREDIENTES
-            $receta = Receta::with('recetaIngredientes.producto')->find($this->desayuno_del_dia);
+                // CARGAR LA RECETA Y SUS INGREDIENTES
+                $receta = Receta::with('recetaIngredientes.producto')->find($recetaId);
 
-            // SUCURSAL FIJA
-            $sucursalId = 1;
+                // PROCESAR CADA INGREDIENTE PARA EL DESCUENTO
+                foreach ($receta->recetaIngredientes as $ingrediente) {
 
-            // PROCESAR CADA INGREDIENTE
-            foreach ($receta->recetaIngredientes as $ingrediente) {
+                    $totalDescontarGramos = $ingrediente->cantidad_porcion * $cantidadServido;
+                    $pesoUnidad = $ingrediente->producto->peso_contenido;
 
-                // Total en gramos a descontar
-                $totalDescontarGramos = $ingrediente->cantidad_porcion * $this->cantidad_servido;
+                    if ($pesoUnidad <= 0) {
+                        throw new Exception("El producto {$ingrediente->producto->nombre} no tiene peso_contenido definido.");
+                    }
 
-                // Peso de una unidad del producto (en gramos)
-                $pesoUnidad = $ingrediente->producto->peso_contenido;
+                    // LOTES FIFO
+                    $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
+                        ->whereHas('lote', function ($q) use ($ingrediente) {
+                            $q->where('producto_id', $ingrediente->producto_id);
+                        })
+                        ->where('cantidad_gramos', '>', 0)
+                        ->orderBy('lote_id', 'asc') // FIFO
+                        ->get();
 
-                if ($pesoUnidad <= 0) {
-                    throw new Exception("El producto {$ingrediente->producto->nombre} no tiene peso_contenido definido.");
+                    $pendiente = $totalDescontarGramos;
+
+                    foreach ($lotes as $inv) {
+
+                        if ($pendiente <= 0) break;
+
+                        $dispGramos = $inv->cantidad_gramos;
+                        $tomarGramos = min($pendiente, $dispGramos);
+
+                        $inv->cantidad_gramos -= $tomarGramos;
+                        $inv->cantidad = floor($inv->cantidad_gramos / $pesoUnidad);
+
+                        $inv->save();
+
+                        $lote = $inv->lote;
+                        $lote->cantidad_actual = $inv->cantidad_gramos;
+                        $lote->save();
+
+                        // Registrar movimiento
+                        MovimientoInventario::create([
+                            'producto_id'    => $ingrediente->producto_id,
+                            'lote_id'        => $lote->id,
+                            'sucursal_id'    => $sucursalId,
+                            'tipo_movimiento' => 'SALIDA',
+                            'unidad_id'      => $ingrediente->unidad_id,
+                            'cantidad'       => floor($tomarGramos / $pesoUnidad), 
+                            'cantidad_gramos' => $tomarGramos,
+                            'fecha'          => now(),
+                            'observaciones'  => "Consumo por receta {$receta->nombre} ({$cantidadServido} raciones)"
+                        ]);
+
+                        $pendiente -= $tomarGramos;
+                    }
+
+                    if ($pendiente > 0) {
+                        throw new Exception("No hay suficiente inventario para el ingrediente: {$ingrediente->producto->nombre}. Faltan " . round($pendiente, 2) . " gramos.");
+                    }
                 }
-
-                // LOTES FIFO (por sucursal)
-                $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
-                    ->whereHas('lote', function ($q) use ($ingrediente) {
-                        $q->where('producto_id', $ingrediente->producto_id);
-                    })
-                    ->where('cantidad_gramos', '>', 0)
-                    ->orderBy('id', 'asc')
-                    ->get();
-
-                $pendiente = $totalDescontarGramos;
-
-                foreach ($lotes as $inv) {
-
-                    if ($pendiente <= 0) break;
-
-                    // Gramos disponibles en este lote
-                    $dispGramos = $inv->cantidad_gramos;
-
-                    // Tomar lo menor entre lo que falta y lo disponible
-                    $tomarGramos = min($pendiente, $dispGramos);
-
-                    // Descontar gramos
-                    $inv->cantidad_gramos -= $tomarGramos;
-
-                    // Recalcular unidades: unidades = floor( gramos / peso_unitario )
-                    $inv->cantidad = floor($inv->cantidad_gramos / $pesoUnidad);
-
-                    $inv->save();
-
-                    // Descontar del LOTE original también
-                    $lote = $inv->lote;
-                    $lote->cantidad_inicial = $inv->cantidad;
-                    $lote->cantidad_actual = $inv->cantidad_gramos;
-                    $lote->save();
-
-                    // Registrar movimiento
-                    MovimientoInventario::create([
-                        'producto_id'    => $ingrediente->producto_id,
-                        'lote_id'        => $lote->id,
-                        'sucursal_id'    => $sucursalId,
-                        'tipo_movimiento' => 'SALIDA',
-                        'unidad_id'      => $ingrediente->unidad_id,
-                        'cantidad'       => $inv->cantidad,
-                        'cantidad_gramos' => $tomarGramos,
-                        'fecha'          => now(),
-                        'observaciones'  => 'Consumo por receta: ' . $receta->nombre
-                    ]);
-
-                    // actualizar lo que falta por descontar
-                    $pendiente -= $tomarGramos;
-                }
-
-                if ($pendiente > 0) {
-                    throw new Exception("No hay suficiente inventario para esta receta");
-                }
-            }
-
+            } // Fin del bucle de registros
 
             DB::commit();
 
             $this->desayuno_registrado = true;
             $this->dispatch('swal', [
-                'title' => '¡Desayuno registrado!',
-                'text'  => 'El desayuno del día fue guardado correctamente.',
+                'title' => '¡Desayunos registrados!',
+                'text'  => 'Los desayunos del día fueron guardados correctamente.',
                 'icon'  => 'success'
             ]);
         } catch (Exception $e) {
             DB::rollBack();
-            // Aquí se activa el mensaje
+
             $this->alertInventario = $e->getMessage();
             $this->dispatch('notify-inventario');
-
             $this->desayuno_registrado = false;
-
-            // Mostrar notificación
             $this->showNotification = true;
             return;
         }
     }
-
-
-
-
 
     public function showNotification()
     {
@@ -209,27 +239,18 @@ class RegistroComida extends Component
 
     public function render()
     {
-        // usa el helper request(), NO la inyección por parámetro
         $buscar = request()->input('buscar');
         $fecha_desde = request()->input('fecha_desde');
         $fecha_hasta = request()->input('fecha_hasta');
 
-        $filter = [
-            'fecha_desde' => $fecha_desde ?? null,
-            'fecha_hasta' => $fecha_hasta ?? null,
-            'buscar'      => $buscar ?? null,
-        ];
-
         $data = DetalleRegistroDiario::with('receta')->paginate(10);
-
         $comidas = Receta::orderBy('id', 'desc')->where('estado', true)->get();
 
-
-        // envía también $buscar a la vista (evita "undefined variable")
         return view('livewire.registro-comida', [
-            'data'   => $data,
-            'buscar' => $buscar,
+            'data'    => $data,
+            'buscar'  => $buscar,
             'comidas' => $comidas,
+            'desayuno_registrado' => $this->desayuno_registrado, 
         ]);
     }
 }

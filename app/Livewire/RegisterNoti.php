@@ -46,17 +46,10 @@ class RegisterNoti extends Component
     public function save()
     {
 
-        if (!$this->desayuno_registrado) {
-            $this->notification = [
-                'type' => 'danger',
-                'message' => 'Debe seleccionar el desayuno y la cantidad antes de registrar estudiantes.'
-            ];
-            $this->showNotification();
-            return;
-        }
+
 
         // 🚨 Validación de límite de raciones
-        $detalleHoy = DetalleRegistroDiario::whereDate('created_at', date('Y-m-d'))->first();
+        $detalleHoy = DetalleRegistroDiario::whereDate('created_at', now())->first();
 
         if (!$detalleHoy) {
             $this->notification = [
