@@ -12,6 +12,10 @@ class FechasCompra extends Component
     public $compra;
     public $fechas = [];
 
+    protected $rules = [
+        'fechas' => 'required|date|after:today',
+    ];
+
     public function mount(Compra $compra)
     {
         $this->compra = $compra;
@@ -41,8 +45,11 @@ class FechasCompra extends Component
                     'fecha_vencimiento' => $datos['fecha_vencimiento'],
                 ]);
         }
-
-        session()->flash('success', 'Fechas de vencimiento y cantidades actualizadas.');
+        $this->dispatch(
+            'mostrar-alerta',
+            icono: 'success',
+            mensaje: 'Fecha guardada correctamente'
+        );
     }
 
     public function render()
