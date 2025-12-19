@@ -16,6 +16,11 @@
             margin: 0;
         }
 
+        img{
+            width: 100%;
+            height: auto;
+        }
+
         .header {
             text-align: center;
             border-bottom: 3px solid #c0392b;
@@ -96,6 +101,10 @@
     @php
         $fechaGeneracion = \Carbon\Carbon::now()->format('d/m/Y H:i');
     @endphp
+
+    <head>
+        <img src="{{ public_path('img/Logo.png') }}" alt="Encabezado de la universidad"/>
+    </head>
 
     <div class="header">
         <h1>Registro Diario del Comedor</h1>
