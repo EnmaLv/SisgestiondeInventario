@@ -357,6 +357,11 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
+            transition: scale .2s ease;
+
+            &:not(:disabled):active {
+                scale: .95;
+            }
         }
 
         .rd-btn-primary {
@@ -709,6 +714,11 @@
 
         .rd-alert-error .rd-alert-list {
             color: #b91c1c;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
         }
     </style>
 @endpush

@@ -58,7 +58,7 @@
         </div>
 
         <!-- Right: Buscador, filtros y tabla -->
-        <div class="rd-card rd-card-list">
+        <div class="rd-card rd-card-list" style="height: 100%">
             <div class="rd-card-header rd-header-space">
                 <div>
                     <h3 class="rd-title-sm">Registros</h3>
@@ -96,12 +96,12 @@
                         class="rd-filters-form">
                         <div class="rd-filter-row">
                             <label>Desde</label>
-                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
+                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" max="{{ date('Y-m-d') }}"value="{{ request("fecha_desde") }}"/>
                         </div>
                         <div class="rd-filter-row">
                             <label>Hasta</label>
                             <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input"
-                                max="{{ date('Y-m-d') }}" />
+                                max="{{ date('Y-m-d') }}" value="{{ request("fecha_hasta") }}"/>
                         </div>
                         <div class="rd-filter-actions">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
@@ -278,6 +278,11 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
+            transition: scale .2s ease;
+
+            &:active {
+                scale: .95;
+            }
         }
 
         .rd-btn-primary {
@@ -715,46 +720,6 @@
         }
 
 
-        const desdeDate = document.getElementById('fecha_desde');
-        const hastaDate = document.getElementById('fecha_hasta');
-
-        // Fecha actual (máximo permitido)
-        const fechaActual = new Date().toISOString().split('T')[0];
-
-        // Establecer máximo hoy para ambos campos
-        if (desdeDate) desdeDate.max = fechaActual;
-        if (hastaDate) hastaDate.max = fechaActual;
-
-
-        // Cuando cambie "desde", ajustar el mínimo de "hasta"
-        if (desdeDate && hastaDate) {
-            desdeDate.addEventListener('change', function() {
-                if (!desdeDate.value) {
-                    // Si se borra la fecha desde, quitamos la restricción mínima en hasta
-                    hastaDate.min = '';
-                    return;
-                }
-
-                // "hasta" no puede ser menor que "desde"
-                hastaDate.min = desdeDate.value;
-
-                if (hastaDate.value && hastaDate.value < desdeDate.value) {
-                    hastaDate.value = desdeDate.value;
-                }
-            });
-
-            // Cuando cambie "hasta", validar contra "desde"
-            hastaDate.addEventListener('change', function() {
-                if (!hastaDate.value || !desdeDate.value) {
-                    return;
-                }
-
-                if (hastaDate.value < desdeDate.value) {
-                    // Si el usuario pone una fecha hasta menor, movemos "desde" a esa fecha
-                    desdeDate.value = hastaDate.value;
-                }
-            });
-        }
 
         //Script para mostrar el PdfGeneratorUtil
         const pdfBtn = document.querySelector('#pdfBtn');

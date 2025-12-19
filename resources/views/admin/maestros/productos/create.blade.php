@@ -232,13 +232,15 @@
                                 <label class="font-weight-bold">Imagen del producto</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-image"></i></span>
+                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer;">Seleccione una foto</label>
                                     <input type="file" name="imagen" id="imagen"
                                         class="form-control rd-filter-input" accept="image/*"
-                                        onchange="previewImage(event)">
+                                        onchange="previewImage(event)" style="display: none">
                                 </div>
 
                                 <img id="imgPreview"
                                     style="width: 100%; display:none; border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,0.08);" />
+                                <em id="fileName" style="margin: 10px"></em>
 
                                 <script>
                                     function previewImage(event) {
@@ -252,6 +254,8 @@
                                             };
                                             reader.readAsDataURL(file);
                                         }
+                                        const fileName = document.getElementById('fileName');
+                                        fileName.textContent = file.name;
                                     }
                                 </script>
 
@@ -417,14 +421,6 @@
         margin-right: 0.5rem;
     }
 
-    .rd-btn-primary {
-        background-color: #7c3aed;
-        color: white;
-    }
-
-    .rd-btn-primary:hover {
-        background-color: #6d28d9;
-    }
 
     .rd-btn-default {
         background-color: #f1f5f9;
@@ -432,9 +428,7 @@
         border-color: #e2e8f0;
     }
 
-    .rd-btn-default:hover {
-        background-color: #e2e8f0;
-    }
+
 
     /* Mensajes de error */
     .text-danger {
@@ -453,6 +447,48 @@
         .ck.ck-editor__editable {
             min-height: 250px;
         }
+    }
+
+    /*Estilos de select */
+    select {
+        &, &::picker(select) {
+            appearance: base-select;    
+        }
+
+        &>option{
+            padding: 10px 0;
+            transition: all .2s ease;
+            &:checked{
+                background: hsl(0, 0%, 88%);
+            }
+        }
+
+
+
+        &::picker(select){
+            border: 1px solid hsl(0, 0%, 81%);
+            border-radius: 12px;
+            background: hsl(0, 0%, 95%);
+            margin: 10px 0
+        }
+
+        &::picker-icon{
+            content: url("../img/keyboard_arrow.svg");
+            transition: all .2s ease;
+            width: 24px;
+            height: 24px;
+        }
+
+        &:open::picker-icon{
+            transform: rotate(180deg);
+        }
+
+    }
+    option::checkmark{
+        content: url('../img/check_small.svg');
+        width: 24px;
+        height: 24px;
+        margin-left: 4px;
     }
 </style>
 @endpush

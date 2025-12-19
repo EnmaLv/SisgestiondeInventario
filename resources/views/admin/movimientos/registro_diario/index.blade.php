@@ -122,6 +122,9 @@
         .rd-blur-btn {
             padding-left: 18px;
             padding-right: 18px;
+            &:hover {
+                color: white;
+            }
         }
     </style>
 @endpush

@@ -238,6 +238,48 @@
 
 @push('css')
     <style>
+        /*Estilos de select */
+        select {
+            &, &::picker(select) {
+                appearance: base-select;    
+            }
+
+            &>option{
+                padding: 10px 0;
+                transition: all .2s ease;
+                &:checked{
+                    background: hsl(0, 0%, 88%);
+                }
+            }
+
+
+
+            &::picker(select){
+                border: 1px solid hsl(0, 0%, 81%);
+                border-radius: 12px;
+                background: hsl(0, 0%, 95%);
+                margin: 10px 0
+            }
+
+            &::picker-icon{
+                content: url({{ asset('img/keyboard_arrow.svg') }});
+                transition: all .2s ease;
+                width: 24px;
+                height: 24px;
+            }
+
+            &:open::picker-icon{
+                transform: rotate(180deg);
+            }
+
+        }
+        option::checkmark{
+            content: url({{ asset('img/check_small.svg') }});
+            width: 24px;
+            height: 24px;
+            margin-left: 4px;
+        }
+
         /* Estilos base para las tarjetas */
         .rd-card {
             background: #ffffff;

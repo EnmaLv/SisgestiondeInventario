@@ -108,16 +108,34 @@
     font-weight: 600;
     border: 0;
     cursor: pointer;
+    transition: scale .2s ease;
+
+    &:active {
+        scale: .95;
+    }
 }
 
 .rd-btn-primary {
     background: #4f46e5;
     color: #fff;
+
+    &:hover {
+        color: white;
+    }
 }
 
+
+
 .rd-btn-default {
-    background: #6b7280;
-    color: #fff;
+    background: transparent;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease;
+}
+
+
+.rd-btn-default:hover {
+    background-color: #f8f9fa;
 }
 
 .rd-btn-success {
@@ -222,5 +240,49 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 a:hover {
-    color: white;
+    color: inherit;
 }
+
+/*Estilos de select */
+/*NOTA: ESTTOS SELECTORRES TODAVIA NO LO SOPORTAN TODOS LOS NAVEGADORES*/
+select {
+    &, &::picker(select) {
+        appearance: base-select;    
+    }
+
+    &>option{
+        padding: 10px 0;
+        transition: all .2s ease;
+        &:checked{
+            background: hsl(0, 0%, 88%);
+        }
+    }
+
+
+
+    &::picker(select){
+        border: 1px solid hsl(0, 0%, 81%);
+        border-radius: 12px;
+        background: hsl(0, 0%, 95%);
+        margin: 10px 0
+    }
+
+    &::picker-icon{
+        content: url("../img/keyboard_arrow.svg");
+        transition: all .2s ease;
+        width: 24px;
+        height: 24px;
+    }
+
+    &:open::picker-icon{
+        transform: rotate(180deg);
+    }
+
+}
+option::checkmark{
+    content: url('../img/check_small.svg');
+    width: 24px;
+    height: 24px;
+    margin-left: 4px;
+}
+

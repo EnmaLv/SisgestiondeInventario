@@ -144,6 +144,9 @@
 
 @section('css')
     <style>
+        a:hover{
+            color: inherit;
+        }
         .rd-card {
             background: #fff;
             border-radius: 12px;
@@ -198,6 +201,11 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
+            transition: scale .2s ease;
+
+            &:active {
+                scale: .95;
+            }
         }
 
         .rd-btn-primary {
@@ -206,8 +214,15 @@
         }
 
         .rd-btn-default {
-            background: #6b7280;
-            color: white;
+            background: transparent;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+            transition: background-color 0.2s ease;
+        }
+
+
+        .rd-btn-default:hover {
+            background-color: #f8f9fa;
         }
 
         .rd-label {
@@ -223,6 +238,28 @@
 
         .gap-2 {
             gap: 10px;
+        }
+        /*Estilos de select */
+        select {
+            &, &::picker(select) {
+                appearance: base-select;    
+            }
+
+            &>option{
+                padding: 10px 0;
+                margin: 0 10px;
+                border-radius: 12px;
+                &:checked{
+                    background: hsl(0, 0%, 88%);
+                }
+            }
+
+            &::picker(select){
+                border: 1px solid hsl(0, 0%, 81%);
+                border-radius: 12px;
+                background: hsl(0, 0%, 95%);
+                margin: 10px 0
+            }
         }
     </style>
 @endsection

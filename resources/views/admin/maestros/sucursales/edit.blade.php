@@ -144,6 +144,10 @@
 
 @section('css')
     <style>
+        a:hover {
+            color: inherit;
+        }
+
         .rd-card {
             background: #fff;
             border-radius: 12px;
@@ -198,6 +202,11 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
+            transition: scale .2s ease;
+
+            &:active {
+                scale: .95;
+            }
         }
 
         .rd-btn-primary {
@@ -206,8 +215,15 @@
         }
 
         .rd-btn-default {
-            background: #6b7280;
-            color: white;
+            background: transparent;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+            transition: background-color 0.2s ease;
+        }
+
+
+        .rd-btn-default:hover {
+            background-color: #f8f9fa;
         }
 
         .rd-label {

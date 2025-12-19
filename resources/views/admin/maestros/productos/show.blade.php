@@ -137,18 +137,18 @@
                     {{-- Imagen --}}
                     <div class="col-md-3">
 
-                        <label class="font-weight-bold">Imagen del Producto</label>
+                        <label class="font-weight-bold" >Imagen del Producto</label>
 
-                        <div class="rd-card p-2" style="border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
-                            @if ($producto->imagen)
-                            <img src="{{ asset('storage/' . $producto->imagen) }}" alt="Imagen del producto"
-                                style="width:100%; height:auto; border-radius:10px; object-fit:cover;">
-                                
-                            @else
-                                <h4>No hay imagen disponible</h3>
-                            @endif
 
-                        </div>
+                        @if ($producto->imagen)
+                            <div class="rd-card p-2" style="border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
+                                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="Imagen del producto"
+                                    style="width:100%; height:auto; border-radius:10px; object-fit:cover;">
+                            </div>
+                        @else
+                        <h4 style="text-align: center; margin-top: 3rem">Imagen no disponible</h4>
+                        @endif
+
 
                     </div>
 
@@ -345,9 +345,6 @@
         border-color: #e2e8f0;
     }
 
-    .rd-btn-default:hover {
-        background-color: #e2e8f0;
-    }
 
     /* Mensajes de error */
     .text-danger {

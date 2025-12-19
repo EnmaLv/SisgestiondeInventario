@@ -71,7 +71,7 @@
                         </a>
 
                         <button type="submit" class="rd-btn rd-btn-primary">
-                            <i class="fas fa-check"></i> Crear
+                            <i class="fas fa-check"></i> Crear Categoría
                         </button>
                     </div>
                 </form>
