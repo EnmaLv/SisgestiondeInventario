@@ -94,6 +94,41 @@
             text-align: center;
             color: #777;
         }
+        .contenedor-resumen {
+            width: 100%;
+            font-family: sans-serif;
+        }
+
+        .item-pnf {
+            width: 100%;
+            padding: 10px 0;
+            border-bottom: 1px solid #eeeeee; /* Línea divisoria sutil */
+            overflow: hidden;
+        }
+
+        .item-pnf-info {
+            float: left;
+            width: 80%;
+        }
+
+        .item-pnf-nombre {
+            font-size: 14px;
+            color: #333333;
+            font-weight: bold;
+        }
+
+        .item-pnf-cantidad {
+            float: right;
+            width: 20%;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            color: #c0392b; /* Color azul para resaltar el número */
+        }
+
+        .clearfix {
+            clear: both;
+        }
     </style>
 </head>
 
@@ -180,6 +215,25 @@
                 @endforeach
             </tbody>
         </table>
+
+        <div class="contenedor-resumen">
+            <h3 style="color: #555; font-size: 16px;">Resumen por PNF</h3>
+            
+            @foreach ($registros_pnf as $registro)
+            <div class="item-pnf">
+                <div class="item-pnf-info">
+                    <div class="item-pnf-nombre">{{ $registro->nombre_pnf }}</div>
+                    <div style="font-size: 11px; color: #888;">Estudiantes registrados</div>
+                </div>
+                
+                <div class="item-pnf-cantidad">
+                    {{ $registro->total_registros }}
+                </div>
+                
+                <div class="clearfix"></div>
+            </div>
+            @endforeach
+        </div>
     @endif
 
     <div class="footer">

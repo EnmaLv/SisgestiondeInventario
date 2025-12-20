@@ -100,7 +100,8 @@ class RegistroDiarioController extends Controller
         $datos = [
             'registros' => $register,
             'fecha_desde' => $fecha_desde,
-            'fecha_hasta' => $fecha_hasta
+            'fecha_hasta' => $fecha_hasta,
+            'registros_pnf' => Registro_diario::getAllByPnf()
         ];
 
         return PdfGeneratorUtil::ShowPdf('pdf.registro_diario', $datos, "Registro Diario");

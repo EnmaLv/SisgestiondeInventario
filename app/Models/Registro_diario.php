@@ -120,4 +120,16 @@ class Registro_diario extends Model
 
         return $query->paginate(10);
     }
+
+    public static function getAllByPnf()
+    {
+        //Relacionamos las tablas necesarias
+        $query = self::relacionTable()
+            // Obtenemos el nombre del pnf y contamos los registros por pnf
+            ->select('pnf.nombre_pnf', DB::raw('COUNT(*) as total_registros'))
+            ->groupBy('pnf.nombre_pnf')
+            ->orderBy('total_registros', 'desc');
+
+        return $query->get();
+    }
 }
