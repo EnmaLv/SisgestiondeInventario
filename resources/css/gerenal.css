@@ -1,0 +1,8 @@
+/*Configuracion de variables de Colores(Sabra dios si serviran)🙏*/
+:root{
+    --color-primary: hsl(358, 80%, 45%);
+    --color-secondary: hsl(357, 43%, 46%);
+    --color-tertiary: hsl(357, 87%, 47%);
+    --color-bg-light-dark-red: hsl(357, 28%, 30%);
+    --color-bg-dark: hsl(356, 15%, 18%);
+}
