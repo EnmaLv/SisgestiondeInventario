@@ -140,12 +140,25 @@
             </a>
         </div>
 
+        <!-- Compras -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/maestros/recetas') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/bandeja-de-comida.gif') }}" alt="Compras">
+                    </div>
+                    <h5>Comidas</h5>
+                    <p>{{ $total_compras }} registradas</p>
+                </div>
+            </a>
+        </div>
+
         <!-- Productos por Vencer -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}" class="module-link">
                 <div class="module-card-light">
                     <div class="module-icon">
-                        <img src="{{ url('/img/alerta.gif') }}" alt="Por vencer">
+                        <img src="{{ url('/img/notificaciones.gif') }}" alt="Por vencer">
                     </div>
                     <h5>Por Vencer</h5>
                     <p>{{ $total_lotes_por_vencer }} próximos a vencer</p>
