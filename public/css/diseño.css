@@ -1,4 +1,16 @@
- /* RD INPUT GROUP */
+:root{
+    --color-primary: hsl(358, 80%, 45%);
+    --color-secondary: hsl(357, 43%, 46%);
+    --color-tertiary: hsl(357, 87%, 47%);
+    --color-bg-light-dark-red: hsl(357, 28%, 30%);
+    --color-bg-dark: hsl(356, 15%, 18%);
+    --color-text-white:hsl(0, 0%, 85%);
+    --color-btn-hover:hsl(358, 75%, 30%);
+
+    /*Transiciones*/
+    --trans-default: all .2s ease;
+}
+/* RD INPUT GROUP */
         .rd-input-group {
             display: flex;
             align-items: center;
@@ -116,12 +128,14 @@
 }
 
 .rd-btn-primary {
-    background: #4f46e5;
+    background: var(--color-secondary);
     color: #fff;
+    transition: var(--trans-default);
+}
 
-    &:hover {
-        color: white;
-    }
+.rd-btn-primary:hover {
+    color: white;
+    background: var(--color-btn-hover); 
 }
 
 
@@ -245,44 +259,5 @@ a:hover {
 
 /*Estilos de select */
 /*NOTA: ESTTOS SELECTORRES TODAVIA NO LO SOPORTAN TODOS LOS NAVEGADORES*/
-select {
-    &, &::picker(select) {
-        appearance: base-select;    
-    }
 
-    &>option{
-        padding: 10px 0;
-        transition: all .2s ease;
-        &:checked{
-            background: hsl(0, 0%, 88%);
-        }
-    }
-
-
-
-    &::picker(select){
-        border: 1px solid hsl(0, 0%, 81%);
-        border-radius: 12px;
-        background: hsl(0, 0%, 95%);
-        margin: 10px 0
-    }
-
-    &::picker-icon{
-        content: url("../img/keyboard_arrow.svg");
-        transition: all .2s ease;
-        width: 24px;
-        height: 24px;
-    }
-
-    &:open::picker-icon{
-        transform: rotate(180deg);
-    }
-
-}
-option::checkmark{
-    content: url('../img/check_small.svg');
-    width: 24px;
-    height: 24px;
-    margin-left: 4px;
-}
 

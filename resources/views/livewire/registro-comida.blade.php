@@ -2,7 +2,7 @@
     @include('components.alert')
     <!-- Formulario único para desayuno + cantidad -->
     <div class="rd-card rd-card-desayuno mb-4 col-md-12 text-center mx-auto">
-        <div class="rd-card-header">
+        <div class="rd-card-headerr">
             <h2 class="rd-title">Desayuno del día</h2>
             <p class="rd-sub">Selecciona el desayuno de hoy y registra la cantidad servida</p>
         </div>
@@ -71,7 +71,7 @@
                     <div class="col-md-12 d-flex mt-4 justify-content-end align-items-center">
                         
                         {{-- Botón para agregar más --}}
-                        <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif" class="rd-btn rd-btn-agregar mr-4" @disabled($desayuno_registrado)>
+                        <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif" class="rd-btn rd-btn-default mr-4" @disabled($desayuno_registrado)>
                             Agregar Desayuno
                         </button>
 
@@ -280,22 +280,10 @@
             align-items: start;
         }
 
-        /* Card base */
-        .rd-card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(31, 41, 55, 0.06);
-            overflow: hidden;
-            border: 1px solid #eef2f6;
-        }
 
-        .rd-card-header {
+        .rd-card-headerr {
             padding: 18px 20px;
             border-bottom: 1px solid #f2f6f9;
-        }
-
-        .rd-card-body {
-            padding: 18px 20px;
         }
 
         .rd-card-footer {
@@ -323,9 +311,6 @@
         }
 
         .rd-input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
             width: 100%;
         }
 
@@ -333,54 +318,19 @@
             flex: 1;
             padding: 12px 14px;
             border-radius: 8px;
-            border: 1px solid #d1d5db;
             font-size: 16px;
             outline: none;
             transition: box-shadow .12s;
         }
 
-        .rd-input:focus {
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-            border-color: #7c3aed;
-        }
 
         .rd-input-error {
             border-color: #f43f5e;
         }
 
-        .rd-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: scale .2s ease;
-
-            &:not(:disabled):active {
-                scale: .95;
-            }
-        }
-
-        .rd-btn-primary {
-            background: #4f46e5;
-            color: #fff;
-        }
-
-        .rd-btn-agregar {
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #dddddd;
-
-            &:hover {
-                background: #f2f2f2;
-            }
-        }
 
         .rd-btn-eliminar{
-            border: 1px solid #d33a3a;
+            border: 1px solid #d33a3a !important;
             background: transparent;
             &:hover{
                 background: #d33a3a;
@@ -390,26 +340,7 @@
             }
         }
 
-        .rd-btn-success {
-            background: #10b981;
-            color: #fff;
-        }
 
-        /* Mantiene el mismo estilo al hacer hover para el botón de exportar Excel */
-        .rd-btn-success:hover {
-            background: #10b981;
-            color: #fff;
-        }
-
-        .rd-btn-danger {
-            background: #ef4444;
-            color: #fff;
-        }
-
-        .rd-btn-default {
-            background: #6b7280;
-            color: #fff;
-        }
 
         .rd-error {
             color: #b91c1c;
@@ -417,52 +348,7 @@
             text-align: center;
         }
 
-        /* Toast */
-        .rd-toast-holder {
-            position: relative;
-            margin-top: 14px;
-        }
 
-        .rd-toast {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            border-radius: 10px;
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-        }
-
-        .rd-toast-body {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            color: #0f172a;
-        }
-
-        .rd-toast-close {
-            background: transparent;
-            border: none;
-            font-size: 20px;
-            line-height: 1;
-            cursor: pointer;
-            color: #374151;
-        }
-
-        .rd-toast-success {
-            background: linear-gradient(90deg, #ecfeff, #f0fdf4);
-            border: 1px solid #d1fae5;
-        }
-
-        .rd-toast-info {
-            background: linear-gradient(90deg, #eef2ff, #f8fafc);
-            border: 1px solid #bfdbfe;
-        }
-
-        .rd-toast-danger {
-            background: linear-gradient(90deg, #fff1f2, #fff7f7);
-            border: 1px solid #fecaca;
-        }
 
         /* List card */
         .rd-card-list .rd-header-space {
@@ -491,88 +377,11 @@
             gap: 8px;
         }
 
-        .rd-search-inline {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
 
-        .rd-search-input {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #e6eef6;
-            min-width: 200px;
-        }
 
-        .rd-icon-btn {
-            background: transparent;
-            border: 1px solid #e6eef6;
-            padding: 8px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #374151;
-        }
 
-        .rd-export-group {
-            display: flex;
-            gap: 8px;
-        }
 
-        .rd-filters {
-            padding: 12px;
-            background: #fbfdff;
-            border-top: 1px solid #f3f6fb;
-            box-shadow: inset 0 6px 10px rgba(101, 114, 151, 0.1);
-        }
 
-        .rd-filters-form {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .rd-filter-row {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .rd-filter-input {
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid #e6eef6;
-        }
-
-        /* Table */
-        .rd-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        .rd-table thead th {
-            background: #f8fafc;
-            padding: 12px 10px;
-            text-align: left;
-            color: #374151;
-            font-weight: 700;
-            border-bottom: 1px solid #eef2f6;
-        }
-
-        .rd-table tbody td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #f6f8fb;
-            vertical-align: middle;
-        }
-
-        .rd-action-group {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            align-items: center;
-        }
 
         .rd-action {
             display: inline-flex;
@@ -585,29 +394,8 @@
             color: #374151;
         }
 
-        .rd-action:hover {
-            background: #f3f4f6;
-        }
 
-        .rd-action-danger {
-            background: #fff7f7;
-            border: 1px solid #fee2e2;
-            color: #dc2626;
-        }
 
-        .rd-badge {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        .rd-badge-success {
-            background: linear-gradient(90deg, #ecfdf5, #e6fffa);
-            color: #065f46;
-            border: 1px solid #bbf7d0;
-        }
 
         .rd-pagination {
             padding: 12px 8px;
@@ -615,18 +403,7 @@
             justify-content: center;
         }
 
-        .fade-in{
-            animation: fadeIn 0.25s ease-in-out forwards;
-        }
 
-        @keyframes fadeIn{
-            from{
-                opacity: 0;
-            }
-            to{
-                opacity: 1;
-            }
-        }
 
         /* Responsive */
         @media (max-width: 980px) {
@@ -645,18 +422,6 @@
             .rd-search-input {
                 min-width: 120px;
             }
-        }
-
-        /* small accessibility */
-        .sr-only {
-            position: absolute !important;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
         }
 
 
@@ -716,10 +481,6 @@
             color: #b91c1c;
         }
 
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-        }
     </style>
 @endpush
 

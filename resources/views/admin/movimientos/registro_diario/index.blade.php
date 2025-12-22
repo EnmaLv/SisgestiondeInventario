@@ -122,9 +122,15 @@
         .rd-blur-btn {
             padding-left: 18px;
             padding-right: 18px;
-            &:hover {
-                color: white;
-            }
+            background-color: var(--color-secondary);
+            color: white;
+            border: 1px solid transparent !important;
+            transition: all .2s ease;
+        }
+        .rd-blur-btn:hover {
+            color: var(--color-secondary) !important;
+            background-color: transparent !important;
+            border: 1px solid var(--color-secondary) !important;
         }
     </style>
 @endpush

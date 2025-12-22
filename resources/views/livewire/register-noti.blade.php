@@ -3,7 +3,7 @@
     <div class="rd-grid">
         <!-- Left: Cedula buscador -->
         <div class="rd-card rd-card-search">
-            <div class="rd-card-header">
+            <div class="rd-card-headerr">
                 <h2 class="rd-title">Registro Diario</h2>
                 <p class="rd-sub">Escanea el código de barras del carnet para registrar la entrada</p>
             </div>
@@ -166,28 +166,6 @@
 
 @push('css')
     <style>
-        /* Card especial para el desayuno */
-        .rd-card-desayuno .rd-title {
-            margin: 0;
-            font-size: 20px;
-            color: #0f172a;
-        }
-
-        .rd-card-desayuno .rd-sub {
-            margin: 4px 0 0;
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        /* Ajusta el select al estilo general */
-        .rd-card-desayuno select.rd-input {
-            padding: 12px 14px;
-            appearance: none;
-            background-position: right 12px center;
-            background-repeat: no-repeat;
-            background-size: 14px;
-        }
-
         /* Reset pequeño para este componente */
         .rd-wrapper {
             padding: 18px 12px;
@@ -210,7 +188,7 @@
             border: 1px solid #eef2f6;
         }
 
-        .rd-card-header {
+        .rd-card-headerr {
             padding: 18px 20px;
             border-bottom: 1px solid #f2f6f9;
         }
@@ -240,7 +218,7 @@
 
         .rd-search-form {
             margin-top: 12px;
-            width: 100%;
+            width: 100% !important;
         }
 
         .rd-input-group {
@@ -251,7 +229,6 @@
         }
 
         .rd-input {
-            flex: 1;
             padding: 12px 14px;
             border-radius: 8px;
             border: 1px solid #d1d5db;
@@ -260,64 +237,9 @@
             transition: box-shadow .12s;
         }
 
-        .rd-input:focus {
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-            border-color: #7c3aed;
-        }
 
-        .rd-input-error {
-            border-color: #f43f5e;
-        }
 
-        .rd-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: scale .2s ease;
-
-            &:active {
-                scale: .95;
-            }
-        }
-
-        .rd-btn-primary {
-            background: #4f46e5;
-            color: #fff;
-        }
-
-        .rd-btn-success {
-            background: #10b981;
-            color: #fff;
-        }
-
-        /* Mantiene el mismo estilo al hacer hover para el botón de exportar Excel */
-        .rd-btn-success:hover {
-            background: #10b981;
-            color: #fff;
-        }
-
-        .rd-btn-danger {
-            background: #ef4444;
-            color: #fff;
-        }
-
-        .rd-btn-default {
-            background: #6b7280;
-            color: #fff;
-        }
-
-        .rd-error {
-            color: #b91c1c;
-            font-size: 13px;
-            text-align: center;
-        }
-
-        /* Toast */
+        /* Toast/Aviso del input de carnet */
         .rd-toast-holder {
             position: relative;
             margin-top: 14px;
@@ -385,87 +307,6 @@
             font-size: 13px;
         }
 
-        .rd-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .rd-search-inline {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .rd-search-input {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #e6eef6;
-            min-width: 200px;
-        }
-
-        .rd-icon-btn {
-            background: transparent;
-            border: 1px solid #e6eef6;
-            padding: 8px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #374151;
-        }
-
-        .rd-export-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .rd-filters {
-            padding: 12px;
-            background: #fbfdff;
-            border-top: 1px solid #f3f6fb;
-            box-shadow: inset 0 6px 10px rgba(101, 114, 151, 0.1);
-        }
-
-        .rd-filters-form {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .rd-filter-row {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .rd-filter-input {
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid #e6eef6;
-        }
-
-        /* Table */
-        .rd-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        .rd-table thead th {
-            background: #f8fafc;
-            padding: 12px 10px;
-            text-align: left;
-            color: #374151;
-            font-weight: 700;
-            border-bottom: 1px solid #eef2f6;
-        }
-
-        .rd-table tbody td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #f6f8fb;
-            vertical-align: middle;
-        }
 
         .rd-action-group {
             display: flex;
@@ -485,36 +326,6 @@
             color: #374151;
         }
 
-        .rd-action:hover {
-            background: #f3f4f6;
-        }
-
-        .rd-action-danger {
-            background: #fff7f7;
-            border: 1px solid #fee2e2;
-            color: #dc2626;
-        }
-
-        .rd-badge {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        .rd-badge-success {
-            background: linear-gradient(90deg, #ecfdf5, #e6fffa);
-            color: #065f46;
-            border: 1px solid #bbf7d0;
-        }
-
-        .rd-pagination {
-            padding: 12px 8px;
-            display: flex;
-            justify-content: center;
-        }
-
         /* Responsive */
         @media (max-width: 980px) {
             .rd-grid {
@@ -532,18 +343,6 @@
             .rd-search-input {
                 min-width: 120px;
             }
-        }
-
-        /* small accessibility */
-        .sr-only {
-            position: absolute !important;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
         }
 
 
