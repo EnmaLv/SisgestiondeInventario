@@ -6,8 +6,7 @@
 
             {{-- Search input --}}
             <input class="form-control form-control-sidebar" type="search"
-                @isset($item['id']) id="{{ $item['id'] }}" @endisset
-                placeholder="{{ $item['text'] }}"
+                @isset($item['id']) id="{{ $item['id'] }}" @endisset placeholder="{{ $item['text'] }}"
                 aria-label="{{ $item['text'] }}">
 
             {{-- Search button --}}

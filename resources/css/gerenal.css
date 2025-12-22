@@ -11,15 +11,15 @@
     /*Transiciones*/
     --trans-default: all .2s ease;
 }
-
 /*breadcrumb*/
-.breadcrumb > li> a {
+.breadcrumb > li > a {
     color: var(--color-secondary);
-
-    &:hover{
-        color: var(--color-primary);
-    }
 }
+
+.breadcrumb > li > a:hover {
+    color: var(--color-primary);
+}
+
 
 /*SideBar color*/
 
@@ -464,3 +464,75 @@ option::checkmark{
     height: 24px;
     margin-left: 4px;
 }
+
+/* Input group limpio */
+.input-group {
+    border: 1px solid #d8dee9;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* Quitar borde y altura rara del input */
+.input-group .form-control,
+.input-group .form-select {
+    border: 0 !important;
+    box-shadow: none !important;
+    height: 38px;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+}
+
+.rd-input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d8dee9;
+    border-radius: 12px;
+    padding: 0 10px;
+    background: #f8fafc;
+}
+
+.rd-input-group span {
+    color: #64748b;
+    font-size: 1rem;
+    margin-right: 6px;
+}
+
+.rd-input-group .rd-input {
+    border: none;
+    background: transparent;
+    padding: 10px 6px;
+    box-shadow: none;
+}
+
+.rd-input-group:focus-within {
+    border-color: var(--color-tertiary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+
+.form-control-sidebar {
+    height: calc(2.25rem + 2px);
+}
+
+.btn-sidebar {
+    height: calc(2.25rem + 2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-control {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding: 0.5rem 0.75rem;
+            height: auto;
+        }
+
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }

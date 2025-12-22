@@ -120,23 +120,19 @@
 
                                 {{-- Precio Compra --}}
                                 <div class="col-md-3">
-                            <div class="form-group">
-                                    <label class="font-weight-bold">Precio Compra (Bs)</label>
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                        <input type="number" 
-                                            class="form-control rd-filter-input" 
-                                            name="precio_compra"
-                                            value="{{ old('precio_compra') }}" 
-                                            placeholder="0.00" 
-                                            min="0"
-                                            step="0.01">
-                                        <span class="input-group-text">.Bs</span>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Precio Compra (Bs)</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                            <input type="number" class="form-control rd-filter-input" name="precio_compra"
+                                                value="{{ old('precio_compra') }}" placeholder="0.00" min="0"
+                                                step="0.01">
+                                            <span class="input-group-text">.Bs</span>
+                                        </div>
+                                        @error('precio_compra')
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
+                                        @enderror
                                     </div>
-                                    @error('precio_compra')
-                                        <div class="text-danger"><b>{{ $message }}</b></div>
-                                    @enderror
-                                </div>
                                 </div>
 
 
@@ -176,8 +172,9 @@
                                         <label class="font-weight-bold">Stock Máximo</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
-                                            <input type="number" class="form-control rd-filter-input" name="stock_maximo"
-                                                value="{{ old('stock_maximo') }}" placeholder="Máximo" min="0">
+                                            <input type="number" class="form-control rd-filter-input"
+                                                name="stock_maximo" value="{{ old('stock_maximo') }}"
+                                                placeholder="Máximo" min="0">
                                         </div>
                                         @error('stock_maximo')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -232,7 +229,8 @@
                                 <label class="font-weight-bold">Imagen del producto</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer;">Seleccione una foto</label>
+                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer;">Seleccione
+                                        una foto</label>
                                     <input type="file" name="imagen" id="imagen"
                                         class="form-control rd-filter-input" accept="image/*"
                                         onchange="previewImage(event)" style="display: none">
@@ -284,214 +282,6 @@
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
 
-
-
-
-@push('css')
-<style>
-    .rd-card {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .rd-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    .rd-title-sm {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1a202c;
-        margin: 0;
-    }
-
-    .rd-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #4a5568;
-        font-size: 0.9375rem;
-    }
-
-    /* Estilos para grupos de entrada */
-    .rd-input-group {
-        margin-bottom: 1.25rem;
-    }
-
-    .input-group {
-        border: 1px solid #d8dee9;
-        border-radius: 12px;
-        padding-inline: 8px;
-        transition: border-color .2s ease, box-shadow .2s ease;
-        overflow: hidden;
-    }
-
-    .input-group:focus-within {
-        border-color: #7c3aed;
-        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-    }
-
-    .input-group-text {
-        background: transparent;
-        border: none;
-        color: #64748b;
-        font-size: 1.05rem;
-        padding: 0 0.5rem;
-    }
-
-    .input-group-text i {
-        width: 22px;
-        text-align: center;
-    }
-
-    /* Estilos para inputs */
-    .form-control,
-    .form-select {
-        border: none;
-        background: transparent;
-        box-shadow: none;
-        padding: 0.75rem 0.5rem;
-        height: auto;
-        font-size: 0.9375rem;
-        color: #2d3748;
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        outline: none;
-        box-shadow: none;
-    }
-
-    /* Estilos para el editor CKEditor */
-    .ck.ck-editor {
-        width: 100% !important;
-        margin-top: 0.5rem;
-    }
-
-    .ck.ck-editor__editable {
-        width: 100% !important;
-        min-height: 200px;
-        border: 1px solid #d8dee9 !important;
-        border-radius: 0 0 12px 12px !important;
-        padding: 1rem !important;
-        color: #2d3748;
-    }
-
-    .ck.ck-toolbar {
-        border: 1px solid #d8dee9 !important;
-        border-bottom: none !important;
-        border-radius: 12px 12px 0 0 !important;
-        background-color: #f8fafc !important;
-    }
-
-    /* Estilos para la vista previa de imágenes */
-    .image-preview {
-        width: 100%;
-        max-width: 200px;
-        height: auto;
-        border-radius: 8px;
-        border: 2px dashed #d8dee9;
-        padding: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    /* Botones */
-    .rd-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.6rem 1.25rem;
-        border-radius: 8px;
-        font-weight: 500;
-        font-size: 0.9375rem;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        border: 1px solid transparent;
-    }
-
-    .rd-btn i {
-        margin-right: 0.5rem;
-    }
-
-
-    .rd-btn-default {
-        background-color: #f1f5f9;
-        color: #475569;
-        border-color: #e2e8f0;
-    }
-
-
-
-    /* Mensajes de error */
-    .text-danger {
-        color: #dc2626;
-        font-size: 0.8125rem;
-        margin-top: 0.25rem;
-        display: block;
-    }
-
-    /* Ajustes responsivos */
-    @media (max-width: 768px) {
-        .rd-card {
-            padding: 1rem;
-        }
-
-        .ck.ck-editor__editable {
-            min-height: 250px;
-        }
-    }
-
-    /*Estilos de select */
-    select {
-        &, &::picker(select) {
-            appearance: base-select;    
-        }
-
-        &>option{
-            padding: 10px 0;
-            transition: all .2s ease;
-            &:checked{
-                background: hsl(0, 0%, 88%);
-            }
-        }
-
-
-
-        &::picker(select){
-            border: 1px solid hsl(0, 0%, 81%);
-            border-radius: 12px;
-            background: hsl(0, 0%, 95%);
-            margin: 10px 0
-        }
-
-        &::picker-icon{
-            content: url("../img/keyboard_arrow.svg");
-            transition: all .2s ease;
-            width: 24px;
-            height: 24px;
-        }
-
-        &:open::picker-icon{
-            transform: rotate(180deg);
-        }
-
-    }
-    option::checkmark{
-        content: url('../img/check_small.svg');
-        width: 24px;
-        height: 24px;
-        margin-left: 4px;
-    }
-</style>
-@endpush
 @section('js')
     <script>
         let descripcionEditor;
