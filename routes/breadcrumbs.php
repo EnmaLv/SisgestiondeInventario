@@ -29,10 +29,10 @@ Breadcrumbs::for('admin.maestros.categorias.edit', function (Trail $trail, $cate
     $trail->push('Editar', route('admin.maestros.categorias.edit', $categoria));
 });
 
-// Maestros > Sucursales
+// Maestros > Sedes
 Breadcrumbs::for('admin.maestros.sucursales.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Sucursales', route('admin.maestros.sucursales.index'));
+    $trail->push('Sedes', route('admin.maestros.sucursales.index'));
 });
 
 Breadcrumbs::for('admin.maestros.sucursales.create', function (Trail $trail) {

@@ -177,7 +177,7 @@
                     if (localStorage.getItem(key) !== hoy) {
 
                         Swal.fire({
-                            title: '⏰ Productos por vencer',
+                            title: 'Productos por vencer',
                             html: `
                 <p style="font-size:15px">
                     Hay <b>{{ $total_lotes_por_vencer }}</b> producto(s)
@@ -190,10 +190,12 @@
                             confirmButtonColor: '#f59e0b',
                             timer: 6000,
                             timerProgressBar: true
-                        }).then(() => {
-                            localStorage.setItem(key, hoy);
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                localStorage.setItem(key, hoy);
+                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}";
+                            }
                         });
-
                     }
                 });
             </script>
@@ -213,8 +215,9 @@
                             title: '⚠️ Lotes vencidos',
                             html: `
                 <p style="font-size:15px">
-                    Existen <b>{{ $total_lotes_vencidos }}</b> lote(s) vencido(s)
-                    que requieren atención inmediata.
+                    Existen <b>{{ $total_lotes_vencidos }}</b> lote(s) vencido(s).<br>
+                    Serán despachados por <b>MERMA automáticamente al cierre (20:00)</b>.
+
                 </p>
             `,
                             icon: 'error',
@@ -223,8 +226,11 @@
                             confirmButtonColor: '#dc2626',
                             timer: 7000,
                             timerProgressBar: true
-                        }).then(() => {
-                            localStorage.setItem(key, hoy);
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                localStorage.setItem(key, hoy);
+                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=vencido') }}";
+                            }
                         });
 
                     }

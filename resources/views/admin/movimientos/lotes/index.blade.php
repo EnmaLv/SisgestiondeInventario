@@ -53,6 +53,9 @@
                 </div>
 
                 <div class="rd-actions">
+                    <button class="rd-icon-btn" title="Mermar Lotes">
+                        <i class="fas fa-water">Mermar Productos</i>
+                    </button>
                     <form action="{{ route('admin.movimientos.lotes.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
@@ -85,6 +88,15 @@
                             <label>Hasta</label>
                             <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" max="{{ now()->format('Y-m-d') }}"/>
                         </div>
+                        <div class="rd-filter-row" style="display: inline-block;">
+                            <select name="estado" class="rd-filter-input">
+                                <option value="">Seleccione una opcion  </option>
+                                <option value="1" {{ request('estado') === '1' ? 'selected' : '' }}>Activos</option>
+                                <option value="0" {{ request('estado') === '0' ? 'selected' : '' }}>Merma</option>
+                            </select>
+                        </div>
+
+
                         <div class="rd-filter-row rd-filter-actions" style="display: inline-block; vertical-align: bottom;">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
                             <button type="button" class="rd-btn rd-btn-default"
@@ -130,7 +142,7 @@
                                 <td>
                                     @if ($lote->is_expired)
                                         <span class="rd-badge rd-badge-danger">Vencido</span>
-                                    @elseif ($lote->days_to_expire <= 10)
+                                    @elseif ($lote->days_to_expire <= 7)
                                         <span class="rd-badge rd-badge-warning">Cerca de Vencer</span>
                                     @else
                                         <span class="rd-badge rd-badge-success">Vigente</span>

@@ -41,7 +41,10 @@ class HomeController extends Controller
         $total_compras = Compra::count();
 
         // Lotes vencidos
-        $total_lotes_vencidos = Lote::where('fecha_vencimiento', '<', $hoy)->count();
+        $total_lotes_vencidos = Lote::whereDate('fecha_vencimiento', '<=', $hoy)
+            ->where('estado', 1)
+            ->count();
+
 
         // Lotes por vencer (≤ 7 días y NO vencidos)
         $total_lotes_por_vencer = Lote::whereBetween(

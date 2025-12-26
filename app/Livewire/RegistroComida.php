@@ -166,12 +166,15 @@ class RegistroComida extends Component
 
                     // LOTES FIFO
                     $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
-                        ->whereHas('lote', function ($q) use ($ingrediente) {
-                            $q->where('producto_id', $ingrediente->producto_id);
-                        })
-                        ->where('cantidad_gramos', '>', 0)
-                        ->orderBy('lote_id', 'asc') // FIFO
-                        ->get();
+                    ->whereHas('lote', function ($q) use ($ingrediente) {
+                        $q->where('producto_id', $ingrediente->producto_id)
+                        ->whereDate('fecha_vencimiento', '>=', now()->toDateString())
+                        ->where('estado', 1);
+                    })
+                    ->where('cantidad_gramos', '>', 0)
+                    ->orderBy('lote_id', 'asc') // FIFO real
+                    ->get();
+
 
                     $pendiente = $totalDescontarGramos;
 

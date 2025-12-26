@@ -134,22 +134,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                 {{-- Stock Mínimo --}}
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -195,24 +179,6 @@
                                                         {{ old('unidad_id') == $unidad->id ? 'selected' : '' }}>
                                                         {{ $unidad->nombre }}</option>
                                                 @endforeach
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                             </select>
                                         </div>
                                         @error('unidad_id')

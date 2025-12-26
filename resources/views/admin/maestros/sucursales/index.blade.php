@@ -12,7 +12,7 @@
         <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
-                Sucursales
+                Sedes
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -37,7 +37,7 @@
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Sucursales Registradas</h3>
+                    <h3 class="rd-title-sm">Sedes Registradas</h3>
                 </div>
 
                 <div class="rd-actions">

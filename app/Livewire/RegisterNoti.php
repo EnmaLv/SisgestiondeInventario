@@ -169,6 +169,7 @@ class RegisterNoti extends Component
 
     public function render()
     {
+        $receta_diario = DetalleRegistroDiario::whereDate('created_at', now())->exists();
         // usa el helper request(), NO la inyección por parámetro
         $buscar = request()->input('buscar');
         $fecha_desde = request()->input('fecha_desde');
@@ -189,6 +190,7 @@ class RegisterNoti extends Component
             'data'   => $data,
             'buscar' => $buscar,
             'comidas' => $comidas,
+            "receta_diario" => $receta_diario,
         ]);
     }
 }

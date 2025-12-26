@@ -36,7 +36,6 @@ class SucursalController extends Controller
             'nombre'    => 'required|string|max:255',    // Nombre obligatorio
             'direccion' => 'required|string|max:255',    // Dirección obligatoria
             'telefono'  => 'required|string|max:20',     // Teléfono obligatorio
-            'activo'    => 'required|boolean',           // Estado activo/inactivo
         ]);
 
         // Crear la nueva sucursal
@@ -96,7 +95,6 @@ class SucursalController extends Controller
             'nombre'    => 'required|string|max:255',    // Nombre obligatorio
             'direccion' => 'required|string|max:255',    // Dirección obligatoria
             'telefono'  => 'required|string|max:20',     // Teléfono obligatorio
-            'activo'    => 'required|boolean',           // Estado activo/inactivo
         ]);
 
         // Actualizar la sucursal con los nuevos datos

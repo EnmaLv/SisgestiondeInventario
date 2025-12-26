@@ -12,7 +12,7 @@
         <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
-                Crear Sucursal
+                Editar Sede
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -52,7 +52,7 @@
             {{-- Header --}}
             <div class="rd-card-header mb-3">
                 <div>
-                    <h3 class="rd-title-sm">Editar Sucursal</h3>
+                    <h3 class="rd-title-sm">Editar Sede</h3>
                     <small class="text-muted">Modifique los datos necesarios</small>
                 </div>
 
@@ -70,7 +70,7 @@
 
                     {{-- Nombre --}}
                     <div class="col-md-6">
-                        <label class="rd-label">Nombre de la Sucursal</label>
+                        <label class="rd-label">Nombre de la Sede</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
                             <input type="text" name="nombre" class="rd-input" value="{{ $sucursal->nombre }}"

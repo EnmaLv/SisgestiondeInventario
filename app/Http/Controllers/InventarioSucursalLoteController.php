@@ -10,7 +10,6 @@ class InventarioSucursalLoteController extends Controller
 {
     public function index()
     {
-        
         $sucursales = Sucursal::withCount('inventarioSucursalLotes')->get();
 
         foreach ($sucursales as $sucursal) {
@@ -18,7 +17,6 @@ class InventarioSucursalLoteController extends Controller
         }
 
         return view('admin.movimientos.sucursales_lotes.index', compact('sucursales'));
-        /* response()->json($sucursalesLotes); */
     }
 
     public function show($id, Request $request)

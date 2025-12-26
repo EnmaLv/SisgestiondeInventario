@@ -13,7 +13,7 @@
                     @csrf
                     <div class="rd-input-group">
                         <label for="cedula" class="sr-only">Cédula</label>
-                        <input type="tel" id="cedula" wire:model.defer="cedula"
+                        <input type="tel" id="cedula" wire:model.defer="cedula" @disabled(!$receta_diario)
                             class="rd-input @error('cedula') rd-input-error @enderror" placeholder="Ej: 12345678"
                             maxlength="8" inputmode="numeric" autofocus />
 

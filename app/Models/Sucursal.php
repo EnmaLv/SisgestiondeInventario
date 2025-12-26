@@ -79,7 +79,7 @@ class Sucursal extends Model
             'nombre'     => $data['nombre'],        // Nombre de la sucursal
             'direccion'  => $data['direccion'],     // Dirección completa
             'telefono'   => $data['telefono'],      // Número de contacto
-            'activo'     => $data['activo'],        // Estado activo/inactivo
+            'activo'     => 1,        // Estado activo/inactivo
             'created_at' => now(),                 // Fecha de creación
             'updated_at' => now()                  // Fecha de actualización
         ]);
@@ -106,7 +106,7 @@ class Sucursal extends Model
                 'nombre'     => $data['nombre'],        // Nuevo nombre
                 'direccion'  => $data['direccion'],     // Nueva dirección
                 'telefono'   => $data['telefono'],      // Nuevo teléfono
-                'activo'     => $data['activo'],        // Nuevo estado
+                'activo'     => 1,        // Nuevo estado
                 'updated_at' => now()                  // Actualizar fecha de modificación
             ]);
     }
