@@ -1,6 +1,50 @@
 @extends('adminlte::page')
 
 @section('content_header')
+    @include('components.alert')
+    <form id="form-actualizar-tasa" action="{{ route('productos.actualizar.tasa') }}" method="POST" style="display:none;">
+        @csrf
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const hoy = new Date().toISOString().slice(0, 10);
+            const key = 'tasa_actualizada_hoy';
+            if (localStorage.getItem(key) === hoy) {
+                return;
+            }
+
+            Swal.fire({
+                title: '🔄 Actualización obligatoria',
+                html: `
+                    <p style="font-size:15px">
+                        Para garantizar precios correctos, es <b>obligatorio</b>
+                        actualizar la tasa del dólar del <b>BCV</b>.<br><br>
+                        Esta acción debe realizarse <b>una vez al día</b>.
+                    </p>
+                `,
+                icon: 'info',
+
+                /* 🔒 BLOQUEO TOTAL */
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+
+                confirmButtonText: 'Actualizar ahora',
+                confirmButtonColor: '#16a34a',
+
+                showCancelButton: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.setItem(key, hoy);
+                    document.getElementById('form-actualizar-tasa').submit();
+                }
+            });
+
+        });
+    </script>
+
+
     <div class="dashboard-header"
         style="
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
@@ -209,7 +253,7 @@
                     const hoy = new Date().toISOString().slice(0, 10);
                     const key = 'alerta_lotes_vencidos';
 
-                    if (localStorage.getItem(key)) {
+                    if (localStorage.getItem(key !== hoy)) {
 
                         Swal.fire({
                             title: '⚠️ Lotes vencidos',

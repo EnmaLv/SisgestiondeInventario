@@ -150,3 +150,5 @@ Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController:
 Route::get('/admin/configuracion', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.configuracion.index')->middleware('auth');
 
 Route::get('/admin/configuracion/indexar', [App\Http\Controllers\IndexarController::class, 'index'])->name('admin.configuracion.indexar.index')->middleware('auth');
+
+Route::post('admin/maestros/productos/actualizar-tasa',[ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');

@@ -121,19 +121,26 @@
                                 {{-- Precio Compra --}}
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label class="font-weight-bold">Precio Compra (US$)</label>
+                                        <label class="font-weight-bold">Precio base (USD)</label>
                                         <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                            <input type="number" class="form-control rd-filter-input" name="precio_compra"
-                                                value="{{ old('precio_compra') }}" placeholder="0.00" min="0"
-                                                step="0.01">
-                                            <span class="input-group-text">.US$</span>
+                                            <span class="input-group-text">$</span>
+                                            <input
+                                                type="number"
+                                                name="costo_usd"
+                                                class="form-control rd-filter-input"
+                                                value="{{ old('costo_usd') }}"
+                                                placeholder="0.00"
+                                                min="0"
+                                                step="0.01"
+                                                required
+                                            >
                                         </div>
-                                        @error('precio_compra')
+                                        @error('costo_usd')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
                                 </div>
+
                                 {{-- Stock Mínimo --}}
                                 <div class="col-md-3">
                                     <div class="form-group">

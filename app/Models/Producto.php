@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
+use App\Models\PrecioProducto;
 
 /**
  * Modelo que representa un producto en el sistema de inventario.
@@ -41,7 +42,8 @@ class Producto extends Model
         'stock_maximo',    // Nivel máximo de inventario
         'unidad_id',       // ID de la unidad de medida
         'estado',          // Estado del producto (activo/inactivo)
-        'categoria_id'     // ID de la categoría a la que pertenece
+        'categoria_id',     // ID de la categoría a la que pertenece
+        "costo_usd"
     ];
     /*
     |--------------------------------------------------------------------------
@@ -185,31 +187,46 @@ class Producto extends Model
      */
     public static function crearProducto(array $data)
     {
-        // Asegurar codigo (si no viene, lo generamos)
-        if (empty($data['codigo'])) {
-            $categoriaNombre = DB::table('categorias')->where('id', $data['categoria_id'])->value('nombre') ?? 'CAT';
-            $data['codigo'] = self::generarCodigoProducto($categoriaNombre, $data['nombre']);
-        } else {
-            $data['codigo'] = strtoupper($data['codigo']);
-        }
+        return DB::transaction(function () use ($data) {
 
-        $insert = [
-            'categoria_id'  => $data['categoria_id'],
-            'codigo'        => $data['codigo'],
-            'nombre'        => $data['nombre'],
-            'descripcion'   => $data['descripcion'] ?? null,
-            'imagen'        => $data['imagen'] ?? 'imagenes/productos/default.png',
-            'precio_compra' => $data['precio_compra'] ?? 0,
-            'stock_minimo'  => $data['stock_minimo'] ?? 0,
-            'stock_maximo'  => $data['stock_maximo'] ?? 0,
-            'unidad_id'     => $data['unidad_id'] ?? null,
-            'estado'        => isset($data['estado']) ? (int)$data['estado'] : 1,
-            'created_at'    => now(),
-            'updated_at'    => now(),
-        ];
+            if (empty($data['codigo'])) {
+                $categoriaNombre = DB::table('categorias')
+                    ->where('id', $data['categoria_id'])
+                    ->value('nombre') ?? 'CAT';
 
-        return DB::table('productos')->insertGetId($insert);
+                $data['codigo'] = self::generarCodigoProducto(
+                    $categoriaNombre,
+                    $data['nombre']
+                );
+            } else {
+                $data['codigo'] = strtoupper($data['codigo']);
+            }
+
+            $productoId = DB::table('productos')->insertGetId([
+                'categoria_id'  => $data['categoria_id'],
+                'codigo'        => $data['codigo'],
+                'nombre'        => $data['nombre'],
+                'descripcion'   => $data['descripcion'] ?? null,
+                'imagen'        => $data['imagen'] ?? 'imagenes/productos/default.png',
+                'precio_compra' => 0,
+                'stock_minimo'  => $data['stock_minimo'] ?? 0,
+                'stock_maximo'  => $data['stock_maximo'] ?? 0,
+                'unidad_id'     => $data['unidad_id'] ?? null,
+                'estado'        => isset($data['estado']) ? (int)$data['estado'] : 1,
+                'created_at'    => now(),
+                'updated_at'    => now(),
+            ]);
+
+            PrecioProducto::create([
+                'producto_id' => $productoId,
+                'costo_usd'  => $data['costo_usd'], 
+                'margen'      => $data['margen'] ?? 0
+            ]);
+
+            return $productoId;
+        });
     }
+
 
     /**
      * Obtiene un producto por su ID con información relacionada.

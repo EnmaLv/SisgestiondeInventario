@@ -28,12 +28,14 @@ class ProductoRequest extends FormRequest
             'descripcion' => 'nullable|string',
             // permitir que no venga imagen en creación
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'precio_compra' => 'required|numeric',
+            'precio_compra' => 'nullable|numeric',
             'stock_minimo' => 'required|integer',
             'stock_maximo' => 'required|integer',
             'unidad_id' => 'required|exists:unidades,id',
             // permitir que no venga estado (lo pones como hidden en el formulario o lo haces nullable)
             'estado' => 'nullable|boolean',
+            'costo_usd' => 'required|numeric|min:0'
+
         ];
     }
 
