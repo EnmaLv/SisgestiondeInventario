@@ -96,7 +96,7 @@
                             <div class="rd-input-group">
                                 <span><i class="fas fa-calendar-alt"></i></span>
                                 <input type="datetime-local" id="fecha" name="fecha" class="form-control rd-input"
-                                    value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}">
+                                    value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}" disabled>
                             </div>
                             @error('fecha')
                                 <div class="rd-error">Este campo es obligatorio.</div>
