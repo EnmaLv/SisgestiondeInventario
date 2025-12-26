@@ -122,6 +122,8 @@ Route::get('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController
 Route::get('/admin/movimientos/lotes/{id}/edit', [App\Http\Controllers\LoteController::class, 'edit'])->name('admin.movimientos.lotes.edit')->middleware('auth');
 Route::put('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'update'])->name('admin.movimientos.lotes.update')->middleware('auth');
 Route::delete('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'destroy'])->name('admin.movimientos.lotes.destroy')->middleware('auth');
+Route::post('admin/movimientos/lotes/mermar-vencidos', [App\Http\Controllers\LoteController::class, 'mermarVencidos'])->name('admin.movimientos.lotes.mermar');
+
 
 // Sucursales por Lotes
 Route::get('/admin/movimientos/sucursales_lotes', [App\Http\Controllers\InventarioSucursalLoteController::class, 'index'])->name('admin.movimientos.sucursales_lotes')->middleware('auth');

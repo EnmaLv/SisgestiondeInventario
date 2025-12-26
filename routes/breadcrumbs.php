@@ -185,7 +185,7 @@ Breadcrumbs::for('admin.movimientos.registro_diario.show', function (Trail $trai
 // Movimientos > Sucursales por Lotes
 Breadcrumbs::for('admin.movimientos.sucursales_lotes', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Lotes por Sucursal', route('admin.movimientos.sucursales_lotes'));
+    $trail->push('Lotes por Sedes', route('admin.movimientos.sucursales_lotes'));
 });
 
 Breadcrumbs::for('admin.movimientos.sucursales_lotes.show', function (Trail $trail, $id) {

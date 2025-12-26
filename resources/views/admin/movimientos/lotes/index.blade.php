@@ -45,6 +45,39 @@
 @stop
 
 @section('content')
+    @include('components.alert')
+    @if ($hayLotesVencidosSinMerma)
+        <div class="rd-card rd-card-full mb-4"
+            style="border-left:6px solid #dc2626;">
+            <div class="rd-card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                    <div>
+                        <h3 class="rd-title-sm text-danger mb-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Productos vencidos detectados
+                        </h3>
+                        <p class="mb-0 text-muted" style="font-size:0.95rem;">
+                            Existen lotes vencidos que aún se encuentran en el inventario.
+                            Se recomienda realizar la <strong>merma</strong> para mantener el stock correcto.
+                        </p>
+                    </div>
+
+                    <form action="{{ route('admin.movimientos.lotes.mermar') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="btn btn-danger px-4"
+                            onclick="confirmarMerma(event, this)">
+                            <i class="fas fa-trash-alt mr-1"></i>
+                            Mermar productos vencidos
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="rd-card rd-card-full">
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
@@ -53,9 +86,8 @@
                 </div>
 
                 <div class="rd-actions">
-                    <button class="rd-icon-btn" title="Mermar Lotes">
-                        <i class="fas fa-water">Mermar Productos</i>
-                    </button>
+                    
+
                     <form action="{{ route('admin.movimientos.lotes.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
@@ -169,45 +201,4 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-    <style>
-        /* ===========================
-                                                                               RD FILTER INPUT
-                                                                               =========================== */
-        .rd-filter-input {
-            width: 100%;
-            background: #ffffff;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 0.95rem;
-            color: #1e293b;
-            outline: none;
-            transition: all 0.2s ease-in-out;
-            height: 42px;
-        }
-
-        /* Hover */
-        .rd-filter-input:hover {
-            border-color: #9ca3af;
-        }
-
-        /* Foco */
-        .rd-filter-input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
-
-        /* Input inválido o error */
-        .rd-filter-input.is-invalid {
-            border-color: #dc2626;
-            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-        }
-
-        /* Disabled */
-        .rd-filter-input:disabled {
-            background: #f1f5f9;
-            cursor: not-allowed;
-            color: #94a3b8;
-        }
-    </style>
 @stop

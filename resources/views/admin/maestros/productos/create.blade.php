@@ -121,13 +121,13 @@
                                 {{-- Precio Compra --}}
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label class="font-weight-bold">Precio Compra (Bs)</label>
+                                        <label class="font-weight-bold">Precio Compra (US$)</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                             <input type="number" class="form-control rd-filter-input" name="precio_compra"
                                                 value="{{ old('precio_compra') }}" placeholder="0.00" min="0"
                                                 step="0.01">
-                                            <span class="input-group-text">.Bs</span>
+                                            <span class="input-group-text">.US$</span>
                                         </div>
                                         @error('precio_compra')
                                             <div class="text-danger"><b>{{ $message }}</b></div>

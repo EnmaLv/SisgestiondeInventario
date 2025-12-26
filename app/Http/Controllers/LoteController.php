@@ -15,35 +15,57 @@ class LoteController extends Controller
 {
     private function procesarLotesVencidos()
     {
-        $lotesVencidos = Lote::whereDate('fecha_vencimiento', '<', now()->toDateString())
-            ->where('estado', 'ACTIVO')
-            ->get();
+        DB::transaction(function () {
 
-        foreach ($lotesVencidos as $lote) {
-            foreach ($lote->inventarioSucursalLotes as $inv) {
+            $lotesVencidos = Lote::with(['producto', 'inventarioSucursalLotes'])
+                ->whereDate('fecha_vencimiento', '<=', now())
+                ->where('estado', 1)
+                ->get();
 
-                if ($inv->cantidad_gramos <= 0) continue;
+            foreach ($lotesVencidos as $lote) {
 
-                MovimientoInventario::create([
-                    'producto_id'     => $lote->producto_id,
-                    'lote_id'         => $lote->id,
-                    'sucursal_id'     => $inv->sucursal_id,
-                    'tipo_movimiento' => 'MERMA',
-                    'cantidad_gramos' => $inv->cantidad_gramos,
-                    'fecha'           => now(),
-                    'observaciones'   => 'Producto vencido'
+                $unidadId = $lote->producto->unidad_id;
+
+                foreach ($lote->inventarioSucursalLotes as $inv) {
+
+                    if ($inv->cantidad_gramos <= 0) {
+                        continue;
+                    }
+
+                    MovimientoInventario::create([
+                        'producto_id'     => $lote->producto_id,
+                        'lote_id'         => $lote->id,
+                        'sucursal_id'     => $inv->sucursal_id,
+                        'tipo_movimiento' => 'MERMA',
+                        'unidad_id'       => $unidadId,
+                        'cantidad'        => 0,
+                        'cantidad_gramos' => $inv->cantidad_gramos,
+                        'fecha'           => now(),
+                        'observaciones'   => 'Producto vencido – merma manual'
+                    ]);
+
+                    $inv->update([
+                        'cantidad' => 0,
+                        'cantidad_gramos' => 0
+                    ]);
+                }
+
+                $lote->update([
+                    'cantidad_inicial' => 0,
+                    'cantidad_actual'  => 0,
+                    'estado'           => 0
                 ]);
-
-                $inv->cantidad_gramos = 0;
-                $inv->cantidad = 0;
-                $inv->save();
             }
-
-            $lote->estado = 'VENCIDO';
-            $lote->cantidad_actual = 0;
-            $lote->save();
-        }
+        });
     }
+
+    public function mermarVencidos()
+    {
+        $this->procesarLotesVencidos();
+        return redirect()->route('admin.movimientos.lotes.index')->with('success', 'Productos vencidos mermados correctamente.');
+    }
+
+
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
@@ -78,7 +100,12 @@ class LoteController extends Controller
             $lote->days_to_expire = now()->diffInDays($fecha, false);
         });
 
-        return view('admin.movimientos.lotes.index', compact('lotes'));
+        $hayLotesVencidosSinMerma = Lote::whereDate('fecha_vencimiento', '<=', now())
+            ->where('estado', 1) // activos
+            ->exists();
+
+
+        return view('admin.movimientos.lotes.index', compact('lotes', 'hayLotesVencidosSinMerma'));
     }
 
 }

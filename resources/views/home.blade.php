@@ -209,14 +209,14 @@
                     const hoy = new Date().toISOString().slice(0, 10);
                     const key = 'alerta_lotes_vencidos';
 
-                    if (localStorage.getItem(key) !== hoy) {
+                    if (localStorage.getItem(key)) {
 
                         Swal.fire({
                             title: '⚠️ Lotes vencidos',
                             html: `
                 <p style="font-size:15px">
                     Existen <b>{{ $total_lotes_vencidos }}</b> lote(s) vencido(s).<br>
-                    Serán despachados por <b>MERMA automáticamente al cierre (20:00)</b>.
+                    Requieren atencion inmediata para ser removidos del inventario</b>.
 
                 </p>
             `,
@@ -242,7 +242,7 @@
 
         <!-- Lotes Vencidos -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/movimientos/historial_movimientos') }}" class="module-link">
+            <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}" class="module-link">
                 <div class="module-card-light">
                     <div class="module-icon">
                         <img src="{{ url('/img/alarma.gif') }}" alt="Lotes vencidos">

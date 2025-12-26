@@ -20,41 +20,28 @@
                                 {{-- SELECT: Desayuno (Columna 1: 50% del ancho) --}}
                                 <div class="col-md-5">
                                     <div class="rd-input-group">
-                                        <label for="desayuno_{{ $index }}" class="sr-only">Desayuno #{{ $index + 1 }}</label>
-                                        <select id="desayuno_{{ $index }}" 
-                                            wire:model="desayunos_agregados.{{ $index }}.receta_id"
-                                            class="rd-input @error('desayunos_agregados.' . $index . '.receta_id') rd-input-error @enderror"
-                                            @disabled($desayuno_registrado)>
+                                        <select
+                                            wire:model.live="desayunos_agregados.{{ $index }}.receta_id"
+                                            class="rd-input @error('desayunos_agregados.' . $index . '.receta_id') rd-input-error @enderror">
                                             <option value="">Seleccione una opción</option>
                                             @foreach ($comidas as $comida)
                                                 <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
+
                                 </div>
 
                                 {{-- CONTENEDOR AGRUPADO: Cantidad + Eliminar (Columna 2: 50% del ancho) --}}
                                 <div class="col-md-7">
                                     <div class="d-flex align-items-center">
                                         
-                                        {{-- INPUT: Cantidad (Ocupa la mayor parte de esta columna) --}}
-                                        <div class="rd-input-group mr-2"> 
-                                            <label for="cantidad_{{ $index }}" class="sr-only">Cant. #{{ $index + 1 }}</label>
-                                            <input type="number" id="cantidad_{{ $index }}"
-                                                wire:model="desayunos_agregados.{{ $index }}.cantidad"
-                                                class="rd-input @error('desayunos_agregados.' . $index . '.cantidad') rd-input-error @enderror" 
-                                                placeholder="Cant." min="1"
-                                                @disabled($desayuno_registrado) />
+                                        <div class="rd-input-group mr-2">
+                                            <input type="number"
+                                                wire:model.live="desayunos_agregados.{{ $index }}.cantidad"
+                                                class="rd-input @error('desayunos_agregados.' . $index . '.cantidad') rd-input-error @enderror"
+                                                placeholder="Cant." min="1" />
                                         </div>
-                                        
-                                        {{-- Botón de Eliminar (Pequeño, solo visible si hay más de una entrada) --}}
-                                        @if(count($desayunos_agregados) > 1 && !$desayuno_registrado)
-                                            <button type="button" wire:click="removeDesayuno({{ $index }})" 
-                                                class="rd-btn rd-btn-eliminar ml-auto"> 
-                                                Eliminar
-                                            </button>
-                                        @endif
-
                                     </div>
                                 </div>
                             </div>

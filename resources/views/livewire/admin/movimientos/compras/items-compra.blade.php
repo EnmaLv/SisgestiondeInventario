@@ -156,7 +156,7 @@
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">Ya fue hecho el
                     pedido</span>
             @else
-                <button class="btn btn-primary" style="float:right" onclick="confirmarEnvio({{ $compra->id }})">
+                <button class="btn btn-primary" wire:click="confirmarEnvio" style="float:right;">
                     <i class="fas fa-paper-plane"></i> Enviar Correo a Compras
                 </button>
                 <script>
@@ -179,3 +179,24 @@
         </div>
     </div>
 </div>
+@push('js')
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('confirmar-envio', event => {
+            Swal.fire({
+                title: "¿Quieres enviar el correo a compras?",
+                text: "Luego de enviarlo no podrás agregar más productos.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, enviar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href =
+                        `/admin/movimientos/compras/${event.detail.compraId}/enviar-correo`;
+                }
+            });
+        });
+    });
+    </script>
+@endpush

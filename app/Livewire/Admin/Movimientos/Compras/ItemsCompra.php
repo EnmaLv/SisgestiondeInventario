@@ -107,6 +107,12 @@ class ItemsCompra extends Component
         return $codigoFinal;
     }
 
+    public function confirmarEnvio()
+    {
+        $this->dispatch('confirmar-envio', compraId: $this->compra->id);
+    }
+
+
 
     // ----------------------
     // Nuevo agregarItems (reemplaza el original)

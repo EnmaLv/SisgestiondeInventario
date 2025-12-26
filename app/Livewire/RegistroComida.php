@@ -25,6 +25,40 @@ class RegistroComida extends Component
     public $alertInventario = null;
     public $alertLimite = null;
 
+    public function updated($property)
+    {
+        if (str_starts_with($property, 'desayunos_agregados')) {
+            $this->validateOnly(
+                $property,
+                $this->rulesRealtime()
+            );
+        }
+
+        // Validación de duplicados
+        if (str_contains($property, 'receta_id')) {
+            $ids = array_filter(array_column($this->desayunos_agregados, 'receta_id'));
+
+            if (count($ids) !== count(array_unique($ids))) {
+                $this->addError('duplicado', 'No puede seleccionar la misma receta más de una vez.');
+            } else {
+                $this->resetErrorBag('duplicado');
+            }
+        }
+    }
+
+
+
+protected function rulesRealtime(): array
+{
+    $rules = [];
+
+    foreach ($this->desayunos_agregados as $index => $desayuno) {
+        $rules["desayunos_agregados.$index.receta_id"] = 'required|exists:recetas,id';
+        $rules["desayunos_agregados.$index.cantidad"] = 'required|numeric|min:1';
+    }
+
+    return $rules;
+}
 
     public function mount()
     {
@@ -57,34 +91,27 @@ class RegistroComida extends Component
 
     public function addDesayuno()
     {
-        // Solo permitir agregar si no está registrado
-        if ($this->desayuno_registrado) {
-             session()->flash('warning', 'El desayuno ya fue registrado y no se pueden agregar más items.');
-             return;
-        }
+        if ($this->desayuno_registrado) return;
 
         $this->desayunos_agregados[] = [
             'receta_id' => null,
             'cantidad' => null,
         ];
+
+        $this->resetErrorBag();
     }
+
 
     public function removeDesayuno($index)
     {
         if ($this->desayuno_registrado) return;
 
-        // Livewire necesita que el índice exista
-        if (isset($this->desayunos_agregados[$index])) {
-            unset($this->desayunos_agregados[$index]);
-            // Reindexar la matriz
-            $this->desayunos_agregados = array_values($this->desayunos_agregados);
-        }
+        unset($this->desayunos_agregados[$index]);
+        $this->desayunos_agregados = array_values($this->desayunos_agregados);
 
-        // Si al eliminar se queda sin entradas, agregamos una por defecto
-        if (empty($this->desayunos_agregados)) {
-            $this->addDesayuno();
-        }
+        $this->resetErrorBag();
     }
+
 
     // --- MODIFICACIÓN DEL MÉTODO DE GUARDADO ---
 
@@ -233,6 +260,18 @@ class RegistroComida extends Component
             $this->showNotification = true;
             return;
         }
+    }
+
+    protected function validationAttributes(): array
+    {
+        $attributes = [];
+
+        foreach ($this->desayunos_agregados as $index => $desayuno) {
+            $attributes["desayunos_agregados.$index.receta_id"] = 'desayuno #' . ($index + 1);
+            $attributes["desayunos_agregados.$index.cantidad"] = 'cantidad del desayuno #' . ($index + 1);
+        }
+
+        return $attributes;
     }
 
     public function showNotification()
