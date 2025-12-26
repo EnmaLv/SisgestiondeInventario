@@ -380,18 +380,52 @@
         <div class="col-lg-4 mb-4">
             <div
                 style="
-                background: var(--color-bg-card);
-        border-radius: 16px;
-        padding: 1.5rem;
-        border: 1px solid var(--color-border-soft);
-        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-            ">
+                    background: var(--color-bg-card);
+                    border-radius: 16px;
+                    padding: 1.5rem;
+                    border: 1px solid var(--color-border-soft);
+                    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+                    height: 100%;
+                "
+                class="text-center"
+            >
                 <h5 style="color: var(--color-text-main); font-weight: 700;">
-                    🎯 Distribución
+                    💵 Estado del Dólar BCV
                 </h5>
-                <canvas id="doughnutChart"></canvas>
+
+                @if ($variacion_dolar === 'subio')
+                    <div style="color:#dc2626;font-weight:800;font-size:1.4rem;">
+                        📈 SUBIÓ
+                    </div>
+                    <div style="font-size:1rem;opacity:.85;">
+                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
+                    </div>
+
+                @elseif ($variacion_dolar === 'bajo')
+                    <div style="color:#16a34a;font-weight:800;font-size:1.4rem;">
+                        📉 BAJÓ
+                    </div>
+                    <div style="font-size:1rem;opacity:.85;">
+                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
+                    </div>
+
+                @else
+                    <div style="color:#6b7280;font-weight:800;font-size:1.3rem;">
+                        ➖ SIN VARIACIÓN
+                    </div>
+                    <div style="font-size:1rem;opacity:.85;">
+                        Tasa estable: {{ number_format($tasa_actual, 2) }} Bs
+                    </div>
+                @endif
+
+                {{-- Dona --}}
+                <div class="mt-3">
+                    <canvas id="doughnutChartID" width="400" height="400"></canvas>
+                </div>
             </div>
         </div>
+
+
     </div>
     <div>
 
@@ -542,6 +576,44 @@
 @section('js')
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const ctx = document.getElementById('doughnutChartID');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Estado'],
+                    datasets: [{
+                        data: [100],
+                        backgroundColor: [
+                            @if($variacion_dolar === 'subio')
+                                '#dc2626'
+                            @elseif($variacion_dolar === 'bajo')
+                                '#16a34a'
+                            @else
+                                '#9ca3af'
+                            @endif
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+
+        });
+        </script>
+
 
     <script>
         console.log("Dashboard mejorado cargado exitosamente 🚀");
@@ -565,6 +637,7 @@
             textWhite: 'hsl(0, 0%, 85%)',
             btnHover: 'hsl(358, 75%, 30%)'
         };
+        
 
         // Gráfica de Barras Principal
         const ctxMain = document.getElementById('mainChart');
@@ -649,5 +722,4 @@
             });
         }
     </script>
-
 @endsection

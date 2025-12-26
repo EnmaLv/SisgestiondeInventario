@@ -10,6 +10,7 @@ use \App\Models\Producto;
 use \App\Models\Proveedor;
 use \App\Models\Compra;
 use \App\Models\Lote;
+use \App\Models\ExchangeRates;
 
 class HomeController extends Controller
 {
@@ -52,7 +53,10 @@ class HomeController extends Controller
             [$hoy, $limite]
         )->count();
 
-        return view('home', compact(
+        $ultimaTasa = ExchangeRates::latest()->first();
+
+        return view('home', ['variacion_dolar' => $ultimaTasa?->variacion,'tasa_actual' => $ultimaTasa?->tasa,], 
+        compact(
             'total_sucursales',
             'total_categorias',
             'total_productos',

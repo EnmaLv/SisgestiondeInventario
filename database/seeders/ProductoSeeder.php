@@ -32,8 +32,5 @@ class ProductoSeeder extends Seeder
             ['categoria_id' => 6, 'codigo' => 'LAC-QUE-015-1', 'nombre' => 'Queso Amarillo', 'descripcion' => null, 'imagen' => null, 'stock_minimo' => 5, 'stock_maximo' => 100, 'peso_contenido' => 300, 'unidad_id' => 1, 'estado' => 1],
 
         ]);
-
-        // 4️⃣ Opcional: disparar el Job para actualizar precio_compra automáticamente
-        \App\Jobs\GuardarTasaJob::dispatch();
     }
 }

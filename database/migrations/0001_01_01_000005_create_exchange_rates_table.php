@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nombre')->default('Oficial');
             $table->string('fuente')->default('BCV');
             $table->decimal('promedio', 12, 2);
+            $table->enum('variacion', ['subio', 'bajo', 'igual'])->default('igual');
             $table->timestamps();
         });
     }

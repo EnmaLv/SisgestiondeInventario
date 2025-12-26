@@ -14,16 +14,14 @@ class Kernel extends ConsoleKernel
      *
      * @var array<int, class-string>
      */
-    protected $commands = [
-        ActualizarTasaBCV::class,
-    ];
+
 
     /**
      * Define el programa de tareas.
      */
     protected function schedule(\Illuminate\Console\Scheduling\Schedule $schedule)
     {
-        $schedule->command('tasa:actualizar')->hourly();
+
         $schedule->job(new ProcesarLotesVencidosJob)->dailyAt('20:00');
     }
 
