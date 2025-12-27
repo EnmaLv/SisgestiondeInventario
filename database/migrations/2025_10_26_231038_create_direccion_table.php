@@ -19,13 +19,20 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('parroquia', function (Blueprint $table){
+            $table->id('id_parroquia');
+            $table->string('nombre_parroquia');
+            $table->foreignId('id_municipio')->references('id_municipio')->on('municipio')->onDelete('cascade');
+            $table->timestamps();
+        });
+
 
         Schema::create('direccion', function (Blueprint $table) {
             $table->id('id_direccion');
             $table->string('sector');
             $table->string('calle');
             $table->foreignId('id_persona')->references('id_persona')->on('persona')->onDelete('cascade');
-            $table->foreignId('id_municipio')->references('id_municipio')->on('municipio')->onDelete('cascade');
+            $table->foreignId('id_parroquia')->references('id_parroquia')->on('parroquia')->onDelete('cascade');
 
             $table->timestamps();
         });
@@ -38,6 +45,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('estado_ve');
         Schema::dropIfExists('municipio');
+        Schema::dropIfExists('parroquia');
         Schema::dropIfExists('direccion');
     }
 };

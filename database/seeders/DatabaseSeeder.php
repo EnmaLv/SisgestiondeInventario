@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
             ProductoSeeder::class,
             RecetaIngredienteSeeder::class,
             PrecioProductoSeeder::class,
+            MunicipioSeeder::class,
+            ParroquiaSeeder::class,
         ]);
 
         \App\Models\Proveedor::factory(1)->create();
