@@ -123,9 +123,6 @@ class CompraController extends Controller
 
     public function finalizarCompra(Request $request, Compra $compra)
     {
-        $request->validate([
-            'sucursal_id' => 'required|exists:sucursals,id',
-        ]);
         $lotesSinFecha = Lote::whereIn(
             'id',
             $compra->detalleCompras->pluck('lote_id')
@@ -139,9 +136,10 @@ class CompraController extends Controller
                     'Debe registrar la fecha de vencimiento de todos los productos antes de finalizar la requisición.'
             ]);
         }
-        Compra::finalizarCompra($compra, $request->sucursal_id);
 
-        return redirect()->route('admin.movimientos.compras.index')->with('success', 'Requisición finalizada correctamente.');
+        Compra::finalizarCompraDistribuida($compra);
+
+        return redirect()->route('admin.movimientos.compras.index')->with('success', 'Requisición finalizada y distribuida equitativamente.');
     }
     
     public function cancelar(Compra $compra)

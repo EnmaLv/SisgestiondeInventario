@@ -217,47 +217,10 @@
                     </div>
                     <div class="card-body">
                         <livewire:admin.movimientos.compras.fechas-compra :compra="$compra" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-
-    @if ($compra->estado == 'Enviado al proveedor')
-        <div class="row">
-            <div class="col-md-12 m-auto">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><b>Paso 4 | Finalizar Requisicion</b></h3>
-                    </div>
-                    <div class="card-body" style="display: block;">
                         <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="sucursal_id">Sedes</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-tags"></i></span>
-                                            </div>
-                                            <select class="form-control" id="sucursal_id" name="sucursal_id">
-                                                <option value="" selected disabled>Seleccione una Sede</option>
-                                                @foreach ($sucursales as $sucursal)
-                                                    <option value="{{ $sucursal->id }}"
-                                                        {{ old('sucursal_id') == $sucursal->id ? 'selected' : '' }}>
-                                                        {{ $sucursal->nombre }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        @error('sucursal_id')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
-                                    </div>
                                     <div class="form-group" style="text-align: right;">
                                         <button type="submit" class="btn btn-success"><i class="fas fa-check"></i>
                                             Finalizar
