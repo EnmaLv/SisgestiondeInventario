@@ -68,14 +68,31 @@
 
                     <div class="card-tools">
                         <form action="{{ route('admin.movimientos.compras.cancelar', $compra) }}"
-                            method="POST"
-                            onsubmit="return confirm('¿Seguro que desea cancelar esta requisición? Se perderán todos los productos agregados.')"
-                            style="display:inline;">
+                            method="POST" style="display:inline;">
                             @csrf
-                            <button type="submit" class="btn btn-tool text-danger">
+                            <button type="submit" class="btn btn-tool text-danger" onclick="confirmDelete(event, this)">
                                 <i class="fas fa-arrow-left"></i>
                                 <b>Cancelar y volver</b>
                             </button>
+                            <script>
+                                function confirmDelete(event, button) {
+                                    event.preventDefault();
+                                    Swal.fire({
+                                        title: '¿Estás seguro?',
+                                        text: "Se perderán todos los productos agregados.",
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Sí',
+                                        cancelButtonText: 'Cancelar'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            button.closest('form').submit();
+                                        }
+                                    });
+                                }
+                            </script>
                         </form>
 
                     </div>
