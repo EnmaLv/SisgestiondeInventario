@@ -10,8 +10,8 @@ class CompraIndex extends Component
 {
     use WithPagination;
 
-    public $buscar = '';      // 👈 OBLIGATORIO
-    public $estado = null;    // 👈 opcional si usas filtro
+    public $buscar = '';      
+    public $estado = null;    
 
     public function updatingBuscar()
     {

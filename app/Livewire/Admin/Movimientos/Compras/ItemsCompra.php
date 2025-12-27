@@ -8,7 +8,6 @@ use App\Models\Lote;
 use App\Models\Producto;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\NullableType;
 
 class ItemsCompra extends Component
 {
@@ -46,9 +45,6 @@ class ItemsCompra extends Component
         $this->cantidad = 1;
     }
 
-    // ----------------------
-    // Ajusta las reglas: codigoLote puede ser nullable (se genera si no viene)
-    // ----------------------
     protected $rules = [
         'productoId' => 'required|exists:productos,id',
         'codigoLote' => 'nullable|string|max:50',
@@ -57,15 +53,11 @@ class ItemsCompra extends Component
         'fechaVencimiento' => 'nullable|date|after:today',
     ];
 
-    // ----------------------
-    // Cuando cambie producto -> cargar precio y generar código de lote
-    // ----------------------
     public function updatedproductoId($value)
     {
         $producto = Producto::with('categoria')->find($value);
         if ($producto) {
             $this->precioCompra = $producto->precio_compra;
-            // Generar un código de lote sugerido automáticamente
             $this->codigoLote = $this->generateCodigoLote($producto);
         } else {
             $this->precioCompra = 0;
@@ -81,21 +73,12 @@ class ItemsCompra extends Component
      */
     protected function generateCodigoLote(Producto $producto): string
     {
-        // 3 letras del nombre del producto, solo alfanumérico
         $prod = $producto->nombre ?? 'PROD';
         $prodPart = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $prod), 0, 3));
-
-        // Año actual
         $year = now()->format('Y');
-
-        // Día juliano (001 - 365/366)
-        $julianDay = now()->format('z') + 1; // z = 0–365, por eso +1
+        $julianDay = now()->format('z') + 1; 
         $julian = str_pad($julianDay, 3, '0', STR_PAD_LEFT);
-
-        // Construir código base
         $codigo = "{$julian}-{$year}-{$prodPart}";
-
-        // Garantizar unicidad
         $contador = 1;
         $codigoFinal = $codigo;
 
@@ -112,27 +95,17 @@ class ItemsCompra extends Component
         $this->dispatch('confirmar-envio', compraId: $this->compra->id);
     }
 
-
-
-    // ----------------------
-    // Nuevo agregarItems (reemplaza el original)
-    // ----------------------
     public function agregarItems()
     {
-        // Si no hay producto seleccionado, la validación lo atrapará
-        // pero generamos lote por si el usuario lo borró manualmente
         $producto = Producto::find($this->productoId);
         if (!$producto) {
             $this->dispatch('mostrar-alerta', icono: 'error', mensaje: 'Seleccione un producto válido.');
             return;
         }
-
-        // Asegurarse que siempre haya un codigo de lote (auto)
         if (empty($this->codigoLote)) {
             $this->codigoLote = $this->generateCodigoLote($producto);
         }
 
-        // validamos (codigoLote es nullable, pero ya lo tenemos)
         $this->validate();
 
         DB::beginTransaction();
@@ -141,20 +114,16 @@ class ItemsCompra extends Component
             $unidad = DB::table('unidades')->where('id', $producto->unidad_id)->first();
             $factor = $unidad->factor_a_gramo ?? 1;
 
-            $pesoUnidad = $producto->peso_contenido;  // ya está en gramos
+            $pesoUnidad = $producto->peso_contenido;
             $cantidadGramos = $this->cantidad * $pesoUnidad;
 
-
-
-
-            // Crear lote con cantidad inicial = cantidad (opcional: dejar 0 y sumar en finalización)
             $lote = Lote::create([
                 'producto_id' => $this->productoId,
                 'proveedor_id' => $this->compra->proveedor_id,
                 'codigo_lote' => $this->codigoLote,
                 'fecha_entrada' => now()->toDateString(),
                 'fecha_vencimiento' => null,
-                'cantidad_inicial' => $this->cantidad,      // puedes poner 0 si prefieres
+                'cantidad_inicial' => $this->cantidad,    
                 'cantidad_actual' => $cantidadGramos,
                 'precio_compra' => $this->precioCompra,
                 'estado' => true,
@@ -169,16 +138,14 @@ class ItemsCompra extends Component
                 'subtotal' => $this->cantidad * $this->precioCompra,
                 'unidad_id' => $unidadId,
             ]);
-
-            // recalcular total (si quieres hacerlo inmediatamente sobre la relación cargada)
-            $this->compra->load('detalleCompras'); // refrescar relación
+            $this->compra->load('detalleCompras'); 
             $this->compra->total = $this->compra->detalleCompras->sum('subtotal');
             $this->compra->save();
 
             DB::commit();
 
             $this->cargarDatos();
-            $this->aggItems(); // notificación
+            $this->aggItems(); 
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch(
@@ -188,11 +155,6 @@ class ItemsCompra extends Component
             );
         }
     }
-
-
-
-
-
 
     public function render()
     {

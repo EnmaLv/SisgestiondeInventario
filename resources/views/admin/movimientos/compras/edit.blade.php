@@ -2,6 +2,18 @@
 
 @section('content_header')
     @include('components.alert')
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show">
+            <strong>Error:</strong>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    @endif
+
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
         style="
             background: #ffffff;
@@ -47,6 +59,7 @@
 @stop
 
 @section('content')
+@include('components.alert')
     <div class="row">
         <div class="col-md-12 m-auto">
             <div class="card">
@@ -54,10 +67,17 @@
                     <h3 class="card-title"><b>Paso 1 | Requisicion creada</b></h3>
 
                     <div class="card-tools">
-                        <a href="{{ url('admin/movimientos/compras') }}" class="btn btn-tool">
-                            <i class="fas fa-arrow-left"></i>
-                            <b>Volver</b>
-                        </a>
+                        <form action="{{ route('admin.movimientos.compras.cancelar', $compra) }}"
+                            method="POST"
+                            onsubmit="return confirm('¿Seguro que desea cancelar esta requisición? Se perderán todos los productos agregados.')"
+                            style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-tool text-danger">
+                                <i class="fas fa-arrow-left"></i>
+                                <b>Cancelar y volver</b>
+                            </button>
+                        </form>
+
                     </div>
                 </div>
                 <div class="card-body" style="display: block;">

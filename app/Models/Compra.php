@@ -5,96 +5,51 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Modelo que representa una compra en el sistema de inventario.
- * 
- * Este modelo maneja todas las operaciones relacionadas con las compras a proveedores,
- * incluyendo la gestión de detalles de compra, lotes y actualización de inventario.
- */
 class Compra extends Model
 {
-    /**
-     * Nombre de la tabla asociada al modelo.
-     *
-     * @var string
-     */
     protected $table = 'compras';
 
-    /**
-     * Atributos que son asignables masivamente.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'proveedor_id',    // ID del proveedor asociado a la compra
-        'fecha',           // Fecha en que se realizó la compra
-        'total',           // Monto total de la compra
-        'estado',          // Estado actual de la compra (Pendiente, Finalizada, etc.)
-        'observaciones',   // Notas adicionales sobre la compra
+        'proveedor_id',    
+        'fecha',           
+        'total',           
+        'estado',          
+        'observaciones',   
     ];
 
-    /**
-     * Atributos que deberían ser convertidos a tipos nativos.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'fecha' => 'date',
         'total' => 'decimal:2',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELACIONES
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Obtiene el proveedor asociado a la compra.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function proveedor()
     {
         return $this->belongsTo(Proveedor::class);
     }
 
-    /**
-     * Obtiene los detalles de la compra.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function detalleCompras()
     {
         return $this->hasMany(DetalleCompra::class);
     }
 
-    /**
-     * Obtiene los datos necesarios para los formularios de compra.
-     * 
-     * Este método devuelve un array con listas de proveedores, productos y sucursales
-     * que se utilizan en los formularios de creación y edición de compras.
-     *
-     * @return array Array asociativo con listas de proveedores, productos y sucursales
-     */
     public function getDatosFormulario()
     {
         return [
             'proveedores' => DB::table('proveedors')
                 ->select('id', 'nombre', 'email')
-                ->where('estado', 1) // Solo proveedores activos
+                ->where('estado', 1) 
                 ->orderBy('nombre')
                 ->get(),
 
             'productos' => DB::table('productos')
                 ->select('id', 'codigo', 'nombre')
-                ->where('estado', 1) // Solo productos activos
+                ->where('estado', 1) 
                 ->orderBy('nombre')
                 ->get(),
 
             'sucursales' => DB::table('sucursals')
                 ->select('id', 'nombre')
-                ->where('activo', 1) // Solo sucursales activas
+                ->where('activo', 1) 
                 ->orderBy('nombre')
                 ->get(),
         ];
@@ -107,13 +62,6 @@ class Compra extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Obtiene un listado paginado de compras con opciones de búsqueda y filtrado.
-     *
-     * @param  string|null  $buscar  Término para buscar en empresa de proveedor o ID de compra
-     * @param  int|string|null  $activo  Filtro por estado (1 = activo, 0 = inactivo, null = todos)
-     * @return \Illuminate\Pagination\LengthAwarePaginator
-     */
     public static function listarCompras($buscar, $estado)
     {
         // Construir la consulta base con join a proveedores
@@ -140,38 +88,19 @@ class Compra extends Model
         return $query->orderBy('compras.id', 'desc')->paginate(2);
     }
 
-
-
-    /**
-     * Crea una nueva compra en el sistema.
-     * 
-     * Inicializa una compra con estado 'Pendiente' y total en 0.
-     * El total se actualizará cuando se agreguen los detalles de la compra.
-     *
-     * @param  array  $data  Datos de la compra a crear
-     * @return int  ID de la compra recién creada
-     */
     public static function crearCompra($data)
     {
         return DB::table('compras')->insertGetId([
             'proveedor_id'  => $data['proveedor_id'],
             'fecha'         => $data['fecha'],
             'observaciones' => $data['observaciones'] ?? null,
-            'total'         => 0, // Se actualizará al agregar detalles
+            'total'         => 0, 
             'estado'        => 'Pendiente',
             'created_at'    => now(),
             'updated_at'    => now(),
         ]);
     }
 
-    /**
-     * Obtiene los detalles de una compra específica con información relacionada.
-     *
-     * Incluye información del producto, lote y unidad de medida para cada detalle.
-     *
-     * @param  int  $compra_id  ID de la compra
-     * @return \Illuminate\Support\Collection  Colección de detalles de la compra
-     */
     public static function obtenerDetallesCompra($compra_id)
     {
         return DB::table('detalle_compras')
@@ -192,12 +121,6 @@ class Compra extends Model
             ->get();
     }
 
-    /**
-     * Obtiene la sucursal destino de una compra a través de sus movimientos de inventario.
-     *
-     * @param  int  $compra_id  ID de la compra
-     * @return object|null  Objeto con id y nombre de la sucursal, o null si no se encuentra
-     */
     public static function obtenerSucursalDestino($compra_id)
     {
         return DB::table('movimiento_inventarios')
@@ -208,12 +131,6 @@ class Compra extends Model
             ->first();
     }
 
-    /**
-     * Obtiene una compra específica con información del proveedor.
-     *
-     * @param  int  $id  ID de la compra a buscar
-     * @return object|null  Objeto con los datos de la compra o null si no se encuentra
-     */
     public static function obtenerCompra($id)
     {
         return DB::table('compras')
@@ -258,19 +175,6 @@ class Compra extends Model
         return $query->get();
     }
 
-
-    /**
-     * Elimina una compra y todos sus registros relacionados de manera segura.
-     * 
-     * Este método elimina:
-     * 1. Los registros de lotes asociados a los detalles de la compra
-     * 2. Los detalles de la compra
-     * 3. Finalmente, el registro de la compra
-     *
-     * @param  int  $id  ID de la compra a eliminar
-     * @return bool  true si la eliminación fue exitosa, false en caso de error
-     * @throws \Exception Si ocurre un error durante la transacción
-     */
     public static function eliminarCompra($id)
     {
         DB::beginTransaction();

@@ -34,7 +34,5 @@ class PrecioProductoSeeder extends Seeder
             // ... agrega más según tus productos
         ]);
 
-        // Opcional: disparar el Job para actualizar precio_compra automáticamente
-        \App\Jobs\GuardarTasaJob::dispatchSync();
     }
 }

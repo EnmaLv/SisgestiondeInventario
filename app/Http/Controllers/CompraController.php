@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compra;
+use App\Models\Lote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CompraProveedorMail;
@@ -83,9 +84,7 @@ class CompraController extends Controller
         ]));
 
         // Redirige al formulario de edición de la compra recién creada
-        return redirect()
-            ->route('admin.movimientos.compras.edit', $id)
-            ->with('success', 'Compra creada exitosamente.');
+        return redirect()->route('admin.movimientos.compras.edit', $id)->with('success', 'Compra creada exitosamente.');
     }
 
     /**
@@ -122,33 +121,48 @@ class CompraController extends Controller
             ->with('icono', $ok ? 'success' : 'error');
     }
 
-    /**
-     * Finaliza una compra y actualiza el inventario de la sucursal destino.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Compra  $compra  Instancia de la compra a finalizar
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function finalizarCompra(Request $request, Compra $compra)
     {
-        // Valida que se haya proporcionado un ID de sucursal válido
         $request->validate([
             'sucursal_id' => 'required|exists:sucursals,id',
         ]);
+        $lotesSinFecha = Lote::whereIn(
+            'id',
+            $compra->detalleCompras->pluck('lote_id')
+        )
+        ->whereNull('fecha_vencimiento')
+        ->exists();
 
-        // Finaliza la compra y actualiza el inventario
+        if ($lotesSinFecha) {
+            return back()->withErrors([
+                'fecha_vencimiento' =>
+                    'Debe registrar la fecha de vencimiento de todos los productos antes de finalizar la requisición.'
+            ]);
+        }
         Compra::finalizarCompra($compra, $request->sucursal_id);
 
+        return redirect()->route('admin.movimientos.compras.index')->with('success', 'Requisición finalizada correctamente.');
+    }
+    
+    public function cancelar(Compra $compra)
+    {
+        if ($compra->estado === 'Finalizada') {
+            return redirect()
+                ->route('admin.movimientos.compras.index')
+                ->with('error', 'No se puede cancelar una requisición finalizada.');
+        }
+        $ok = Compra::eliminarCompra($compra->id);
+
         return redirect()
-            ->route('admin.movimientos.compras.index')->with('success', 'Compra finalizada exitosamente.');
+            ->route('admin.movimientos.compras.index')
+            ->with(
+                $ok ? 'success' : 'error',
+                $ok
+                    ? 'Requisición cancelada. No se guardaron los productos.'
+                    : 'No se pudo cancelar la requisición.'
+            );
     }
 
-    /**
-     * Envía un correo electrónico al proveedor con los detalles de la compra.
-     *
-     * @param  \App\Models\Compra  $compra  Instancia de la compra a enviar
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function enviarCorreo(Compra $compra)
     {
         // Obtiene el correo electrónico del proveedor

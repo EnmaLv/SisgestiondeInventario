@@ -23,7 +23,6 @@ class FechasCompra extends Component
         foreach ($compra->detalleCompras as $detalle) {
             $this->fechas[$detalle->id] = [
                 'fecha_vencimiento' => optional($detalle->lote)->fecha_vencimiento,
-                'cantidad_recibida' => $detalle->cantidad,
                 'lote_id' => $detalle->lote_id,
             ];
         }
@@ -33,24 +32,35 @@ class FechasCompra extends Component
     {
         foreach ($this->fechas as $detalleId => $datos) {
 
-            // 1️⃣ actualizar la cantidad en detalle de compra
-            DetalleCompra::where('id', $detalleId)
-                ->update([
-                    'cantidad' => $datos['cantidad_recibida'],
-                ]);
+            if (empty($datos['fecha_vencimiento'])) {
+                $this->addError(
+                    "fechas.$detalleId.fecha_vencimiento",
+                    'La fecha es obligatoria.'
+                );
+                return;
+            }
 
-            // 2️⃣ actualizar la fecha de vencimiento en el lote
+            if ($datos['fecha_vencimiento'] <= now()->toDateString()) {
+                $this->addError(
+                    "fechas.$detalleId.fecha_vencimiento",
+                    'Debe ser mayor a hoy.'
+                );
+                return;
+            }
+
             Lote::where('id', $datos['lote_id'])
                 ->update([
                     'fecha_vencimiento' => $datos['fecha_vencimiento'],
                 ]);
         }
+
         $this->dispatch(
             'mostrar-alerta',
             icono: 'success',
-            mensaje: 'Fecha guardada correctamente'
+            mensaje: 'Fechas guardadas correctamente'
         );
     }
+
 
     public function render()
     {

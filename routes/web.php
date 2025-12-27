@@ -113,6 +113,7 @@ Route::get('/admin/movimientos/compras/{compra}/enviar-correo', [App\Http\Contro
 Route::post('/admin/movimientos/compras/{compra}/finalizar-compra', [App\Http\Controllers\CompraController::class, 'finalizarCompra'])->name('admin.movimientos.compras.finalizarCompra')->middleware('auth');
 Route::delete('/admin/movimientos/compras/{id}', [App\Http\Controllers\CompraController::class, 'destroy'])->name('admin.movimientos.compras.destroy')->middleware('auth');
 Route::get('/admin/movimientos/compras/e/export-pdf', [App\Http\Controllers\CompraController::class, 'exportPdf'])->name('admin.movimientos.compras.export_pdf')->middleware('auth');
+Route::post('admin/movimientos/compras/{compra}/cancelar',[App\Http\Controllers\CompraController::class, 'cancelar'])->name('admin.movimientos.compras.cancelar');
 
 //Lotes
 Route::get('/admin/movimientos/lotes', [App\Http\Controllers\LoteController::class, 'index'])->name('admin.movimientos.lotes.index')->middleware('auth');
