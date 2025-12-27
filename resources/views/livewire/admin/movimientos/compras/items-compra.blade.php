@@ -1,84 +1,67 @@
 <div>
     <div class="row">
         <div class="col-md-3">
-            <div class="form-group">
-                <label for="nombre">Producto</label>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text inline-block"><i class="fas fa-box"></i></span>
-                    </div>
-                    <select @disabled($compra->estado == 'Enviado al proveedor') name="nombre" wire:model.live="productoId" id="nombre"
-                        class="form-control select2">
-                        <option value="">Seleccione un producto</option>
-                        @foreach ($productos as $producto)
-                            <option value="{{ $producto->id }}">{{ $producto->codigo }} -
-                                {{ $producto->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @error('productoId')
-                    <div class="alert text-danger p-0 m-0">
-                        <b>{{ 'Este campo es obligatorio.' }}</b>
-                    </div>
-                @enderror
+            <label for="nombre">Producto</label>
+            <div class="rd-input-group">
+                <span><i class="fas fa-box"></i></span>
+                <select @disabled($compra->estado == 'Enviado al proveedor') name="nombre" wire:model.live="productoId" id="nombre"
+                    class="form-control select2">
+                    <option value="">Seleccione un producto</option>
+                    @foreach ($productos as $producto)
+                        <option value="{{ $producto->id }}">{{ $producto->codigo }} -
+                            {{ $producto->nombre }}</option>
+                    @endforeach
+                </select>
             </div>
+            @error('productoId')
+                <div class="alert text-danger p-0 m-0">
+                    <b>{{ 'Este campo es obligatorio.' }}</b>
+                </div>
+            @enderror
         </div>
 
         <div class="col-md-2">
-            <div class="form-group">
-                <label for="nombre">Lote</label>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text inline-block"><i class="fas fa-box"></i></span>
-                    </div>
-                    <input type="text" wire:model="codigoLote" class="form-control" id="lote" name="lote"
-                        placeholder="Código de lote" readonly>
-                </div>
-                @error('codigoLote')
-                    <div class="alert text-danger p-0 m-0">
-                        <b>{{ 'Este campo es obligatorio.' }}</b>
-                    </div>
-                @enderror
+            <label for="nombre">Lote</label>
+            <div class="rd-input-group">
+                <span><i class="fas fa-box"></i></span>
+                <input type="text" wire:model="codigoLote" class="form-control" id="lote" name="lote" placeholder="Código de lote" readonly>
             </div>
+            @error('codigoLote')
+                <div class="alert text-danger p-0 m-0">
+                    <b>{{ 'Este campo es obligatorio.' }}</b>
+                </div>
+            @enderror
         </div>
 
 
         <div class="col-md-2">
-            <div class="form-group">
-                <label for="cantidad">Cantidad (U)</label>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text inline-block"><i class="fas fa-plus"></i></span>
-                    </div>
-                    <input @disabled($compra->estado == 'Enviado al proveedor') type="number" class="form-control" id="cantidad"
-                        wire:model="cantidad" name="cantidad" placeholder="Ingrese cantidad"
-                        value="{{ old('cantidad', $compra->cantidad) }}" min="0">
-                </div>
-                @error('cantidad')
-                    <div class="alert text-danger p-0 m-0">
-                        <b>{{ 'Este campo es obligatorio.' }}</b>
-                    </div>
-                @enderror
+            <label for="cantidad">Cantidad (U)</label>
+            <div class="rd-input-group">
+                    <span><i class="fas fa-plus"></i></span>
+                <input @disabled($compra->estado == 'Enviado al proveedor') type="number" class="form-control" id="cantidad"
+                    wire:model="cantidad" name="cantidad" placeholder="Ingrese cantidad"
+                    value="{{ old('cantidad', $compra->cantidad) }}" min="0">
             </div>
+            @error('cantidad')
+                <div class="alert text-danger p-0 m-0">
+                    <b>{{ 'Este campo es obligatorio.' }}</b>
+                </div>
+            @enderror
         </div>
 
         <div class="col-md-2">
-            <div class="form-group">
-                <label for="precioCompra">Precio Compra(.BS)</label>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text inline-block"><i class="fas fa-dollar-sign"></i></span>
-                    </div>
-                    <input @disabled($compra->estado == 'Enviado al proveedor') type="number" wire:model="precioCompra" class="form-control"
-                        id="precioCompra" name="precio_compra" placeholder="Ingrese precio de compra"
-                        value="{{ old('precio_compra', $compra->precio_compra) }}" min="0">
-                </div>
-                @error('precioCompra')
-                    <div class="alert text-danger p-0 m-0">
-                        <b>{{ 'Este campo es obligatorio.' }}</b>
-                    </div>
-                @enderror
+            <label for="precioCompra">Precio Compra(.BS)</label>
+            <div class="rd-input-group">
+                    <span><i class="fas fa-dollar-sign"></i></span>
+                <input @disabled($compra->estado == 'Enviado al proveedor') type="number" wire:model="precioCompra" class="form-control"
+                    id="precioCompra" name="precio_compra" placeholder="Ingrese precio de compra"
+                    value="{{ old('precio_compra', $compra->precio_compra) }}" min="0">
             </div>
+            @error('precioCompra')
+                <div class="alert text-danger p-0 m-0">
+                    <b>{{ 'Este campo es obligatorio.' }}</b>
+                </div>
+            @enderror
         </div>
 
         <div class="col-md-1">
@@ -156,7 +139,7 @@
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">Ya fue hecho el
                     pedido</span>
             @else
-                <button class="btn btn-primary" wire:click="confirmarEnvio" style="float:right;">
+                <button class="rd-btn btn-primary" wire:click="confirmarEnvio" style="float:right;">
                     <i class="fas fa-paper-plane"></i> Enviar Correo a Compras
                 </button>
                 <script>
@@ -179,6 +162,10 @@
         </div>
     </div>
 </div>
+
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+@endsection
 @push('js')
     <script>
     document.addEventListener('DOMContentLoaded', () => {

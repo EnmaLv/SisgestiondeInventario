@@ -1,10 +1,15 @@
 <div>
+    <div class="form-group" style="text-align: right;">
+        <button wire:click="guardar" class="rd-btn btn-success">
+            <i class="fas fa-save"></i> Guardar Fechas de Vencimiento
+        </button>
+    </div>
     <table class="table table-bordered mt-3">
+        
         <thead>
             <tr>
                 <th>Producto</th>
                 <th>Fecha de Vencimiento</th>
-                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -19,11 +24,6 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
 
-                    </td>
-                    <td>
-                        <button wire:click="guardar" class="btn btn-success">
-                            <i class="fas fa-save"></i>
-                        </button>
                     </td>
                 </tr>
             @endforeach

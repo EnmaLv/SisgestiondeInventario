@@ -98,41 +98,32 @@
                     </div>
                 </div>
                 <div class="card-body" style="display: block;">
-
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-3 display: inline-block;">
-                                    <div class="form-group">
-                                        <label for="nombre">Proveedor</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
-                                                        class="fas fa-tags"></i></span>
-                                            </div>
-                                            <select class="form-control" id="proveedor_id" name="proveedor_id" disabled>
-                                                <option value="">Seleccione un proveedor</option>
-                                                @foreach ($proveedores as $proveedor)
-                                                    <option value="{{ $proveedor->id }}"
-                                                        {{ old('proveedor_id', $compra->proveedor_id) == $proveedor->id ? 'selected' : '' }}>
-                                                        {{ $proveedor->nombre }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        @error('proveedor_id')
-                                            <div class="alert text-danger p-0 m-0">
-                                                <b>{{ 'Este campo es obligatorio.' }}</b>
-                                            </div>
-                                        @enderror
+                                    <label for="nombre" class="rd-label">Proveedor</label>
+                                    <div class="rd-input-group">
+                                        <span><i class="fas fa-user-tie"></i></span>
+                                        <select class="form-control rd-input" id="proveedor_id" name="proveedor_id" disabled>
+                                            <option value="">Seleccione un proveedor</option>
+                                            @foreach ($proveedores as $proveedor)
+                                                <option value="{{ $proveedor->id }}"
+                                                    {{ old('proveedor_id', $compra->proveedor_id) == $proveedor->id ? 'selected' : '' }}>
+                                                    {{ $proveedor->nombre }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                </div>
-                                <div class="form-group col-md-3" style="display: inline-block;">
-                                    <label for="codigo">Fecha de la Requisicion</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
-                                                    class="fas fa-calendar-alt"></i></span>
+                                    @error('proveedor_id')
+                                        <div class="alert text-danger p-0 m-0">
+                                            <b>{{ 'Este campo es obligatorio.' }}</b>
                                         </div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3" style="display: inline-block;">
+                                    <label for="codigo">Fecha de la Requisicion</label>
+                                    <div class="rd-input-group">
+                                        <span><i class="fas fa-calendar-alt"></i></span>
                                         <input type="datetime-local"
                                             value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}"
                                             class="form-control" id="fecha" name="fecha"
@@ -144,21 +135,18 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-4" style="display: inline-block;">
+                                <div class="col-md-4" style="display: inline-block;">
                                     <label for="codigo">Observaciones</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
-                                                    class="fas fa-sticky-note"></i></span>
-                                        </div>
+                                    <div class="rd-input-group">
+                                        <span><i class="fas fa-sticky-note"></i></span>
                                         @if ($compra->observaciones == !null)
                                             <input type="text" class="form-control" id="observaciones"
                                                 name="observaciones" placeholder="Ingrese observaciones"
-                                                value="{{ old('observaciones', $compra->observaciones) }}" readonly>
+                                                value="{{ old('observaciones', $compra->observaciones) }}" disabled>
                                         @else
                                             <input type="text" class="form-control" id="observaciones"
                                                 name="observaciones" placeholder="Ingrese observaciones"
-                                                value="Sin observaciones" readonly>
+                                                value="Sin observaciones" disabled>
                                         @endif
                                     </div>
                                     @error('observaciones')
@@ -167,16 +155,13 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-2" style="display: inline-block;">
+                                <div class="col-md-2" style="display: inline-block;">
                                     <label for="codigo">Requisicion</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
-                                                    class="fas fa-sticky-note"></i></span>
-                                        </div>
+                                    <div class="rd-input-group">
+                                        <span><i class="fas fa-sticky-note"></i></span>
                                         <input type="text" class="form-control" id="estado" name="estado"
                                             placeholder="Ingrese estado" value="{{ old('estado', $compra->estado) }}"
-                                            readonly>
+                                            disabled>
                                     </div>
                                     @error('estado')
                                         <div class="alert text-danger p-0 m-0">
@@ -188,8 +173,6 @@
 
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -222,9 +205,10 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group" style="text-align: right;">
-                                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i>
+                                        <button type="submit" class="rd-btn rd-btn-primary"><i class="fas fa-check"></i>
                                             Finalizar
-                                            Requisicion</button>
+                                            Requisicion
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -238,6 +222,7 @@
 
 @section('css')
     @livewireStyles
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
 @section('js')
     @livewireScripts
