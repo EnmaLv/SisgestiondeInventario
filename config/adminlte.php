@@ -423,6 +423,19 @@ return [
             'url' => 'admin/movimientos/historial_movimientos',
             'icon' => 'fas fa-clipboard-list ',
         ],
+        ['header' => 'Registros' ],
+        [
+            'text' => 'Pnf',
+            'url' => 'admin/maestros/pnf',
+            'icon' => 'fas fa-graduation-cap ',
+            'active' => ['admin/maestro/pnf*'],
+        ],
+        [
+            'text' => 'Registrar Usuarios',
+            'url' => '',
+            'icon' => 'fas fa-solid fa-address-card ',
+            'active' => ['admin/movimientos/*'],
+        ],
 
 
         /* ---------------------------------------------------

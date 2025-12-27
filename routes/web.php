@@ -7,7 +7,7 @@ use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\RegistroDiarioController;
 use App\Http\Controllers\DetalleRegistroDiarioController;
-
+use App\Http\Controllers\PnfController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -142,6 +142,16 @@ Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(f
 
 Route::prefix('admin/movimientos/registro_comida')->middleware('auth')->group(function () {
     Route::get('/',[DetalleRegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_comida.index');
+});
+
+Route::prefix('admin/maestros/pnf')->middleware('auth')->group(function () {
+    Route::get('/',[PnfController::class, 'index'])->name('admin.maestros.pnf.index');
+    Route::get('/create', [PnfController::class, 'create'])->name('admin.maestros.pnf.create');
+    Route::post('/store', [PnfController::class, 'store'])->name('admin.maestros.pnf.store');
+    Route::get('/edit/{id}', [PnfController::class, 'edit'])->name('admin.maestros.pnf.edit');
+    Route::put('/update', [PnfController::class, 'update'])->name('admin.maestros.pnf.update');
+    Route::delete('/destroy/{id}', [PnfController::class, 'destroy'])->name('admin.maestros.pnf.destroy');
+    Route::put('/activar/{id}', [PnfController::class, 'activar'])->name('admin.maestros.pnf.activar');
 });
 
 //Rutas para Consultas

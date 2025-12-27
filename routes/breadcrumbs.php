@@ -204,6 +204,21 @@ Breadcrumbs::for('admin.movimientos.registro_comida.index', function (Trail $tra
     $trail->push('Registro Comida', route('admin.movimientos.registro_comida.index'));
 });
 
+Breadcrumbs::for('admin.maestros.pnf.index', function(Trail $trail){
+    $trail->parent('home');
+    $trail->push('Pnf', route('admin.maestros.pnf.index')); 
+});
+
+Breadcrumbs::for('admin.maestros.pnf.create', function(Trail $trail){
+    $trail->parent('admin.maestros.pnf.index');
+    $trail->push('Crear', route('admin.maestros.pnf.create')); 
+});
+
+Breadcrumbs::for('admin.maestros.pnf.edit', function(Trail $trail, $id){
+    $trail->parent('admin.maestros.pnf.index');
+    $trail->push('Editar', route('admin.maestros.pnf.edit', $id)); 
+});
+
 // Consultas > Reportes
 Breadcrumbs::for('admin.consultas.reportes.index', function (Trail $trail) {
     $trail->parent('home');
