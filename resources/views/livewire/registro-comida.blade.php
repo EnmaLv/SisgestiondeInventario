@@ -476,7 +476,8 @@
 @push('js')
     <script>
         document.addEventListener('livewire:initialized', () => {
-            Livewire.on('swal', data => {
+            Livewire.on('swal', payload => {
+                const data = Array.isArray(payload) ? payload[0] : payload;
                 Swal.fire({
                     title: data.title,
                     text: data.text,
