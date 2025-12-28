@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+<<<<<<< HEAD
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth as AuthFacade;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+=======
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
 
 class LoginController extends Controller
 {
@@ -42,6 +45,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+<<<<<<< HEAD
 
     /**
      * Override login to use new usuario table and AuthService
@@ -93,4 +97,6 @@ class LoginController extends Controller
 
         return redirect()->intended($this->redirectPath());
     }
+=======
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
 }

@@ -21,9 +21,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+<<<<<<< HEAD
         'role',
         'master_key',
         'security_questions',
+=======
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
     ];
 
     /**
@@ -34,7 +37,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+<<<<<<< HEAD
         'master_key',
+=======
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
     ];
 
     /**
@@ -47,6 +53,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+<<<<<<< HEAD
             'security_questions' => 'array',
         ];
     }
@@ -81,4 +88,8 @@ class User extends Authenticatable
 
         return hash_equals($stored, $candidate);
     }
+=======
+        ];
+    }
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
 }

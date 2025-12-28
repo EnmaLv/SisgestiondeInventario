@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+<<<<<<< HEAD
 use App\Services\AuthService;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
+=======
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
 
 class RegisterController extends Controller
 {
@@ -40,9 +46,13 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
+<<<<<<< HEAD
         // Allow showing the registration form even if a user is authenticated
         // (prevents redirect to /home when clicking the register link while logged in)
         $this->middleware('guest')->except('showRegistrationForm');
+=======
+        $this->middleware('guest');
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
     }
 
     /**
@@ -53,6 +63,7 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+<<<<<<< HEAD
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -68,6 +79,13 @@ class RegisterController extends Controller
         }
 
         return Validator::make($data, $rules);
+=======
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
     }
 
     /**
@@ -78,6 +96,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+<<<<<<< HEAD
         // Use the new AuthService to register persona + usuario, but keep creating legacy User for compatibility
         $authService = new AuthService();
 
@@ -129,5 +148,12 @@ class RegisterController extends Controller
         }
 
         return $user;
+=======
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+>>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
     }
 }
