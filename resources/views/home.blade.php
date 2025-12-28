@@ -1,0 +1,725 @@
+@extends('adminlte::page')
+
+@section('content_header')
+    @include('components.alert')
+    <form id="form-actualizar-tasa" action="{{ route('productos.actualizar.tasa') }}" method="POST" style="display:none;">
+        @csrf
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const hoy = new Date().toISOString().slice(0, 10);
+            const key = 'tasa_actualizada_hoy';
+            if (localStorage.getItem(key) === hoy) {
+                return;
+            }
+
+            Swal.fire({
+                title: '🔄 Actualización obligatoria',
+                html: `
+                    <p style="font-size:15px">
+                        Para garantizar precios correctos, es <b>obligatorio</b>
+                        actualizar la tasa del dólar del <b>BCV</b>.<br><br>
+                        Esta acción debe realizarse <b>una vez al día</b>.
+                    </p>
+                `,
+                icon: 'info',
+
+                /* 🔒 BLOQUEO TOTAL */
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+
+                confirmButtonText: 'Actualizar ahora',
+                confirmButtonColor: '#16a34a',
+
+                showCancelButton: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.setItem(key, hoy);
+                    document.getElementById('form-actualizar-tasa').submit();
+                }
+            });
+
+        });
+    </script>
+
+
+    <div class="dashboard-header"
+        style="
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(197, 34, 34, 0.3);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+         ">
+
+        <!-- Patrón de fondo decorativo -->
+        <div
+            style="
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            filter: blur(40px);
+        ">
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center" style="position: relative; z-index: 1;">
+            <!-- Texto principal -->
+            <div>
+                <h1 class="m-0 text-white" style="font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;">
+                    🏠 Panel de Control
+                </h1>
+                <p class="mt-2 mb-0 text-white" style="font-size: 1.1rem; opacity: 0.95;">
+                    Bienvenido de nuevo, <strong>{{ auth()->user()->name }}</strong>
+                </p>
+                <p class="mb-0 text-white" style="font-size: 0.9rem; opacity: 0.8;">
+                    Gestiona tu inventario de manera eficiente
+                </p>
+            </div>
+
+            <!-- Tarjeta de fecha con avatar -->
+            <div class="d-none d-md-flex align-items-center" style="gap: 1.5rem;">
+                <div class="text-right text-white">
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.25rem;">
+                        📅 Hoy es
+                    </div>
+                    <div style="font-weight: 700; font-size: 1.3rem;">
+                        {{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}
+                    </div>
+                    <div style="font-size: 0.85rem; opacity: 0.8;">
+                        {{ \Carbon\Carbon::now()->translatedFormat('l') }}
+                    </div>
+                </div>
+
+                <div
+                    style="
+                    width: 70px;
+                    height: 70px;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    border: 4px solid rgba(255,255,255,0.3);
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+                    background: white;
+                ">
+                    <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('content')
+    <div class="row">
+
+        <!-- Sucursales -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/maestros/sucursales') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/edificio.gif') }}" alt="Sucursales">
+                    </div>
+                    <h5>Sedes</h5>
+                    <p>{{ $total_sucursales }} registradas</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Categorías -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/maestros/categorias') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/carpetas.gif') }}" alt="Categorías">
+                    </div>
+                    <h5>Categorías</h5>
+                    <p>{{ $total_categorias }} activas</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Productos -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/maestros/productos') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/paquete.gif') }}" alt="Productos">
+                    </div>
+                    <h5>Productos</h5>
+                    <p>{{ $total_productos }} en inventario</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Proveedores -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/maestros/proveedores') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/camion.gif') }}" alt="Proveedores">
+                    </div>
+                    <h5>Proveedores</h5>
+                    <p>{{ $total_proveedores }} disponibles</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Compras -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/movimientos/compras') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/lista-de-verificacion.gif') }}" alt="Compras">
+                    </div>
+                    <h5>Compras</h5>
+                    <p>{{ $total_compras }} realizadas</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Compras -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/maestros/recetas') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/bandeja-de-comida.gif') }}" alt="Compras">
+                    </div>
+                    <h5>Comidas</h5>
+                    <p>{{ $total_compras }} registradas</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Productos por Vencer -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/notificaciones.gif') }}" alt="Por vencer">
+                    </div>
+                    <h5>Por Vencer</h5>
+                    <p>{{ $total_lotes_por_vencer }} próximos a vencer</p>
+                </div>
+            </a>
+        </div>
+
+
+
+        @if ($total_lotes_por_vencer > 0)
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const hoy = new Date().toISOString().slice(0, 10);
+                    const key = 'alerta_por_vencer';
+
+                    if (localStorage.getItem(key) !== hoy) {
+
+                        Swal.fire({
+                            title: 'Productos por vencer',
+                            html: `
+                <p style="font-size:15px">
+                    Hay <b>{{ $total_lotes_por_vencer }}</b> producto(s)
+                    que vencerán en los próximos <b>7 días</b>.
+                </p>
+            `,
+                            icon: 'warning',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Revisar',
+                            confirmButtonColor: '#f59e0b',
+                            timer: 6000,
+                            timerProgressBar: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                localStorage.setItem(key, hoy);
+                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}";
+                            }
+                        });
+                    }
+                });
+            </script>
+        @endif
+
+
+
+        @if ($total_lotes_vencidos > 0)
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const hoy = new Date().toISOString().slice(0, 10);
+                    const key = 'alerta_lotes_vencidos';
+
+                    if (localStorage.getItem(key !== hoy)) {
+
+                        Swal.fire({
+                            title: '⚠️ Lotes vencidos',
+                            html: `
+                <p style="font-size:15px">
+                    Existen <b>{{ $total_lotes_vencidos }}</b> lote(s) vencido(s).<br>
+                    Requieren atencion inmediata para ser removidos del inventario</b>.
+
+                </p>
+            `,
+                            icon: 'error',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Ver lotes',
+                            confirmButtonColor: '#dc2626',
+                            timer: 7000,
+                            timerProgressBar: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                localStorage.setItem(key, hoy);
+                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=vencido') }}";
+                            }
+                        });
+
+                    }
+                });
+            </script>
+        @endif
+
+
+
+        <!-- Lotes Vencidos -->
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <img src="{{ url('/img/alarma.gif') }}" alt="Lotes vencidos">
+                    </div>
+                    <h5>Lotes Vencidos</h5>
+                    <p>{{ $total_lotes_vencidos }} requieren atención</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Resumen rápido con estadísticas destacadas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="stats-summary"
+                style="
+                background: var(--color-bg-card);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid var(--color-border-soft);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            ">
+                <h5 style="color: var(--color-text-main); font-weight: 700;">
+                    📊 Resumen General
+                </h5>
+                <div class="row">
+                    <div class="col-md-3 col-6 mb-3 mb-md-0">
+                        <div class="text-center">
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--color-primary);">
+                                {{ $total_productos }}
+                            </div>
+                            <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Total Productos
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3 mb-md-0">
+                        <div class="text-center">
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--color-tertiary);">
+                                {{ $total_compras }}
+                            </div>
+                            <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Compras Realizadas
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="text-center">
+                            <div style="font-size: 2rem; font-weight: 800; color: var(--color-secondary);">
+                                {{ $total_proveedores }}
+                            </div>
+                            <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Proveedores
+                                Activos</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="text-center">
+                            <div
+                                style="font-size: 2rem; font-weight: 800; color: {{ $total_lotes_vencidos > 0 ? '#ff6b6b' : 'var(--color-tertiary)' }};">
+                                {{ $total_lotes_vencidos }}
+                            </div>
+                            <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Lotes Vencidos
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Sección de Gráficas -->
+    <div class="row ">
+        <!-- Gráfica de Barras -->
+        <div class="col-lg-8 mb-4">
+            <div
+                style="
+                background: var(--color-bg-card);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid var(--color-border-soft);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            ">
+                <h5 style="color: var(--color-text-main); font-weight: 700;">
+                    📈 Estadísticas del Sistema
+                </h5>
+                <canvas id="mainChart" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfica de Dona -->
+        <div class="col-lg-4 mb-4">
+            <div
+                style="
+                    background: var(--color-bg-card);
+                    border-radius: 16px;
+                    padding: 1.5rem;
+                    border: 1px solid var(--color-border-soft);
+                    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+                    height: 100%;
+                "
+                class="text-center"
+            >
+                <h5 style="color: var(--color-text-main); font-weight: 700;">
+                    💵 Estado del Dólar BCV
+                </h5>
+
+                @if ($variacion_dolar === 'subio')
+                    <div style="color:#dc2626;font-weight:800;font-size:1.4rem;">
+                        📈 SUBIÓ
+                    </div>
+                    <div style="font-size:1rem;opacity:.85;">
+                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
+                    </div>
+
+                @elseif ($variacion_dolar === 'bajo')
+                    <div style="color:#16a34a;font-weight:800;font-size:1.4rem;">
+                        📉 BAJÓ
+                    </div>
+                    <div style="font-size:1rem;opacity:.85;">
+                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
+                    </div>
+
+                @else
+                    <div style="color:#6b7280;font-weight:800;font-size:1.3rem;">
+                        ➖ SIN VARIACIÓN
+                    </div>
+                    <div style="font-size:1rem;opacity:.85;">
+                        Tasa estable: {{ number_format($tasa_actual, 2) }} Bs
+                    </div>
+                @endif
+
+                {{-- Dona --}}
+                <div class="mt-3">
+                    <canvas id="doughnutChartID" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div>
+
+    </div>
+@stop
+
+@push('css')
+    <style>
+        :root {
+            --color-primary: #dc2626;
+            --color-secondary: #ef4444;
+            --color-tertiary: #b91c1c;
+
+            --color-bg-main: #f8fafc;
+            /* fondo general */
+            --color-bg-card: #ffffff;
+            /* tarjetas */
+            --color-bg-soft: #f1f5f9;
+            /* secciones suaves */
+
+            --color-border-soft: #e5e7eb;
+            --color-text-main: #1f2933;
+            --color-text-muted: #6b7280;
+
+            --color-btn-hover: #991b1b;
+
+            --trans-default: all .2s ease;
+        }
+
+        .content-wrapper {
+            background: var(--color-bg-main);
+        }
+
+
+
+        .module-card:active {
+            transform: scale(0.98) !important;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .module-card {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .row>div:nth-child(1) .module-card {
+            animation-delay: 0.1s;
+        }
+
+        .row>div:nth-child(2) .module-card {
+            animation-delay: 0.2s;
+        }
+
+        .row>div:nth-child(3) .module-card {
+            animation-delay: 0.3s;
+        }
+
+        .row>div:nth-child(4) .module-card {
+            animation-delay: 0.4s;
+        }
+
+        .row>div:nth-child(5) .module-card {
+            animation-delay: 0.5s;
+        }
+
+        .row>div:nth-child(6) .module-card {
+            animation-delay: 0.6s;
+        }
+
+        .module-link {
+            text-decoration: none;
+        }
+
+        .module-card-light {
+            background: var(--color-bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--color-border-soft);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            transition: var(--trans-default);
+            height: 100%;
+            text-align: center;
+        }
+
+        .module-card-light:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.18);
+            border-color: rgba(220, 38, 38, 0.4);
+        }
+
+        .module-card-light h5 {
+            margin-top: 1rem;
+            margin-bottom: .25rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+        }
+
+        .module-card-light p {
+            margin: 0;
+            font-size: .9rem;
+            color: var(--color-text-muted);
+        }
+
+        .module-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module-icon img {
+            width: 50px;
+            height: 50px;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1.5rem !important;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem !important;
+            }
+        }
+
+        /* Estilos para los canvas de Chart.js */
+        canvas {
+            max-height: 300px;
+        }
+    </style>
+@endpush
+
+@section('js')
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const ctx = document.getElementById('doughnutChartID');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Estado'],
+                    datasets: [{
+                        data: [100],
+                        backgroundColor: [
+                            @if($variacion_dolar === 'subio')
+                                '#dc2626'
+                            @elseif($variacion_dolar === 'bajo')
+                                '#16a34a'
+                            @else
+                                '#9ca3af'
+                            @endif
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+
+        });
+        </script>
+
+
+    <script>
+        console.log("Dashboard mejorado cargado exitosamente 🚀");
+        const chartPalette = [
+            '#dc2626',
+            '#ef4444',
+            '#f87171',
+            '#b91c1c',
+            '#991b1b',
+            '#7f1d1d'
+        ];
+
+
+        // Configuración de colores del tema
+        const themeColors = {
+            primary: 'hsl(358, 80%, 45%)',
+            secondary: 'hsl(357, 43%, 46%)',
+            tertiary: 'hsl(357, 87%, 47%)',
+            bgLightDarkRed: 'hsl(357, 28%, 30%)',
+            bgDark: 'hsl(356, 15%, 18%)',
+            textWhite: 'hsl(0, 0%, 85%)',
+            btnHover: 'hsl(358, 75%, 30%)'
+        };
+        
+
+        // Gráfica de Barras Principal
+        const ctxMain = document.getElementById('mainChart');
+
+        if (ctxMain) {
+            new Chart(ctxMain, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Sucursales',
+                        'Categorías',
+                        'Productos',
+                        'Proveedores',
+                        'Compras',
+                        'Lotes Vencidos'
+                    ],
+                    datasets: [{
+                        label: 'Cantidad',
+                        data: [
+                            {{ $total_sucursales }},
+                            {{ $total_categorias }},
+                            {{ $total_productos }},
+                            {{ $total_proveedores }},
+                            {{ $total_compras }},
+                            {{ $total_lotes_vencidos }}
+                        ],
+                        backgroundColor: chartPalette.map(c => c + 'cc'),
+                        borderColor: chartPalette,
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#111827',
+                            bodyColor: '#374151',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: ctx => `${ctx.parsed.y} registros`
+                            }
+                        }
+
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#374151',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: '#e5e7eb',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#374151',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+
+                }
+            });
+        }
+    </script>
+@endsection

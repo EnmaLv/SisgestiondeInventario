@@ -1,0 +1,199 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Receta;
+use App\Models\Producto;
+use App\Models\Unidad;
+use App\Models\RecetaIngrediente;
+use Illuminate\Support\Facades\DB;
+
+class RecetaIngredienteController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $buscar = $request->input('buscar');
+        $estado = $request->input('estado', 1); // Cambiado de 'estado' a 'estado'
+
+        $query = Receta::with('recetaIngredientes');
+
+        if ($buscar) {
+            $query->where(function ($q) use ($buscar) {
+                $q->where('nombre', 'like', "%{$buscar}%");
+            });
+        }
+
+        if ($estado !== null && $estado !== '') {
+            $query->where('estado', (int)$estado);
+        } else {
+            // Por defecto, mostrar solo estados
+            $query->where('estado', 1);
+        }
+
+        $recetas = $query->orderBy('id', 'desc')->paginate(10);
+
+        return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar', 'estado'));
+    }
+
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $recetas = Receta::all();
+        $productos = Producto::all();
+        $unidades = Unidad::all();
+        return view('admin.maestros.receta_ingredientes.create', compact('recetas', 'productos', 'unidades'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'recetas_id' => 'required|exists:recetas,id',
+
+            // arrays
+            'producto_id' => 'required|array|min:1',
+            'producto_id.*' => 'required|exists:productos,id',
+
+            'cantidad_porcion' => 'nullable|array',
+            'cantidad_porcion.*' => 'nullable|numeric',
+
+            'cantidad_gramos' => 'nullable|array',
+            'cantidad_gramos.*' => 'nullable|numeric',
+
+            'unidad_id' => 'required|array',
+            'unidad_id.*' => 'required|exists:unidades,id',
+        ]);
+
+        // Guardar múltiples ingredientes en transacción
+        DB::beginTransaction();
+        try {
+            foreach ($validated['producto_id'] as $index => $productoId) {
+                $cantidad = $validated['cantidad_porcion'][$index] ?? null;
+                $unidadId = $validated['unidad_id'][$index] ?? null;
+
+                $unidad = Unidad::find($unidadId);
+                $cantidadGramos = $cantidad * $unidad->factor_a_gramo;
+
+
+                // seguridad: saltar si faltan datos
+                if (!$cantidad || !$unidadId) continue;
+
+                RecetaIngrediente::create([
+                    'recetas_id' => $validated['recetas_id'],
+                    'producto_id' => $productoId,
+                    'cantidad_porcion' => $cantidad,
+                    'cantidad_gramos' => $cantidadGramos,
+                    'unidad_id' => $unidadId,
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route('admin.maestros.receta_ingredientes.index')->with('success', 'Ingredientes agregados correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($recetaId)
+    {
+        $recetaIngrediente = RecetaIngrediente::with(['producto', 'unidad', 'receta'])
+            ->findOrFail($recetaId);
+
+        $recetas = Receta::all();
+        $productos = Producto::all();
+        $unidades = Unidad::all();
+
+        return view('admin.maestros.receta_ingredientes.edit', compact(
+            'recetaIngrediente',
+            'recetas',
+            'productos',
+            'unidades'
+        ));
+    }
+
+
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $recetaId)
+    {
+        $validated = $request->validate([
+            'recetas_id' => 'required|exists:recetas,id',
+            'producto_id' => 'required|array|min:1',
+            'producto_id.*' => 'required|exists:productos,id',
+            'cantidad_porcion' => 'required|array',
+            'cantidad_porcion.*' => 'required|numeric|min:0.0001',
+            'unidad_id' => 'required|array',
+            'unidad_id.*' => 'required|exists:unidades,id',
+        ]);
+
+        // seguridad: ensure ruta y form coinciden
+        if ((int)$validated['recetas_id'] !== (int)$recetaId) {
+            return redirect()->back()->withInput()->with('error', 'Id de receta inválido.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // 1) eliminar ingredientes actuales de la receta
+            RecetaIngrediente::where('recetas_id', $recetaId)->delete();
+
+            // 2) insertar los nuevos (o los mismos)
+            foreach ($validated['producto_id'] as $index => $productoId) {
+                $cantidad = $validated['cantidad_porcion'][$index] ?? null;
+                $unidadId = $validated['unidad_id'][$index] ?? null;
+
+                $unidad = Unidad::find($unidadId);
+                $cantidadGramos = $cantidad * $unidad->factor_a_gramo;
+
+
+                if (!$cantidad || !$unidadId) continue;
+
+                RecetaIngrediente::create([
+                    'recetas_id' => $recetaId,
+                    'producto_id' => $productoId,
+                    'cantidad_porcion' => $cantidad,
+                    'cantidad_gramos' => $cantidadGramos,
+                    'unidad_id' => $unidadId,
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route('admin.maestros.receta_ingredientes.index')
+                ->with('success', 'Ingredientes de la receta actualizados correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        Receta::eliminarReceta($id);
+        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta eliminada exitosamente.');
+    }
+
+    public function activar($id)
+    {
+        Receta::activarReceta($id);
+        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Categoria activada exitosamente.');
+    }
+}
