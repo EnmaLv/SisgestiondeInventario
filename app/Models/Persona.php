@@ -31,7 +31,6 @@ class Persona extends Model
     {
         //Iniciamos una transsaccion para crear la persona
 
-        // dd($data);
         DB::beginTransaction();
 
         try {
