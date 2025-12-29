@@ -219,6 +219,24 @@ Breadcrumbs::for('admin.maestros.pnf.edit', function(Trail $trail, $id){
     $trail->push('Editar', route('admin.maestros.pnf.edit', $id)); 
 });
 
+// Estado
+Breadcrumbs::for('admin.estado.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Estado', route('admin.estado.index'));
+});
+
+// Municipio
+Breadcrumbs::for('admin.municipio.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Municipio', route('admin.municipio.index'));
+});
+
+// Localidad
+Breadcrumbs::for('admin.localidad.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Localidad', route('admin.localidad.index'));
+});
+
 // Consultas > Reportes
 Breadcrumbs::for('admin.consultas.reportes.index', function (Trail $trail) {
     $trail->parent('home');

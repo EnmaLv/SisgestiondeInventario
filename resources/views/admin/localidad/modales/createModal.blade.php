@@ -1,0 +1,176 @@
+<!-- Modal Crear Estado -->
+<div wire:ignore.self class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-modern">
+
+            {{-- Cuerpo del modal con formulario --}}
+            <div class="rd-card p-4">
+                <div class="rd-card-header mb-3">
+                    <h3 class="rd-title-sm">Crear Nueva Localidad</h3>
+                </div>
+                <hr>
+                <form wire:submit.prevent="store" id="formCrearLocalidad">
+                    
+                    {{-- Contenedor para alertas de validación --}}
+                    <div id="contenedorAlertaCrear"></div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            {{-- Select del estado --}}
+                            <label class="rd-label">Estado</label>
+                            <div class="rd-input-group">
+                                <span><i class="fas fa-globe"></i></span>
+                                <select name="estado_id" 
+                                    wire:model.live="estado_id"
+                                    id="estado_id" 
+                                    class="form-control rd-input" 
+                                    data-live-search="true"
+                                    title="Seleccione un estado"
+                                    required>
+                                    <option value="">Seleccione un estado</option>
+                                    @foreach ($estados as $estado)
+                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                    @endforeach
+                                </select>
+                                @error('estado_id')
+                                    <div class="error-message">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="rd-label">Municipio</label>
+                            {{-- Select del municipio --}}
+                            <div class="rd-input-group">
+                                    <span><i class="fas fa-city"></i></span>
+                                <select name="municipio_id" 
+                                    wire:model.live="municipio_id"
+                                    id="municipio_id" 
+                                    class="form-control rd-input" 
+                                    data-live-search="true"
+                                    title="Seleccione un municipio"
+                                    required>
+                                    <option value="">Seleccione un municipio</option>
+                                    @foreach ($municipios as $municipio)
+                                        <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
+                                    @endforeach
+                                </select>
+                                @error('municipio_id')
+                                    <div class="error-message">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label class="rd-label">Nombre de la Localidad</label>
+                        <div class="rd-input-group">
+                            <span><i class="fas fa-home me-2"></i></span>
+                            <input type="text" 
+                                class="form-control rd-input" 
+                                id="nombre_localidad_crear" 
+                                wire:model.defer="nombre_localidad"
+                                inputmode="text"
+                                maxlength="100"
+                                placeholder="Ingrese el nombre de la localidad"
+                                required>
+                            @error('nombre_localidad')
+                                <div class="rd-error">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    {{-- Botones --}}
+                    <div class="d-flex justify-content-end" style="gap:10px;">
+                        <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="rd-btn rd-btn-primary">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modal Crear Localidad -->
+{{-- <div wire:ignore.self class="modal fade" id="modalCrearLocalidad" tabindex="-1" aria-labelledby="modalCrearLocalidadLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form wire:submit.prevent="store">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear Localidad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body"> --}}
+                    {{-- Select Estado --}}
+                    {{-- <label for="estado_id" class="form-label">Estado</label>
+                    <select wire:model.live="estado_id" id="estado_id" class="form-control" required>
+                        <option value="">Seleccione un estado</option>
+                        @foreach ($estados as $estado)
+                            <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                        @endforeach
+                    </select>
+                    @error('estado_id') <span class="text-danger">{{ $message }}</span> @enderror
+ --}}
+                    {{-- Select Municipio dependiente --}}
+                   {{--  <label for="municipio_id" class="form-label mt-3">Municipio</label>
+                    <select wire:model.live="municipio_id" id="municipio_id" class="form-control" required>
+                        <option value="">Seleccione un municipio</option>
+                        @foreach ($municipios as $municipio)
+                            <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
+                        @endforeach
+                    </select>
+                    @error('municipio_id') <span class="text-danger">{{ $message }}</span> @enderror
+ --}}
+                    {{-- Input Localidad --}}
+     {{--                <label for="nombre_localidad" class="form-label mt-3">Nombre de la Localidad</label>
+                    <input type="text" wire:model.defer="nombre_localidad" id="nombre_localidad" class="form-control" required>
+                    @error('nombre_localidad') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+ --}}

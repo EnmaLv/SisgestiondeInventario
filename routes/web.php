@@ -10,6 +10,9 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\RegistroDiarioController;
 use App\Http\Controllers\DetalleRegistroDiarioController;
 use App\Http\Controllers\PnfController;
+use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\MunicipioController;
+use App\Http\Controllers\LocalidadController;
 
 Auth::routes();
 
@@ -180,6 +183,31 @@ Route::prefix('admin/maestros/pnf')->middleware('auth')->group(function () {
     Route::delete('/destroy/{id}', [PnfController::class, 'destroy'])->name('admin.maestros.pnf.destroy');
     Route::put('/activar/{id}', [PnfController::class, 'activar'])->name('admin.maestros.pnf.activar');
 });
+
+// ===== ESTADO (LIVEWIRE) =====
+Route::get('admin/estado', function () {
+    return view('admin.estado.index');
+})->name('admin.estado.index')->middleware('auth');
+
+// Ruta para verificar la existencia de un estado
+Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
+
+// ===== MUNICIPIO (LIVEWIRE) =====
+Route::get('admin/municipio', function () {
+    return view('admin.municipio.index');
+})->name('admin.municipio.index')->middleware('auth');
+
+// Ruta para verificar la existencia de un municipio
+Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
+
+// ===== LOCALIDAD (LIVEWIRE) =====
+Route::get('admin/localidad', function () {
+    return view('admin.localidad.index');
+})->name('admin.localidad.index')->middleware('auth');
+
+// Ruta para verificar la existencia de una localidad
+Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
+
 
 //Rutas para Consultas
 Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');
