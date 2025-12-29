@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -78,6 +78,3 @@
 </div>
 </body>
 </html>
-=======
-@extends('adminlte::auth.register')
->>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164

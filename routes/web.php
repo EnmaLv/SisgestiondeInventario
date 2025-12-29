@@ -2,11 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-<<<<<<< HEAD
 use App\Http\Controllers\Auth\AdminMasterKeyController;
 use App\Http\Controllers\Auth\PasswordRecoveryController;
-=======
->>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
@@ -14,11 +11,14 @@ use App\Http\Controllers\RegistroDiarioController;
 use App\Http\Controllers\DetalleRegistroDiarioController;
 use App\Http\Controllers\PnfController;
 
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-<<<<<<< HEAD
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
+
 // Custom auth routes (replacing adminlte auth views)
 // Login
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
@@ -44,12 +44,6 @@ Route::get('password/recover/verify', [PasswordRecoveryController::class, 'showV
 Route::post('password/recover/verify', [PasswordRecoveryController::class, 'verifyAnswers'])->name('password.recover.verify');
 Route::post('password/recover/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.recover.reset_password');
 Route::post('password/recover/reset-masterkey', [PasswordRecoveryController::class, 'resetMasterKey'])->name('password.recover.reset_masterkey');
-=======
-Auth::routes();
->>>>>>> 357e4cdaba75ae2dc079ffec813e4fa3fb3f6164
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
-
 
 //Rutas para Maestros
 
