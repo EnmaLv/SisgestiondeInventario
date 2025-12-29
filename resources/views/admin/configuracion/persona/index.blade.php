@@ -41,10 +41,10 @@
                 </div>
 
                 <div class="rd-actions">
-                    <form action="{{ route('admin.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
+                    <form action="{{ route('admin.configuracion.persona.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba el nombre de la Persona/Usuario" />
+                            placeholder="Buscar nombre o apellido" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 

@@ -1,4 +1,5 @@
 @props(['paginator'])
+@vite('resources/css/gerenal.css')
 
 @if ($paginator->hasPages())
     <nav>
@@ -85,19 +86,19 @@
     }
 
     .rd-pagination a:hover {
-        background: #0062ff;
-        color: #fff;
+        background: var(--color-bg-light-dark-red);
+        color: #fff !important;
         transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 98, 255, 0.25);
+        box-shadow: 0 4px 10px var(--color-bg-light-dark-red);
     }
 
     .rd-pagination .active span {
-        background: #0062ff;
+        background: var(--color-bg-light-dark-red);
         color: white;
-        border-color: #0062ff;
+        border-color: var(--color-bg-light-dark-red);
         font-weight: 600;
         cursor: default;
-        box-shadow: 0 4px 10px rgba(0, 98, 255, 0.25);
+        box-shadow: 0 4px 10px var(--color-bg-light-dark-red);
     }
 
     .rd-pagination .disabled span {
