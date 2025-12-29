@@ -437,6 +437,31 @@ return [
             'active' => ['admin/movimientos/*'],
         ],
 
+        ['header' => 'UBICACIÓN GEOGRÁFICA'],
+
+        [
+            'text' => 'Ubicaciones',
+            'icon' => 'fas fa-map-marked-alt',
+            'active' => ['admin/estado*'],
+            'submenu' => [
+                [
+                    'text' => 'Estados',
+                    'url'  => 'admin/estado',
+                    'icon' => 'fas fa-globe',
+                ],
+                [
+                    'text' => 'Municipios',
+                    'url'  => 'admin/municipio',
+                    'icon' => 'fas fa-city',
+                ],
+                [
+                    'text' => 'Localidades',
+                    'url'  => 'admin/localidad',
+                    'icon' => 'fas fa-home',
+                ],
+            ],
+        ],
+
 
         /* ---------------------------------------------------
         | 📊 REPORTES

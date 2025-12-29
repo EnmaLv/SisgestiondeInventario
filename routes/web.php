@@ -2,21 +2,51 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\AdminMasterKeyController;
+use App\Http\Controllers\Auth\PasswordRecoveryController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\RegistroDiarioController;
 use App\Http\Controllers\DetalleRegistroDiarioController;
 use App\Http\Controllers\PnfController;
+use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\MunicipioController;
+use App\Http\Controllers\LocalidadController;
+
+Auth::routes();
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
 
+// Custom auth routes (replacing adminlte auth views)
+// Login
+Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+// Logout
+Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+// Register
+Route::get('register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+
+// Admin master key verification
+Route::get('admin/master-key', [AdminMasterKeyController::class, 'showForm'])->name('admin.master_key.form');
+Route::post('admin/master-key/verify', [AdminMasterKeyController::class, 'verify'])->name('admin.master_key.verify');
+
+// Admin manage master key (only for logged admin users)
+Route::get('admin/master-key/manage', [App\Http\Controllers\Admin\MasterKeyController::class, 'showForm'])->name('admin.master_key.manage')->middleware('auth');
+Route::post('admin/master-key/manage', [App\Http\Controllers\Admin\MasterKeyController::class, 'update'])->name('admin.master_key.update')->middleware('auth');
+
+// Password recovery via security questions
+Route::get('password/recover', [PasswordRecoveryController::class, 'showEmailForm'])->name('password.recover.email');
+Route::post('password/recover', [PasswordRecoveryController::class, 'postEmail'])->name('password.recover.post_email');
+Route::get('password/recover/verify', [PasswordRecoveryController::class, 'showVerifyForm'])->name('password.recover.verify.form');
+Route::post('password/recover/verify', [PasswordRecoveryController::class, 'verifyAnswers'])->name('password.recover.verify');
+Route::post('password/recover/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.recover.reset_password');
+Route::post('password/recover/reset-masterkey', [PasswordRecoveryController::class, 'resetMasterKey'])->name('password.recover.reset_masterkey');
 
 //Rutas para Maestros
 
@@ -153,6 +183,31 @@ Route::prefix('admin/maestros/pnf')->middleware('auth')->group(function () {
     Route::delete('/destroy/{id}', [PnfController::class, 'destroy'])->name('admin.maestros.pnf.destroy');
     Route::put('/activar/{id}', [PnfController::class, 'activar'])->name('admin.maestros.pnf.activar');
 });
+
+// ===== ESTADO (LIVEWIRE) =====
+Route::get('admin/estado', function () {
+    return view('admin.estado.index');
+})->name('admin.estado.index')->middleware('auth');
+
+// Ruta para verificar la existencia de un estado
+Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
+
+// ===== MUNICIPIO (LIVEWIRE) =====
+Route::get('admin/municipio', function () {
+    return view('admin.municipio.index');
+})->name('admin.municipio.index')->middleware('auth');
+
+// Ruta para verificar la existencia de un municipio
+Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
+
+// ===== LOCALIDAD (LIVEWIRE) =====
+Route::get('admin/localidad', function () {
+    return view('admin.localidad.index');
+})->name('admin.localidad.index')->middleware('auth');
+
+// Ruta para verificar la existencia de una localidad
+Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
+
 
 //Rutas para Consultas
 Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');

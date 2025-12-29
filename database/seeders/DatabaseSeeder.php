@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             CategoriaSeeder::class,
             SucursalSeeder::class,
             RecetaSeeder::class,
+            EstadoSeeder::class,
+            MunicipioSeeder::class,
+            LocalidadSeeder::class,
             //Seeders con relacion
             PerfilSeeder::class,
             PnfSeeder::class,
@@ -30,17 +33,10 @@ class DatabaseSeeder extends Seeder
             ProductoSeeder::class,
             RecetaIngredienteSeeder::class,
             PrecioProductoSeeder::class,
-            MunicipioSeeder::class,
             ParroquiaSeeder::class,
         ]);
 
         \App\Models\Proveedor::factory(1)->create();
 
-
-        User::create([
-            'name' => 'Enma',
-            'email' => 'medina.enma1234@gmail.com',
-            'password' => bcrypt('31008661'),
-        ]);
     }
 }

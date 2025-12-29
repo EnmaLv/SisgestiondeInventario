@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'master_key',
+        'security_questions',
     ];
 
     /**
@@ -31,6 +34,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'master_key',
     ];
 
     /**
@@ -43,6 +47,39 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'security_questions' => 'array',
         ];
     }
+
+    /**
+     * Mutator to encrypt master key before saving to DB.
+     */
+    public function setMasterKeyAttribute($value)
+    {
+        if (is_null($value)) {
+            $this->attributes['master_key'] = null;
+            return;
+        }
+
+        $this->attributes['master_key'] = encrypt($value);
+    }
+
+    /**
+     * Helper to verify a given master key against stored encrypted value.
+     */
+    public function verifyMasterKey(string $candidate): bool
+    {
+        if (empty($this->master_key)) {
+            return false;
+        }
+
+        try {
+            $stored = decrypt($this->getAttributes()['master_key']);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return hash_equals($stored, $candidate);
+    }
+
 }

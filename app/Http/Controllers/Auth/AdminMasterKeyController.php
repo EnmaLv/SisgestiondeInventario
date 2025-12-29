@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
+class AdminMasterKeyController extends Controller
+{
+    public function showForm()
+    {
+        if (!session('pending_admin_id')) {
+            return redirect()->route('login');
+        }
+
+        return view('auth.admin_master_key');
+    }
+
+    public function verify(Request $request)
+    {
+        $request->validate([
+            'master_key' => ['required', 'string'],
+        ]);
+
+        $id = session('pending_admin_id');
+        if (!$id) {
+            return redirect()->route('login')->withErrors(['email' => 'Session expired, please login again.']);
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['email' => 'User not found.']);
+        }
+
+        if ($user->verifyMasterKey($request->input('master_key'))) {
+            // clear pending and login
+            session()->forget('pending_admin_id');
+            Auth::loginUsingId($user->id);
+            return redirect()->intended('/home');
+        }
+
+        return back()->withErrors(['master_key' => 'Llave maestra incorrecta.']);
+    }
+}
