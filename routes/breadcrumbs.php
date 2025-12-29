@@ -249,6 +249,30 @@ Breadcrumbs::for('admin.configuracion.index', function (Trail $trail) {
     $trail->push('Configuración', route('admin.configuracion.index'));
 });
 
+Breadcrumbs::for('admin.configuracion.persona.index', function (Trail $trail) {
+    $trail->parent('admin.configuracion.index');
+    $trail->push('Persona', route('admin.configuracion.persona.index'));
+});
+
+
+Breadcrumbs::for('admin.configuracion.persona.create', function (Trail $trail) {
+    $trail->parent('admin.configuracion.persona.index');
+    $trail->push('Crear Persona', route('admin.configuracion.persona.create'));
+});
+    
+
+// Configuración > Ver Persona
+Breadcrumbs::for('admin.configuracion.persona.show', function (Trail $trail, $id) {
+    $trail->parent('admin.configuracion.persona.index');
+    $trail->push('Ver Mas', route('admin.configuracion.persona.show', $id));
+});
+
+// Configuración > Editar Persona
+Breadcrumbs::for('admin.configuracion.persona.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.configuracion.persona.index');
+    $trail->push('Editar Persona', route('admin.configuracion.persona.edit', $id));
+});
+
 // Configuración > Indexar
 Breadcrumbs::for('admin.configuracion.indexar.index', function (Trail $trail) {
     $trail->parent('home');

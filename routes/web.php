@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\RegistroDiarioController;
 use App\Http\Controllers\DetalleRegistroDiarioController;
 use App\Http\Controllers\PnfController;
+use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
@@ -182,6 +183,15 @@ Route::prefix('admin/maestros/pnf')->middleware('auth')->group(function () {
     Route::put('/update', [PnfController::class, 'update'])->name('admin.maestros.pnf.update');
     Route::delete('/destroy/{id}', [PnfController::class, 'destroy'])->name('admin.maestros.pnf.destroy');
     Route::put('/activar/{id}', [PnfController::class, 'activar'])->name('admin.maestros.pnf.activar');
+});
+
+Route::prefix('admin/persona')->middleware('auth')->group(function () {
+    Route::get('/',[PersonaController::class, 'index'])->name('admin.configuracion.persona.index');
+    Route::get('/create',[PersonaController::class, 'create'])->name('admin.configuracion.persona.create');
+    Route::get('/edit/{id}',[PersonaController::class, 'edit'])->name('admin.configuracion.persona.edit');
+    Route::get('/show/{id}',[PersonaController::class, 'show'])->name('admin.configuracion.persona.show');
+    
+    
 });
 
 // ===== ESTADO (LIVEWIRE) =====
