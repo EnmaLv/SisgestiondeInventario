@@ -7,21 +7,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * This migration will ensure that a role named "Administrador" exists and
-     * that its `menu_permissions` column contains all keys found in the
-     * `adminlte.menu` configuration. It is idempotent.
-     *
-     * Note: this migration reads config at runtime; ensure config('adminlte.menu')
-     * is available when running migrations (it usually is).
-     *
-     * @return void
-     */
     public function up()
     {
-        // Collect menu keys from config/adminlte.php
+        
         $menu = config('adminlte.menu', []);
         $allKeys = [];
 
@@ -40,14 +28,14 @@ return new class extends Migration
         $allKeys = array_values(array_unique($allKeys));
 
         if (empty($allKeys)) {
-            // nothing to do
+          
             return;
         }
 
-        // Ensure role exists
+       
         $rol = DB::table('rol')->where('nombre', 'Administrador')->first();
         if (!$rol) {
-            // Insert a basic Administrador role
+       
             $id = DB::table('rol')->insertGetId([
                 'nombre' => 'Administrador',
                 'descripcion' => 'Rol administrador creado por migración',
@@ -56,7 +44,7 @@ return new class extends Migration
                 'updated_at' => now(),
             ]);
         } else {
-            // Update existing role's menu_permissions
+           
             DB::table('rol')->where('id_rol', $rol->id_rol)->update([
                 'menu_permissions' => json_encode($allKeys),
                 'updated_at' => now(),
@@ -64,15 +52,7 @@ return new class extends Migration
         }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * This will not remove the Administrador role, but will clear its
-     * `menu_permissions` column to an empty array (safe rollback).
-     *
-     * @return void
-     */
-    public function down()
+public function down()
     {
         $rol = DB::table('rol')->where('nombre', 'Administrador')->first();
         if ($rol) {

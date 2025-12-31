@@ -7,7 +7,7 @@ return new class extends Migration
 {
     public function up()
     {
-        // Ensure roles exist with default menu_permissions
+        
         if (DB::getSchemaBuilder()->hasTable('rol')) {
             $hasSlug = DB::getSchemaBuilder()->hasColumn('rol', 'slug');
 
