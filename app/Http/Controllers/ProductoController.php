@@ -186,6 +186,8 @@ class ProductoController extends Controller
 
             DB::commit();
 
+            session()->forget('tasa_pendiente');
+
             return redirect()->back()->with(
                 'success',
                 'Tasa actualizada correctamente y precios recalculados.'

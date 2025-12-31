@@ -3,8 +3,6 @@
 namespace App\Console;
 
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Console\Commands\ActualizarTasaBCV;
-use App\Jobs\ProcesarLotesVencidosJob;
 
 
 class Kernel extends ConsoleKernel
@@ -21,8 +19,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(\Illuminate\Console\Scheduling\Schedule $schedule)
     {
-
-        $schedule->job(new ProcesarLotesVencidosJob)->dailyAt('20:00');
     }
 
     /**

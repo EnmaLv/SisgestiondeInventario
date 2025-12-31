@@ -17,6 +17,17 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\CompraController;
+use App\Http\Controllers\LoteController;
+use App\Http\Controllers\InventarioSucursalLoteController;
+use App\Http\Controllers\RecetaController;
+use App\Http\Controllers\RecetaIngredienteController;
+use App\Http\Controllers\MovimientoInventarioController;
+use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\IndexarController;
 
 Auth::routes();
 
@@ -24,7 +35,231 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
+Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
+
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    // TODAS tus rutas protegidas aquí
+    Route::prefix('/admin')->group(function () {
+
+        /* Categorias */
+
+        //Index 
+        Route::get('/maestros/categorias', [CategoriaController::class, 'index'])->name('admin.maestros.categorias.index');
+        
+        //Crear una nueva categoría
+        Route::get('/maestros/categorias/create', [CategoriaController::class, 'create'])->name('admin.maestros.categorias.create');
+            
+        //Almacenar una nueva categoría
+        Route::post('/maestros/categorias/store', [CategoriaController::class, 'store'])->name('admin.maestros.categorias.store');
+            
+        //Mostrar una categoría específica
+        Route::get('/maestros/categorias/{categoria}', [CategoriaController::class, 'show'])->name('admin.maestros.categorias.show');
+            
+        //Editar una categoría específica
+        Route::get('/maestros/categorias/{categoria}/edit', [CategoriaController::class, 'edit'])->name('admin.maestros.categorias.edit');
+        
+        //Actualizar una categoría específica
+        Route::put('/maestros/categorias/{categoria}', [CategoriaController::class, 'update'])->name('admin.maestros.categorias.update');
+
+        //Eliminar una categoria especifica
+        Route::delete('/maestros/categorias/{categoria}', [CategoriaController::class, 'destroy'])->name('admin.maestros.categorias.destroy');
+
+        //Activar una categoria especifica
+        Route::put('/maestros/categorias/{categoria}/activar', [CategoriaController::class, 'activar'])->name('admin.maestros.productos.activar');
+
+        /* Sedes */
+
+        //Index 
+        Route::get('/maestros/sucursales', [SucursalController::class, 'index'])->name('admin.maestros.sucursales.index');
+
+        Route::get('/maestros/sucursales/create', [SucursalController::class, 'create'])->name('admin.maestros.sucursales.create');
+
+        Route::post('/maestros/sucursales/store', [SucursalController::class, 'store'])->name('admin.maestros.sucursales.store');
+
+        Route::get('/maestros/sucursales/{sucursal}', [SucursalController::class, 'show'])->name('admin.maestros.sucursales.show');
+
+        Route::get('/maestros/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('admin.maestros.sucursales.edit');
+
+        Route::put('/maestros/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('admin.maestros.sucursales.update');
+
+        Route::delete('/maestros/sucursales/{id}', [SucursalController::class, 'destroy'])->name('admin.maestros.sucursales.destroy');
+
+        Route::put('/maestros/sucursales/{sucursal}/activar', [SucursalController::class, 'activar'])->name('admin.maestros.sucursales.activar');
+
+        /* Productos */
+
+        Route::get('/maestros/productos', [ProductoController::class, 'index'])->name('admin.maestros.productos.index');
+
+        Route::get('/maestros/productos/create', [ProductoController::class, 'create'])->name('admin.maestros.productos.create');
+
+        Route::post('/maestros/productos/store', [ProductoController::class, 'store'])->name('admin.maestros.productos.store');
+
+        Route::get('/maestros/productos/{producto}', [ProductoController::class, 'show'])->name('admin.maestros.productos.show');
+
+        Route::get('/maestros/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('admin.maestros.productos.edit');
+
+        Route::put('/maestros/productos/{producto}', [ProductoController::class, 'update'])->name('admin.maestros.productos.update');
+
+        Route::delete('/maestros/productos/{producto}', [ProductoController::class, 'destroy'])->name('admin.maestros.productos.destroy');
+
+        Route::put('/maestros/productos/{producto}/activar', [ProductoController::class, 'activar'])->name('admin.maestros.productos.activar');
+
+        Route::post('/maestros/productos/actualizar-tasa',[ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
+
+        /* Proveedores */
+
+        Route::get('/maestros/proveedores', [ProveedorController::class, 'index'])->name('admin.maestros.proveedores.index');
+
+        Route::get('/maestros/proveedores/create', [ProveedorController::class, 'create'])->name('admin.maestros.proveedores.create');
+
+        Route::post('/maestros/proveedores/store', [ProveedorController::class, 'store'])->name('admin.maestros.proveedores.store');
+
+        Route::get('/maestros/proveedores/{proveedor}', [ProveedorController::class, 'show'])->name('admin.maestros.proveedores.show');
+
+        Route::get('/maestros/proveedores/{proveedor}/edit', [ProveedorController::class, 'edit'])->name('admin.maestros.proveedores.edit');
+
+        Route::put('/maestros/proveedores/{proveedor}', [ProveedorController::class, 'update'])->name('admin.maestros.proveedores.update');
+
+        Route::delete('/maestros/proveedores/{proveedor}', [ProveedorController::class, 'destroy'])->name('admin.maestros.proveedores.destroy');
+
+        Route::put('/maestros/proveedores/{proveedor}/activar', [ProveedorController::class, 'activar'])->name('admin.maestros.proveedores.activar');
+
+        /* Requisicion de Compra */
+
+        Route::get('/movimientos/compras', [CompraController::class, 'index'])->name('admin.movimientos.compras.index');
+        
+        Route::get('/movimientos/compras/create', [CompraController::class, 'create'])->name('admin.movimientos.compras.create');
+        
+        Route::post('/movimientos/compras/store', [CompraController::class, 'store'])->name('admin.movimientos.compras.store');
+        
+        Route::get('/movimientos/compras/{id}', [CompraController::class, 'show'])->name('admin.movimientos.compras.show');
+        
+        Route::get('/movimientos/compras/{id}/edit', [CompraController::class, 'edit'])->name('admin.movimientos.compras.edit');
+        
+        Route::get('/movimientos/compras/{compra}/enviar-correo', [CompraController::class, 'enviarCorreo'])->name('admin.movimientos.compras.enviarCorreo');
+        
+        Route::post('/movimientos/compras/{compra}/finalizar-compra', [CompraController::class, 'finalizarCompra'])->name('admin.movimientos.compras.finalizarCompra');
+        
+        Route::delete('/movimientos/compras/{id}', [CompraController::class, 'destroy'])->name('admin.movimientos.compras.destroy');
+        
+        Route::get('/movimientos/compras/e/export-pdf', [CompraController::class, 'exportPdf'])->name('admin.movimientos.compras.export_pdf');
+        
+        Route::post('admin/movimientos/compras/{compra}/cancelar',[CompraController::class, 'cancelar'])->name('admin.movimientos.compras.cancelar');
+
+        /* Lotes */
+
+        Route::get('/movimientos/lotes', [LoteController::class, 'index'])->name('admin.movimientos.lotes.index');
+        
+        Route::get('/movimientos/lotes/create', [LoteController::class, 'create'])->name('admin.movimientos.lotes.create');
+        
+        Route::post('/movimientos/lotes/store', [LoteController::class, 'store'])->name('admin.movimientos.lotes.store');
+        
+        Route::get('/movimientos/lotes/{id}', [LoteController::class, 'show'])->name('admin.movimientos.lotes.show');
+        
+        Route::get('/movimientos/lotes/{id}/edit', [LoteController::class, 'edit'])->name('admin.movimientos.lotes.edit');
+        
+        Route::put('/movimientos/lotes/{id}', [LoteController::class, 'update'])->name('admin.movimientos.lotes.update');
+        
+        Route::delete('/movimientos/lotes/{id}', [LoteController::class, 'destroy'])->name('admin.movimientos.lotes.destroy');
+        
+        Route::post('/movimientos/lotes/mermar-vencidos', [LoteController::class, 'mermarVencidos'])->name('admin.movimientos.lotes.mermar');
+
+        /* Sucursal por lotes */
+        Route::get('/movimientos/sucursales_lotes', [InventarioSucursalLoteController::class, 'index'])->name('admin.movimientos.sucursales_lotes');
+        
+        Route::get('/movimientos/sucursales_lotes/show/{id}', [InventarioSucursalLoteController::class, 'show'])->name('admin.movimientos.sucursales_lotes.show');
+
+        /* Registro diario */
+
+        Route::get('/movimientos/registro_diario', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
+
+        Route::get('/movimientos/registro_diario/registro/{id}', [RegistroDiarioController::class, 'show'])->name('admin.movimientos.registro_diario.show');
+
+        /* Recetas */
+
+        Route::get('/maestros/recetas', [RecetaController::class, 'index'])->name('admin.maestros.recetas.index');
+        
+        Route::get('/maestros/recetas/create', [RecetaController::class, 'create'])->name('admin.maestros.recetas.create');
+        
+        Route::post('/maestros/recetas/store', [RecetaController::class, 'store'])->name('admin.maestros.recetas.store');
+        
+        Route::get('/maestros/recetas/{receta}/edit', [RecetaController::class, 'edit'])->name('admin.maestros.recetas.edit');
+        
+        Route::put('/maestros/recetas/{receta}', [RecetaController::class, 'update'])->name('admin.maestros.recetas.update');
+        
+        Route::delete('/maestros/recetas/{receta}', [RecetaController::class, 'destroy'])->name('admin.maestros.recetas.destroy');
+        
+        Route::put('/maestros/recetas/{receta}/activar', [RecetaController::class, 'activar'])->name('admin.maestros.recetas.activar');
+
+        /* Receta Ingredientes */
+
+        Route::get('/maestros/receta_ingredientes', [RecetaIngredienteController::class, 'index'])->name('admin.maestros.receta_ingredientes.index');
+
+        Route::get('/maestros/receta_ingredientes/create', [RecetaIngredienteController::class, 'create'])->name('admin.maestros.receta_ingredientes.create');
+        
+        Route::post('/maestros/receta_ingredientes/store', [RecetaIngredienteController::class, 'store'])->name('admin.maestros.receta_ingredientes.store');
+        
+        Route::get('/maestros/receta_ingredientes/{id}/edit', [RecetaIngredienteController::class, 'edit'])->name('admin.maestros.receta_ingredientes.edit');
+        
+        Route::put('/maestros/receta_ingredientes/receta/{id}', [RecetaIngredienteController::class, 'update'])->name('admin.maestros.receta_ingredientes.update');
+        
+        Route::delete('/maestros/receta_ingredientes/{id}', [RecetaIngredienteController::class, 'destroy'])->name('admin.maestros.receta_ingredientes.destroy');
+        
+        Route::put('/maestros/receta_ingredientes/{id}/activar', [RecetaIngredienteController::class, 'activar'])->name('admin.maestros.receta_ingredientes.activar');
+
+        /* Historial de Movimientos */
+
+        Route::get('/movimientos/historial_movimientos', [MovimientoInventarioController::class, 'index'])->name('admin.movimientos.historial_movimientos.index');
+
+        /* Registro Diario */
+
+        Route::get('/movimientos/registro_diario', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
+        
+        Route::get('/movimientos/registro_diario/export-pdf', [RegistroDiarioController::class, 'exportPdf'])->name('admin.movimientos.registro_diario.export_pdf');
+        
+        Route::get('/movimientos/registro_diario/export-excel', [RegistroDiarioController::class, 'exportExcel'])->name('admin.movimientos.registro_diario.export_excel');
+
+        /* Registro de Comida */
+        Route::get('/movimientos/registro_comida',[DetalleRegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_comida.index');
+
+        /* PNF */
+
+        Route::get('/maestros/pnf',[PnfController::class, 'index'])->name('admin.maestros.pnf.index');
+
+        Route::get('/maestros/pnf/create', [PnfController::class, 'create'])->name('admin.maestros.pnf.create');
+
+        Route::post('/maestros/pnf/store', [PnfController::class, 'store'])->name('admin.maestros.pnf.store');
+
+        Route::get('/maestros/pnf/edit/{id}', [PnfController::class, 'edit'])->name('admin.maestros.pnf.edit');
+
+        Route::put('/maestros/pnf/update', [PnfController::class, 'update'])->name('admin.maestros.pnf.update');
+
+        Route::delete('/maestros/pnf/destroy/{id}', [PnfController::class, 'destroy'])->name('admin.maestros.pnf.destroy');
+
+        Route::put('/maestros/pnf/activar/{id}', [PnfController::class, 'activar'])->name('admin.maestros.pnf.activar');
+
+        /* Persona */
+
+        Route::get('/persona',[PersonaController::class, 'index'])->name('admin.configuracion.persona.index');
+        
+        Route::get('/persona/create',[PersonaController::class, 'create'])->name('admin.configuracion.persona.create');
+        
+        Route::get('/persona/edit/{id}',[PersonaController::class, 'edit'])->name('admin.configuracion.persona.edit');
+        
+        Route::get('/persona/show/{id}',[PersonaController::class, 'show'])->name('admin.configuracion.persona.show');
+
+        //Rutas para Consultas
+        Route::get('consultas/reportes', [ReporteController::class, 'index'])->name('admin.consultas.reportes.index');
+
+        //Rutas para Configuracion
+        Route::get('configuracion', [AdminController::class, 'index'])->name('admin.configuracion.index');
+
+        Route::get('configuracion/indexar', [IndexarController::class, 'index'])->name('admin.configuracion.indexar.index');
+
+    });
+    
+});
 
 // Custom auth routes (replacing adminlte auth views)
 // Login
@@ -58,150 +293,6 @@ Route::post('password/recover/verify', [PasswordRecoveryController::class, 'veri
 Route::post('password/recover/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.recover.reset_password');
 Route::post('password/recover/reset-masterkey', [PasswordRecoveryController::class, 'resetMasterKey'])->name('password.recover.reset_masterkey');
 
-//Rutas para Maestros
-
-//Categorias
-
-Route::prefix('/admin/maestros/categorias')->group(function () {
-    //Index 
-    Route::get('/', [CategoriaController::class, 'index'])->name('admin.maestros.categorias.index');
-    //Crear una nueva categoría
-    Route::get('/create', [CategoriaController::class, 'create'])->name('admin.maestros.categorias.create');
-    //Almacenar una nueva categoría
-    Route::post('/store', [CategoriaController::class, 'store'])->name('admin.maestros.categorias.store');
-    //Mostrar una categoría específica
-    Route::get('/{categoria}', [CategoriaController::class, 'show'])->name('admin.maestros.categorias.show');
-    //Editar una categoría específica
-    Route::get('/{categoria}/edit', [CategoriaController::class, 'edit'])->name('admin.maestros.categorias.edit');
-    //Actualizar una categoría específica
-    Route::put('/{categoria}', [CategoriaController::class, 'update'])->name('admin.maestros.categorias.update');
-    //Eliminar una categoria especifica
-    Route::delete('/{categoria}', [CategoriaController::class, 'destroy'])->name('admin.maestros.categorias.destroy');
-    Route::put('/{categoria}/activar', [CategoriaController::class, 'activar'])->name('admin.maestros.productos.activar');
-})->middleware('auth');
-
-
-
-//Sucursales
-Route::prefix('/admin/maestros/sucursales')->middleware('auth')->group(function () {
-    Route::get('/', [SucursalController::class, 'index'])->name('admin.maestros.sucursales.index');
-    Route::get('/create', [SucursalController::class, 'create'])->name('admin.maestros.sucursales.create');
-    Route::post('/store', [SucursalController::class, 'store'])->name('admin.maestros.sucursales.store');
-    Route::get('/{sucursal}', [SucursalController::class, 'show'])->name('admin.maestros.sucursales.show');
-    Route::get('/{sucursal}/edit', [SucursalController::class, 'edit'])->name('admin.maestros.sucursales.edit');
-    Route::put('/{sucursal}', [SucursalController::class, 'update'])->name('admin.maestros.sucursales.update');
-    Route::delete('/{id}', [SucursalController::class, 'destroy'])->name('admin.maestros.sucursales.destroy');
-    Route::put('/{sucursal}/activar', [SucursalController::class, 'activar'])->name('admin.maestros.sucursales.activar');
-});
-
-//Productos
-
-Route::prefix('/admin/maestros/productos')->middleware('auth')->group(function () {
-    Route::get('/', [ProductoController::class, 'index'])->name('admin.maestros.productos.index');
-    Route::get('/create', [ProductoController::class, 'create'])->name('admin.maestros.productos.create');
-    Route::post('/store', [ProductoController::class, 'store'])->name('admin.maestros.productos.store');
-    Route::get('/{producto}', [ProductoController::class, 'show'])->name('admin.maestros.productos.show');
-    Route::get('/{producto}/edit', [ProductoController::class, 'edit'])->name('admin.maestros.productos.edit');
-    Route::put('/{producto}', [ProductoController::class, 'update'])->name('admin.maestros.productos.update');
-    Route::delete('/{producto}', [ProductoController::class, 'destroy'])->name('admin.maestros.productos.destroy');
-    Route::put('/{producto}/activar', [ProductoController::class, 'activar'])->name('admin.maestros.productos.activar');
-});
-
-//Registro Diario
-Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
-    Route::get('/', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
-    Route::get('/registro/{id}', [RegistroDiarioController::class, 'show'])->name('admin.movimientos.registro_diario.show');
-});
-
-
-//Proveedores
-Route::get('/admin/maestros/proveedores', [App\Http\Controllers\ProveedorController::class, 'index'])->name('admin.maestros.proveedores.index')->middleware('auth');
-Route::get('/admin/maestros/proveedores/create', [App\Http\Controllers\ProveedorController::class, 'create'])->name('admin.maestros.proveedores.create')->middleware('auth');
-Route::post('/admin/maestros/proveedores/store', [App\Http\Controllers\ProveedorController::class, 'store'])->name('admin.maestros.proveedores.store')->middleware('auth');
-Route::get('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'show'])->name('admin.maestros.proveedores.show')->middleware('auth');
-Route::get('/admin/maestros/proveedores/{proveedor}/edit', [App\Http\Controllers\ProveedorController::class, 'edit'])->name('admin.maestros.proveedores.edit')->middleware('auth');
-Route::put('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'update'])->name('admin.maestros.proveedores.update')->middleware('auth');
-Route::delete('/admin/maestros/proveedores/{proveedor}', [App\Http\Controllers\ProveedorController::class, 'destroy'])->name('admin.maestros.proveedores.destroy')->middleware('auth');
-Route::put('/admin/maestros/proveedores/{proveedor}/activar', [App\Http\Controllers\ProveedorController::class, 'activar'])->name('admin.maestros.proveedores.activar');
-//Recetas
-Route::get('/admin/maestros/recetas', [App\Http\Controllers\RecetaController::class, 'index'])->name('admin.maestros.recetas.index')->middleware('auth');
-Route::get('/admin/maestros/recetas/create', [App\Http\Controllers\RecetaController::class, 'create'])->name('admin.maestros.recetas.create')->middleware('auth');
-Route::post('/admin/maestros/recetas/store', [App\Http\Controllers\RecetaController::class, 'store'])->name('admin.maestros.recetas.store')->middleware('auth');
-Route::get('/admin/maestros/recetas/{receta}/edit', [App\Http\Controllers\RecetaController::class, 'edit'])->name('admin.maestros.recetas.edit')->middleware('auth');
-Route::put('/admin/maestros/recetas/{receta}', [App\Http\Controllers\RecetaController::class, 'update'])->name('admin.maestros.recetas.update')->middleware('auth');
-Route::delete('/admin/maestros/recetas/{receta}', [App\Http\Controllers\RecetaController::class, 'destroy'])->name('admin.maestros.recetas.destroy')->middleware('auth');
-Route::put('/admin/maestros/recetas/{receta}/activar', [App\Http\Controllers\RecetaController::class, 'activar'])->name('admin.maestros.recetas.activar');
-
-//Receta Ingredientes
-Route::get('/admin/maestros/receta_ingredientes', [App\Http\Controllers\RecetaIngredienteController::class, 'index'])->name('admin.maestros.receta_ingredientes.index')->middleware('auth');
-Route::get('/admin/maestros/receta_ingredientes/create', [App\Http\Controllers\RecetaIngredienteController::class, 'create'])->name('admin.maestros.receta_ingredientes.create')->middleware('auth');
-Route::post('/admin/maestros/receta_ingredientes/store', [App\Http\Controllers\RecetaIngredienteController::class, 'store'])->name('admin.maestros.receta_ingredientes.store')->middleware('auth');
-Route::get('/admin/maestros/receta_ingredientes/{id}/edit', [App\Http\Controllers\RecetaIngredienteController::class, 'edit'])->name('admin.maestros.receta_ingredientes.edit')->middleware('auth');
-Route::put('admin/maestros/receta_ingredientes/receta/{id}', [App\Http\Controllers\RecetaIngredienteController::class, 'update'])->name('admin.maestros.receta_ingredientes.update');
-Route::delete('/admin/maestros/receta_ingredientes/{id}', [App\Http\Controllers\RecetaIngredienteController::class, 'destroy'])->name('admin.maestros.receta_ingredientes.destroy')->middleware('auth');
-Route::put('admin/maestros/receta_ingredientes/{id}/activar', [App\Http\Controllers\RecetaIngredienteController::class, 'activar'])->name('admin.maestros.receta_ingredientes.activar');
-
-//Rutas para Movimientos
-
-//Compras
-Route::get('/admin/movimientos/compras', [App\Http\Controllers\CompraController::class, 'index'])->name('admin.movimientos.compras.index')->middleware('auth');
-Route::get('/admin/movimientos/compras/create', [App\Http\Controllers\CompraController::class, 'create'])->name('admin.movimientos.compras.create')->middleware('auth');
-Route::post('/admin/movimientos/compras/store', [App\Http\Controllers\CompraController::class, 'store'])->name('admin.movimientos.compras.store')->middleware('auth');
-Route::get('/admin/movimientos/compras/{id}', [App\Http\Controllers\CompraController::class, 'show'])->name('admin.movimientos.compras.show')->middleware('auth');
-Route::get('/admin/movimientos/compras/{id}/edit', [App\Http\Controllers\CompraController::class, 'edit'])->name('admin.movimientos.compras.edit')->middleware('auth');
-Route::get('/admin/movimientos/compras/{compra}/enviar-correo', [App\Http\Controllers\CompraController::class, 'enviarCorreo'])->name('admin.movimientos.compras.enviarCorreo')->middleware('auth');
-Route::post('/admin/movimientos/compras/{compra}/finalizar-compra', [App\Http\Controllers\CompraController::class, 'finalizarCompra'])->name('admin.movimientos.compras.finalizarCompra')->middleware('auth');
-Route::delete('/admin/movimientos/compras/{id}', [App\Http\Controllers\CompraController::class, 'destroy'])->name('admin.movimientos.compras.destroy')->middleware('auth');
-Route::get('/admin/movimientos/compras/e/export-pdf', [App\Http\Controllers\CompraController::class, 'exportPdf'])->name('admin.movimientos.compras.export_pdf')->middleware('auth');
-Route::post('admin/movimientos/compras/{compra}/cancelar',[App\Http\Controllers\CompraController::class, 'cancelar'])->name('admin.movimientos.compras.cancelar');
-
-//Lotes
-Route::get('/admin/movimientos/lotes', [App\Http\Controllers\LoteController::class, 'index'])->name('admin.movimientos.lotes.index')->middleware('auth');
-Route::get('/admin/movimientos/lotes/create', [App\Http\Controllers\LoteController::class, 'create'])->name('admin.movimientos.lotes.create')->middleware('auth');
-Route::post('/admin/movimientos/lotes/store', [App\Http\Controllers\LoteController::class, 'store'])->name('admin.movimientos.lotes.store')->middleware('auth');
-Route::get('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'show'])->name('admin.movimientos.lotes.show')->middleware('auth');
-Route::get('/admin/movimientos/lotes/{id}/edit', [App\Http\Controllers\LoteController::class, 'edit'])->name('admin.movimientos.lotes.edit')->middleware('auth');
-Route::put('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'update'])->name('admin.movimientos.lotes.update')->middleware('auth');
-Route::delete('/admin/movimientos/lotes/{id}', [App\Http\Controllers\LoteController::class, 'destroy'])->name('admin.movimientos.lotes.destroy')->middleware('auth');
-Route::post('admin/movimientos/lotes/mermar-vencidos', [App\Http\Controllers\LoteController::class, 'mermarVencidos'])->name('admin.movimientos.lotes.mermar');
-
-
-// Sucursales por Lotes
-Route::get('/admin/movimientos/sucursales_lotes', [App\Http\Controllers\InventarioSucursalLoteController::class, 'index'])->name('admin.movimientos.sucursales_lotes')->middleware('auth');
-Route::get('/admin/movimientos/sucursales_lotes/show/{id}', [App\Http\Controllers\InventarioSucursalLoteController::class, 'show'])->name('admin.movimientos.sucursales_lotes.show')->middleware('auth');
-
-// Historial de Movimientos
-Route::get('/admin/movimientos/historial_movimientos', [App\Http\Controllers\MovimientoInventarioController::class, 'index'])->name('admin.movimientos.historial_movimientos.index')->middleware('auth');
-
-// Registro diario
-Route::prefix('/admin/movimientos/registro_diario')->middleware('auth')->group(function () {
-    Route::get('/', [App\Http\Controllers\RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
-    Route::get('/export-pdf', [App\Http\Controllers\RegistroDiarioController::class, 'exportPdf'])->name('admin.movimientos.registro_diario.export_pdf');
-    Route::get('/export-excel', [App\Http\Controllers\RegistroDiarioController::class, 'exportExcel'])->name('admin.movimientos.registro_diario.export_excel');
-});
-
-Route::prefix('admin/movimientos/registro_comida')->middleware('auth')->group(function () {
-    Route::get('/',[DetalleRegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_comida.index');
-});
-
-Route::prefix('admin/maestros/pnf')->middleware('auth')->group(function () {
-    Route::get('/',[PnfController::class, 'index'])->name('admin.maestros.pnf.index');
-    Route::get('/create', [PnfController::class, 'create'])->name('admin.maestros.pnf.create');
-    Route::post('/store', [PnfController::class, 'store'])->name('admin.maestros.pnf.store');
-    Route::get('/edit/{id}', [PnfController::class, 'edit'])->name('admin.maestros.pnf.edit');
-    Route::put('/update', [PnfController::class, 'update'])->name('admin.maestros.pnf.update');
-    Route::delete('/destroy/{id}', [PnfController::class, 'destroy'])->name('admin.maestros.pnf.destroy');
-    Route::put('/activar/{id}', [PnfController::class, 'activar'])->name('admin.maestros.pnf.activar');
-});
-
-Route::prefix('admin/persona')->middleware('auth')->group(function () {
-    Route::get('/',[PersonaController::class, 'index'])->name('admin.configuracion.persona.index');
-    Route::get('/create',[PersonaController::class, 'create'])->name('admin.configuracion.persona.create');
-    Route::get('/edit/{id}',[PersonaController::class, 'edit'])->name('admin.configuracion.persona.edit');
-    Route::get('/show/{id}',[PersonaController::class, 'show'])->name('admin.configuracion.persona.show');
-    
-    
-});
 
 // ===== ESTADO (LIVEWIRE) =====
 Route::get('admin/estado', function () {
@@ -226,17 +317,6 @@ Route::get('admin/localidad', function () {
 
 // Ruta para verificar la existencia de una localidad
 Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
-
-
-//Rutas para Consultas
-Route::get('/admin/consultas/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('admin.consultas.reportes.index')->middleware('auth');
-
-//Rutas para Configuracion
-Route::get('/admin/configuracion', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.configuracion.index')->middleware('auth');
-
-Route::get('/admin/configuracion/indexar', [App\Http\Controllers\IndexarController::class, 'index'])->name('admin.configuracion.indexar.index')->middleware('auth');
-
-Route::post('admin/maestros/productos/actualizar-tasa',[ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
 
 // Configuración - Empleados y Permisos
 Route::prefix('admin/configuracion')->middleware(['auth', \App\Http\Middleware\CheckMenuPermission::class])->group(function () {

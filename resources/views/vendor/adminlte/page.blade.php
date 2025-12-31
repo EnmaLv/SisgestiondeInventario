@@ -20,6 +20,41 @@
             @include('adminlte::partials.common.preloader')
         @endif
 
+        <form id="form-actualizar-tasa"
+            action="{{ route('productos.actualizar.tasa') }}"
+            method="POST"
+            style="display:none;">
+            @csrf
+        </form>
+
+        @if(session()->has('tasa_pendiente'))
+            <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    title: '🔄 Actualización obligatoria',
+                    html: `
+                        <p style="font-size:15px">
+                            Para garantizar precios correctos es <b>obligatorio</b>
+                            actualizar la tasa del dólar BCV.
+                        </p>
+                    `,
+                    icon: 'warning',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    confirmButtonText: 'Actualizar ahora',
+                    confirmButtonColor: '#16a34a'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('form-actualizar-tasa').submit();
+                    }
+                });
+            });
+            </script>
+        @endif
+
+
+
+
         {{-- Top Navbar --}}
         @if ($layoutHelper->isLayoutTopnavEnabled())
             @include('adminlte::partials.navbar.navbar-layout-topnav')
