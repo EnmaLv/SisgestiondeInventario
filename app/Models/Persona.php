@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Exception;
 class Persona extends Model
 {
     protected $table = 'persona';
@@ -25,16 +27,140 @@ class Persona extends Model
         'id_sede',
     ];
 
-    protected $appends = ['nombre'];
-
-    public function getNombreAttribute()
+    public static function crearPersona($data)
     {
-        $first = trim(($this->nombre_persona ?? '') . ' ' . ($this->segundo_nombre_persona ?? ''));
-        $last = trim(($this->apellido_persona ?? '') . ' ' . ($this->segundo_apellido_persona ?? ''));
-        $full = trim($first . ' ' . $last);
-        return $full !== '' ? $full : '—';
+        //Iniciamos una transsaccion para crear la persona
+
+        DB::beginTransaction();
+
+        try {
+            //Primero creamos la persona
+            $personaId = DB::table('persona')->insertGetId([
+                'cedula_persona' => $data['cedula'],
+                'nombre_persona' => $data['nombre'],
+                'segundo_nombre_persona' => $data['segundo_nombre'],
+                'apellido_persona' => $data['apellido'],
+                'segundo_apellido_persona' => $data['segundo_apellido'],
+                'telefono_persona' => $data['telefono'],
+                'genero_persona' => $data['genero'],
+                'edad_persona' => Carbon::parse($data['fecha_nacimiento'])->age,
+                'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
+                'email_persona' => $data['email'],
+                'id_perfil' => $data['userPerfil'],
+                'id_sede' => $data['sedeId'] ?? null,
+            ]);
+
+            //Guardamos la direccion
+
+            DB::table('direccion')->insert([
+                'sector' => $data['sector'],
+                'calle' => $data['calle'],
+                'id_persona' => $personaId,
+                'id_parroquia' => $data['parroquiaId'],
+            ]);
+
+            //Guardamos el pnf y la sede si es un estudiante
+
+            if($data['userPerfil'] == 1){
+
+                //Asignar la sede
+                DB::table('persona')->where('id_persona', $personaId)->updateOrInsert([
+                    'id_sede' => $data['sedeId'],
+                ], [
+                    'id_sede' => $data['sedeId'],
+                ]);
+
+
+                //Asignar el pnf
+                DB::table('persona_pnf')->insert([
+                    'id_persona' => $personaId,
+                    'id_pnf' => $data['pnfId'],
+                    'fecha_inicio' => Carbon::now(),
+                    'fecha_fin' => Carbon::now(),
+                ]);
+                
+            }
+
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+
+            DB::rollBack(); 
+            return false;
+
+        }
+
     }
 
+    public static function actualizarPersona($data, $personaId)
+    {
+        // Lógica para actualizar la persona
+        DB::beginTransaction();
+
+        try {
+            // 1. Actualizar los datos básicos de la persona
+            DB::table('persona')->where('id_persona', $personaId)->update([
+                'nombre_persona'           => $data['nombre'],
+                'segundo_nombre_persona'   => $data['segundo_nombre'],
+                'apellido_persona'         => $data['apellido'],
+                'segundo_apellido_persona' => $data['segundo_apellido'],
+                'telefono_persona'         => $data['telefono'],
+                'genero_persona'           => $data['genero'],
+                'edad_persona'             => Carbon::parse($data['fecha_nacimiento'])->age,
+                'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
+                'email_persona'            => $data['email'],
+                'id_perfil'                => $data['userPerfil'],
+                'id_sede'                  => $data['sedeId'] ?? null,
+            ]);
+
+            //En el dado caso de cambiar la cedula, debemos verificar que no exista otra persona con esa cedula
+            $personaExistente = DB::table('persona')
+                ->where('cedula_persona', $data['cedula'])
+                ->where('id_persona', '!=', $personaId)
+                ->first();
+            
+            if ($personaExistente) {
+                throw new Exception('Ya existe otra persona con esa cédula');
+            }else{
+                DB::table('persona')->where('id_persona', $personaId)->update([
+                    'cedula_persona' => $data['cedula']
+                ]);
+            }
+
+            // 2. Actualizar la dirección
+            // Usamos updateOrInsert por si acaso la persona no tenía dirección previa
+            DB::table('direccion')->updateOrInsert(
+                ['id_persona' => $personaId], // Condición de búsqueda
+                [
+                    'sector'       => $data['sector'],
+                    'calle'        => $data['calle'],
+                    'id_parroquia' => $data['parroquiaId'],
+                ]
+            );
+
+            // 3. Lógica específica para Estudiantes (Perfil ID 1)
+            if ($data['userPerfil'] == 1) {
+                
+                // Actualizar o insertar el PNF relacionado
+                DB::table('persona_pnf')->updateOrInsert(
+                    ['id_persona' => $personaId], // Condición
+                    [
+                        'id_pnf'       => $data['pnfId'],
+                        'fecha_inicio' => Carbon::now(), // O mantener la original si fuera necesario
+                        'fecha_fin'    => Carbon::now(),
+                    ]
+                );
+            }
+
+            DB::commit();
+            return [true, null];
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return [false, $e->getMessage()];
+        }
+    }
     public function usuarios()
     {
         return $this->hasMany(Usuario::class, 'id_persona', 'id_persona');

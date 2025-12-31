@@ -22,6 +22,6 @@ class PersonaPnf extends Model
 
     public function pnf()
     {
-        return $this->belongsTo(Pnf::class, 'id_pnf');
+        return $this->belongsTo(Pnf::class, 'id_pnf', 'id_pnf');
     }
 }

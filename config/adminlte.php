@@ -438,9 +438,9 @@ return [
         ],
         [
             'text' => 'Registrar Usuarios',
-            'url' => '',
+            'url' => 'admin/persona',
             'icon' => 'fas fa-solid fa-address-card ',
-            'active' => ['admin/movimientos/*'],
+            'active' => ['admin/persona*'],
         ],
 
         ['header' => 'UBICACIÓN GEOGRÁFICA'],
