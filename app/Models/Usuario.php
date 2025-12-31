@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Rol;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
     protected $table = 'usuario';
     protected $primaryKey = 'id_usuario';
@@ -16,9 +17,18 @@ class Usuario extends Model
         'id_perfil',
         'username',
         'password',
+        'role',
+        'master_key',
+        'security_questions',
+        'extra_permissions',
     ];
 
     protected $hidden = ['password'];
+
+    protected $casts = [
+        'security_questions' => 'array',
+        'extra_permissions' => 'array',
+    ];
 
     public function perfil()
     {
@@ -30,13 +40,57 @@ class Usuario extends Model
         return $this->belongsTo(Persona::class, 'id_persona', 'id_persona');
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, 'rol_usuario', 'id_usuario', 'id_rol');
+    }
+
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
     }
 
+    public function setMasterKeyAttribute($value)
+    {
+        $this->attributes['master_key'] = Hash::make($value);
+    }
+
+    public function verifyMasterKey($candidate)
+    {
+        try {
+            $stored = $this->getOriginal('master_key') ?: $this->master_key;
+            if (is_null($stored) || $stored === '') {
+                return false;
+            }
+
+            return Hash::check($candidate, $stored);
+        } catch (\RuntimeException $e) {
+            // Fallback: if hasher enforces bcrypt algorithm, try native password_verify
+            $stored = $this->getOriginal('master_key') ?: $this->master_key;
+            if (is_string($stored) && $stored !== '') {
+                return password_verify($candidate, $stored);
+            }
+
+            return false;
+        }
+    }
+
     public function verifyPassword($candidate)
     {
-        return Hash::check($candidate, $this->getOriginal('password')) || Hash::check($candidate, $this->password);
+        try {
+            $stored = $this->getOriginal('password') ?: $this->password;
+            if (is_null($stored) || $stored === '') {
+                return false;
+            }
+
+            return Hash::check($candidate, $stored);
+        } catch (\RuntimeException $e) {
+            $stored = $this->getOriginal('password') ?: $this->password;
+            if (is_string($stored) && $stored !== '') {
+                return password_verify($candidate, $stored);
+            }
+
+            return false;
+        }
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
 
 class PasswordRecoveryController extends Controller
@@ -17,7 +17,7 @@ class PasswordRecoveryController extends Controller
     public function postEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-        $user = User::where('email', $request->email)->first();
+        $user = Usuario::where('username', $request->email)->first();
         if (!$user) {
             return back()->withErrors(['email' => 'Usuario no encontrado.']);
         }
@@ -28,8 +28,8 @@ class PasswordRecoveryController extends Controller
             return back()->withErrors(['email' => 'El usuario no tiene preguntas de seguridad configuradas.']);
         }
 
-        session(['recovery_user_id' => $user->id]);
-        return view('auth.recover_questions', ['questions' => $questions, 'role' => $user->role]);
+        session(['recovery_user_id' => $user->id_usuario]);
+        return view('auth.recover_questions', ['questions' => $questions]);
     }
 
     public function verifyAnswers(Request $request)
@@ -38,8 +38,7 @@ class PasswordRecoveryController extends Controller
         if (!$id) {
             return redirect()->route('password.recover.email')->withErrors(['email' => 'Sesión expirada.']);
         }
-
-        $user = User::find($id);
+        $user = Usuario::find($id);
         $stored = $user->security_questions ?? [];
 
         $answers = $request->input('answers', []);
@@ -53,14 +52,20 @@ class PasswordRecoveryController extends Controller
             }
         }
 
-        // Answers validated
-        if ($user->role === 'Obrero') {
-            // allow reset password flow
+        // Answers validated: decide based on assigned roles
+        $hasObrero = $user->roles()->where('nombre', 'Obrero')->exists();
+        $hasAdmin = $user->roles()->where('nombre', 'Administrador')->exists();
+
+        if ($hasObrero && ! $hasAdmin) {
             return view('auth.reset_password', ['user' => $user]);
         }
 
-        // Admin: give choice to reset password or master key
-        return view('auth.admin_recovery_choice', ['user' => $user]);
+        if ($hasAdmin) {
+            return view('auth.admin_recovery_choice', ['user' => $user]);
+        }
+
+        // Default: allow password reset
+        return view('auth.reset_password', ['user' => $user]);
     }
 
     /**
@@ -73,7 +78,7 @@ class PasswordRecoveryController extends Controller
             return redirect()->route('password.recover.email')->withErrors(['email' => 'Sesión expirada.']);
         }
 
-        $user = User::find($id);
+        $user = Usuario::find($id);
         if (!$user) {
             return redirect()->route('password.recover.email')->withErrors(['email' => 'Usuario no encontrado.']);
         }
@@ -83,7 +88,7 @@ class PasswordRecoveryController extends Controller
             return redirect()->route('password.recover.email')->withErrors(['email' => 'El usuario no tiene preguntas de seguridad configuradas.']);
         }
 
-        return view('auth.recover_questions', ['questions' => $questions, 'role' => $user->role]);
+        return view('auth.recover_questions', ['questions' => $questions]);
     }
 
     public function resetPassword(Request $request)
@@ -92,7 +97,7 @@ class PasswordRecoveryController extends Controller
         if (!$id) return redirect()->route('password.recover.email');
 
         $request->validate(['password' => 'required|string|min:8|confirmed']);
-        $user = User::find($id);
+        $user = Usuario::find($id);
         $user->password = Hash::make($request->password);
         $user->save();
         session()->forget('recovery_user_id');
@@ -105,7 +110,7 @@ class PasswordRecoveryController extends Controller
         if (!$id) return redirect()->route('password.recover.email');
 
         $request->validate(['master_key' => 'required|string|min:6']);
-        $user = User::find($id);
+        $user = Usuario::find($id);
         $user->master_key = $request->master_key; // mutator encrypts
         $user->save();
         session()->forget('recovery_user_id');

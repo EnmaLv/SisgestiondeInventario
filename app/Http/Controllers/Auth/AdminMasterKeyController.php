@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use App\Models\Usuario;
 
 class AdminMasterKeyController extends Controller
 {
@@ -29,7 +29,7 @@ class AdminMasterKeyController extends Controller
             return redirect()->route('login')->withErrors(['email' => 'Session expired, please login again.']);
         }
 
-        $user = User::find($id);
+        $user = Usuario::find($id);
         if (!$user) {
             return redirect()->route('login')->withErrors(['email' => 'User not found.']);
         }
@@ -37,7 +37,7 @@ class AdminMasterKeyController extends Controller
         if ($user->verifyMasterKey($request->input('master_key'))) {
             // clear pending and login
             session()->forget('pending_admin_id');
-            Auth::loginUsingId($user->id);
+            Auth::loginUsingId($user->id_usuario ?? $user->id);
             return redirect()->intended('/home');
         }
 

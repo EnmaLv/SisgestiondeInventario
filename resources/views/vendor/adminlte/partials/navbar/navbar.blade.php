@@ -18,8 +18,8 @@
     </ul>
     <ul class="navbar-nav ml-left">
         <li class="nav-item align-self-center">
-            <nav aria-label="breadcrumb" class="mb-0">
-                {!! Breadcrumbs::render() !!}
+                <nav aria-label="breadcrumb" class="mb-0">
+                {!! (class_exists(\Diglactic\Breadcrumbs\Breadcrumbs::class) && \Diglactic\Breadcrumbs\Breadcrumbs::exists()) ? \Diglactic\Breadcrumbs\Breadcrumbs::render() : '' !!}
             </nav>
         </li>
     </ul>

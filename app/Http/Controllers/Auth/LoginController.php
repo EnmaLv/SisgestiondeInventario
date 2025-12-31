@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth as AuthFacade;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Usuario;
 
 
 class LoginController extends Controller
@@ -69,14 +70,11 @@ class LoginController extends Controller
         $perfil = $usuario->perfil()->first();
         if ($perfil && $perfil->nombre_perfil === 'Administrador') {
             session(['pending_admin_id' => $usuario->id_usuario]);
-            return redirect()->route('admin.master_key.form');
+            return redirect()->route('admin.configuracion.master_key.form');
         }
 
-        // Non-admin: log in the legacy user (if exists) and redirect
-        $legacy = \App\Models\User::where('email', $username)->first();
-        if ($legacy) {
-            AuthFacade::login($legacy);
-        }
+        // Non-admin: log in the usuario and redirect
+        AuthFacade::login($usuario);
 
         return redirect()->intended($this->redirectTo);
     }
@@ -87,11 +85,18 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        if ($user->role === 'Administrador') {
+        // If user belongs to Administrador role, require master key before granting session
+        try {
+            $isAdmin = $user->roles()->where('nombre', 'Administrador')->exists();
+        } catch (\Exception $e) {
+            $isAdmin = ($user->role ?? '') === 'Administrador';
+        }
+
+        if ($isAdmin) {
             // Log out the session and require master key step
             Auth::logout();
-            session(['pending_admin_id' => $user->id]);
-            return redirect()->route('admin.master_key.form');
+            session(['pending_admin_id' => $user->id_usuario ?? $user->id]);
+            return redirect()->route('admin.configuracion.master_key.form');
         }
 
         return redirect()->intended($this->redirectPath());

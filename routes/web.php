@@ -7,6 +7,9 @@ use App\Http\Controllers\Auth\PasswordRecoveryController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\Admin\Configuracion\EmpleosController;
+use App\Http\Controllers\Admin\Configuracion\PermisosController;
+use App\Http\Controllers\Admin\Configuracion\RolesController;
 use App\Http\Controllers\RegistroDiarioController;
 use App\Http\Controllers\DetalleRegistroDiarioController;
 use App\Http\Controllers\PnfController;
@@ -31,6 +34,12 @@ Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout
 // Register
 Route::get('register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+
+// Security questions flow shown immediately after register
+Route::middleware('auth')->group(function () {
+    Route::get('security-questions', [App\Http\Controllers\Auth\RegisterController::class, 'showSecurityQuestionsForm'])->name('security.questions');
+    Route::post('security-questions', [App\Http\Controllers\Auth\RegisterController::class, 'saveSecurityQuestions'])->name('security.questions.save');
+});
 
 // Admin master key verification
 Route::get('admin/master-key', [AdminMasterKeyController::class, 'showForm'])->name('admin.master_key.form');
@@ -218,3 +227,28 @@ Route::get('/admin/configuracion', [App\Http\Controllers\AdminController::class,
 Route::get('/admin/configuracion/indexar', [App\Http\Controllers\IndexarController::class, 'index'])->name('admin.configuracion.indexar.index')->middleware('auth');
 
 Route::post('admin/maestros/productos/actualizar-tasa',[ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
+
+// Configuración - Empleados y Permisos
+Route::prefix('admin/configuracion')->middleware(['auth', \App\Http\Middleware\CheckMenuPermission::class])->group(function () {
+    Route::get('/empleados', [EmpleosController::class, 'index'])->name('admin.configuracion.empleados.index');
+    Route::get('/empleados/{id}/edit', [EmpleosController::class, 'edit'])->name('admin.configuracion.empleados.edit');
+    Route::get('/empleados/{id}', [EmpleosController::class, 'show'])->name('admin.configuracion.empleados.show');
+    Route::put('/empleados/{id}', [EmpleosController::class, 'update'])->name('admin.configuracion.empleados.update');
+    Route::delete('/empleados/{id}', [EmpleosController::class, 'destroy'])->name('admin.configuracion.empleados.destroy');
+
+    Route::get('/permisos', [PermisosController::class, 'index'])->name('admin.configuracion.permisos.index');
+    Route::get('/permisos/{id}/edit', [PermisosController::class, 'edit'])->name('admin.configuracion.permisos.edit');
+    Route::put('/permisos/{id}', [PermisosController::class, 'update'])->name('admin.configuracion.permisos.update');
+
+    // Roles CRUD
+    Route::get('/roles', [RolesController::class, 'index'])->name('admin.configuracion.roles.index');
+    Route::get('/roles/create', [RolesController::class, 'create'])->name('admin.configuracion.roles.create');
+    Route::post('/roles', [RolesController::class, 'store'])->name('admin.configuracion.roles.store');
+    Route::get('/roles/{id}/edit', [RolesController::class, 'edit'])->name('admin.configuracion.roles.edit');
+    Route::put('/roles/{id}', [RolesController::class, 'update'])->name('admin.configuracion.roles.update');
+    Route::delete('/roles/{id}', [RolesController::class, 'destroy'])->name('admin.configuracion.roles.destroy');
+
+    // Master key verification routes for configuration access
+    Route::get('/master-key', [EmpleosController::class, 'masterKeyForm'])->name('admin.configuracion.master_key.form');
+    Route::post('/master-key/verify', [EmpleosController::class, 'verifyMasterKey'])->name('admin.configuracion.master_key.verify');
+});

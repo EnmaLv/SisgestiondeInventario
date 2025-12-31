@@ -349,6 +349,7 @@ return [
 
         [
             'text' => 'Categorías de Productos',
+            'key' => 'productos_categorias',
             'url' => 'admin/maestros/categorias',
             'icon' => 'fas fa-tags ',
             'active' => ['admin/maestros/categorias*'],
@@ -356,6 +357,7 @@ return [
 
         [
             'text' => 'Productos y Alimentos',
+            'key' => 'productos',
             'url' => 'admin/maestros/productos',
             'icon' => 'fas fa-box ',
             'active' => ['admin/maestros/productos*'],
@@ -363,6 +365,7 @@ return [
 
         [
             'text' => 'Proveedores',
+            'key' => 'proveedores',
             'url' => 'admin/maestros/proveedores',
             'icon' => 'fas fa-truck ',
             'active' => ['admin/maestros/proveedores*'],
@@ -405,6 +408,7 @@ return [
         ],
         [
             'text' => 'Registro Comida',
+            'key' => 'registro_comida',
             'url' => 'admin/movimientos/registro_comida',
             'icon' => 'fas fa-clipboard-check ',
             'active' => ['admin/movimientos/registro_comida*'],
@@ -413,6 +417,7 @@ return [
 
         [
             'text' => 'Registro Diario de Comidas',
+            'key' => 'registro_diario',
             'url' => 'admin/movimientos/registro_diario',
             'icon' => 'fas fa-concierge-bell ',
             'active' => ['admin/movimientos/registro_diario*'],
@@ -426,6 +431,7 @@ return [
         ['header' => 'Registros' ],
         [
             'text' => 'Pnf',
+            'key' => 'pnf',
             'url' => 'admin/maestros/pnf',
             'icon' => 'fas fa-graduation-cap ',
             'active' => ['admin/maestro/pnf*'],
@@ -441,21 +447,25 @@ return [
 
         [
             'text' => 'Ubicaciones',
+            'key' => 'ubicaciones',
             'icon' => 'fas fa-map-marked-alt',
             'active' => ['admin/estado*'],
             'submenu' => [
                 [
                     'text' => 'Estados',
+                    'key' => 'ubicaciones_estados',
                     'url'  => 'admin/estado',
                     'icon' => 'fas fa-globe',
                 ],
                 [
                     'text' => 'Municipios',
+                    'key' => 'ubicaciones_municipios',
                     'url'  => 'admin/municipio',
                     'icon' => 'fas fa-city',
                 ],
                 [
                     'text' => 'Localidades',
+                    'key' => 'ubicaciones_localidades',
                     'url'  => 'admin/localidad',
                     'icon' => 'fas fa-home',
                 ],
@@ -478,24 +488,30 @@ return [
         /* ---------------------------------------------------
         | ⚙️ CONFIGURACIÓN
         --------------------------------------------------- */
-        /* ['header' => '⚙️ CONFIGURACIÓN DEL SISTEMA'],
+        ['header' => '⚙️ Configuración','classes' => 'text-bold'],
 
         [
-            'text' => 'Preferencias del Sistema',
-            'url' => 'admin/configuracion',
-            'icon' => 'fas fa-cog text-secondary',
+            'text' => 'Empleados',
+            'key' => 'config_empleados',
+            'url' => 'admin/configuracion/empleados',
+            'icon' => 'fas fa-users-cog',
+            'active' => ['admin/configuracion/empleados*'],
         ],
         [
-            'text' => 'Indexar Datos',
-            'url' => 'admin/configuracion/indexar',
-            'icon' => 'fas fa-search text-dark',
+            'text' => 'Roles',
+            'key' => 'config_roles',
+            'url' => 'admin/configuracion/roles',
+            'icon' => 'fas fa-user-tag',
+            'active' => ['admin/configuracion/roles*'],
         ],
-
         [
-            'text' => 'Salir',
-            'url' => 'logout',
-            'icon' => 'fas fa-sign-out-alt text-danger',
-        ], */
+            'text' => 'Permisos',
+            'key' => 'config_permisos',
+            'url' => 'admin/configuracion/permisos',
+            'icon' => 'fas fa-key',
+            'active' => ['admin/configuracion/permisos*'],
+        ],
+        
     ],
 
 
@@ -513,6 +529,7 @@ return [
     */
 
     'filters' => [
+        App\Menu\Filters\PermissionFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,

@@ -20,7 +20,6 @@
         @endforeach
         <button class="btn" type="submit">Verificar</button>
     </form>
-    <p style="margin-top:12px;color:#666">Role: {{ $role }}</p>
 </div>
 </body>
 </html>

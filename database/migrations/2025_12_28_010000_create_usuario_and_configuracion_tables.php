@@ -19,6 +19,10 @@ return new class extends Migration
             $table->foreignId('id_perfil')->constrained('perfil', 'id_perfil')->onDelete('cascade');
             $table->string('username')->unique();
             $table->string('password');
+            // Authentication and security fields consolidated from later alters
+            $table->text('master_key')->nullable();
+            $table->json('security_questions')->nullable();
+            $table->json('extra_permissions')->nullable();
             $table->timestamps();
         });
 
@@ -30,21 +34,17 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // seed default perfiles if not present and estatus row exists
+        // seed a default perfil used for grouping users (do NOT create role-like perfiles such as 'Administrador' here)
         if (Schema::hasTable('perfil') && Schema::hasTable('estatus')) {
-            // Only insert if there is an estatus with id_estatus = 1 (or any) to satisfy FK
             $estatusExists = DB::table('estatus')->exists();
             if ($estatusExists) {
-                $exists = DB::table('perfil')->whereIn('nombre_perfil', ['Administrador','Obrero','Económico'])->count();
+                $exists = DB::table('perfil')->where('nombre_perfil', 'Usuario')->count();
                 if ($exists === 0) {
-                    // find a sensible id_estatus to reference: try id_estatus = 1 else pick first
                     $estatusRow = DB::table('estatus')->orderBy('id_estatus')->first();
                     $estatusId = $estatusRow->id_estatus ?? null;
                     if ($estatusId) {
                         DB::table('perfil')->insert([
-                            ['nombre_perfil' => 'Administrador', 'id_estatus' => $estatusId, 'created_at' => now(), 'updated_at' => now()],
-                            ['nombre_perfil' => 'Obrero', 'id_estatus' => $estatusId, 'created_at' => now(), 'updated_at' => now()],
-                            ['nombre_perfil' => 'Económico', 'id_estatus' => $estatusId, 'created_at' => now(), 'updated_at' => now()],
+                            ['nombre_perfil' => 'Usuario', 'id_estatus' => $estatusId, 'created_at' => now(), 'updated_at' => now()],
                         ]);
                     }
                 }

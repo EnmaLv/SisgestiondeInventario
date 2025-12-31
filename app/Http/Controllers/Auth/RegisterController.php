@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Usuario;
+use App\Models\Rol;
 
 use App\Services\AuthService;
+use App\Models\ConfiguracionSistema;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -56,16 +58,27 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'first_lastname' => ['required', 'string', 'max:255'],
+            'cedula' => ['required', 'digits_between:1,8'],
+            'telefono' => ['nullable', 'regex:/^\d{4}-\d{7}$/'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:usuario,username'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'security_questions' => ['required', 'array', 'min:1'],
+            'security_questions' => ['required', 'array', 'size:2'],
             'security_questions.*.question' => ['required', 'string'],
             'security_questions.*.answer' => ['required', 'string'],
         ];
 
-        // If no Administrador exists, require master_key (first admin must set it)
-        if (User::where('role', 'Administrador')->count() === 0) {
+        // If no Administrador role assignment exists, require master_key (first admin must set it)
+        try {
+            $adminRol = Rol::where('nombre', 'Administrador')->first();
+            $adminCount = $adminRol ? $adminRol->usuarios()->count() : 0;
+        } catch (\Throwable $e) {
+            // If Rol table doesn't exist yet or another error, fall back to safe default using perfil check
+            $adminCount = Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')->where('perfil.nombre_perfil', 'Administrador')->count();
+        }
+
+        if ($adminCount === 0) {
             $rules['master_key'] = ['required', 'string', 'min:6'];
         }
 
@@ -77,7 +90,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Models\User
+    * @return \App\Models\Usuario
      */
     protected function create(array $data)
     {
@@ -86,12 +99,12 @@ class RegisterController extends Controller
 
         // Prepare persona data mapping to existing persona table structure if needed
             $personaData = [
-                'nombre_persona' => $data['name'],
+                'nombre_persona' => $data['first_name'],
                 'segundo_nombre_persona' => null,
-                'apellido_persona' => $data['name'],
+                'apellido_persona' => $data['first_lastname'],
                 'segundo_apellido_persona' => null,
-                'cedula_persona' => $data['email'],
-                'telefono_persona' => '',
+                'cedula_persona' => $data['cedula'] ?? null,
+                'telefono_persona' => $data['telefono'] ?? null,
                 'genero_persona' => '',
                 'edad_persona' => 0,
                 'fecha_nacimiento_persona' => now(),
@@ -105,18 +118,56 @@ class RegisterController extends Controller
         ];
 
         // register persona + usuario
+        // Normalize phone to format 0000-0000000 if provided (in case client didn't)
+        if (!empty($data['telefono'])) {
+            $digits = preg_replace('/\D+/', '', $data['telefono']);
+            $digits = substr($digits, 0, 11);
+            if (strlen($digits) >= 5) {
+                $personaData['telefono_persona'] = substr($digits, 0, 4) . '-' . substr($digits, 4);
+            } else {
+                $personaData['telefono_persona'] = $digits;
+            }
+        }
+
         $usuario = $authService->register($personaData, $userData);
 
-        // Legacy Laravel user (keeps default auth scaffolding working)
-        $role = User::where('role', 'Administrador')->count() === 0 ? 'Administrador' : 'Obrero';
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role' => $role,
-        ]);
+        // Decide role: if no user has Administrador role yet, assign Administrador to first registrant; otherwise assign Obrero
+        try {
+            $adminRol = Rol::firstOrCreate(
+                ['nombre' => 'Administrador'],
+                ['descripcion' => 'Rol por defecto Administrador', 'slug' => 'administrador']
+            );
+            $obreroRol = Rol::firstOrCreate(
+                ['nombre' => 'Obrero'],
+                ['descripcion' => 'Rol por defecto Obrero', 'slug' => 'obrero']
+            );
 
-        // Save security questions to legacy user as well
+            $adminCount = $adminRol->usuarios()->count();
+            $assignRol = $adminCount === 0 ? $adminRol : $obreroRol;
+
+            // Attach to pivot table
+            if (! $usuario->roles()->where('rol.id_rol', $assignRol->id_rol)->exists()) {
+                $usuario->roles()->attach($assignRol->id_rol);
+            }
+
+            // If assigned as admin and master_key provided, persist system master key
+            if ($assignRol->nombre === 'Administrador' && !empty($data['master_key'])) {
+                try {
+                    ConfiguracionSistema::updateMasterKey($data['master_key']);
+                } catch (\Throwable $ex) {
+                    // ignore if config table not available
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback: legacy single-column role assignment if roles table not available
+            $role = Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')->where('perfil.nombre_perfil', 'Administrador')->count() === 0 ? 'Administrador' : 'Obrero';
+            $usuario->role = $role;
+        }
+        if (!empty($data['master_key'])) {
+            $usuario->master_key = $data['master_key'];
+        }
+
+        // store security questions if provided
         if (!empty($data['security_questions']) && is_array($data['security_questions'])) {
             $sq = [];
             foreach ($data['security_questions'] as $qa) {
@@ -127,10 +178,14 @@ class RegisterController extends Controller
                     ];
                 }
             }
-            $user->security_questions = $sq;
-            $user->save();
+            if (!empty($sq)) {
+                $usuario->security_questions = $sq;
+            }
         }
 
-        return $user;
+        $usuario->save();
+
+        return $usuario;
     }
+    
 }

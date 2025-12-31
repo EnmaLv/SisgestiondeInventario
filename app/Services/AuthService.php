@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Usuario;
 use App\Models\Persona;
 use App\Models\Perfil;
+use App\Models\Rol;
 use App\Models\ConfiguracionSistema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -25,15 +26,9 @@ class AuthService
             $estadoVeId = $this->ensureEstadoVe();
             $sedeId = $this->ensureSede($estadoVeId);
 
-            // Ensure perfiles exist and get admin/obrero IDs
-            $adminPerfil = $this->ensurePerfil('Administrador', $estatusId);
-            $obreroPerfil = $this->ensurePerfil('Obrero', $estatusId);
-
-            $hasAdmin = Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')
-                ->where('perfil.nombre_perfil', 'Administrador')
-                ->exists();
-
-            $perfilId = $hasAdmin ? $obreroPerfil->id_perfil : $adminPerfil->id_perfil;
+            // Ensure a generic perfil for grouping users exists (Perfil groups persons/departments)
+            $defaultPerfil = $this->ensurePerfil('Usuario', $estatusId);
+            $perfilId = $defaultPerfil->id_perfil;
 
             // attach perfil and sede to persona data if not provided
             if (empty($personaData['id_perfil'])) {
@@ -54,10 +49,7 @@ class AuthService
                 'password' => $userData['password'],
             ]);
 
-            // If created as Administrador and master_key provided, store hashed master key
-            if (!$hasAdmin && !empty($userData['master_key'])) {
-                ConfiguracionSistema::updateMasterKey($userData['master_key']);
-            }
+            // Master key handling will be performed by the caller if needed based on assigned roles
 
             return $usuario;
         });
@@ -126,8 +118,16 @@ class AuthService
      */
     public function verifyMasterKeyForUsuario(Usuario $usuario, string $masterKey): bool
     {
-        $perfil = $usuario->perfil()->first();
-        if ($perfil && $perfil->nombre_perfil === 'Administrador') {
+        // Check if usuario has Administrador role
+        try {
+            $isAdmin = $usuario->roles()->where('nombre', 'Administrador')->exists();
+        } catch (\Throwable $e) {
+            // Fallback to perfil check if roles table not available
+            $perfil = $usuario->perfil()->first();
+            $isAdmin = $perfil && $perfil->nombre_perfil === 'Administrador';
+        }
+
+        if ($isAdmin) {
             return ConfiguracionSistema::checkMasterKey($masterKey);
         }
 
@@ -145,8 +145,14 @@ class AuthService
             throw new AuthenticationException('Credenciales inválidas');
         }
 
-        $perfil = $usuario->perfil()->first();
-        if ($perfil && $perfil->nombre_perfil === 'Administrador') {
+        try {
+            $isAdmin = $usuario->roles()->where('nombre', 'Administrador')->exists();
+        } catch (\Throwable $e) {
+            $perfil = $usuario->perfil()->first();
+            $isAdmin = $perfil && $perfil->nombre_perfil === 'Administrador';
+        }
+
+        if ($isAdmin) {
             if (empty($masterKey) || !ConfiguracionSistema::checkMasterKey($masterKey)) {
                 throw new AuthenticationException('Llave maestra requerida o inválida');
             }

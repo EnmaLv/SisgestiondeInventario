@@ -25,6 +25,16 @@ class Persona extends Model
         'id_sede',
     ];
 
+    protected $appends = ['nombre'];
+
+    public function getNombreAttribute()
+    {
+        $first = trim(($this->nombre_persona ?? '') . ' ' . ($this->segundo_nombre_persona ?? ''));
+        $last = trim(($this->apellido_persona ?? '') . ' ' . ($this->segundo_apellido_persona ?? ''));
+        $full = trim($first . ' ' . $last);
+        return $full !== '' ? $full : '—';
+    }
+
     public function usuarios()
     {
         return $this->hasMany(Usuario::class, 'id_persona', 'id_persona');
