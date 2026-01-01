@@ -11,14 +11,16 @@ class PersonaController extends Controller
     {
         //En el caso de que tenga una busqueda
         
-        $query = Persona::select('id_persona','nombre_persona', 'apellido_persona','email_persona', 'id_perfil');
+        $query = Persona::select('id_persona','nombre_persona', 'apellido_persona','email_persona', 'cedula_persona');
         
         if ($request->has('buscar') && $request->buscar != '') {
-            $query->where('nombre_persona', 'like', '%' . $request->buscar . '%')
-                  ->orWhere('apellido_persona', 'like', '%' . $request->buscar . '%');
+            $buscar = $request->buscar;
+            $query->where('nombre_persona', 'like', "%{$buscar}%")
+                  ->orWhere('apellido_persona', 'like', "%{$buscar}%")
+                  ->orWhere('cedula_persona', 'like', "%{$buscar}%");
         }
         
-        $personas = $query->paginate(10);
+        $personas = $query->where('id_perfil', 1)->paginate(10);
         return view('admin.configuracion.persona.index', compact('personas'));
     }
     

@@ -12,25 +12,10 @@
                         <label class="rd-label">Cédula / ID</label>
                         <div class="rd-input-group {{ $errors->has('cedula') ? 'border-danger' : '' }}">
                             <span><i class="fas fa-fingerprint"></i></span>
-                            <input type="number" wire:model.lazy="cedula" name="cedula" class="rd-input form-control" placeholder="25123456" value="{{ old('cedula')}}"
+                            <input type="number" wire:model.lazy="cedula" min="7" name="cedula" class="rd-input form-control" placeholder="25123456" value="{{ old('cedula')}}"
                             {{ $onlyShow ? 'disabled' : ''  }}>
                         </div>
                         @error('cedula')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="rd-label">Perfil de Usuario</label>
-                        <div class="rd-input-group">
-                            <span><i class="fas fa-user-shield"></i></span>
-                            <select wire:model.lazy="userPerfil" name="perfil_id" class="rd-input form-control" {{$onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}">
-                                <option value="" selected>Asignar Perfil</option>
-                                @foreach($perfil as $p)
-                                    <option value="{{ $p->id_perfil}}">{{ $p->nombre_perfil }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @error('userPerfil')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
@@ -142,18 +127,18 @@
                 </div>
             </div>
 
-            @if($showPnf)
+
             <div class="mb-4 fade-in">
                 <h5 class="rd-title-sm text-muted mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-address-book mr-1"></i> Información Academica
                 </h5>
 
                 <div class="row">
-                    <div class="col-md-3 mb-3 fade-in">
+                    <div class="col-md-4 mb-3 fade-in">
                         <label class="rd-label">PNF</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-university"></i></span>
-                            <select wire:model="pnfId" class="rd-input form-control" {{ $onlyShow ? 'disabled' : ''  }}>
+                            <select wire:model="pnfId" class="rd-input form-control" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} >
                                 <option value="">Seleccione PNF</option>
                                 @foreach($pnfs as $pnf)
                                     <option value="{{ $pnf->id_pnf }}">{{ $pnf->nombre_pnf }}</option>
@@ -162,11 +147,11 @@
                         </div>
                         @error('pnfId') <small class="text-danger"><b>El PNF es obligatorio</b></small> @enderror
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label class="rd-label">Sede del Estudiante</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-university"></i></span>
-                            <select wire:model="sedeId" class="rd-input form-control" {{ $onlyShow ? 'disabled' : ''  }}>
+                            <select wire:model="sedeId" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}>
                                 <option value="">Seleccione Sede</option>
                                 @foreach($sede as $sed)
                                     <option value="{{ $sed->id_sede }}">{{ $sed->nombre_sede }}</option>
@@ -178,7 +163,7 @@
                     </div>
                 </div>
             </div>
-            @endif
+
 
             <hr class="my-4" style="border-top: 2px dashed #eef2f6;">
 
@@ -194,7 +179,7 @@
                             <select wire:model.lazy="estadosVeId" name="estado_id" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione Estado</option>
                                 @foreach($estadosVE as $estado)
-                                    <option value="{{ $estado->id_estado_ve }}">{{ $estado->nombre_estado_ve }}</option>
+                                    <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -209,7 +194,7 @@
                              {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" @if(!$enabledMunicipio) disabled @endif>
                                 <option value="">Seleccione Municipio</option>
                                 @foreach($municipiosVE as $municipio)
-                                    <option value="{{ $municipio->id_municipio }}">{{ $municipio->nombre_municipio }}</option>
+                                    <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -218,13 +203,13 @@
                         @enderror
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="rd-label">Parroquia</label>
+                        <label class="rd-label">Localidad</label>
                         <div class="rd-input-group">
                             <select wire:model.lazy="parroquiaId" name="parroquia_id" class="rd-input form-control" 
                             {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" @if(!$enabledParroquia) disabled @endif>
-                                <option value="">Seleccione Parroquia</option>
+                                <option value="">Seleccione Localidad</option>
                                 @foreach($parroquiasVE as $parroquia)
-                                    <option value="{{ $parroquia->id_parroquia }}">{{ $parroquia->nombre_parroquia }}</option>
+                                    <option value="{{ $parroquia->id }}">{{ $parroquia->nombre_localidad }}</option>
                                 @endforeach
                             </select>
                         </div>
