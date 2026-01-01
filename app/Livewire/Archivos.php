@@ -6,6 +6,9 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Archivo;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\DB;
+use App\Models\Persona;
 
 class Archivos extends Component
 {
@@ -28,22 +31,85 @@ class Archivos extends Component
     {
         $this->validate();
 
-        // Guardar archivo físico
-        $ruta = $this->archivo->store('informacion', 'public');
+        DB::beginTransaction();
 
-        // Guardar registro en BD
-        Archivo::create([
-            'info_estudiantes' => $ruta,
-            'fecha' => Carbon::now()->toDateString(),
-            'estado' => 'Procesado',
-        ]);
+        try {
 
-        // Reset
-        $this->reset('archivo');
-        $this->archivoKey = rand();
+            // 1. Guardar archivo
+            $ruta = $this->archivo->store('informacion', 'public');
+            $fullPath = storage_path('app/public/' . $ruta);
 
-        session()->flash('success', 'Archivo procesado correctamente.');
+            // 2. BORRAR TODOS LOS ESTUDIANTES ACTUALES
+            Persona::where('id_perfil', 2)->delete();
+
+            // 3. Leer Excel
+            $spreadsheet = IOFactory::load($fullPath);
+            $rows = $spreadsheet->getActiveSheet()->toArray();
+
+            unset($rows[0]); // eliminar encabezado
+
+            // 👇 NUEVO: control de duplicados
+            $cedulasProcesadas = [];
+            $cedulasDuplicadas = 0;
+            $insertados = 0;
+
+            // 4. Procesar filas
+            foreach ($rows as $row) {
+
+                $cedula = trim($row[4]);
+
+                // 👇 Si la cédula ya fue procesada, se omite
+                if (in_array($cedula, $cedulasProcesadas)) {
+                    $cedulasDuplicadas++;
+                    continue;
+                }
+
+                $cedulasProcesadas[] = $cedula;
+
+                Persona::create([
+                    'nombre_persona' => $row[0],
+                    'segundo_nombre_persona' => $row[1] ?: null,
+                    'apellido_persona' => $row[2],
+                    'segundo_apellido_persona' => $row[3] ?: null,
+                    'cedula_persona' => $cedula,
+                    'telefono_persona' => $row[5],
+                    'genero_persona' => $row[6],
+                    'edad_persona' => $row[7],
+                    'fecha_nacimiento_persona' => Carbon::parse($row[8]),
+                    'email_persona' => $row[9],
+                    'id_perfil' => 2,
+                    'id_sede' => 1,
+                ]);
+
+                $insertados++;
+            }
+
+            // 5. Guardar historial
+            Archivo::create([
+                'info_estudiantes' => $ruta,
+                'fecha' => now()->toDateString(),
+                'estado' => 'Procesado',
+            ]);
+
+            DB::commit();
+
+            $this->reset('archivo');
+            $this->archivoKey = rand();
+
+            session()->flash(
+                'success',
+                "Proceso completado. Insertados: {$insertados}. Cédulas duplicadas omitidas: {$cedulasDuplicadas}."
+            );
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+            report($e);
+
+            session()->flash('error', 'Error al procesar el archivo.');
+        }
     }
+
 
     public function render()
     {
