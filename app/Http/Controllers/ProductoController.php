@@ -140,19 +140,29 @@ class ProductoController extends Controller
 
             $data = $response->json();
 
-            $tasa = ExchangeRates::firstOrCreate(
-                ['nombre' => 'Oficial'],
-                [
-                    'fuente'   => 'oficial',
-                    'promedio' => 0
-                ]
-            );
+            $fechaVigencia = isset($data['fecha'])
+                ? \Carbon\Carbon::parse($data['fecha'])->toDateString()
+                : now()->toDateString();
 
-            $tasa->forceFill([
-                'fuente'   => $data['fuente'],
-                'promedio' => $data['promedio'],
-            ])->save();
+            // Buscar si YA existe una tasa con esa fecha
+            $tasaExistente = ExchangeRates::whereDate('fecha_vigencia', $fechaVigencia)
+                ->where('nombre', 'Oficial')
+                ->first();
 
+            if (!$tasaExistente) {
+                // Crear NUEVO registro (historial)
+                $tasa = ExchangeRates::create([
+                    'nombre'         => 'Oficial',
+                    'fuente'         => $data['fuente'],
+                    'promedio'       => $data['promedio'],
+                    'fecha_vigencia' => $fechaVigencia,
+                ]);
+            } else {
+                // Usar la existente
+                $tasa = $tasaExistente;
+            }
+
+            // Recalcular precios con la tasa vigente
             $productos = Producto::with('precioProducto')->get();
 
             foreach ($productos as $producto) {
@@ -161,8 +171,9 @@ class ProductoController extends Controller
                     continue;
                 }
 
-                $precioUSD = $producto->precioProducto->precio_usd
-                    ?? $producto->precioProducto->costo_usd;
+                $precioUSD =
+                    $producto->precioProducto->precio_usd ??
+                    $producto->precioProducto->costo_usd;
 
                 if (!$precioUSD || $precioUSD <= 0) {
                     continue;
@@ -183,21 +194,21 @@ class ProductoController extends Controller
                     ]);
             }
 
-
             DB::commit();
 
             session()->forget('tasa_pendiente');
 
             return redirect()->back()->with(
                 'success',
-                'Tasa actualizada correctamente y precios recalculados.'
+                'Tasa registrada y precios recalculados correctamente.'
             );
 
         } catch (\Exception $e) {
+            DB::rollBack();
+
             \Log::error('Error al actualizar la tasa', [
                 'error' => $e->getMessage()
             ]);
-            DB::rollBack();
 
             return redirect()->back()->with(
                 'error',
@@ -206,30 +217,19 @@ class ProductoController extends Controller
         }
     }
 
+
     private function procesarTasaYPrecios(?int $productoId = null)
     {
-        $response = Http::get('https://ve.dolarapi.com/v1/dolares/oficial');
+        $tasa = ExchangeRates::orderByDesc('fecha_vigencia')->first();
 
-        if (!$response->ok()) {
-            throw new \Exception('No se pudo obtener la tasa del dólar');
+        if (!$tasa) {
+            throw new \Exception('No existe una tasa registrada');
         }
-
-        $data = $response->json();
-
-        $tasa = ExchangeRates::firstOrCreate(
-            ['nombre' => 'Oficial'],
-            ['fuente' => 'oficial', 'promedio' => 0]
-        );
-
-        $tasa->update([
-            'fuente'   => $data['fuente'],
-            'promedio' => $data['promedio'],
-        ]);
 
         $query = Producto::with('precioProducto');
 
         if ($productoId) {
-            $query->where('id', $productoId); 
+            $query->where('id', $productoId);
         }
 
         $productos = $query->get();
@@ -240,9 +240,10 @@ class ProductoController extends Controller
                 continue;
             }
 
-            $precioUSD = $producto->precioProducto->costo_usd
-                ?? $producto->precioProducto->precio_usd
-                ?? 0;
+            $precioUSD =
+                $producto->precioProducto->costo_usd ??
+                $producto->precioProducto->precio_usd ??
+                0;
 
             if ($precioUSD <= 0) {
                 continue;
@@ -262,8 +263,8 @@ class ProductoController extends Controller
                     'updated_at'    => now()
                 ]);
         }
-
     }
+
 
 
 }

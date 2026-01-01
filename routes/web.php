@@ -27,7 +27,7 @@ use App\Http\Controllers\RecetaIngredienteController;
 use App\Http\Controllers\MovimientoInventarioController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\IndexarController;
+use App\Http\Controllers\ArchivoController;
 
 Auth::routes();
 
@@ -255,7 +255,66 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         //Rutas para Configuracion
         Route::get('configuracion', [AdminController::class, 'index'])->name('admin.configuracion.index');
 
-        Route::get('configuracion/indexar', [IndexarController::class, 'index'])->name('admin.configuracion.indexar.index');
+
+        /* Rutas de direcciones */
+
+        Route::get('/estado', function () {
+            return view('admin.estado.index');
+        })->name('admin.estado.index');
+
+        Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
+
+        Route::get('/municipio', function () {
+            return view('admin.municipio.index');
+        })->name('admin.municipio.index');
+
+        Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
+
+        Route::get('/localidad', function () {
+            return view('admin.localidad.index');
+        })->name('admin.localidad.index');
+
+        Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
+
+        /* Configuración - Empleados, Permisos, Roles */
+        
+        Route::prefix('configuracion')
+            ->middleware(\App\Http\Middleware\CheckMenuPermission::class) // solo permisos
+            ->group(function () {
+                Route::get('/empleados', [EmpleosController::class, 'index'])->name('admin.configuracion.empleados.index');
+                Route::get('/empleados/{id}/edit', [EmpleosController::class, 'edit'])->name('admin.configuracion.empleados.edit');
+                Route::get('/empleados/{id}', [EmpleosController::class, 'show'])->name('admin.configuracion.empleados.show');
+                Route::put('/empleados/{id}', [EmpleosController::class, 'update'])->name('admin.configuracion.empleados.update');
+                Route::delete('/empleados/{id}', [EmpleosController::class, 'destroy'])->name('admin.configuracion.empleados.destroy');
+
+                Route::get('/permisos', [PermisosController::class, 'index'])->name('admin.configuracion.permisos.index');
+                Route::get('/permisos/{id}/edit', [PermisosController::class, 'edit'])->name('admin.configuracion.permisos.edit');
+                Route::put('/permisos/{id}', [PermisosController::class, 'update'])->name('admin.configuracion.permisos.update');
+
+                Route::get('/roles', [RolesController::class, 'index'])->name('admin.configuracion.roles.index');
+                Route::get('/roles/create', [RolesController::class, 'create'])->name('admin.configuracion.roles.create');
+                Route::post('/roles', [RolesController::class, 'store'])->name('admin.configuracion.roles.store');
+                Route::get('/roles/{id}/edit', [RolesController::class, 'edit'])->name('admin.configuracion.roles.edit');
+                Route::put('/roles/{id}', [RolesController::class, 'update'])->name('admin.configuracion.roles.update');
+                Route::delete('/roles/{id}', [RolesController::class, 'destroy'])->name('admin.configuracion.roles.destroy');
+
+                Route::get('/archivos', [ArchivoController::class, 'index'])->name('admin.configuracion.archivos.index');
+                // routes/web.php
+                Route::get('/archivos/ver/{archivo}', function ($archivo) {
+                    $path = storage_path('app/public/' . $archivo);
+
+                    abort_unless(file_exists($path), 404);
+
+                    return response()->file($path, [
+                        'Content-Disposition' => 'inline'
+                    ]);
+                })->where('archivo', '.*');
+
+
+                // Master key routes
+                Route::get('/master-key', [EmpleosController::class, 'masterKeyForm'])->name('admin.configuracion.master_key.form');
+                Route::post('/master-key/verify', [EmpleosController::class, 'verifyMasterKey'])->name('admin.configuracion.master_key.verify');
+            });
 
     });
     
@@ -292,53 +351,3 @@ Route::get('password/recover/verify', [PasswordRecoveryController::class, 'showV
 Route::post('password/recover/verify', [PasswordRecoveryController::class, 'verifyAnswers'])->name('password.recover.verify');
 Route::post('password/recover/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.recover.reset_password');
 Route::post('password/recover/reset-masterkey', [PasswordRecoveryController::class, 'resetMasterKey'])->name('password.recover.reset_masterkey');
-
-
-// ===== ESTADO (LIVEWIRE) =====
-Route::get('admin/estado', function () {
-    return view('admin.estado.index');
-})->name('admin.estado.index')->middleware('auth');
-
-// Ruta para verificar la existencia de un estado
-Route::get('estado/verificar', [EstadoController::class, 'verificarExistencia'])->name('estado.verificar');
-
-// ===== MUNICIPIO (LIVEWIRE) =====
-Route::get('admin/municipio', function () {
-    return view('admin.municipio.index');
-})->name('admin.municipio.index')->middleware('auth');
-
-// Ruta para verificar la existencia de un municipio
-Route::get('municipio/verificar', [MunicipioController::class, 'verificarExistencia'])->name('municipio.verificar');
-
-// ===== LOCALIDAD (LIVEWIRE) =====
-Route::get('admin/localidad', function () {
-    return view('admin.localidad.index');
-})->name('admin.localidad.index')->middleware('auth');
-
-// Ruta para verificar la existencia de una localidad
-Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
-
-// Configuración - Empleados y Permisos
-Route::prefix('admin/configuracion')->middleware(['auth', \App\Http\Middleware\CheckMenuPermission::class])->group(function () {
-    Route::get('/empleados', [EmpleosController::class, 'index'])->name('admin.configuracion.empleados.index');
-    Route::get('/empleados/{id}/edit', [EmpleosController::class, 'edit'])->name('admin.configuracion.empleados.edit');
-    Route::get('/empleados/{id}', [EmpleosController::class, 'show'])->name('admin.configuracion.empleados.show');
-    Route::put('/empleados/{id}', [EmpleosController::class, 'update'])->name('admin.configuracion.empleados.update');
-    Route::delete('/empleados/{id}', [EmpleosController::class, 'destroy'])->name('admin.configuracion.empleados.destroy');
-
-    Route::get('/permisos', [PermisosController::class, 'index'])->name('admin.configuracion.permisos.index');
-    Route::get('/permisos/{id}/edit', [PermisosController::class, 'edit'])->name('admin.configuracion.permisos.edit');
-    Route::put('/permisos/{id}', [PermisosController::class, 'update'])->name('admin.configuracion.permisos.update');
-
-    // Roles CRUD
-    Route::get('/roles', [RolesController::class, 'index'])->name('admin.configuracion.roles.index');
-    Route::get('/roles/create', [RolesController::class, 'create'])->name('admin.configuracion.roles.create');
-    Route::post('/roles', [RolesController::class, 'store'])->name('admin.configuracion.roles.store');
-    Route::get('/roles/{id}/edit', [RolesController::class, 'edit'])->name('admin.configuracion.roles.edit');
-    Route::put('/roles/{id}', [RolesController::class, 'update'])->name('admin.configuracion.roles.update');
-    Route::delete('/roles/{id}', [RolesController::class, 'destroy'])->name('admin.configuracion.roles.destroy');
-
-    // Master key verification routes for configuration access
-    Route::get('/master-key', [EmpleosController::class, 'masterKeyForm'])->name('admin.configuracion.master_key.form');
-    Route::post('/master-key/verify', [EmpleosController::class, 'verifyMasterKey'])->name('admin.configuracion.master_key.verify');
-});

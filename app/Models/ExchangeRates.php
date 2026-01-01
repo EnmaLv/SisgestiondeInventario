@@ -15,6 +15,8 @@ class ExchangeRates extends Model
     protected $fillable = [
         'nombre',
         'fuente',
-        'promedio'
+        'promedio',
+        'variacion',
+        'fecha_vigencia'
     ];
 }

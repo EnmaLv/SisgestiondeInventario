@@ -512,6 +512,13 @@ return [
             'active' => ['admin/configuracion/permisos*'],
         ],
         
+        [
+            'text' => 'Archivos',
+            'key' => 'config_empleados',
+            'url' => 'admin/configuracion/archivos',
+            'icon' => 'fas fa-users-cog',
+            'active' => ['admin/configuracion/archivos*'],
+        ],
     ],
 
 

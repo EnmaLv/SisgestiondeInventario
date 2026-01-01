@@ -34,7 +34,7 @@
                     🏠 Panel de Control
                 </h1>
                 <p class="mt-2 mb-0 text-white" style="font-size: 1.1rem; opacity: 0.95;">
-                    Bienvenido de nuevo, <strong>{{ auth()->user()->name }}</strong>
+                    Bienvenido de nuevo, <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
                 </p>
                 <p class="mb-0 text-white" style="font-size: 0.9rem; opacity: 0.8;">
                     Gestiona tu inventario de manera eficiente

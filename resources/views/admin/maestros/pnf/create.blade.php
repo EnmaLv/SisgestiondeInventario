@@ -16,7 +16,7 @@
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
 

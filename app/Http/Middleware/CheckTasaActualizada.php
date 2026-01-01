@@ -24,18 +24,18 @@ class CheckTasaActualizada
             return $next($request);
         }
 
-        // ¿Existe tasa hoy?
-        $tasaHoy = ExchangeRates::whereDate('created_at', now()->toDateString())
-            ->exists();
+        $tasaVigente = ExchangeRates::whereDate('fecha_vigencia', '<=', now()->toDateString())
+            ->orderByDesc('fecha_vigencia')
+            ->first();
 
-        if (!$tasaHoy) {
-
+        if (!$tasaVigente) {
             session()->put('tasa_pendiente', true);
 
             if (!$request->routeIs('home')) {
                 return redirect()->route('home');
             }
         }
+
 
         return $next($request);
     }

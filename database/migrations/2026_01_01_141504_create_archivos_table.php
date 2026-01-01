@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exchange_rates', function (Blueprint $table) {
+        Schema::create('archivos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->default('Oficial');
-            $table->string('fuente')->default('BCV');
-            $table->decimal('promedio', 12, 2);
-            $table->enum('variacion', ['subio', 'bajo', 'igual'])->default('igual');
-            $table->date('fecha_vigencia');
+            $table->string('info_estudiantes');
+            $table->date('fecha');
+            $table->string('estado');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exchange_rates');
+        Schema::dropIfExists('archivos');
     }
 };

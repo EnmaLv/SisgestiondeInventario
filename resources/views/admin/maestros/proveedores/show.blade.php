@@ -2,7 +2,7 @@
 
 @section('content_header')
     <h1>Proveedor</h1>
-    <p>Bienvenido {{ auth()->user()->name }}.</p>
+    <p>Bienvenido {{ auth()->user()->persona->nombre_persona }}.</p>
 @stop
 
 @section('content')
