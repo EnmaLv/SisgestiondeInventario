@@ -60,7 +60,7 @@
                             x-on:livewire-upload-progress="progress = $event.detail.progress"
                         >
                             <input type="file"
-                                class="form-control"
+                                class="form-control rd-filter-input"
                                 wire:model="archivo"
                                 wire:key="{{ $archivoKey }}"
                                 accept=".xlsx,.xls,.pdf,.txt"
