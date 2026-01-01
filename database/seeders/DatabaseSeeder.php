@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             EstatusSeeder::class,
-            EstadoVeSeeder::class,
             UnidadSeeder::class,
             CategoriaSeeder::class,
             SucursalSeeder::class,
@@ -32,7 +31,6 @@ class DatabaseSeeder extends Seeder
             ProductoSeeder::class,
             RecetaIngredienteSeeder::class,
             PrecioProductoSeeder::class,
-            ParroquiaSeeder::class,
         ]);
 
         \App\Models\Proveedor::factory(1)->create();

@@ -67,10 +67,10 @@ class AuthService
 
     private function ensureEstadoVe(): int
     {
-        $row = DB::table('estado_ve')->orderBy('id_estado_ve')->first();
-        if ($row) return $row->id_estado_ve;
+        $row = DB::table('estados')->orderBy('id')->first();
+        if ($row) return $row->id;
 
-        $id = DB::table('estado_ve')->insertGetId(['nombre_estado_ve' => 'Default', 'created_at' => now(), 'updated_at' => now()]);
+        $id = DB::table('estados')->insertGetId(['nombre_estado' => 'Default', 'created_at' => now(), 'updated_at' => now()]);
         return $id;
     }
 
@@ -79,7 +79,7 @@ class AuthService
         $row = DB::table('sede')->orderBy('id_sede')->first();
         if ($row) return $row->id_sede;
 
-        $id = DB::table('sede')->insertGetId(['nombre_sede' => 'Principal', 'id_estado_ve' => $estadoVeId, 'created_at' => now(), 'updated_at' => now()]);
+        $id = DB::table('sede')->insertGetId(['nombre_sede' => 'Principal', 'id_estado' => $estadoVeId, 'created_at' => now(), 'updated_at' => now()]);
         return $id;
     }
 

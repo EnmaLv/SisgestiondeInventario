@@ -17,11 +17,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('estado_ve', function (Blueprint $table) {
-            $table->id('id_estado_ve');
-            $table->string('nombre_estado_ve');
-            $table->timestamps();
-        });
     }
 
     /**

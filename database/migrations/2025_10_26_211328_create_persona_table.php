@@ -22,7 +22,7 @@ return new class extends Migration
         Schema::create('sede', function (Blueprint $table) {
             $table->id('id_sede');
             $table->string('nombre_sede');
-            $table->foreignId('id_estado_ve')->references('id_estado_ve')->on('estado_ve')->onDelete('cascade');
+            $table->foreignId('id_estado')->constrained('estados')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -40,6 +40,16 @@ return new class extends Migration
             $table->string('email_persona');
             $table->foreignId('id_perfil')->references('id_perfil')->on('perfil')->onDelete('cascade');
             $table->foreignId('id_sede')->references('id_sede')->on('sede')->onDelete('cascade');
+        });
+
+        Schema::create('direccion', function (Blueprint $table) {
+            $table->id('id_direccion');
+            $table->string('sector');
+            $table->string('calle');
+            $table->foreignId('id_persona')->references('id_persona')->on('persona')->onDelete('cascade');
+            $table->foreignId('id_localidad')->constrained('localidads')->cascadeOnDelete();
+
+            $table->timestamps();
         });
     }
 

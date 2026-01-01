@@ -15,7 +15,7 @@ class SedeSeeder extends Seeder
     {
         DB::table('sede')->insert([
             'nombre_sede' => 'Sede Central',
-            'id_estado_ve' => 1,
+            'id_estado' => 1,
         ]);
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('municipio_id')->constrained('municipios')->cascadeOnDelete();
             $table->timestamps();
         });
+
     }
 
     /**
@@ -26,5 +27,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('localidads');
+        Schema::dropIfExists('direccion');
     }
 };
