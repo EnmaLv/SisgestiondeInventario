@@ -24,7 +24,7 @@ class PersonaSeeder extends Seeder
             'edad_persona' => 18,
             'fecha_nacimiento_persona' => '2000-01-01',
             'email_persona' => 'persona@persona.com',
-            'id_perfil' => 1,
+            'id_perfil' => 2,
             'id_sede' => 1,
         ]);
 
@@ -46,7 +46,7 @@ class PersonaSeeder extends Seeder
             'edad_persona' => 20,
             'fecha_nacimiento_persona' => '2000-01-01',
             'email_persona' => 'medina1234@gmail.com',
-            'id_perfil' => 1,
+            'id_perfil' => 2,
             'id_sede' => 1,
         ]);
 
@@ -69,7 +69,7 @@ class PersonaSeeder extends Seeder
             'edad_persona' => 20,
             'fecha_nacimiento_persona' => '2000-01-01',
             'email_persona' => 'abdias.scc@gmail.com',
-            'id_perfil' => 1,
+            'id_perfil' => 2,
             'id_sede' => 1,
         ]);
 
@@ -91,7 +91,7 @@ class PersonaSeeder extends Seeder
             'edad_persona' => 20,
             'fecha_nacimiento_persona' => '2000-01-01',
             'email_persona' => 'AngelLinarez@gmail.com',
-            'id_perfil' => 1,
+            'id_perfil' => 2,
             'id_sede' => 1,
         ]);
 
@@ -113,7 +113,7 @@ class PersonaSeeder extends Seeder
             'edad_persona' => 20,
             'fecha_nacimiento_persona' => '2000-01-01',
             'email_persona' => 'medina1234@gmail.com',
-            'id_perfil' => 1,
+            'id_perfil' => 2,
             'id_sede' => 1,
         ]);
 
@@ -135,7 +135,7 @@ class PersonaSeeder extends Seeder
             'edad_persona' => 20,
             'fecha_nacimiento_persona' => '2000-01-01',
             'email_persona' => 'medina1234@gmail.com',
-            'id_perfil' => 1,
+            'id_perfil' => 2,
             'id_sede' => 1,
         ]);
 
@@ -157,7 +157,7 @@ class PersonaSeeder extends Seeder
             'edad_persona' => 19,
             'fecha_nacimiento_persona' => '2000-01-01',
             'email_persona' => 'medina1234@gmail.com',
-            'id_perfil' => 1,
+            'id_perfil' => 2,
             'id_sede' => 1,
         ]);
 

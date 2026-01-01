@@ -33,23 +33,6 @@ return new class extends Migration
             $table->text('valor_parametro');
             $table->timestamps();
         });
-
-        // seed a default perfil used for grouping users (do NOT create role-like perfiles such as 'Administrador' here)
-        if (Schema::hasTable('perfil') && Schema::hasTable('estatus')) {
-            $estatusExists = DB::table('estatus')->exists();
-            if ($estatusExists) {
-                $exists = DB::table('perfil')->where('nombre_perfil', 'Usuario')->count();
-                if ($exists === 0) {
-                    $estatusRow = DB::table('estatus')->orderBy('id_estatus')->first();
-                    $estatusId = $estatusRow->id_estatus ?? null;
-                    if ($estatusId) {
-                        DB::table('perfil')->insert([
-                            ['nombre_perfil' => 'Usuario', 'id_estatus' => $estatusId, 'created_at' => now(), 'updated_at' => now()],
-                        ]);
-                    }
-                }
-            }
-        }
     }
 
     /**
