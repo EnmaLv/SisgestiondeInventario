@@ -21,7 +21,6 @@ class RegistroPersona extends Component
 
     //Inputs a validar
     public $cedula; 
-    public $userPerfil; 
     public $estadosVeId; 
     public $municipiosId; 
     public $parroquiaId;
@@ -63,8 +62,7 @@ class RegistroPersona extends Component
     protected function rules()
     {
         $rules = [
-            'cedula' => 'required|min:8|numeric|unique:persona,cedula_persona',
-            'userPerfil' => 'required',
+            'cedula' => 'required|min:1000000|numeric|unique:persona,cedula_persona',
             'nombre' => 'required|min:3|max:50',
             'segundo_nombre' => 'nullable',
             'apellido' => 'required|min:3|max:50',
@@ -77,16 +75,13 @@ class RegistroPersona extends Component
             'estadosVeId' => 'required|numeric',
             'municipiosId' => 'required|numeric',
             'parroquiaId' => 'required|numeric',
+            'sedeId' => 'required|numeric',
+            'pnfId' => 'required|numeric',
         ];
-        // Si el perfil es de estudiante (asumiendo que el ID 1 es para estudiantes)
-        if ($this->userPerfil == 1) {
-            $rules['pnfId'] = 'required|numeric';
-            $rules['sedeId'] = 'required|numeric';
-        }
         
         // Si es edición, no validamos la cédula como única
         if ($this->isEdit) {
-            $rules['cedula'] = 'required|min:8|numeric';
+            $rules['cedula'] = 'required|min:100000|numeric';
         }
         
         return $rules;
@@ -94,8 +89,8 @@ class RegistroPersona extends Component
 
 
     protected $messages = [
-        'userPerfil.required' => 'Debe seleccionar un perfil',
         'estadosVeId.required' => 'Debe seleccionar un estado',
+        'cedula.min' => 'La cédula debe tener al menos 7 dígitos',
         'nombre.required' => 'El nombre es obligatorio',
         'apellido.required' => 'El apellido es obligatorio',
         'genero.required' => 'El genero es obligatorio',
@@ -138,20 +133,16 @@ class RegistroPersona extends Component
         }
     }
 
-    /*Funcion para mostrar el PNF dependiendo del perfil */
-    public function updatedUserPerfil($value)
-    {
-        $this->validateOnly('userPerfil');
-
-        $this->showPnf = ($value == 1 && $this->formHabilitado);
-    }
 
     /*Funcion para actualizar los municipios dependiendo del estados */
     public function updatedEstadosVeId($value)
     {
         $this->validateOnly('estadosVeId');
 
-        $this->municipiosVE = DB::table('municipio')->where('id_estado_ve', $value)->get();
+        $this->municipiosVE = DB::table('municipios')
+            ->where('estado_id', $value)
+            ->where('status', 1)
+            ->get();
         
         $this->enabledMunicipio = ($value && $this->formHabilitado);
     }
@@ -162,7 +153,7 @@ class RegistroPersona extends Component
     {
         $this->validateOnly('municipiosId');
 
-        $this->parroquiasVE = DB::table('parroquia')->where('id_municipio', $value)->get();
+        $this->parroquiasVE = DB::table('localidads')->where('municipio_id', $value)->where('status', 1)->get();
         
         $this->enabledParroquia = ($value && $this->formHabilitado);
     }
@@ -256,17 +247,16 @@ class RegistroPersona extends Component
             $persona = Persona::where('id_persona', $id)->first();
             $personaPnf = PersonaPnf::with('pnf')->where('id_persona', $id)->first();
             $direccion = DB::table('direccion')
-                ->join('parroquia', 'direccion.id_parroquia', '=', 'parroquia.id_parroquia')
-                ->join('municipio', 'parroquia.id_municipio', '=', 'municipio.id_municipio')
-                ->join('estado_ve', 'municipio.id_estado_ve', '=', 'estado_ve.id_estado_ve')
+                ->join('localidads', 'direccion.id_localidad', '=', 'localidads.id')
+                ->join('municipios', 'localidads.municipio_id', '=', 'municipios.id')
+                ->join('estados', 'municipios.estado_id', '=', 'estados.id')
                 ->where('direccion.id_persona', $id)
-                ->select('direccion.*', 'parroquia.*', 'municipio.*', 'estado_ve.*')
+                ->select('direccion.*', 'localidads.*', 'municipios.*', 'estados.*')
                 ->first();
 
             //Remplazamos los valores
             $this->cedula = $persona->cedula_persona;
             $this->perfil = DB::table('perfil')->get();
-            $this->userPerfil = $persona->id_perfil;
             $this->fecha_nacimiento = $persona->fecha_nacimiento_persona;
             $this->nombre = $persona->nombre_persona;
             $this->segundo_nombre = $persona->segundo_nombre_persona;
@@ -276,17 +266,16 @@ class RegistroPersona extends Component
             $this->telefono = $persona->telefono_persona;
             $this->email = $persona->email_persona;
 
-            //Carga datos si es estudiante
 
-            if($persona->id_perfil == 1)
-            {
-                //cargamos los selects
-                $this->pnfs = DB::table('pnf')->where('id_estatus', 1)->get();
-                $this->sede = DB::table('sede')->get();
-                $this->showPnf = true;
-                $this->pnfId = $personaPnf->id_pnf;
-                $this->sedeId = $persona->id_sede;
-            }
+
+
+            //cargamos los selects
+            $this->pnfs = DB::table('pnf')->where('id_estatus', 1)->get();
+            $this->sede = DB::table('sede')->get();
+            $this->showPnf = true;
+            $this->pnfId = $personaPnf->id_pnf;
+            $this->sedeId = $persona->id_sede;
+            
 
             //En el caso del que usurio NO tenga una direccion asociada(osea null)
 
@@ -294,7 +283,7 @@ class RegistroPersona extends Component
             {
                 $this->enabledMunicipio = false;
                 $this->enabledParroquia = false;
-                $this->estadosVE = DB::table('estado_ve')->get();
+                $this->estadosVE = DB::table('estados')->get();
 
                 //Alertamos al usuario que no tiene direccion registrada
                 $this->dispatch('alert',
@@ -304,22 +293,22 @@ class RegistroPersona extends Component
                 return;
             }
             //Direccion
-            $this->estadosVeId = $direccion->id_estado_ve;
+            $this->estadosVeId = $direccion->estado_id;
             // 2. Carga los municipios del estado
-            $this->municipiosVE = DB::table('municipio')
-                ->where('id_estado_ve', $this->estadosVeId)
+            $this->municipiosVE = DB::table('municipios')
+                ->where('estado_id', $this->estadosVeId)
                 ->get();
             
             // 3. Asigna el municipio
-            $this->municipiosId = $direccion->id_municipio;
+            $this->municipiosId = $direccion->municipio_id;
             
             // 4. Carga las parroquias del municipio
-            $this->parroquiasVE = DB::table('parroquia')
-                ->where('id_municipio', $this->municipiosId)
+            $this->parroquiasVE = DB::table('localidads')
+                ->where('municipio_id', $this->municipiosId)
                 ->get();
                 
             // 5. Finalmente asigna la parroquia
-            $this->parroquiaId = $direccion->id_parroquia;
+            $this->parroquiaId = $direccion->id_localidad;
 
             $this->calle = $direccion->calle;
             $this->sector = $direccion->sector;
@@ -329,9 +318,8 @@ class RegistroPersona extends Component
         }
 
         // Lógica de inicialización si es necesaria
-        $this->perfil = DB::table('perfil')->get();
         $this->pnfs = DB::table('pnf')->where('id_estatus', 1)->get();
-        $this->estadosVE = DB::table('estado_ve')->get();
+        $this->estadosVE = DB::table('estados')->where('status', 1)->get();
         $this->sede = DB::table('sede')->get();
     }
     

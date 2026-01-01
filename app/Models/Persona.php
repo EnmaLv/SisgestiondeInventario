@@ -46,7 +46,7 @@ class Persona extends Model
                 'edad_persona' => Carbon::parse($data['fecha_nacimiento'])->age,
                 'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
                 'email_persona' => $data['email'],
-                'id_perfil' => $data['userPerfil'],
+                'id_perfil' => 1,
                 'id_sede' => $data['sedeId'] ?? null,
             ]);
 
@@ -56,37 +56,34 @@ class Persona extends Model
                 'sector' => $data['sector'],
                 'calle' => $data['calle'],
                 'id_persona' => $personaId,
-                'id_parroquia' => $data['parroquiaId'],
+                'id_localidad' => $data['parroquiaId'],
             ]);
 
             //Guardamos el pnf y la sede si es un estudiante
 
-            if($data['userPerfil'] == 1){
 
-                //Asignar la sede
-                DB::table('persona')->where('id_persona', $personaId)->updateOrInsert([
-                    'id_sede' => $data['sedeId'],
-                ], [
-                    'id_sede' => $data['sedeId'],
-                ]);
+            //Asignar la sede
+            DB::table('persona')->where('id_persona', $personaId)->update([
+                'id_sede' => $data['sedeId'],
+            ]);
 
 
-                //Asignar el pnf
-                DB::table('persona_pnf')->insert([
-                    'id_persona' => $personaId,
-                    'id_pnf' => $data['pnfId'],
-                    'fecha_inicio' => Carbon::now(),
-                    'fecha_fin' => Carbon::now(),
-                ]);
+            //Asignar el pnf
+            DB::table('persona_pnf')->insert([
+                'id_persona' => $personaId,
+                'id_pnf' => $data['pnfId'],
+                'fecha_inicio' => Carbon::now(),
+                'fecha_fin' => Carbon::now(),
+            ]);
                 
-            }
+            
 
 
             DB::commit();
             return true;
         } catch (Exception $e) {
-
             DB::rollBack(); 
+            dd($e->getMessage());
             return false;
 
         }
@@ -110,7 +107,6 @@ class Persona extends Model
                 'edad_persona'             => Carbon::parse($data['fecha_nacimiento'])->age,
                 'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
                 'email_persona'            => $data['email'],
-                'id_perfil'                => $data['userPerfil'],
                 'id_sede'                  => $data['sedeId'] ?? null,
             ]);
 
@@ -135,23 +131,20 @@ class Persona extends Model
                 [
                     'sector'       => $data['sector'],
                     'calle'        => $data['calle'],
-                    'id_parroquia' => $data['parroquiaId'],
+                    'id_localidad' => $data['parroquiaId'],
                 ]
             );
 
-            // 3. Lógica específica para Estudiantes (Perfil ID 1)
-            if ($data['userPerfil'] == 1) {
                 
-                // Actualizar o insertar el PNF relacionado
-                DB::table('persona_pnf')->updateOrInsert(
-                    ['id_persona' => $personaId], // Condición
-                    [
-                        'id_pnf'       => $data['pnfId'],
-                        'fecha_inicio' => Carbon::now(), // O mantener la original si fuera necesario
-                        'fecha_fin'    => Carbon::now(),
-                    ]
-                );
-            }
+            // Actualizar o insertar el PNF relacionado
+            DB::table('persona_pnf')->updateOrInsert(
+                ['id_persona' => $personaId], // Condición
+                [
+                    'id_pnf'       => $data['pnfId'],
+                    'fecha_inicio' => Carbon::now(), // O mantener la original si fuera necesario
+                    'fecha_fin'    => Carbon::now(),
+                ]
+            );
 
             DB::commit();
             return [true, null];
