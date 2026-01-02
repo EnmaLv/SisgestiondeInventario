@@ -8,8 +8,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
          ">
-
-        <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Estudiantes
@@ -19,27 +17,22 @@
                 Bienvenido <strong>{{ auth()->user()->name }}</strong>.
             </p>
         </div>
-
-        <!-- Imagen + Fecha -->
         <div>
             <a href="{{ url('admin/persona/create') }}" class="rd-btn rd-btn-primary">
                 <i class="fas fa-plus"></i>Registra un nuevo estudiante
             </a>
         </div>
-
     </div>
 @stop
 
 @section('content')
     @include('components.alert')
     <div class="rd-card rd-card-full">
-
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
                     <h3 class="rd-title-sm">Estudiantes Registradas</h3>
                 </div>
-
                 <div class="rd-actions">
                     <form action="{{ route('admin.configuracion.persona.index') }}" method="GET" class="rd-search-inline"
                         role="search">
@@ -55,8 +48,6 @@
 
                 </div>
             </div>
-
-            {{-- Tabla --}}
             <div id="printArea">
                 <table class="rd-table">
                     <thead>
@@ -99,8 +90,6 @@
                     </tbody>
                 </table>
             </div>
-
-            {{-- Paginación del servidor --}}
             <div class="mt-3 d-flex justify-content-center">
                 {{ $personas->onEachSide(1)->links('components.pagination') }}
             </div>

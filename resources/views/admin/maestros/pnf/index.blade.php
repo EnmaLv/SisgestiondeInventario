@@ -66,57 +66,7 @@
 
                 </div>
             </div>
-
-            <style>
-                .toggle-container {
-                    position: relative;
-                    width: 60px;
-                    height: 30px;
-                }
-
-                .toggle-checkbox {
-                    display: none;
-                }
-
-                .toggle-label {
-                    display: block;
-                    overflow: hidden;
-                    cursor: pointer;
-                    border-radius: 999px;
-                    background-color: #dc2626; /* rojo por defecto */
-                    position: relative;
-                    transition: background-color 0.25s;
-                    height: 100%;
-                }
-
-                .toggle-inner {
-                    display: block;
-                    width: 200%;
-                    margin-left: -100%;
-                    transition: margin 0.25s;
-                }
-
-                .toggle-switch {
-                    display: block;
-                    width: 26px;
-                    height: 26px;
-                    background: white;
-                    position: absolute;
-                    top: 2px;
-                    left: 2px;
-                    border-radius: 50%;
-                    transition: all 0.25s;
-                }
-
-                .toggle-checkbox:checked + .toggle-label {
-                    background-color: #16a34a; /* verde cuando está activo */
-                }
-
-                .toggle-checkbox:checked + .toggle-label .toggle-switch {
-                    transform: translateX(30px);
-                }
-
-            </style>
+            
             <script>
                 document.getElementById('estadoToggle').addEventListener('change', function() {
                     if (this.checked) {
