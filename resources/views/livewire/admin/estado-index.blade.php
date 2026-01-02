@@ -1,45 +1,23 @@
 <div class="main-container">
-
-    {{-- Modales incluidos DENTRO del componente Livewire --}}
     @include('admin.estado.modales.createModal')
     @include('admin.estado.modales.editModal')
 
-    {{-- Alertas --}}
-    @if (session('success') || session('error'))
-        <div class="alerts-container">
-            @if (session('success'))
-                <div class="alert-modern alert-success alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Éxito</h4>
-                        <p>{{ session('success') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('swal', data => {
+                Swal.fire({
+                    icon: data.icon,
+                    title: data.title,
+                    text: data.text,
+                    confirmButtonColor: '#7c3aed',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            });
+        });
+    </script>
 
-            @if (session('error'))
-                <div class="alert-modern alert-error alert alert-dismissible fade show">
-                    <div class="alert-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="alert-content">
-                        <h4>Error</h4>
-                        <p>{{ session('error') }}</p>
-                    </div>
-                    <button type="button" class="alert-close btn-close" data-bs-dismiss="alert">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
-        </div>
-    @endif
 
-    @include('components.alert')
     <div class="rd-card rd-card-full">
 
         <div class="rd-card-body">
@@ -122,73 +100,42 @@
                                             <i class="fas fa-edit"></i>
                                         </button>
 
-                                        {{-- Botón Eliminar --}}
-                                        @if ($datos->status == true)
-                                            <form action="{{ url('admin/maestros/categorias/' . $datos->id) }}"
-                                                method="POST" class="form-delete" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="rd-action rd-action-danger btn-delete"
-                                                    onclick="confirmDelete(event, this)">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-
-                                            <script>
-                                                function confirmDelete(event, button) {
-                                                    event.preventDefault();
-                                                    Swal.fire({
-                                                        title: '¿Estás seguro?',
-                                                        text: "Desea inactivar la categoria?",
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#3085d6',
-                                                        cancelButtonColor: '#d33',
-                                                        confirmButtonText: 'Sí, inactivar',
-                                                        cancelButtonText: 'Cancelar'
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            button.closest('form').submit();
-                                                        }
-                                                    });
-                                                }
-                                            </script>
-                                        @else
-                                            <form
-                                                action="{{ url('admin/maestros/categorias/' . $datos->id . '/activar') }}"
-                                                method="POST" class="form-delete" style="display:inline;">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="rd-action rd-action-success btn-delete"
-                                                    onclick="confirmDelete(event, this)">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            </form>
-
-                                            <script>
-                                                function confirmDelete(event, button) {
-                                                    event.preventDefault();
-                                                    Swal.fire({
-                                                        title: '¿Estás seguro?',
-                                                        text: "Desea activar la categoria?",
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#3085d6',
-                                                        cancelButtonColor: '#d33',
-                                                        confirmButtonText: 'Sí, activar',
-                                                        cancelButtonText: 'Cancelar'
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            button.closest('form').submit();
-                                                        }
-                                                    });
-                                                }
-                                            </script>
+                                        @if ($datos->status)
+                                            <button
+                                                class="rd-action rd-action-danger"
+                                                wire:click="confirmDestroy({{ $datos->id }})"
+                                                type="button"
+                                                title="Eliminar"
+                                            >
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         @endif
                                     </div>
                                 </td>
                             </tr>
                         @endforeach
+                        <script>
+                            document.addEventListener('livewire:init', () => {
+
+                                Livewire.on('confirm-delete', data => {
+                                    Swal.fire({
+                                        title: '¿Estás seguro?',
+                                        text: 'Desea inactivar el estado?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Sí, inactivar',
+                                        cancelButtonText: 'Cancelar',
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            Livewire.dispatch('destroy-estado', { id: data.id });
+                                        }
+                                    });
+                                });
+
+                            });
+                        </script>
                     </tbody>
                 </table>
             </div>

@@ -5,7 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Estado;
-use App\Models\AnioEscolar;
+use Livewire\Attributes\On;
 
 class EstadoIndex extends Component
 {
@@ -19,26 +19,6 @@ class EstadoIndex extends Component
     protected $rules = [
         'nombre_estado' => 'required|string|max:255',
     ];
-
-    /**
-     * Se ejecuta al montar el componente
-     */
-    public function mount()
-    {
-    }
-
-
-    /**
-     * Verifica antes de ejecutar acciones
-     */
-    private function verificarAccion()
-    {
-        if (!$this->anioEscolarActivo) {
-            session()->flash('warning', 'Debe registrar un año escolar activo para realizar esta acción.');
-            return false;
-        }
-        return true;
-    }
 
     public function render()
     {
@@ -73,9 +53,12 @@ class EstadoIndex extends Component
     {
         $this->validate();
 
-        // Evitar duplicados
         if (Estado::where('nombre_estado', $this->nombre_estado)->where('status', true)->exists()) {
-            session()->flash('error', 'Ya existe un estado con ese nombre.');
+            $this->dispatch('swal',
+                icon: 'error',
+                title: 'Error',
+                text: 'Ya existe un estado con ese nombre.'
+            );
             return;
         }
 
@@ -84,9 +67,14 @@ class EstadoIndex extends Component
             'status' => true,
         ]);
 
-        $this->dispatch('cerrarModal');
         $this->resetInputFields();
-        session()->flash('success', 'Estado creado correctamente.');
+
+        $this->dispatch('swal',
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Estado creado correctamente.'
+        );
+
     }
 
     public function edit($id)
@@ -101,21 +89,35 @@ class EstadoIndex extends Component
     {
         $this->validate();
 
-        $estado = Estado::find($this->estado_id);
-        $estado->update(['nombre_estado' => $this->nombre_estado]);
+        Estado::find($this->estado_id)
+            ->update(['nombre_estado' => $this->nombre_estado]);
 
-        session()->flash('success', 'Estado actualizado correctamente.');
-        $this->dispatch('cerrarModal');
-        $this->resetInputFields();
+        $this->dispatch('swal',
+            icon: 'success',
+            title: 'Actualizado',
+            text: 'Estado actualizado correctamente.'
+        );
     }
 
+    public function confirmDestroy($id)
+    {
+        $this->dispatch('confirm-delete', id: $id);
+    }
+
+    #[On('destroy-estado')]
     public function destroy($id)
     {
-        $estado = Estado::findOrFail($id);
-        $estado->update(['status' => false]);
+        Estado::findOrFail($id)->update([
+            'status' => false
+        ]);
 
-        session()->flash('success', 'Estado eliminado correctamente.');
-        $this->dispatch('cerrarModal');
-        $this->resetPage();
+        $this->dispatch('swal',
+            icon: 'success',
+            title: 'Eliminado',
+            text: 'Estado eliminado correctamente.'
+        );
     }
+
+
+
 }

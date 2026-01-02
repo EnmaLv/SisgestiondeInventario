@@ -7,7 +7,7 @@ use App\Models\Municipio;
 use App\Models\Localidad;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\AnioEscolar;
+use Livewire\Attributes\On;
 
 class LocalidadIndex extends Component
 {
@@ -19,21 +19,13 @@ class LocalidadIndex extends Component
     public $localidad_id;
     public $updateMode = false;
     public $search = '';
-    public $municipios = []; //municipios dinámicos filtrados
+    public $municipios = [];
 
     protected $rules = [
         'nombre_localidad' => 'required|string|max:255',
         'estado_id' => 'required|integer|exists:estados,id',
         'municipio_id' => 'required|integer|exists:municipios,id',
     ];
-
-        /**
-     * Se ejecuta al montar el componente
-     */
-    public function mount()
-    {
-    }
-
 
     public function render()
     {
@@ -65,8 +57,6 @@ class LocalidadIndex extends Component
         $this->resetPage();
     }
 
-
-    //Cuando cambia el estado, actualizamos los municipios
     public function updatedEstadoId($estado_id)
     {
         $this->municipios = Municipio::where('estado_id', $estado_id)
@@ -74,7 +64,7 @@ class LocalidadIndex extends Component
             ->orderBy('nombre_municipio', 'asc')
             ->get();
 
-        $this->municipio_id = null; //Reinicia el select dependiente
+        $this->municipio_id = null;
     }
 
     public function resetInputFields()
@@ -92,7 +82,11 @@ class LocalidadIndex extends Component
         $this->validate();
 
         if (Localidad::where('nombre_localidad', $this->nombre_localidad)->where('status', true)->exists()) {
-            session()->flash('error', 'Ya existe una localidad con ese nombre.');
+            $this->dispatch('swal',
+                icon: 'error',
+                title: 'Error',
+                text: 'Ya existe un estado con ese nombre.'
+            );
             return;
         }
 
@@ -102,12 +96,14 @@ class LocalidadIndex extends Component
             'status' => true,
         ]);
 
-        session()->flash('success', 'Localidad creada correctamente.');
-        $this->dispatch('cerrarModal');
         $this->resetInputFields();
+
+        $this->dispatch('swal',
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Estado creado correctamente.'
+        );
     }
-
-
 
     public function edit($id)
     {
@@ -115,12 +111,9 @@ class LocalidadIndex extends Component
 
         $this->localidad_id = $localidad->id;
         $this->nombre_localidad = $localidad->nombre_localidad;
-
-        // Obtenemos correctamente el estado desde la relación
         $this->estado_id = $localidad->municipio->estado->id ?? null;
         $this->municipio_id = $localidad->municipio_id;
 
-        // Cargamos los municipios de ese estado
         if ($this->estado_id) {
             $this->municipios = Municipio::where('estado_id', $this->estado_id)
                 ->where('status', true)
@@ -130,7 +123,6 @@ class LocalidadIndex extends Component
 
         $this->updateMode = true;
     }
-
 
     public function update()
     {
@@ -143,18 +135,29 @@ class LocalidadIndex extends Component
 
         ]);
 
-        session()->flash('success', 'Localidad actualizada correctamente.');
-        $this->dispatch('cerrarModal');
-        $this->resetInputFields();
+        $this->dispatch('swal',
+            icon: 'success',
+            title: 'Actualizado',
+            text: 'Estado actualizado correctamente.'
+        );
     }
 
+    public function confirmDestroy($id)
+    {
+        $this->dispatch('confirm-delete', id: $id);
+    }
+
+    #[On('destroy-localidad')]
     public function destroy($id)
     {
-        $localidad = Localidad::findOrFail($id);
-        $localidad->update(['status' => false]);
+        Localidad::findOrFail($id)->update([
+            'status' => false
+        ]);
 
-        session()->flash('success', 'Localidad eliminada correctamente.');
-        $this->dispatch('cerrarModal');
-        $this->resetPage();
+        $this->dispatch('swal',
+            icon: 'success',
+            title: 'Eliminado',
+            text: 'Estado eliminado correctamente.'
+        );
     }
 }

@@ -1,22 +1,15 @@
-<!-- Modal Editar Localidad -->
 <div wire:ignore.self class="modal fade" id="modalEditar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-modern">
-
-            {{-- Cuerpo del modal con formulario --}}
+        <div class="modal-content modal-modern" style="border-radius: 50px">
             <div class="rd-card p-4">
                 <div class="rd-card-header mb-3">
                     <h3 class="rd-title-sm">Crear Nueva Localidad</h3>
                 </div>
                 <hr>
                 <form wire:submit.prevent="update" id="formEditarLocalidad">
-
-                    {{-- Contenedor para alertas de validación --}}
                     <div id="contenedorAlertaEditar"></div>
-
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                        {{-- Select del estado --}}
                             <label class="rd-label">Estado</label>
                             <div class="rd-input-group">
                                 <span><i class="fas fa-globe"></i></span>
@@ -40,7 +33,6 @@
                             </div>
                         </div>
 
-                        {{-- Select del municipio (dependiente del estado) --}}
                         <div class="col-md-6 mb-3">
                             <label class="rd-label">Municipio</label>
                             <div class="rd-input-group">
@@ -66,7 +58,7 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Nombre de la Localidad --}}
+
                     <div class="col-md-12 mb-3">
                         <label class="rd-label">Nombre de la Localidad</label>
                         <div class="rd-input-group">
@@ -86,8 +78,6 @@
                             @enderror
                         </div>
                     </div>
-
-                    {{-- Botones --}}
                     <div class="d-flex justify-content-end" style="gap:10px;">
                         <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">
                             Cancelar
@@ -98,7 +88,6 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </div>

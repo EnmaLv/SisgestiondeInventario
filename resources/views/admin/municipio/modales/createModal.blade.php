@@ -1,80 +1,62 @@
-<!-- Modal Crear Estado -->
 <div wire:ignore.self class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-modern">
-
-            {{-- Cabecera del modal --}}
-            <div class="modal-header-create">
-                <div class="modal-icon-create">
-                    <i class="fas fa-plus-circle"></i>
+        <div class="modal-content modal-modern" style="border-radius: 50px">
+            <div class="rd-card p-4">
+                <div class="rd-card-header mb-3">
+                    <h3 class="rd-title-sm">Crear Nueva Localidad</h3>
                 </div>
-                <h5 class="modal-title-create" id="modalCrearLabel">Nuevo Municipio</h5>
-                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Cerrar">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            {{-- Cuerpo del modal con formulario --}}
-            <div class="modal-body-create">
+                <hr>
                 <form wire:submit.prevent="store" id="formCrearMunicipio">
-                    
-                    {{-- Contenedor para alertas de validación --}}
-                    <div id="contenedorAlertaCrear"></div>
-
-                    {{-- Select del estado --}}
-                    <div class="form-group-modern">
-                        <label for="estado_id" class="form-label-modern">
-                            <i class="fas fa-tags"></i>
-                            Estado
-                        </label>
-                        <select name="estado_id" 
-                            wire:model.defer="estado_id"
-                            id="estado_id" 
-                            class="form-control-modern " 
-                            data-live-search="true"
-                            title="Seleccione un estado"
-                            required>
-                            <option value="">Seleccione un estado</option>
-                            @foreach ($estados as $estado)
-                                <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Nombre del Municipio --}}
-                    <div class="form-group-modern">
-                        <label for="nombre_municipio_crear" class="form-label-modern">
-                            <i class="fas fa-hashtag me-2"></i> Nombre del Municipio
-                        </label>
-                        <input type="text" 
-                               class="form-control-modern" 
-                               id="nombre_municipio_crear" 
-                               wire:model.defer="nombre_municipio"
-                               inputmode="text"
-                               maxlength="100"
-                               placeholder="Ingrese el nombre del municipio"
-                               required>
-                        @error('nombre_municipio')
-                            <div class="error-message">
-                                {{ $message }}
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="rd-label">Estado</label>
+                            <div class="rd-input-group">
+                                <span><i class="fas fa-globe"></i></span>
+                                <select name="estado_id" 
+                                    wire:model.defer="estado_id"
+                                    id="estado_id" 
+                                    class="form-control rd-input" 
+                                    data-live-search="true"
+                                    title="Seleccione un estado"
+                                    required>
+                                    <option value="">Seleccione un estado</option>
+                                    @foreach ($estados as $estado)
+                                        <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                        @enderror
-                    </div>
-
-                    {{-- Botones --}}
-                    <div class="modal-footer-create">
-                        <div class="footer-buttons">
-                            <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="btn-modal-create">
-                                Guardar
-                            </button>
                         </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="rd-label">Nombre del Municipio</label>
+                            <div class="rd-input-group">
+                                <span><i class="fas fa-city"></i></span>
+                                <input type="text" 
+                                    class="form-control rd-input"  
+                                    id="nombre_municipio_crear" 
+                                    wire:model.defer="nombre_municipio"
+                                    inputmode="text"
+                                    maxlength="100"
+                                    placeholder="Ingrese el nombre del municipio"
+                                    required>
+                                @error('nombre_municipio')
+                                    <div class="error-message">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end" style="gap:10px;">
+                        <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="rd-btn rd-btn-primary">
+                            Guardar
+                        </button>
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </div>

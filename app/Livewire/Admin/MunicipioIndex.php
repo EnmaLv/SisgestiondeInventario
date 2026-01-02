@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Estado;
 use App\Models\Municipio;
-use App\Models\AnioEscolar;
+use Livewire\Attributes\On;
 
 class MunicipioIndex extends Component
 {
@@ -72,7 +72,11 @@ class MunicipioIndex extends Component
         if (Municipio::where('nombre_municipio', $this->nombre_municipio)
             ->where('estado_id', $this->estado_id)
             ->where('status', true)->exists()) {
-            session()->flash('error', 'Ya existe un municipio con ese nombre.');
+            $this->dispatch('swal',
+                icon: 'error',
+                title: 'Error',
+                text: 'Ya existe un estado con ese nombre.'
+            );
             return;
         }
 
@@ -82,10 +86,13 @@ class MunicipioIndex extends Component
             'status' => true,
         ]);
 
-        session()->flash('success', 'Municipio creado correctamente.');
-        $this->dispatch('cerrarModal');
         $this->resetInputFields();
 
+        $this->dispatch('swal',
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Estado creado correctamente.'
+        );
     }
 
     public function edit($id)
@@ -104,20 +111,30 @@ class MunicipioIndex extends Component
         $municipio = Municipio::find($this->municipio_id);
         $municipio->update(['nombre_municipio' => $this->nombre_municipio, 'estado_id' => $this->estado_id]);
 
-        session()->flash('success', 'Municipio actualizado correctamente.');
-        $this->dispatch('cerrarModal');
-        $this->resetInputFields();
+        $this->dispatch('swal',
+            icon: 'success',
+            title: 'Actualizado',
+            text: 'Estado actualizado correctamente.'
+        );
     }
 
+    public function confirmDestroy($id)
+    {
+        $this->dispatch('confirm-delete', id: $id);
+    }
+
+    #[On('destroy-municipio')]
     public function destroy($id)
     {
-        $municipio = Municipio::findOrFail($id);
-        $municipio->update(['status' => false]);
+        Municipio::findOrFail($id)->update([
+            'status' => false
+        ]);
 
-        session()->flash('success', 'Municipio eliminado correctamente.');
-
-        $this->dispatch('cerrarModal');
-        $this->resetPage();
+        $this->dispatch('swal',
+            icon: 'success',
+            title: 'Eliminado',
+            text: 'Estado eliminado correctamente.'
+        );
 
     }
 
