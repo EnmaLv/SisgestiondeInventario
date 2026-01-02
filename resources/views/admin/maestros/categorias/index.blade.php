@@ -41,38 +41,88 @@
                 </div>
 
                 <div class="rd-actions">
+                    <div class="d-flex gap-3 align-items-center">
+                        <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
+                        
+                        <div class="toggle-container">
+                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ request('estado', 1) == 1 ? 'checked' : '' }}>
+                            <label for="estadoToggle" class="toggle-label">
+                                <span class="toggle-inner"></span>
+                                <span class="toggle-switch"></span>
+                            </label>
+                        </div>
+                    </div>
                     <form action="{{ route('admin.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
                             placeholder="Escriba la categoria" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
-
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
-
                 </div>
             </div>
 
-            <div class="collapse" id="filters">
-                <div class="rd-filters">
-                    <div class="d-flex gap-3 align-items-center mb-3">
-                        <span class="font-weight-bold" style="margin-right:5px; ">Filtrar por estado:</span>
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}"
-                                class="btn {{ request('estado', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
-                                Activos
-                            </a>
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}"
-                                class="btn {{ request('estado', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
-                                Inactivos
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <style>
+                .toggle-container {
+                    position: relative;
+                    width: 60px;
+                    height: 30px;
+                }
+
+                .toggle-checkbox {
+                    display: none;
+                }
+
+                .toggle-label {
+                    display: block;
+                    overflow: hidden;
+                    cursor: pointer;
+                    border-radius: 999px;
+                    background-color: #dc2626; /* rojo por defecto */
+                    position: relative;
+                    transition: background-color 0.25s;
+                    height: 100%;
+                }
+
+                .toggle-inner {
+                    display: block;
+                    width: 200%;
+                    margin-left: -100%;
+                    transition: margin 0.25s;
+                }
+
+                .toggle-switch {
+                    display: block;
+                    width: 26px;
+                    height: 26px;
+                    background: white;
+                    position: absolute;
+                    top: 2px;
+                    left: 2px;
+                    border-radius: 50%;
+                    transition: all 0.25s;
+                }
+
+                .toggle-checkbox:checked + .toggle-label {
+                    background-color: #16a34a; /* verde cuando está activo */
+                }
+
+                .toggle-checkbox:checked + .toggle-label .toggle-switch {
+                    transform: translateX(30px);
+                }
+
+            </style>
+            <script>
+                document.getElementById('estadoToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        // Activos
+                        window.location.href = "{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}";
+                    } else {
+                        // Inactivos
+                        window.location.href = "{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}";
+                    }
+                });
+            </script>
+
 
             {{-- Tabla --}}
             <div id="printArea">

@@ -54,7 +54,6 @@
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
-
     </div>
 @stop
 
@@ -70,10 +69,16 @@
                         <form action="{{ route('admin.movimientos.compras.cancelar', $compra) }}"
                             method="POST" style="display:inline;">
                             @csrf
-                            <button type="submit" class="btn btn-tool text-danger" onclick="confirmDelete(event, this)">
-                                <i class="fas fa-arrow-left"></i>
-                                <b>Cancelar y volver</b>
-                            </button>
+                            @if ($compra->estado == 'Pendiente')
+                                <button type="submit" class="btn btn-tool text-danger" onclick="confirmDelete(event, this)">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <b>Cancelar y volver</b>
+                                </button>
+                            @elseif ($compra->estado == 'Enviado al proveedor')
+                                <a href="{{ url('admin/movimientos/compras') }}" class="rd-btn rd-btn-default">
+                                    <i class="fas fa-arrow-left"></i> Volver
+                                </a>
+                            @endif
                             <script>
                                 function confirmDelete(event, button) {
                                     event.preventDefault();
@@ -213,6 +218,20 @@
                                 </div>
                             </div>
                         </form>
+                        <script>
+                            document.addEventListener('livewire:init', () => {
+                                Livewire.on('swal', data => {
+                                    Swal.fire({
+                                        icon: data.icon,
+                                        title: data.title,
+                                        text: data.text,
+                                        confirmButtonColor: '#7c3aed',
+                                        timer: 3000,
+                                        timerProgressBar: true
+                                    });
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
             </div>

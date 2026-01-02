@@ -180,14 +180,11 @@ class Compra extends Model
         DB::beginTransaction();
 
         try {
-            // Obtener todos los detalles de la compra
             $detalles = DB::table('detalle_compras')
                 ->where('compra_id', $id)
                 ->get();
 
-            // Eliminar lotes y detalles
             foreach ($detalles as $detalle) {
-                // Primero verificar si el lote no está siendo usado en otro lugar
                 $usoLote = DB::table('inventario_sucursal_lotes')
                     ->where('lote_id', $detalle->lote_id)
                     ->exists();
@@ -196,14 +193,10 @@ class Compra extends Model
                     throw new \Exception('No se puede eliminar la compra porque uno de sus lotes está siendo utilizado en el inventario.');
                 }
 
-                // Eliminar el lote
                 DB::table('lotes')->where('id', $detalle->lote_id)->delete();
-
-                // Eliminar el detalle de compra
                 DB::table('detalle_compras')->where('id', $detalle->id)->delete();
             }
 
-            // Finalmente, eliminar la compra
             DB::table('compras')->where('id', $id)->delete();
 
             DB::commit();

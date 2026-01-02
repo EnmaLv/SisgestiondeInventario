@@ -111,14 +111,10 @@ class CompraController extends Controller
      */
     public function destroy($id)
     {
-        // Intenta eliminar la compra y obtiene el resultado
         $ok = Compra::eliminarCompra($id);
-
-        // Redirige al listado de compras con un mensaje de éxito o error
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with('mensaje', $ok ? 'Compra eliminada.' : 'Error al eliminar.')
-            ->with('icono', $ok ? 'success' : 'error');
+            ->with('success', 'Compra Eliminada Correctamente.');
     }
 
     public function finalizarCompra(Request $request, Compra $compra)
@@ -149,16 +145,11 @@ class CompraController extends Controller
                 ->route('admin.movimientos.compras.index')
                 ->with('error', 'No se puede cancelar una requisición finalizada.');
         }
-        $ok = Compra::eliminarCompra($compra->id);
+        Compra::eliminarCompra($compra->id);
 
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with(
-                $ok ? 'success' : 'error',
-                $ok
-                    ? 'Requisición cancelada. No se guardaron los productos.'
-                    : 'No se pudo cancelar la requisición.'
-            );
+            ->with('success', 'Compra Eliminada Correctamente.');
     }
 
     public function enviarCorreo(Compra $compra)

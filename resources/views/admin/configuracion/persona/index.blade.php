@@ -56,24 +56,6 @@
                 </div>
             </div>
 
-            <div class="collapse" id="filters">
-                <div class="rd-filters">
-                    <div class="d-flex gap-3 align-items-center mb-3">
-                        <span class="font-weight-bold" style="margin-right:5px; ">Filtrar por estado:</span>
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}"
-                                class="btn {{ request('estado', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
-                                Activos
-                            </a>
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}"
-                                class="btn {{ request('estado', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
-                                Inactivos
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {{-- Tabla --}}
             <div id="printArea">
                 <table class="rd-table">

@@ -14,7 +14,7 @@ class RecetaController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $activo = $request->input('activo', 1); // Cambiado de 'estado' a 'activo'
+        $estado = $request->input('estado', 1);
 
         $query = Receta::query();
 
@@ -24,16 +24,15 @@ class RecetaController extends Controller
             });
         }
 
-        if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int)$activo);
+        if ($estado !== null && $estado !== '') {
+            $query->where('estado', (int)$estado);
         } else {
-            // Por defecto, mostrar solo activos
             $query->where('estado', 1);
         }
 
         $recetas = $query->orderBy('id', 'desc')->paginate(10);
 
-        return view('admin.maestros.recetas.index', compact('recetas', 'buscar', 'activo'));
+        return view('admin.maestros.recetas.index', compact('recetas', 'buscar', 'estado'));
     }
 
     /**

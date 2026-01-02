@@ -54,10 +54,10 @@ class FechasCompra extends Component
                 ]);
         }
 
-        $this->dispatch(
-            'mostrar-alerta',
-            icono: 'success',
-            mensaje: 'Fechas guardadas correctamente'
+        $this->dispatch('swal',
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Estado creado correctamente.'
         );
     }
 
