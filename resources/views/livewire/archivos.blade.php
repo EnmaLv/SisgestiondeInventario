@@ -36,10 +36,9 @@
             <div class="row g-3">
 
                 <div class="col-md-7">
-                    <label class="rd-label mb-1">Archivo</label>
-
-                    <div class="rd-card p-4 text-center"
-                        style="border:2px dashed #cbd5e1; background:#f8fafc">
+                    
+                    <label class="rd-card p-4 text-center" for="archivo"
+                    style="border:2px dashed #cbd5e1; background:#f8fafc; width: 100%; cursor: pointer; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
 
                         <i class="fas fa-file-upload mb-2"
                             style="font-size:2.2rem; color:#64748b"></i>
@@ -64,16 +63,17 @@
                                 wire:model="archivo"
                                 wire:key="{{ $archivoKey }}"
                                 accept=".xlsx,.xls,.pdf,.txt"
-                                style="padding: 20px; font-size: 1rem; height: auto;">
-
-                            @error('archivo')
+                                style="padding: 20px; font-size: 1rem; height: auto;" id="archivo" hidden>
+                                
+                                @error('archivo')
                                 <div class="rd-error">{{ $message }}</div>
-                            @enderror
-                            <div x-show="isUploading" style="text-align: left; margin-top: 12px;">
-                                <progress max="100" x-bind:value="progress" style="width: 100%; height: 16px;"></progress>
-                            </div>
+                                @enderror
+                                <div x-show="isUploading" style="text-align: left; margin-top: 12px;">
+                                    <progress max="100" x-bind:value="progress" style="width: 100%; height: 16px;"></progress>
+                                </div>
+                                <span wire:ignore id="nombre-display"></span>
                         </div>
-                    </div>
+                    </label>
                 </div>
                 <div class="col-md-5">
                     <label class="rd-label mb-1">¿Cómo funciona?</label>
@@ -172,3 +172,16 @@
     </div>
 
 </div>
+
+@push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const archivoInput = document.getElementById('archivo');
+            const nombreDisplay = document.getElementById('nombre-display');
+            archivoInput.addEventListener('change', function(e) {
+                let fileName = e.target.files[0].name;
+                nombreDisplay.innerText = fileName;
+            });
+        });
+    </script>
+@endpush
