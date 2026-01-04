@@ -28,9 +28,25 @@ class Receta extends Model
         return $this->hasMany(DetalleRegistroDiario::class, 'receta_id');
     }
 
+    public static function tieneIngredienes($id)
+    {
+        return DB::table('receta_ingredientes')
+            ->where('recetas_id', $id)
+            ->where('estado', 1)
+            ->exists();
+    }
+
+    public static function cantidadIngredientes($id)
+    {
+        return DB::table('receta_ingredientes')
+            ->where('recetas_id', $id)
+            ->where('estado', 1)
+            ->count();
+    }
+
     public static function eliminarReceta($id)
     {
-        return DB::table('recetas')
+        return DB::table('receta')
             ->where('id', $id)
             ->update([
                 'estado' => 0,
@@ -40,7 +56,7 @@ class Receta extends Model
 
     public static function activarReceta($id)
     {
-        return DB::table('recetas')
+        return DB::table('receta')
             ->where('id', $id)
             ->update([
                 'estado' => 1,

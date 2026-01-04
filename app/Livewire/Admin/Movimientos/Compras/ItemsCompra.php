@@ -32,7 +32,7 @@ class ItemsCompra extends Component
     public function mount(Compra $compra)
     {
         $this->compra = $compra;
-        $this->productos = Producto::all();
+        $this->productos = Producto::all()->where('estado', 1);
         $this->cargarDatos();
     }
 

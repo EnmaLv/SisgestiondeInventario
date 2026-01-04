@@ -173,7 +173,7 @@
                                 <td>{{ round($lote->cantidad_gramos_sucursal) }}g</td>
                                 <td>
                                     @if ($lote->cantidad_sucursal && $lote->cantidad_sucursal <= 0)
-                                        <span class="rd-badge rd-badge-secondary">Fuera de Stock</span>
+                                        <span class="rd-badge rd-badge-secondary">Agotado</span>
                                     @elseif ($lote->days_to_expire <= 7)
                                         <span class="rd-badge rd-badge-warning">Cerca de Vencer</span>
                                     @elseif ($lote->is_expired)

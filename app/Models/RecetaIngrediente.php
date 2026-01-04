@@ -44,23 +44,10 @@ class RecetaIngrediente extends Model
         return $this->belongsTo(Unidad::class);
     }
 
-    public static function eliminarReceta($id)
+    public static function eliminarIngredientes($id)
     {
         return DB::table('receta_ingredientes')
             ->where('id', $id)
-            ->update([
-                'estado' => 0,
-                'updated_at' => now()
-            ]);
-    }
-
-    public static function activarReceta($id)
-    {
-        return DB::table('receta_ingredientes')
-            ->where('id', $id)
-            ->update([
-                'estado' => 1,
-                'updated_at' => now()
-            ]);
+            ->delete();
     }
 }

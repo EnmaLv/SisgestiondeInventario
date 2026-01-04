@@ -151,7 +151,13 @@
                                 <td class="text-center">{{ $producto->codigo }}</td>
                                 <td class="text-center">{{ $producto->nombre }}</td>
                                 <td class="text-center">{{ $producto->categoria->nombre }}</td>
-                                <td class="text-center">{{ $producto->cantidad_actual ?? 'Aun no existe compra registrada'}}</td>
+                                @if ($producto->cantidad_actual == null)
+                                    <td class="text-center"><span class="rd-badge rd-badge-secondary">No hay compra registrada</span></td>
+                                @elseif ($producto->cantidad_actual == 0)
+                                    <td class="text-center"><span class="rd-badge rd-badge-secondary">Agotado</span></td>
+                                @else
+                                    <td class="text-center">{{ $producto->cantidad_actual }}</td>
+                                @endif
                                 <td class="text-center">{{ $producto->unidad->nombre }}</td>
                                 <td class="text-center">
                                     @if ($producto->estado == true)

@@ -17,7 +17,7 @@ class RecetaIngredienteController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $estado = $request->input('estado', 1); // Cambiado de 'estado' a 'estado'
+        $estado = $request->input('estado', 1);
 
         $query = Receta::with('recetaIngredientes');
 
@@ -30,7 +30,6 @@ class RecetaIngredienteController extends Controller
         if ($estado !== null && $estado !== '') {
             $query->where('estado', (int)$estado);
         } else {
-            // Por defecto, mostrar solo estados
             $query->where('estado', 1);
         }
 
@@ -110,20 +109,19 @@ class RecetaIngredienteController extends Controller
      */
     public function edit($recetaId)
     {
-        $recetaIngrediente = RecetaIngrediente::with(['producto', 'unidad', 'receta'])
+        $receta = Receta::with('recetaIngredientes.producto', 'recetaIngredientes.unidad')
             ->findOrFail($recetaId);
 
-        $recetas = Receta::all();
         $productos = Producto::all();
         $unidades = Unidad::all();
 
         return view('admin.maestros.receta_ingredientes.edit', compact(
-            'recetaIngrediente',
-            'recetas',
+            'receta',
             'productos',
             'unidades'
         ));
     }
+
 
 
 
@@ -181,19 +179,13 @@ class RecetaIngredienteController extends Controller
         }
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy($recetaId)
     {
-        Receta::eliminarReceta($id);
-        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta eliminada exitosamente.');
+        RecetaIngrediente::where('recetas_id', $recetaId)->delete();
+
+        return redirect()
+            ->route('admin.maestros.receta_ingredientes.index')
+            ->with('success', 'Ingredientes de la receta eliminados correctamente.');
     }
 
-    public function activar($id)
-    {
-        Receta::activarReceta($id);
-        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Categoria activada exitosamente.');
-    }
 }

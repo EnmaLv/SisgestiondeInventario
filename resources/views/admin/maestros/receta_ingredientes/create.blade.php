@@ -115,7 +115,7 @@
                                 </div>
 
                                 <div style="width:120px">
-                                    <button type="button" class="btn btn-primary" id="agregarProducto"
+                                    <button type="button" class="btn rd-btn-primary" id="agregarProducto"
                                         style="height: 38px;" @disabled($recetas->isEmpty() || $productos->isEmpty())
                                         style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
                                         <i class="fas fa-plus"></i> Agregar

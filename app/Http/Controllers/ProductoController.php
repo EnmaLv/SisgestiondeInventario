@@ -100,9 +100,26 @@ class ProductoController extends Controller
 
     public function destroy($id)
     {
+        if (Producto::tieneInventarioEnAcarigua($id)) {
+
+            $cantidad = Producto::cantidadEnAcarigua($id);
+
+            return redirect()
+                ->route('admin.maestros.productos.index')
+                ->with(
+                    'error',
+                    "No se puede eliminar el producto porque aún tiene " . round($cantidad) . " unidad(es) en el inventario."
+                )
+                ->with('icono', 'error');
+        }
+
         Producto::eliminarProducto($id);
-        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto inactivado exitosamente.');
+
+        return redirect()
+            ->route('admin.maestros.productos.index')
+            ->with('success', 'Producto inactivado exitosamente.');
     }
+
 
     public function activar($id)
     {

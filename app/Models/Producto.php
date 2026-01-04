@@ -279,4 +279,23 @@ class Producto extends Model
 
         return $codigo;
     }
+
+    public static function tieneInventarioEnAcarigua($productoId)
+    {
+        return DB::table('inventario_sucursal_lotes as isl')
+            ->join('lotes as l', 'l.id', '=', 'isl.lote_id')
+            ->where('l.producto_id', $productoId)
+            ->where('isl.sucursal_id', 1) // Acarigua
+            ->where('isl.cantidad', '>', 0)
+            ->exists();
+    }
+
+    public static function cantidadEnAcarigua($productoId)
+    {
+        return DB::table('inventario_sucursal_lotes as isl')
+            ->join('lotes as l', 'l.id', '=', 'isl.lote_id')
+            ->where('l.producto_id', $productoId)
+            ->where('isl.sucursal_id', 1)
+            ->sum('isl.cantidad');
+    }
 }

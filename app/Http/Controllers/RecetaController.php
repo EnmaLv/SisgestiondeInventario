@@ -95,6 +95,18 @@ class RecetaController extends Controller
      */
     public function destroy($id)
     {
+        if (Receta::tieneIngredienes($id)) {
+
+            $cantidad = Receta::cantidadIngredientes($id);
+
+            return redirect()
+                ->route('admin.maestros.recetas.index')
+                ->with(
+                    'error',
+                    "No se puede eliminar la receta porque tiene " . round($cantidad) . " ingrediente(s) asociado(s)."
+                )
+                ->with('icono', 'error');
+        }
         Receta::eliminarReceta($id);
         return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta eliminada exitosamente.');
     }
