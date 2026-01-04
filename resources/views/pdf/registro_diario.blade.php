@@ -17,8 +17,9 @@
         }
 
         img{
-            width: 100%;
+            width: 10%;
             height: auto;
+            float: left;
         }
 
         .header {
