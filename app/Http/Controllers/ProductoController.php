@@ -16,9 +16,7 @@ use App\Http\Requests\ProductoRequest;
 
 class ProductoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $activo = $request->input('activo', 1); // Por defecto muestra solo activos
@@ -26,54 +24,47 @@ class ProductoController extends Controller
         return view('admin.maestros.productos.index', compact('productos'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $datos = Producto::getDatosFormulario();
         return view('admin.maestros.productos.create', $datos);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(ProductoRequest $request)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        if ($request->hasFile('imagen')) {
-            $validated['imagen'] = $request->file('imagen')
-                ->store('imagenes/productos', 'public');
-        } else {
-            $validated['imagen'] = 'imagenes/productos/default.png';
+            if ($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen')
+                    ->store('imagenes/productos', 'public');
+            } else {
+                $validated['imagen'] = 'imagenes/productos/default.png';
+            }
+
+            $productoId = Producto::crearProducto($validated);
+
+            $this->procesarTasaYPrecios($productoId);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.maestros.productos.index')
+                ->with('success', 'Producto creado y precio actualizado correctamente.');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            \Log::error('Error al crear producto', ['error' => $e->getMessage()]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Error al crear el producto.');
         }
-
-        $productoId = Producto::crearProducto($validated);
-
-        $this->procesarTasaYPrecios($productoId);
-
-        DB::commit();
-
-        return redirect()
-            ->route('admin.maestros.productos.index')
-            ->with('success', 'Producto creado y precio actualizado correctamente.');
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-        \Log::error('Error al crear producto', ['error' => $e->getMessage()]);
-
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with('error', 'Error al crear el producto.');
     }
-}
 
 
     public function show($id)
@@ -82,9 +73,6 @@ class ProductoController extends Controller
         return view('admin.maestros.productos.show', compact('producto'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
         $producto = Producto::findOrFail($id);
@@ -95,9 +83,6 @@ class ProductoController extends Controller
         ]));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(ProductoRequest $request, $id)
     {
         $validated = $request->validated();
@@ -108,6 +93,7 @@ class ProductoController extends Controller
         }
 
         Producto::actualizarProducto($id, $validated);
+        $this->procesarTasaYPrecios($id);
 
         return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto actualizado exitosamente.');
     }
@@ -124,9 +110,6 @@ class ProductoController extends Controller
         return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto activado exitosamente.');
     }
 
-    /**
-     * Actualiza la tasa del dólar y recalcula los precios de todos los productos
-     */
     public function actualizarTasaDolar()
     {
         DB::beginTransaction();
@@ -264,7 +247,4 @@ class ProductoController extends Controller
                 ]);
         }
     }
-
-
-
 }

@@ -43,6 +43,15 @@
                     </div>
                 </div>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form action="{{ route('admin.maestros.productos.update', $producto->id) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
@@ -120,25 +129,31 @@
                             </div>
 
                             <div class="row mt-3">
-
                                 {{-- Precio Compra --}}
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <label class="font-weight-bold">Precio Compra</label>
+                                        <label class="font-weight-bold">Precio base (USD)</label>
                                         <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                            <input type="number" class="form-control rd-filter-input" name="precio_compra"
-                                                value="{{ old('precio_compra', $producto->precio_compra) }}"
-                                                placeholder="$$">
+                                            <span class="input-group-text">$</span>
+                                            <input
+                                                type="number"
+                                                name="costo_usd"
+                                                class="form-control rd-filter-input"
+                                                value="{{ old('costo_usd', $producto->precioProducto->costo_usd ?? '') }}"
+                                                placeholder="0.00"
+                                                min="0"
+                                                step="0.01"
+                                                required
+                                            >
                                         </div>
-                                        @error('precio_compra')
+                                        @error('costo_usd')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
                                 </div>
 
                                 {{-- Stock Mínimo --}}
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Mínimo</label>
                                         <div class="input-group mb-2">
@@ -154,7 +169,7 @@
                                 </div>
 
                                 {{-- Stock Máximo --}}
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Máximo</label>
                                         <div class="input-group mb-2">
@@ -187,6 +202,24 @@
                                             </select>
                                         </div>
                                         @error('unidad_id')
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold" id="label-peso">
+                                            Peso contenido
+                                        </label>
+
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-weight"></i></span>
+                                            <input type="number" class="form-control rd-filter-input"
+                                                name="peso_contenido" value="{{ round(old('peso_contenido', $producto->peso_contenido)) }}"
+                                                placeholder="Peso contenido" min="0">
+                                        </div>
+                                        @error('peso_contenido')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
@@ -443,6 +476,21 @@
 @endpush
 @section('js')
     <script>
+        document.getElementById('unidad_id').addEventListener('change', function () {
+            const selected = this.options[this.selectedIndex];
+            const abrev = selected.getAttribute('data-abreviatura');
+
+            const label = document.getElementById('label-peso');
+
+            if (abrev) {
+                label.textContent = `Peso contenido (en ${abrev})`;
+            } else {
+                label.textContent = 'Peso contenido';
+            }
+        });
+    </script>
+
+    <script>
         let descripcionEditor;
         ClassicEditor
             .create(document.querySelector('#descripcion'), {
@@ -480,5 +528,6 @@
                 });
             }
         });
+        
     </script>
 @stop

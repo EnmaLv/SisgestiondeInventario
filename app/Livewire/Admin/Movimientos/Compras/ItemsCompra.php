@@ -94,7 +94,7 @@ class ItemsCompra extends Component
     {
         $this->dispatch('confirmar-envio', compraId: $this->compra->id);
     }
-
+    
     public function agregarItems()
     {
         $producto = Producto::find($this->productoId);

@@ -119,7 +119,7 @@
                             <div class="row mt-3">
 
                                 {{-- Precio Compra --}}
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Precio base (USD)</label>
                                         <div class="input-group mb-2">
@@ -142,7 +142,7 @@
                                 </div>
 
                                 {{-- Stock Mínimo --}}
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Mínimo</label>
                                         <div class="input-group mb-2">
@@ -158,7 +158,7 @@
                                 </div>
 
                                 {{-- Stock Máximo --}}
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Máximo</label>
                                         <div class="input-group mb-2">
@@ -182,13 +182,31 @@
                                             <select class="form-control rd-filter-input" name="unidad_id" id="unidad_id">
                                                 <option value="" selected disabled>Seleccione una unidad</option>
                                                 @foreach ($unidades as $unidad)
-                                                    <option value="{{ $unidad->id }}"
+                                                    <option value="{{ $unidad->id }}" data-abreviatura="{{ $unidad->abreviatura }}"
                                                         {{ old('unidad_id') == $unidad->id ? 'selected' : '' }}>
                                                         {{ $unidad->nombre }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         @error('unidad_id')
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold" id="label-peso">
+                                            Peso contenido
+                                        </label>
+
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-weight"></i></span>
+                                            <input type="number" class="form-control rd-filter-input"
+                                                name="peso_contenido" value="{{ old('peso_contenido') }}"
+                                                placeholder="Peso contenido" min="0">
+                                        </div>
+                                        @error('peso_contenido')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                     </div>
@@ -449,6 +467,21 @@
 
 @section('js')
     <script>
+        document.getElementById('unidad_id').addEventListener('change', function () {
+            const selected = this.options[this.selectedIndex];
+            const abrev = selected.getAttribute('data-abreviatura');
+
+            const label = document.getElementById('label-peso');
+
+            if (abrev) {
+                label.textContent = `Peso contenido (en ${abrev})`;
+            } else {
+                label.textContent = 'Peso contenido';
+            }
+        });
+    </script>
+
+    <script>
         let descripcionEditor;
         ClassicEditor
             .create(document.querySelector('#descripcion'), {
@@ -486,5 +519,6 @@
                 });
             }
         });
+        
     </script>
 @stop

@@ -26,16 +26,14 @@ class ProductoRequest extends FormRequest
             'codigo' => 'nullable|string|max:255',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
-            // permitir que no venga imagen en creación
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'precio_compra' => 'nullable|numeric',
             'stock_minimo' => 'required|integer',
             'stock_maximo' => 'required|integer',
+            'peso_contenido' => 'required|numeric|min:1',
             'unidad_id' => 'required|exists:unidades,id',
-            // permitir que no venga estado (lo pones como hidden en el formulario o lo haces nullable)
             'estado' => 'nullable|boolean',
-            'costo_usd' => 'required|numeric|min:0'
-
+            'costo_usd' => 'sometimes|required|numeric|min:0'
         ];
     }
 

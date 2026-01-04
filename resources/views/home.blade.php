@@ -238,8 +238,54 @@
                 });
             </script>
         @endif
+        
+        @if ($total_productos_stock_minimo > 0)
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const hoy = new Date().toISOString().slice(0, 10);
+                const key = 'alerta_stock_minimo_' + hoy; // ✅ Mejorado: incluye la fecha en la key
 
-
+                // ✅ Solo mostrar si NO se ha visto hoy
+                if (localStorage.getItem(key) !== 'visto') {
+                    Swal.fire({
+                        title: '📉 Stock mínimo alcanzado',
+                        html: `
+                            <p style="font-size:15px">
+                                Existen <b>{{ $total_productos_stock_minimo }}</b> producto(s)
+                                que han alcanzado o bajado del <b>stock mínimo</b> en tu sucursal.
+                            </p>
+                            <p style="font-size:14px; color:#6b7280;">
+                                Se recomienda revisarlos y realizar una compra.
+                            </p>
+                            <ul style="text-align:left; font-size:14px; max-height:200px; overflow-y:auto;">
+                            @foreach ($productos_stock_minimo as $producto)
+                                <li>
+                                    <strong>{{ $producto->nombre }}</strong>
+                                    <small class="text-danger">
+                                        ({{ number_format($producto->stock_actual, 2) }} / {{ number_format($producto->stock_minimo, 2) }})
+                                    </small>
+                                </li>
+                            @endforeach
+                            </ul>
+                        `,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Revisar inventario',
+                        cancelButtonText: 'Cerrar',
+                        confirmButtonColor: '#f59e0b',
+                        cancelButtonColor: '#6b7280'
+                    }).then((result) => {
+                        // ✅ Marcar como visto sin importar qué botón presionen
+                        localStorage.setItem(key, 'visto');
+                        
+                        if (result.isConfirmed) {
+                            window.location.href = "{{ url('/admin/maestros/productos?filtro=stock_minimo') }}";
+                        }
+                    });
+                }
+            });
+            </script>
+        @endif
 
         <!-- Lotes Vencidos -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">

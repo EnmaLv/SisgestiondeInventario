@@ -37,7 +37,7 @@
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Proveedores Registrados</h3>
+                    <h3 class="rd-title-sm">Productos Registrados</h3>
                 </div>
 
                 <div class="rd-actions">
@@ -139,8 +139,7 @@
                             <th class="text-center">Codigo</th>
                             <th class="text-center">Nombre</th>
                             <th class="text-center">Categoria</th>
-                            <th class="text-center">Stock Minimo</th>
-                            <th class="text-center">Stock Maximo</th>
+                            <th class="text-center">Cantidad Actual</th>
                             <th class="text-center">Unidad</th>
                             <th class="text-center">Estado</th>
                             <th class="text-center">Acciones</th>
@@ -152,8 +151,7 @@
                                 <td class="text-center">{{ $producto->codigo }}</td>
                                 <td class="text-center">{{ $producto->nombre }}</td>
                                 <td class="text-center">{{ $producto->categoria->nombre }}</td>
-                                <td class="text-center">{{ $producto->stock_minimo }}</td>
-                                <td class="text-center">{{ $producto->stock_maximo }}</td>
+                                <td class="text-center">{{ $producto->cantidad_actual ?? 'Aun no existe compra registrada'}}</td>
                                 <td class="text-center">{{ $producto->unidad->nombre }}</td>
                                 <td class="text-center">
                                     @if ($producto->estado == true)

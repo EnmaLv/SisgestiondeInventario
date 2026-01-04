@@ -55,16 +55,8 @@ class Compra extends Model
         ];
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | MÉTODOS DE CONSULTA
-    |--------------------------------------------------------------------------
-    */
-
     public static function listarCompras($buscar, $estado)
     {
-        // Construir la consulta base con join a proveedores
         $query = DB::table('compras')
             ->join('proveedors', 'proveedors.id', '=', 'compras.proveedor_id')
             ->select(
@@ -79,13 +71,11 @@ class Compra extends Model
                 ->orWhere('compras.id', 'like', "%{$buscar}%");
         });
 
-        // Aplicar filtro de estado si se proporciona
         if ($estado !== null && $estado !== '') {
             $query->where('compras.estado', (int) $estado);
         }
 
-        // Ordenar por ID de forma descendente y paginar
-        return $query->orderBy('compras.id', 'desc')->paginate(2);
+        return $query->orderBy('compras.id', 'desc')->paginate(10);
     }
 
     public static function crearCompra($data)
@@ -208,7 +198,6 @@ class Compra extends Model
         }
     }
 
-    // FINALIZAR COMPRA (inventario y movimientos)
     public static function finalizarCompra($compra, $sucursal_id)
     {
         DB::beginTransaction();
@@ -218,8 +207,6 @@ class Compra extends Model
                 ->get();
 
             foreach ($detalles as $detalle) {
-
-                // Inventario por sucursal
                 $inventario = DB::table('inventario_sucursal_lotes')
                     ->where('lote_id', $detalle->lote_id)
                     ->where('sucursal_id', $sucursal_id)
@@ -229,19 +216,18 @@ class Compra extends Model
                     DB::table('inventario_sucursal_lotes')
                         ->where('id', $inventario->id)
                         ->update([
-                            'cantidad'         => $inventario->cantidad + $detalle->cantidad, // unidades
-                            'cantidad_gramos'  => $inventario->cantidad_gramos + $detalle->cantidad_gramos // gramos
+                            'cantidad'         => $inventario->cantidad + $detalle->cantidad, 
+                            'cantidad_gramos'  => $inventario->cantidad_gramos + $detalle->cantidad_gramos
                         ]);
                 } else {
                     DB::table('inventario_sucursal_lotes')->insert([
                         'lote_id'      => $detalle->lote_id,
                         'sucursal_id'  => $sucursal_id,
                         'cantidad'     => $detalle->cantidad,
-                        'cantidad_gramos'     => $detalle->cantidad_gramos
+                        'cantidad_gramos' => $detalle->cantidad_gramos
                     ]);
                 }
 
-                // CREAR MOVIMIENTO
                 DB::table('movimiento_inventarios')->insert([
                     'producto_id'     => $detalle->producto_id,
                     'lote_id'         => $detalle->lote_id,
@@ -249,12 +235,11 @@ class Compra extends Model
                     'tipo_movimiento' => 'ENTRADA',
                     'unidad_id'       => $detalle->unidad_id,
                     'cantidad'        => $detalle->cantidad,
-                    'cantidad_gramos'        => $detalle->cantidad_gramos,
+                    'cantidad_gramos' => $detalle->cantidad_gramos,
                     'fecha'           => now(),
                 ]);
             }
 
-            // ACTUALIZAR COMPRA
             DB::table('compras')
                 ->where('id', $compra->id)
                 ->update([
@@ -270,82 +255,144 @@ class Compra extends Model
         }
     }
 
+    /**
+     * ✅ MEJORADO: Distribuye equitativamente respetando stock máximo
+     * - Sucursales normales: máximo según stock_maximo del producto
+     * - Acarigua (sucursal_id = 1): recibe todo el sobrante sin límite
+     */
     public static function finalizarCompraDistribuida($compra)
     {
         DB::beginTransaction();
 
         try {
-            // 1️⃣ Obtener sucursales activas (Acarigua primero)
+            // Obtener sucursales activas (Acarigua primero)
             $sucursales = DB::table('sucursals')
                 ->where('activo', 1)
-                ->orderByRaw("nombre = 'Acarigua' DESC")
-                ->pluck('id');
+                ->orderByRaw("id = 1 DESC") // Acarigua (id=1) primero
+                ->get();
 
             if ($sucursales->isEmpty()) {
                 throw new \Exception('No existen sucursales activas.');
             }
 
-            $cantidadSucursales = $sucursales->count();
+            // Identificar Acarigua
+            $acariguaId = 1;
+            $sucursalesNormales = $sucursales->where('id', '!=', $acariguaId);
+            $acarigua = $sucursales->firstWhere('id', $acariguaId);
 
-            // 2️⃣ Detalles de compra
+            if (!$acarigua) {
+                throw new \Exception('No se encontró la sucursal principal (Acarigua).');
+            }
+
             $detalles = DB::table('detalle_compras')
                 ->where('compra_id', $compra->id)
                 ->get();
 
             foreach ($detalles as $detalle) {
+                // Obtener producto para conocer su stock_maximo
+                $producto = DB::table('productos')->where('id', $detalle->producto_id)->first();
+                if (!$producto) {
+                    throw new \Exception("Producto {$detalle->producto_id} no encontrado.");
+                }
 
-                // 🔢 Reparto de UNIDADES
-                $cantidadBase = intdiv($detalle->cantidad, $cantidadSucursales);
-                $resto = $detalle->cantidad % $cantidadSucursales;
+                $stockMaximo = $producto->stock_maximo;
+                $cantidadRestante = $detalle->cantidad;
+                $gramosPorUnidad = $detalle->cantidad_gramos / $detalle->cantidad;
 
-                foreach ($sucursales as $index => $sucursal_id) {
+                // 🔹 PASO 1: Distribuir a sucursales normales (respetando stock máximo)
+                foreach ($sucursalesNormales as $sucursal) {
+                    if ($cantidadRestante <= 0) break;
 
-                    $cantidadAsignada = $cantidadBase + ($index < $resto ? 1 : 0);
+                    // Calcular stock actual en esta sucursal
+                    $stockActual = DB::table('inventario_sucursal_lotes')
+                        ->join('lotes', 'lotes.id', '=', 'inventario_sucursal_lotes.lote_id')
+                        ->where('lotes.producto_id', $producto->id)
+                        ->where('inventario_sucursal_lotes.sucursal_id', $sucursal->id)
+                        ->sum('inventario_sucursal_lotes.cantidad');
 
-                    if ($cantidadAsignada <= 0) {
-                        continue;
+                    // Calcular cuánto puede recibir sin superar el máximo
+                    $espacioDisponible = max(0, $stockMaximo - $stockActual);
+                    $cantidadAsignada = min($cantidadRestante, $espacioDisponible);
+
+                    if ($cantidadAsignada > 0) {
+                        $gramosAsignados = $cantidadAsignada * $gramosPorUnidad;
+
+                        // Actualizar o insertar en inventario
+                        $inventario = DB::table('inventario_sucursal_lotes')
+                            ->where('lote_id', $detalle->lote_id)
+                            ->where('sucursal_id', $sucursal->id)
+                            ->first();
+
+                        if ($inventario) {
+                            DB::table('inventario_sucursal_lotes')
+                                ->where('id', $inventario->id)
+                                ->update([
+                                    'cantidad'        => $inventario->cantidad + $cantidadAsignada,
+                                    'cantidad_gramos' => $inventario->cantidad_gramos + $gramosAsignados,
+                                ]);
+                        } else {
+                            DB::table('inventario_sucursal_lotes')->insert([
+                                'lote_id'         => $detalle->lote_id,
+                                'sucursal_id'     => $sucursal->id,
+                                'cantidad'        => $cantidadAsignada,
+                                'cantidad_gramos' => $gramosAsignados,
+                            ]);
+                        }
+
+                        // Registrar movimiento
+                        DB::table('movimiento_inventarios')->insert([
+                            'producto_id'     => $detalle->producto_id,
+                            'lote_id'         => $detalle->lote_id,
+                            'sucursal_id'     => $sucursal->id,
+                            'tipo_movimiento' => 'ENTRADA',
+                            'unidad_id'       => $detalle->unidad_id,
+                            'cantidad'        => $cantidadAsignada,
+                            'cantidad_gramos' => $gramosAsignados,
+                            'fecha'           => now(),
+                        ]);
+
+                        $cantidadRestante -= $cantidadAsignada;
                     }
+                }
 
-                    // ✅ GRAMOS FIJOS (1 unidad = 1000g)
-                    $gramosAsignados = $cantidadAsignada * 1000;
+                // 🔹 PASO 2: Todo el sobrante va a Acarigua (sin límite)
+                if ($cantidadRestante > 0) {
+                    $gramosAsignados = $cantidadRestante * $gramosPorUnidad;
 
-                    // 🔍 Buscar inventario existente
                     $inventario = DB::table('inventario_sucursal_lotes')
                         ->where('lote_id', $detalle->lote_id)
-                        ->where('sucursal_id', $sucursal_id)
+                        ->where('sucursal_id', $acariguaId)
                         ->first();
 
                     if ($inventario) {
                         DB::table('inventario_sucursal_lotes')
                             ->where('id', $inventario->id)
                             ->update([
-                                'cantidad'        => $inventario->cantidad + $cantidadAsignada,
+                                'cantidad'        => $inventario->cantidad + $cantidadRestante,
                                 'cantidad_gramos' => $inventario->cantidad_gramos + $gramosAsignados,
                             ]);
                     } else {
                         DB::table('inventario_sucursal_lotes')->insert([
                             'lote_id'         => $detalle->lote_id,
-                            'sucursal_id'     => $sucursal_id,
-                            'cantidad'        => $cantidadAsignada,
+                            'sucursal_id'     => $acariguaId,
+                            'cantidad'        => $cantidadRestante,
                             'cantidad_gramos' => $gramosAsignados,
                         ]);
                     }
 
-                    // 📦 Movimiento
                     DB::table('movimiento_inventarios')->insert([
                         'producto_id'     => $detalle->producto_id,
                         'lote_id'         => $detalle->lote_id,
-                        'sucursal_id'     => $sucursal_id,
+                        'sucursal_id'     => $acariguaId,
                         'tipo_movimiento' => 'ENTRADA',
                         'unidad_id'       => $detalle->unidad_id,
-                        'cantidad'        => $cantidadAsignada,
+                        'cantidad'        => $cantidadRestante,
                         'cantidad_gramos' => $gramosAsignados,
                         'fecha'           => now(),
                     ]);
                 }
             }
 
-            // 3️⃣ Finalizar compra
             DB::table('compras')
                 ->where('id', $compra->id)
                 ->update([
@@ -361,6 +408,4 @@ class Compra extends Model
             throw $e;
         }
     }
-
-
 }

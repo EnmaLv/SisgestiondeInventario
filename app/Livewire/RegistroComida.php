@@ -164,7 +164,7 @@ protected function rulesRealtime(): array
         DB::beginTransaction();
 
         try {
-            $sucursalId = 1; // Sucursal fija
+            $sucursalId = 1;
 
             // 3. PROCESAR CADA REGISTRO DE DESAYUNO EN EL ARRAY
             foreach ($this->desayunos_agregados as $registro) {
@@ -184,7 +184,7 @@ protected function rulesRealtime(): array
                 // PROCESAR CADA INGREDIENTE PARA EL DESCUENTO
                 foreach ($receta->recetaIngredientes as $ingrediente) {
 
-                    $totalDescontarGramos = $ingrediente->cantidad_porcion * $cantidadServido;
+                    $totalDescontarGramos = $ingrediente->cantidad_gramos * $cantidadServido;
                     $pesoUnidad = $ingrediente->producto->peso_contenido;
 
                     if ($pesoUnidad <= 0) {
@@ -199,7 +199,7 @@ protected function rulesRealtime(): array
                         ->where('estado', 1);
                     })
                     ->where('cantidad_gramos', '>', 0)
-                    ->orderBy('lote_id', 'asc') // FIFO real
+                    ->orderBy('lote_id', 'asc')
                     ->get();
 
 
@@ -218,6 +218,7 @@ protected function rulesRealtime(): array
                         $inv->save();
 
                         $lote = $inv->lote;
+                        $lote->cantidad_inicial = floor($lote->cantidad_inicial - ($tomarGramos / $pesoUnidad));
                         $lote->cantidad_actual = $inv->cantidad_gramos;
                         $lote->save();
 
