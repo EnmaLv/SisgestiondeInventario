@@ -276,10 +276,22 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         Route::get('localidad/verificar', [LocalidadController::class, 'verificarExistencia'])->name('localidad.verificar');
 
+        Route::get('/configuracion/archivos', [ArchivoController::class, 'index'])->name('admin.configuracion.archivos.index');
+        Route::get('/configuracion/archivos/ver/{archivo}', function ($archivo) {
+            $path = storage_path('app/public/' . $archivo);
+
+            abort_unless(file_exists($path), 404);
+
+            return response()->file($path, [
+                'Content-Disposition' => 'inline'
+            ]);
+        })->where('archivo', '.*');
+
+        
         /* Configuración - Empleados, Permisos, Roles */
         
         Route::prefix('configuracion')
-            ->middleware(\App\Http\Middleware\CheckMenuPermission::class) // solo permisos
+            ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
             ->group(function () {
                 Route::get('/empleados', [EmpleosController::class, 'index'])->name('admin.configuracion.empleados.index');
                 Route::get('/empleados/{id}/edit', [EmpleosController::class, 'edit'])->name('admin.configuracion.empleados.edit');
@@ -298,17 +310,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
                 Route::put('/roles/{id}', [RolesController::class, 'update'])->name('admin.configuracion.roles.update');
                 Route::delete('/roles/{id}', [RolesController::class, 'destroy'])->name('admin.configuracion.roles.destroy');
 
-                Route::get('/archivos', [ArchivoController::class, 'index'])->name('admin.configuracion.archivos.index');
-                // routes/web.php
-                Route::get('/archivos/ver/{archivo}', function ($archivo) {
-                    $path = storage_path('app/public/' . $archivo);
-
-                    abort_unless(file_exists($path), 404);
-
-                    return response()->file($path, [
-                        'Content-Disposition' => 'inline'
-                    ]);
-                })->where('archivo', '.*');
+                
 
 
                 // Master key routes
