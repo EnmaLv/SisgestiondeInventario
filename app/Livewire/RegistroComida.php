@@ -14,13 +14,10 @@ use Exception;
 
 class RegistroComida extends Component
 {
-    // --- PROPIEDADES NUEVAS (Para el manejo de arrays) ---
-    public $desayunos_agregados = []; // Array de entradas: [['receta_id' => 1, 'cantidad' => 10], ...]
-
-    // --- PROPIEDADES EXISTENTES ---
+    public $desayunos_agregados = [];
     public $showNotification = false;
     public $notification = ['type' => 'success', 'message' => ''];
-    public $desayuno_registrado = false; // Indica si ya se registró algo hoy
+    public $desayuno_registrado = false;
     public $horarioPermitido;
     public $alertInventario = null;
     public $alertLimite = null;
@@ -34,7 +31,6 @@ class RegistroComida extends Component
             );
         }
 
-        // Validación de duplicados
         if (str_contains($property, 'receta_id')) {
             $ids = array_filter(array_column($this->desayunos_agregados, 'receta_id'));
 
@@ -45,8 +41,6 @@ class RegistroComida extends Component
             }
         }
     }
-
-
 
 protected function rulesRealtime(): array
 {
@@ -63,7 +57,6 @@ protected function rulesRealtime(): array
     public function mount()
     {
         $this->checkDesayunoStatus();
-        // Inicializa siempre con al menos una fila vacía
         if (empty($this->desayunos_agregados)) {
             $this->addDesayuno();
         }
@@ -86,9 +79,7 @@ protected function rulesRealtime(): array
             })->toArray();
         }
     }
-
-    // --- NUEVOS MÉTODOS PARA EL MANEJO DINÁMICO ---
-
+    
     public function addDesayuno()
     {
         if ($this->desayuno_registrado) return;
@@ -112,10 +103,7 @@ protected function rulesRealtime(): array
         $this->resetErrorBag();
     }
 
-
-    // --- MODIFICACIÓN DEL MÉTODO DE GUARDADO ---
-
-    public function saveDesayuno() // Nombre modificado
+    public function saveDesayuno() 
     {
         // Validar hora
         $hora = now()->format('H:i');
@@ -124,17 +112,14 @@ protected function rulesRealtime(): array
             return;
         }
 
-        // Validar si ya existe un registro para hoy
         if (DetalleRegistroDiario::whereDate('created_at', now()->toDateString())->exists()) {
             $this->addError('existe', 'El desayuno de hoy ya fue registrado.');
             return;
         }
 
-        // 1. VALIDACIÓN DINÁMICA DE ARRAYS
         $rules = [];
         $messages = [];
         
-        // Verifica que la lista no esté vacía
         if (empty(array_filter($this->desayunos_agregados, fn($d) => $d['receta_id'] !== null))) {
             $this->addError('general', 'Debe seleccionar al menos un desayuno con su cantidad.');
             return;
@@ -149,7 +134,6 @@ protected function rulesRealtime(): array
             $messages['desayunos_agregados.' . $index . '.cantidad.min'] = "La cantidad debe ser 1 o superior para el Desayuno #" . ($index + 1);
         }
 
-        // 2. Validación de Duplicados (Mejorada)
         $recetaIds = array_filter(array_column($this->desayunos_agregados, 'receta_id')); // Filtra IDs nulos
 
         if (!empty($recetaIds) && count($recetaIds) !== count(array_unique($recetaIds))) {
@@ -157,31 +141,25 @@ protected function rulesRealtime(): array
             return;
         }
         
-        // Validación final
         $this->validate($rules, $messages);
-
 
         DB::beginTransaction();
 
         try {
             $sucursalId = 1;
 
-            // 3. PROCESAR CADA REGISTRO DE DESAYUNO EN EL ARRAY
             foreach ($this->desayunos_agregados as $registro) {
                 
                 $recetaId = $registro['receta_id'];
                 $cantidadServido = $registro['cantidad'];
                 
-                // GUARDAR EL DETALLE DEL DESAYUNO
                 DetalleRegistroDiario::create([
                     'receta_id' => $recetaId,
                     'cantidad_servido' => $cantidadServido,
                 ]);
 
-                // CARGAR LA RECETA Y SUS INGREDIENTES
                 $receta = Receta::with('recetaIngredientes.producto')->find($recetaId);
 
-                // PROCESAR CADA INGREDIENTE PARA EL DESCUENTO
                 foreach ($receta->recetaIngredientes as $ingrediente) {
 
                     $totalDescontarGramos = $ingrediente->cantidad_gramos * $cantidadServido;
@@ -191,7 +169,6 @@ protected function rulesRealtime(): array
                         throw new Exception("El producto {$ingrediente->producto->nombre} no tiene peso_contenido definido.");
                     }
 
-                    // LOTES FIFO
                     $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
                     ->whereHas('lote', function ($q) use ($ingrediente) {
                         $q->where('producto_id', $ingrediente->producto_id)
@@ -242,7 +219,7 @@ protected function rulesRealtime(): array
                         throw new Exception("No hay suficiente inventario para el ingrediente: {$ingrediente->producto->nombre}. Faltan " . round($pendiente, 2) . " gramos.");
                     }
                 }
-            } // Fin del bucle de registros
+            }
 
             DB::commit();
 

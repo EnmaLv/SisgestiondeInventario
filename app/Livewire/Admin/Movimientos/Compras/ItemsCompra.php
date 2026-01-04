@@ -65,12 +65,6 @@ class ItemsCompra extends Component
         }
     }
 
-    /**
-     * Genera un código de lote legible:
-     * formato: PRD-YYYYMMDD-XXX
-     * PRD = 3 letras del nombre del producto
-     * XXX = número random 3 dígitos (si ya existe, se regenera)
-     */
     protected function generateCodigoLote(Producto $producto): string
     {
         $prod = $producto->nombre ?? 'PROD';
@@ -175,16 +169,12 @@ class ItemsCompra extends Component
     {
         DB::beginTransaction();
         try {
-
-
             $detalle = DetalleCompra::find($detalleId);
 
             $lote_id = $detalle->lote_id;
             $lote = Lote::find($lote_id);
             $lote->delete();
             $detalle->delete();
-
-
 
             $this->compra->total = $this->compra->detalleCompras->sum('subtotal');
             $this->compra->save();

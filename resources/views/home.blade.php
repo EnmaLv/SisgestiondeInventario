@@ -243,9 +243,8 @@
             <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const hoy = new Date().toISOString().slice(0, 10);
-                const key = 'alerta_stock_minimo_' + hoy; // ✅ Mejorado: incluye la fecha en la key
+                const key = 'alerta_stock_minimo_' + hoy;
 
-                // ✅ Solo mostrar si NO se ha visto hoy
                 if (localStorage.getItem(key) !== 'visto') {
                     Swal.fire({
                         title: '📉 Stock mínimo alcanzado',
@@ -275,7 +274,6 @@
                         confirmButtonColor: '#f59e0b',
                         cancelButtonColor: '#6b7280'
                     }).then((result) => {
-                        // ✅ Marcar como visto sin importar qué botón presionen
                         localStorage.setItem(key, 'visto');
                         
                         if (result.isConfirmed) {

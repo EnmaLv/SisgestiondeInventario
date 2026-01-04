@@ -255,69 +255,63 @@ class Compra extends Model
         }
     }
 
-    /**
-     * ✅ MEJORADO: Distribuye equitativamente respetando stock máximo
-     * - Sucursales normales: máximo según stock_maximo del producto
-     * - Acarigua (sucursal_id = 1): recibe todo el sobrante sin límite
-     */
     public static function finalizarCompraDistribuida($compra)
     {
         DB::beginTransaction();
 
         try {
-            // Obtener sucursales activas (Acarigua primero)
             $sucursales = DB::table('sucursals')
                 ->where('activo', 1)
-                ->orderByRaw("id = 1 DESC") // Acarigua (id=1) primero
+                ->orderByRaw("id = 1 DESC")
                 ->get();
 
             if ($sucursales->isEmpty()) {
                 throw new \Exception('No existen sucursales activas.');
             }
 
-            // Identificar Acarigua
             $acariguaId = 1;
-            $sucursalesNormales = $sucursales->where('id', '!=', $acariguaId);
-            $acarigua = $sucursales->firstWhere('id', $acariguaId);
-
-            if (!$acarigua) {
-                throw new \Exception('No se encontró la sucursal principal (Acarigua).');
-            }
+            $cantidadSucursales = $sucursales->count();
 
             $detalles = DB::table('detalle_compras')
                 ->where('compra_id', $compra->id)
                 ->get();
 
             foreach ($detalles as $detalle) {
-                // Obtener producto para conocer su stock_maximo
                 $producto = DB::table('productos')->where('id', $detalle->producto_id)->first();
                 if (!$producto) {
                     throw new \Exception("Producto {$detalle->producto_id} no encontrado.");
                 }
 
                 $stockMaximo = $producto->stock_maximo;
-                $cantidadRestante = $detalle->cantidad;
                 $gramosPorUnidad = $detalle->cantidad_gramos / $detalle->cantidad;
+                $cantidadBase = intdiv($detalle->cantidad, $cantidadSucursales);
+                $resto = $detalle->cantidad % $cantidadSucursales;
+                $cantidadRestante = 0;
 
-                // 🔹 PASO 1: Distribuir a sucursales normales (respetando stock máximo)
-                foreach ($sucursalesNormales as $sucursal) {
-                    if ($cantidadRestante <= 0) break;
+                foreach ($sucursales as $index => $sucursal) {
+                    $cantidadEquitativa = $cantidadBase + ($index < $resto ? 1 : 0);
 
-                    // Calcular stock actual en esta sucursal
-                    $stockActual = DB::table('inventario_sucursal_lotes')
-                        ->join('lotes', 'lotes.id', '=', 'inventario_sucursal_lotes.lote_id')
-                        ->where('lotes.producto_id', $producto->id)
-                        ->where('inventario_sucursal_lotes.sucursal_id', $sucursal->id)
-                        ->sum('inventario_sucursal_lotes.cantidad');
+                    if ($cantidadEquitativa <= 0) {
+                        continue;
+                    }
 
-                    // Calcular cuánto puede recibir sin superar el máximo
-                    $espacioDisponible = max(0, $stockMaximo - $stockActual);
-                    $cantidadAsignada = min($cantidadRestante, $espacioDisponible);
+                    if ($sucursal->id != $acariguaId) {
+                        $stockActual = DB::table('inventario_sucursal_lotes')
+                            ->join('lotes', 'lotes.id', '=', 'inventario_sucursal_lotes.lote_id')
+                            ->where('lotes.producto_id', $producto->id)
+                            ->where('inventario_sucursal_lotes.sucursal_id', $sucursal->id)
+                            ->sum('inventario_sucursal_lotes.cantidad');
+
+                        $espacioDisponible = max(0, $stockMaximo - $stockActual);
+                        $cantidadAsignada = min($cantidadEquitativa, $espacioDisponible);
+                        $sobrante = $cantidadEquitativa - $cantidadAsignada;
+                        $cantidadRestante += $sobrante;
+                    } else {
+                        $cantidadAsignada = $cantidadEquitativa;
+                    }
 
                     if ($cantidadAsignada > 0) {
                         $gramosAsignados = $cantidadAsignada * $gramosPorUnidad;
-
-                        // Actualizar o insertar en inventario
                         $inventario = DB::table('inventario_sucursal_lotes')
                             ->where('lote_id', $detalle->lote_id)
                             ->where('sucursal_id', $sucursal->id)
@@ -339,7 +333,6 @@ class Compra extends Model
                             ]);
                         }
 
-                        // Registrar movimiento
                         DB::table('movimiento_inventarios')->insert([
                             'producto_id'     => $detalle->producto_id,
                             'lote_id'         => $detalle->lote_id,
@@ -350,12 +343,9 @@ class Compra extends Model
                             'cantidad_gramos' => $gramosAsignados,
                             'fecha'           => now(),
                         ]);
-
-                        $cantidadRestante -= $cantidadAsignada;
                     }
                 }
-
-                // 🔹 PASO 2: Todo el sobrante va a Acarigua (sin límite)
+                
                 if ($cantidadRestante > 0) {
                     $gramosAsignados = $cantidadRestante * $gramosPorUnidad;
 

@@ -19,7 +19,7 @@ class ProductoController extends Controller
 
     public function index(Request $request)
     {
-        $activo = $request->input('activo', 1); // Por defecto muestra solo activos
+        $activo = $request->input('activo', 1);
         $productos = Producto::listarProductos($request->buscar, $activo);
         return view('admin.maestros.productos.index', compact('productos'));
     }

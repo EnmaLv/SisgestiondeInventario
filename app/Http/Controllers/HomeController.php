@@ -12,6 +12,7 @@ use \App\Models\Compra;
 use \App\Models\Lote;
 use \App\Models\ExchangeRates;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -25,8 +26,7 @@ class HomeController extends Controller
         $hoy = Carbon::now();
         $limite = Carbon::now()->addDays(7);
 
-        // ✅ Obtener sucursal del usuario autenticado
-        $sucursalId = auth()->user()->sucursal_id ?? 1;
+        $sucursalId = Auth::user()->persona->sucursal_id ?? 1;
 
         $total_sucursales = Sucursal::count();
         $total_categorias = Categoria::count();
@@ -38,17 +38,13 @@ class HomeController extends Controller
         $total_lotes_vencidos = Lote::whereDate('fecha_vencimiento', '<=', $hoy)
             ->where('estado', 1)
             ->count();
-
-        // Lotes por vencer (≤ 7 días y NO vencidos)
+            
         $total_lotes_por_vencer = Lote::whereBetween(
             'fecha_vencimiento',
             [$hoy, $limite]
         )->count();
 
         $ultimaTasa = ExchangeRates::latest()->first();
-
-        // ✅ CORREGIDO: Solo productos que EXISTEN en inventario_sucursal_lotes de la sucursal
-        // y que están por debajo del stock mínimo
         $productos_stock_minimo = Producto::select(
                 'productos.id',
                 'productos.nombre',
@@ -60,10 +56,10 @@ class HomeController extends Controller
                 $join->on('inventario_sucursal_lotes.lote_id', '=', 'lotes.id')
                      ->where('inventario_sucursal_lotes.sucursal_id', '=', $sucursalId);
             })
-            ->where('productos.estado', 1) // Solo productos activos
+            ->where('productos.estado', 1)
             ->groupBy('productos.id', 'productos.nombre', 'productos.stock_minimo')
             ->havingRaw('SUM(inventario_sucursal_lotes.cantidad) <= productos.stock_minimo')
-            ->havingRaw('SUM(inventario_sucursal_lotes.cantidad) > 0') // Excluye productos con 0 stock
+            ->havingRaw('SUM(inventario_sucursal_lotes.cantidad) > 0')
             ->orderBy('stock_actual', 'asc')
             ->get();
 

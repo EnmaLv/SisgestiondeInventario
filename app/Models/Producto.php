@@ -110,7 +110,6 @@ class Producto extends Model
         return $query->orderByDesc('cantidad_actual')->paginate($perPage);
     }
 
-    // ✅ SI NECESITAS EL ACCESSOR, MODIFÍCALO PARA QUE RECIBA SUCURSAL
     public function getCantidadEnSucursal($sucursalId)
     {
         return DB::table('inventario_sucursal_lotes')
@@ -232,7 +231,6 @@ class Producto extends Model
             unset($update['imagen']);
         }
 
-        // Actualizar o crear el registro de PrecioProducto
         $precio = PrecioProducto::firstOrNew(['producto_id' => $id]);
         $precio->costo_usd = $data['costo_usd'] ?? $precio->costo_usd;
         $precio->margen    = $data['margen'] ?? $precio->margen;
