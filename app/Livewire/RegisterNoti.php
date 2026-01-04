@@ -12,10 +12,13 @@ use App\Models\DetalleRegistroDiario;
 use App\Models\Receta;
 use App\Models\Lote;
 use App\Models\InventarioSucursalLote;
+use App\Models\SobranteComedor;
 use App\Models\MovimientoInventario;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Livewire\WithPagination;
+
+use function Symfony\Component\Clock\now;
 
 class RegisterNoti extends Component
 {
@@ -37,10 +40,82 @@ class RegisterNoti extends Component
     public $desayuno_del_dia = null;
     public $horarioPermitido;
 
+    public $enableInput = true;
+    public $showBtnFinalizar = true;   
+
     public $alertInventario = null;
     public $alertLimite = null;
 
 
+    //Funcion para pasar datos al form de finalizar
+    public $fecha;
+    public $sobrante;
+    public $motivo;
+    public $accion;
+    //Saber cuantos es la cantidad de estudiantes que se registraron
+    public $registradosHoy;
+    public function finalizarDia()
+    {
+        //Verificamos en bd cuantos estudiantes de registraron
+        $validated =$this->validate([
+            'fecha' => 'required|date',
+            'sobrante' => 'required|numeric',
+            'motivo' => 'required|string',
+            'accion' => 'required|string'
+        ], [
+            'fecha.required' => 'La fecha es requerida',
+            'fecha.date' => 'La fecha no es válida',
+            'sobrante.required' => 'La cantidad sobrante es requerida',
+            'sobrante.numeric' => 'La cantidad sobrante debe ser un número',
+            'motivo.required' => 'El motivo es requerido',
+            'accion.required' => 'La acción es requerida'
+        ]);
+
+        //Guardamos los datos en la tabla de sobrantes 
+
+        SobranteComedor::create([
+            'fecha' => $validated['fecha'],
+            'cantidad_sobrante' => $validated['sobrante'],
+            'motivo' => $validated['motivo'],
+            'accion_tomada' => $validated['accion'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        //Hacemos innaccesible el formulario
+        $this->enableInput = false;
+        
+        //Ocultamos el botón de finalizar
+        $this->showBtnFinalizar = false;
+
+
+        //Al finalizar enviar un evento con el resultado
+        $this->dispatch('finalizar-dia-guardado', [
+            'icon' => 'success',
+            'title' => 'Cierre de jornada registrado',
+            'text' => 'El cierre de jornada se ha registrado correctamente.'
+        ]);
+        
+    }
+
+    private function recalcularSobrante()
+    {
+        $registradosHoy = Registro_diario::where('fecha_regis_diario_c', date('Y-m-d'))->count();
+        $desayunoDelDia = DetalleRegistroDiario::where('fecha', now()->format('Y-m-d'))->get();
+
+        if ($desayunoDelDia->isEmpty()) {
+            $this->sobrante = 0;
+            return;
+        }
+
+        $desayunoTotal = $desayunoDelDia->sum('cantidad_servido');
+        
+        // El sobrante es el total preparado menos los que ya comieron
+        $this->sobrante = $desayunoTotal - $registradosHoy;
+    }
+
+    public function openModal()
+    {$this->dispatch('openModal');}
 
 
     public function save()
@@ -119,6 +194,13 @@ class RegisterNoti extends Component
 
                 //Aplicamos en la base de datos
                 DB::commit();
+                //Actualizamos el sobrante
+                $this->recalcularSobrante();
+                //Si el sobrante queda en 0, ocultamos el boton de finalizar
+                if($this->sobrante == 0){
+                    $this->showBtnFinalizar = false;
+                    $this->enableInput = false;
+                }
             } catch (Exception $e) {
                 DB::rollBack();
                 //retornamos un mensaje de error
@@ -167,6 +249,29 @@ class RegisterNoti extends Component
         $this->showNotification = true;
     }
 
+    //Verificar al montar el componente
+    public function mount(){
+        //Verifica si ya se registro un cierre de jornada hoy
+        $cierreHoy = DB::table('sobrantes_comedor')->whereDate('fecha', now()->format('Y-m-d'))->exists();
+
+        if ($cierreHoy || $this->sobrante == 0) {
+            $this->enableInput = false;
+            $this->showBtnFinalizar = false;
+            return;
+        }
+
+        //Cargamos los sobrantes
+        $this->recalcularSobrante();
+
+        //Cargamos datos
+        $this->fecha = now()->format('Y-m-d');
+
+        //Si hay alimentos sobrantes mostrar el boton de finalizar día
+        if($this->sobrante > 0){
+            $this->showBtnFinalizar = true;
+        }
+
+    }
     public function render()
     {
         $receta_diario = DetalleRegistroDiario::whereDate('created_at', now())->exists();

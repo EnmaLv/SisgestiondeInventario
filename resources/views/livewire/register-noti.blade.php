@@ -11,13 +11,14 @@
             <div class="rd-card-body">
                 <form wire:submit.prevent="save" class="rd-search-form" autocomplete="off">
                     @csrf
-                    <div class="rd-input-group">
+                    <div style="display: flex;gap: 10px;align-items: center; justify-content: space-between;">
                         <label for="cedula" class="sr-only">Cédula</label>
-                        <input type="tel" id="cedula" wire:model.defer="cedula" @disabled(!$receta_diario)
+                        <input type="tel" id="cedula" wire:model.defer="cedula" @disabled(!$receta_diario || !$enableInput)
                             class="rd-input @error('cedula') rd-input-error @enderror" placeholder="Ej: 12345678"
                             maxlength="8" inputmode="numeric" autofocus />
 
-                        <button class="rd-btn rd-btn-primary" type="submit" aria-label="Buscar">Buscar</button>
+                        <button class="rd-btn rd-btn-primary" type="submit" @disabled(!$enableInput)
+                         aria-label="Buscar"  @if(!$enableInput) style="opacity: .8; cursor: not-allowed;" @endif>Buscar</button>
                     </div>
                     <small class="text-muted d-block mt-1">
                         Solo números, máximo 8 dígitos. <br />
@@ -77,6 +78,80 @@
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
                     </button>
+                    @if ($showBtnFinalizar)
+                        <button class="rd-btn rd-btn-alter" title="Finalizar Dia" id="finalizarDia">
+                            <i class="fas fa-sun"></i>
+                            Finalizar Dia
+                        </button>  
+                    @endif
+                    <!-- Modal Finalizar Dia -->
+                    <div wire:ignore.self class="modal fade" id="modalFinalizarDia" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-md"> <div class="modal-content rd-card border-0">
+                                <div class="modal-header border-bottom-0 pt-4 px-4">
+                                    <h5 class="rd-title-sm" style="font-size: 1.25rem;">
+                                        <i class="fas fa-file-signature me-2" style="color: var(--color-tertiary);"></i>
+                                        Reporte de Cierre de Jornada
+                                    </h5>
+                                </div>
+                                
+                                <form wire:submit.prevent="finalizarDia" id="formFinalizarDia">
+                                    <div class="modal-body px-4">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="rd-label mb-2">Fecha de Cierre</label>
+                                                <div class="rd-input-group bg-light">
+                                                    <span><i class="fas fa-calendar-day"></i></span>
+                                                    <input wire:model="fecha" type="date" class="form-control rd-input" id="fechaCierre" readonly >
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="rd-label mb-2">Cantidad Sobrante</label>
+                                                <div class="rd-input-group">
+                                                    <span><i class="fas fa-utensils"></i></span>
+                                                    <input wire:model="sobrante" type="number" class="form-control rd-input" id="cantidadSobrante" placeholder="0" min="0" required readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="rd-label mb-2">Motivo del Cierre</label>
+                                            <select wire:model="motivo" class="form-select rd-filter-input w-100" id="motivoCierre" >
+                                                <option value="" selected >Seleccione el motivo...</option>
+                                                <option value="Falta de insumos">Falta de insumos</option>
+                                                <option value="Baja asistencia de Personal">Baja asistencia de personal</option>
+                                                <option value="Emergencia / Contingencia">Emergencia / Contingencia</option>
+                                                <option value="Suspensión de Actividades">Suspensión de Actividades (Paros/Asambleas)</option>
+                                            </select>
+                                            @error('motivo')
+                                                <div class="text-danger small">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="rd-label mb-2">Acción Tomada con el Sobrante</label>
+                                            <div class="rd-input-group">
+                                                <span><i class="fas fa-hand-holding-heart"></i></span>
+                                                <input wire:model="accion" type="text" class="form-control rd-input" id="accionTomada" placeholder="Ej: Donación, refrigeración, descarte..." >
+                                            </div>
+                                            @error('accion')
+                                                <div class="text-danger small">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer border-top-0 pb-4 px-4 gap-2">
+                                        <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="rd-btn rd-btn-primary" id="btnConfirmarCierre">
+                                            <i class="fas fa-save me-1"></i> Guardar y Finalizar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    
 
                     <div class="rd-export-group">
                         <a href="{{ route('admin.movimientos.registro_diario.export_excel', request()->only(['buscar', 'fecha_desde', 'fecha_hasta'])) }}"
@@ -234,7 +309,11 @@
             border: 1px solid #d1d5db;
             font-size: 16px;
             outline: none;
-            transition: box-shadow .12s;
+            transition: border .12s;
+
+            &:focus-within{
+                border: 1px solid var(--color-primary);
+            }
         }
 
 
@@ -473,7 +552,8 @@
                 let blockCedulaFocus = false;
     
                 const focusCedulaSafely = () => {
-                    if (blockCedulaFocus) return;
+                    const isModalOpen = document.querySelector('#modalFinalizarDia.show');
+                    if (blockCedulaFocus || isModalOpen) return;
                     inputCedula.focus({
                         preventScroll: true
                     });
@@ -517,6 +597,54 @@
                 });
             }
         }
+
+
+        const finalizarModal = new bootstrap.Modal(document.getElementById('modalFinalizarDia'));
+        document.addEventListener('DOMContentLoaded', ()=>{
+            //Script para el boton de finalizarDia
+            const finalizarBtn = document.querySelector('#finalizarDia')
+            finalizarBtn.addEventListener('click', function() {
+                //Mostramos una alerta de confirmacion
+                Swal.fire({
+                    title: '¿Estas seguro de finalizar el dia?',
+                    icon: 'warning',
+                    text: 'Al finalizar el dia, no podras registrar mas estudiantes',
+                    showCancelButton: true,
+                    confirmButtonText: 'Si, finalizar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //emitimos el evento
+                        @this.openModal();  
+                    }
+                });
+            })
+        })
+
+
+        document.querySelector('button[data-bs-dismiss="modal"]').addEventListener('click', function() {
+            finalizarModal.hide();
+        }); 
+
+        // Escuchamos el evento que viene del servidor (PHP)
+        document.addEventListener('livewire:initialized', () => {
+            @this.on('openModal', () => {
+                // Mostramos la modal de forma segura una vez el DOM está listo
+                finalizarModal.show();
+            });
+            
+            @this.on('finalizar-dia-guardado', (event) => {
+                let message = event[0]
+                finalizarModal.hide();
+                Swal.fire({
+                    icon: message.icon,
+                    title: message.title,
+                    text: message.text,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            });
+        });
 
 
 
