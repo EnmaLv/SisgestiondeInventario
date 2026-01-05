@@ -109,7 +109,7 @@
                             <th>Lote</th>
                             <th>Cantidad (g)</th>
                             <th>Unidad</th>
-                            <th>Sucursal</th>
+                            <th>Sede</th>
                             <th>Fecha</th>
                             <th>Observación</th>
                         </tr>

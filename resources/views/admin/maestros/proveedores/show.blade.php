@@ -51,7 +51,7 @@
                                             </div>
                                             <input type="text" value="{{ old('direccion', $proveedor->direccion) }}"
                                                 class="form-control" id="direccion" name="direccion"
-                                                placeholder="Ingrese la dirección de la sucursal" readonly>
+                                                placeholder="Ingrese la dirección de la sede" readonly>
                                         </div>
                                         @error('direccion')
                                             <div class="alert text-danger p-0 m-0">

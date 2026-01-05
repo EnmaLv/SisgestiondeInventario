@@ -86,11 +86,11 @@
                                     <td class="text-center">
                                         <div class="rd-action-group">
 
+                                            <a href="{{ url('admin/movimientos/compras/' . $compra->id . '/edit') }}"
+                                                class="rd-action" title="Continuar"><i class="fas fa-arrow-right"></i></a>
+
                                             <a href="{{ url('admin/movimientos/compras/' . $compra->id) }}"
                                                 class="rd-action" title="Ver Detalles"><i class="fas fa-eye"></i></a>
-
-                                            <a href="{{ url('admin/movimientos/compras/' . $compra->id . '/edit') }}"
-                                                class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
 
                                             <form action="{{ url('admin/movimientos/compras/' . $compra->id) }}"
                                                 method="POST" class="form-delete" style="display:inline;">

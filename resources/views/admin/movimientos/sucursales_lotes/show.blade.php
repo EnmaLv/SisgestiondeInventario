@@ -12,7 +12,7 @@
         <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
-                Inventario de la Sucursal:
+                Inventario de la Sede:
                 {{ $sucursales->firstWhere('id', request()->segment(count(request()->segments())))?->nombre ?? '' }}
             </h1>
 

@@ -76,7 +76,6 @@
 @section('content')
     <div class="row">
 
-        <!-- Sucursales -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/sucursales') }}" class="module-link">
                 <div class="module-card-light">

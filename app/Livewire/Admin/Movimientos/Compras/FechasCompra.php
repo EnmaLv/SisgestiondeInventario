@@ -57,7 +57,7 @@ class FechasCompra extends Component
         $this->dispatch('swal',
             icon: 'success',
             title: '¡Éxito!',
-            text: 'Estado creado correctamente.'
+            text: 'Fecha guardada correctamente.'
         );
     }
 

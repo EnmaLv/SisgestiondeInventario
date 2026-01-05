@@ -75,7 +75,7 @@ class MunicipioIndex extends Component
             $this->dispatch('swal',
                 icon: 'error',
                 title: 'Error',
-                text: 'Ya existe un estado con ese nombre.'
+                text: 'Ya existe un municipio con ese nombre.'
             );
             return;
         }
@@ -91,7 +91,7 @@ class MunicipioIndex extends Component
         $this->dispatch('swal',
             icon: 'success',
             title: '¡Éxito!',
-            text: 'Estado creado correctamente.'
+            text: 'Municipio registrado correctamente.'
         );
     }
 

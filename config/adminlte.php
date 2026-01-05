@@ -394,7 +394,7 @@ return [
                     'icon' => 'fas fa-boxes ',
                 ],
                 [
-                    'text' => 'Existencias por Sucursal',
+                    'text' => 'Existencias por Sede',
                     'url' => 'admin/movimientos/sucursales_lotes',
                     'icon' => 'fas fa-store-alt ',
                     'active' => ['admin/movimientos/sucursales_lotes*'],

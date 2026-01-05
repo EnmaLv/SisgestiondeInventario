@@ -94,7 +94,7 @@
                         {{-- Precios / Stock --}}
                         <div class="row">
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <label class="font-weight-bold">Precio Compra</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
@@ -103,7 +103,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <label class="font-weight-bold">Stock Mínimo</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
@@ -112,7 +112,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <label class="font-weight-bold">Stock Máximo</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
@@ -130,6 +130,20 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="font-weight-bold" id="label-peso">
+                                        Peso del contenido
+                                    </label>
+
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text"><i class="fas fa-weight"></i></span>
+                                        <input type="number" class="form-control rd-filter-input"
+                                            name="peso_contenido" value="{{ round(old('peso_contenido', $producto->peso_contenido)) }}"
+                                            placeholder="Peso contenido" min="0">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>

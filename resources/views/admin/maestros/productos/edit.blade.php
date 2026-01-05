@@ -210,7 +210,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold" id="label-peso">
-                                            Peso contenido
+                                            Peso del contenido
                                         </label>
 
                                         <div class="input-group mb-2">

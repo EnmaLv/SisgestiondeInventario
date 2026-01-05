@@ -197,7 +197,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold" id="label-peso">
-                                            Peso contenido
+                                            Peso del contenido
                                         </label>
 
                                         <div class="input-group mb-2">
@@ -260,7 +260,7 @@
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
                         <button type="submit" class="rd-btn rd-btn-primary">
-                            <i class="fas fa-check"></i> Crear
+                            <i class="fas fa-check"></i>Guardar
                         </button>
                     </div>
 

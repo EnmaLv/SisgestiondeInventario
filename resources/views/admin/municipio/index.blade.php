@@ -28,7 +28,7 @@
                     data-bs-toggle="modal" 
                     data-bs-target="#modalCrear">
                 <i class="fas fa-plus"></i>
-                <span>Nuevo Municipio</span>
+                <span>Crear Nuevo</span>
             </button>
         </div>
     </div>

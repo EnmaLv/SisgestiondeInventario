@@ -126,7 +126,7 @@
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea inactivar la sucursal?",
+                                                        text: "Desea inactivar la sede?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -157,7 +157,7 @@
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea activar la sucursal?",
+                                                        text: "Desea activar la sede?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -177,7 +177,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                                <td colspan="6" class="text-center py-4">No hay Sedes</td>
                             </tr>
                         @endforelse
                     </tbody>

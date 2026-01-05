@@ -85,7 +85,7 @@ class LocalidadIndex extends Component
             $this->dispatch('swal',
                 icon: 'error',
                 title: 'Error',
-                text: 'Ya existe un estado con ese nombre.'
+                text: 'Ya existe una localidad con ese nombre.'
             );
             return;
         }
@@ -101,7 +101,7 @@ class LocalidadIndex extends Component
         $this->dispatch('swal',
             icon: 'success',
             title: '¡Éxito!',
-            text: 'Estado creado correctamente.'
+            text: 'Localidad registrada correctamente.'
         );
     }
 

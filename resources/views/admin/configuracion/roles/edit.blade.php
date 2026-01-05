@@ -36,6 +36,11 @@
                                            value="{{ old('nombre', $rol->nombre) }}" 
                                            {{ ($isProtected ?? false) ? 'readonly' : 'required' }} placeholder="Nombre del rol">
                                 </div>
+                                @error('nombre')
+                                    <div class="col-md-12 mt-2">
+                                        <small class="text-danger">{{ $message }}</small>
+                                    </div>
+                                @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="rd-label mb-2">Descripción</label>

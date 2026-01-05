@@ -57,7 +57,7 @@ class EmpleosController extends Controller
 
     public function show($id)
     {
-        $usuario = Usuario::with(['persona','perfil','roles'])->findOrFail($id);
+        $usuario = Usuario::with(['persona', 'perfil', 'roles'])->findOrFail($id);
         return view('admin.configuracion.empleados.show', compact('usuario'));
     }
 
@@ -139,7 +139,7 @@ class EmpleosController extends Controller
             }
         }
 
-        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Roles actualizados correctamente');
+        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado actualizado correctamente');
     }
 
     // Master key form and verify (simple flow for configuration access)

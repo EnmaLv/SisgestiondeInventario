@@ -55,7 +55,7 @@
                     <form action="{{ route('admin.maestros.sucursales.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba la sucursal" />
+                            placeholder="Escriba la sede" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
@@ -179,7 +179,7 @@
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea inactivar la sucursal?",
+                                                        text: "Desea inactivar la sede?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -210,7 +210,7 @@
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea activar la sucursal?",
+                                                        text: "Desea activar la sede?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -230,7 +230,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                                <td colspan="6" class="text-center py-4">No hay sedes</td>
                             </tr>
                         @endforelse
                     </tbody>

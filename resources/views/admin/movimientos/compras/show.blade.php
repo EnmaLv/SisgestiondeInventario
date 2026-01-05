@@ -144,7 +144,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-md-2" style="display: inline-block;">
-                                    <label for="codigo">Sucursal de Destino</label>
+                                    <label for="codigo">Sedes de Destino</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text inline-block"><i
@@ -157,7 +157,7 @@
                                                 readonly>
                                         @else
                                             <input type="text" class="form-control" id="sucursal_destino"
-                                                name="sucursal_destino" placeholder="Ingrese sucursal de destino"
+                                                name="sucursal_destino" placeholder="Ingrese sede de destino"
                                                 value="Sin concluir" readonly>
                                         @endif
                                     </div>

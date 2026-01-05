@@ -54,7 +54,8 @@ class EstadoIndex extends Component
         $this->validate();
 
         if (Estado::where('nombre_estado', $this->nombre_estado)->where('status', true)->exists()) {
-            $this->dispatch('swal',
+            $this->dispatch(
+                'swal',
                 icon: 'error',
                 title: 'Error',
                 text: 'Ya existe un estado con ese nombre.'
@@ -69,12 +70,12 @@ class EstadoIndex extends Component
 
         $this->resetInputFields();
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: '¡Éxito!',
-            text: 'Estado creado correctamente.'
+            text: 'Estado registrado correctamente.'
         );
-
     }
 
     public function edit($id)
@@ -92,7 +93,8 @@ class EstadoIndex extends Component
         Estado::find($this->estado_id)
             ->update(['nombre_estado' => $this->nombre_estado]);
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: 'Actualizado',
             text: 'Estado actualizado correctamente.'
@@ -111,13 +113,11 @@ class EstadoIndex extends Component
             'status' => false
         ]);
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: 'Eliminado',
             text: 'Estado eliminado correctamente.'
         );
     }
-
-
-
 }

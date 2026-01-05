@@ -15,7 +15,7 @@ class CompraController extends Controller
     {
         $compras = Compra::listarCompras(
             $request->buscar,
-            $request->estado 
+            $request->estado
         );
 
         return view('admin.movimientos.compras.index', compact('compras'));
@@ -49,7 +49,7 @@ class CompraController extends Controller
             'observaciones' => 'nullable|string'
         ]));
 
-        return redirect()->route('admin.movimientos.compras.edit', $id)->with('success', 'Compra creada exitosamente.');
+        return redirect()->route('admin.movimientos.compras.edit', $id)->with('success', 'Requisicion creada exitosamente.');
     }
 
     public function show($id)
@@ -66,7 +66,7 @@ class CompraController extends Controller
         $ok = Compra::eliminarCompra($id);
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with('success', 'Compra Eliminada Correctamente.');
+            ->with('success', 'Requisición Eliminada Correctamente.');
     }
 
     public function finalizarCompra(Request $request, Compra $compra)
@@ -75,13 +75,13 @@ class CompraController extends Controller
             'id',
             $compra->detalleCompras->pluck('lote_id')
         )
-        ->whereNull('fecha_vencimiento')
-        ->exists();
+            ->whereNull('fecha_vencimiento')
+            ->exists();
 
         if ($lotesSinFecha) {
             return back()->withErrors([
                 'fecha_vencimiento' =>
-                    'Debe registrar la fecha de vencimiento de todos los productos antes de finalizar la requisición.'
+                'Debe registrar la fecha de vencimiento de todos los productos antes de finalizar la requisición.'
             ]);
         }
 
@@ -89,7 +89,7 @@ class CompraController extends Controller
 
         return redirect()->route('admin.movimientos.compras.index')->with('success', 'Requisición finalizada y distribuida equitativamente.');
     }
-    
+
     public function cancelar(Compra $compra)
     {
         if ($compra->estado === 'Finalizada') {
@@ -101,7 +101,7 @@ class CompraController extends Controller
 
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with('success', 'Compra Eliminada Correctamente.');
+            ->with('success', 'Requisición Eliminada Correctamente.');
     }
 
     public function enviarCorreo(Compra $compra)
@@ -150,7 +150,7 @@ class CompraController extends Controller
             'buscar' => $request->buscar,
             'estado' => $request->estado
         ];
-        
+
         return PdfGeneratorUtil::ShowPdf('pdf.compra', $datos, "Compras");
     }
 }

@@ -33,7 +33,13 @@
                                     <input type="text" name="nombre" class="rd-input w-100" 
                                            placeholder="Ej: Supervisor" required value="{{ old('nombre') }}">
                                 </div>
+                                @error('nombre')
+                                    <div class="col-md-12 mt-2">
+                                        <small class="text-danger">{{ $message }}</small>
+                                    </div>
+                                @enderror
                             </div>
+                            
                             <div class="col-md-6">
                                 <label class="rd-label mb-2">Descripción Corta</label>
                                 <input type="text" name="descripcion" class="form-control" 
