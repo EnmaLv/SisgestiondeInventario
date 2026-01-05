@@ -1,5 +1,5 @@
-<div class="main-content">
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+<div class="main-content pt-3">
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center content-header">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem">
                 Importación de Archivos
@@ -37,8 +37,7 @@
 
                 <div class="col-md-7">
                     
-                    <label class="rd-card p-4 text-center" for="archivo"
-                    style="border:2px dashed #cbd5e1; background:#f8fafc; width: 100%; cursor: pointer; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <label class="rd-card p-4 text-center" for="archivo">
 
                         <i class="fas fa-file-upload mb-2"
                             style="font-size:2.2rem; color:#64748b"></i>
@@ -184,4 +183,25 @@
             });
         });
     </script>
+@endpush
+
+@push('css')
+    <style>
+        label[for="archivo"] {
+            cursor: pointer;
+            border:2px dashed #cbd5e1;
+            background:#f8fafc;
+            width: 100%;
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color.2s ease;
+            &:hover {
+                background-color: #e5e7eb;
+            }
+        }
+    </style>
 @endpush
