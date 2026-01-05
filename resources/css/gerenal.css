@@ -96,10 +96,6 @@
     box-shadow: none !important;
 }
 
-.rd-input-group:focus-within {
-    border-color: var(--color-tertiary);
-    box-shadow: 0 0 0 3px rgba(var(--color-tertiary), 0.15);
-}
 
 .rd-label {
     font-weight: 600;
@@ -477,10 +473,13 @@ option::checkmark{
 }
 
 .rd-input-group:focus-within {
-    border-color: var(--color-tertiary);
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    border-color: var(--color-tertiary) !important;
+    box-shadow: 0 0 0 3px rgba(var(--color-tertiary), 0.1); /* Sombra suave */
 }
 
+.rd-input:focus-visible{
+    outline: none!important;
+}
 
 .form-control-sidebar {
     height: calc(2.25rem + 2px);
@@ -507,3 +506,22 @@ option::checkmark{
             color: #6c757d;
             cursor: not-allowed;
         }
+
+/* Color corporativo para los checks */
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--color-secondary) !important;
+    border-color: var(--color-secondary) !important;
+}
+
+.custom-control-input:hover ~ .custom-control-label::before {
+    background-color: var(--color-secondary) !important;
+    border-color: var(--color-secondary) !important;
+}   
+
+/* Responsividad: bajar a 1 columna en móviles */
+@media (max-width: 992px) {
+    .permissions-grid { column-count: 2; }
+}
+@media (max-width: 576px) {
+    .permissions-grid { column-count: 1; }
+}
