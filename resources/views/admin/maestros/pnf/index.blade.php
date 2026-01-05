@@ -22,9 +22,9 @@
 
         <!-- Imagen + Fecha -->
         <div>
-            <a href="{{ url('admin/maestros/pnf/create') }}" class="rd-btn rd-btn-primary">
+            <button type="button" class="rd-btn rd-btn-primary" data-toggle="modal" data-target="#modalCrearPnf">
                 <i class="fas fa-plus"></i> Crear Nuevo
-            </a>
+            </button>
         </div>
 
     </div>
@@ -59,25 +59,9 @@
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
-
                 </div>
             </div>
             
-            <script>
-                document.getElementById('estadoToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        // Activos
-                        window.location.href = "{{ route('admin.maestros.pnf.index', array_merge(request()->query(), ['activo' => 1])) }}";
-                    } else {
-                        // Inactivos
-                        window.location.href = "{{ route('admin.maestros.pnf.index', array_merge(request()->query(), ['activo' => 2])) }}";
-                    }
-                });
-            </script>
 
 
             {{-- Tabla --}}
@@ -190,6 +174,42 @@
             </div>
         </div>
     </div>
+    {{-- Modal Crear PNF --}}
+    <div class="modal fade" id="modalCrearPnf" tabindex="-1" role="dialog" aria-labelledby="modalCrearPnfLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+            <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div class="modal-header" style="border-bottom: 1px solid #e5e7eb;">
+                    <h5 class="modal-title rd-title-sm" id="modalCrearPnfLabel">Crear un PNF</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <form action="{{ route('admin.maestros.pnf.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-body p-4">
+                        {{-- Nombre --}}
+                        <div>
+                            <label class="rd-label">Nombre del PNF</label>
+                            <div class="rd-input-group">
+                                <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
+                                <input type="text" name="nombre" class="form-control rd-filter-input" 
+                                    placeholder="Ingrese el nombre" value="{{ old('nombre') }}" required>
+                            </div>
+                            @error('nombre')
+                                <span class="rd-error">Este campo es obligatorio.</span>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer" style="border-top: 1px solid #e5e7eb; background: #f8fafc; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
+                        <button type="button" class="rd-btn rd-btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="rd-btn rd-btn-primary">Guardar PNF</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @stop
 
 @push('js')
@@ -203,6 +223,21 @@
             });
         </script>
     @endif
+
+
+    <script>
+        
+        document.getElementById('estadoToggle').addEventListener('change', function() {
+            if (this.checked) {
+                // Activos
+                window.location.href = "{{ route('admin.maestros.pnf.index', array_merge(request()->query(), ['activo' => 1])) }}";
+            } else {
+                // Inactivos
+                window.location.href = "{{ route('admin.maestros.pnf.index', array_merge(request()->query(), ['activo' => 2])) }}";
+            }
+        });
+
+    </script>
 
 @endpush
 

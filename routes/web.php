@@ -227,7 +227,6 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         Route::get('/maestros/pnf',[PnfController::class, 'index'])->name('admin.maestros.pnf.index');
 
-        Route::get('/maestros/pnf/create', [PnfController::class, 'create'])->name('admin.maestros.pnf.create');
 
         Route::post('/maestros/pnf/store', [PnfController::class, 'store'])->name('admin.maestros.pnf.store');
 
