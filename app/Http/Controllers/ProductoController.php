@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use App\Models\Categoria;
-use App\Models\Unidad;
 use Illuminate\Http\Request;
 use App\Models\ExchangeRates;
-use App\Models\PrecioProducto;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
@@ -144,36 +141,26 @@ class ProductoController extends Controller
                 ? \Carbon\Carbon::parse($data['fecha'])->toDateString()
                 : now()->toDateString();
 
-            // Buscar si YA existe una tasa con esa fecha
-            $tasaExistente = ExchangeRates::whereDate('fecha_vigencia', $fechaVigencia)
-                ->where('nombre', 'Oficial')
-                ->first();
-
-            if (!$tasaExistente) {
-                // Crear NUEVO registro (historial)
-                $tasa = ExchangeRates::create([
+            $tasa = ExchangeRates::updateOrCreate(
+                [
                     'nombre'         => 'Oficial',
-                    'fuente'         => $data['fuente'],
-                    'promedio'       => $data['promedio'],
-                    'fecha_vigencia' => $fechaVigencia,
-                ]);
-            } else {
-                // Usar la existente
-                $tasa = $tasaExistente;
-            }
+                    'fecha_vigencia' => $fechaVigencia
+                ],
+                [
+                    'fuente'   => $data['fuente'],
+                    'promedio' => $data['promedio'],
+                ]
+            );
 
-            // Recalcular precios con la tasa vigente
             $productos = Producto::with('precioProducto')->get();
 
             foreach ($productos as $producto) {
-
                 if (!$producto->precioProducto) {
                     continue;
                 }
 
-                $precioUSD =
-                    $producto->precioProducto->precio_usd ??
-                    $producto->precioProducto->costo_usd;
+                $precioUSD = $producto->precioProducto->precio_usd 
+                    ?? $producto->precioProducto->costo_usd;
 
                 if (!$precioUSD || $precioUSD <= 0) {
                     continue;
@@ -198,7 +185,7 @@ class ProductoController extends Controller
 
             session()->forget('tasa_pendiente');
 
-            return redirect()->back()->with(
+            return redirect()->route('home')->with(
                 'success',
                 'Tasa registrada y precios recalculados correctamente.'
             );
