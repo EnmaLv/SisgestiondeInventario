@@ -53,10 +53,6 @@
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
                 </div>
             </div>
 
@@ -67,7 +63,7 @@
                             <th style="width:60px">#</th>
                             <th class="text-center">Nombre</th>
                             <th class="text-center">Cantidad por Porcion</th>
-                            {{-- <th style="width:150px" class="text-center">Acciones</th> --}}
+                            <th style="width:150px" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -210,9 +206,6 @@
 @stop
 
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-@stop
 
 @section('js')
     <script>

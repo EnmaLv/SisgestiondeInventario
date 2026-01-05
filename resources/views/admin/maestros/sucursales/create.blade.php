@@ -125,9 +125,6 @@
 @endsection
 
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-@stop
 
 @section('js')
     <script>
