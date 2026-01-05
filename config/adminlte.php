@@ -428,7 +428,7 @@ return [
             'url' => 'admin/movimientos/historial_movimientos',
             'icon' => 'fas fa-clipboard-list ',
         ],
-        ['header' => 'Registros' ],
+        ['header' => 'Registros', 'classes' => 'text-bold' ],
         [
             'text' => 'Pnf',
             'key' => 'pnf',
@@ -443,7 +443,7 @@ return [
             'active' => ['admin/persona*'],
         ],
 
-        ['header' => 'UBICACIÓN GEOGRÁFICA'],
+        ['header' => 'Ubicacion Geográfica', 'classes' => 'text-bold'],
 
         [
             'text' => 'Ubicaciones',
@@ -488,7 +488,7 @@ return [
         /* ---------------------------------------------------
         | ⚙️ CONFIGURACIÓN
         --------------------------------------------------- */
-        ['header' => '⚙️ Configuración','classes' => 'text-bold'],
+        ['header' => ' Configuración','classes' => 'text-bold'],
 
         [
             'text' => 'Empleados',

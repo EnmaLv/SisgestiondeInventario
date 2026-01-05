@@ -69,7 +69,7 @@
             <div class="form-group">
                 @if ($compra->estado == 'Enviado al proveedor')
                 @else
-                    <button class="btn btn-primary disabled:opacity-25" type="submit" wire:click="agregarItems"
+                    <button class="rd-btn rd-btn-alter disabled:opacity-25" type="submit" wire:click="agregarItems"
                         wire:loading.attr="disabled">Agregar</button>
                 @endif
             </div>
@@ -139,7 +139,7 @@
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">Ya fue hecho el
                     pedido</span>
             @else
-                <button class="rd-btn btn-primary" wire:click="confirmarEnvio" style="float:right;">
+                <button class="rd-btn rd-btn-primary" wire:click="confirmarEnvio" style="float:right;">
                     <i class="fas fa-paper-plane"></i> Enviar Correo a Compras
                 </button>
                 <script>
@@ -163,9 +163,37 @@
     </div>
 </div>
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-@endsection
+@push('css')
+    <style>
+        /* Estilos para la tabla */
+        .table {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            color: #4a5568;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tbody td {
+            padding: 1rem 1.5rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+    </style>
+@endpush
 @push('js')
     <script>
     document.addEventListener('DOMContentLoaded', () => {
