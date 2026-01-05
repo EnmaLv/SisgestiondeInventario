@@ -20,7 +20,7 @@ class PersonaController extends Controller
                   ->orWhere('cedula_persona', 'like', "%{$buscar}%");
         }
         
-        $personas = $query->where('id_perfil', 1)->paginate(10);
+        $personas = $query->where('id_perfil', 2)->paginate(10);
         return view('admin.configuracion.persona.index', compact('personas'));
     }
     

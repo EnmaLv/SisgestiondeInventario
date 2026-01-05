@@ -70,7 +70,7 @@
                             method="POST" style="display:inline;">
                             @csrf
                             @if ($compra->estado == 'Pendiente')
-                                <button type="submit" class="btn btn-tool text-danger" onclick="confirmDelete(event, this)">
+                                <button type="submit" class="rd-btn rd-btn-alter" onclick="confirmDelete(event, this)">
                                     <i class="fas fa-arrow-left"></i>
                                     <b>Cancelar y volver</b>
                                 </button>

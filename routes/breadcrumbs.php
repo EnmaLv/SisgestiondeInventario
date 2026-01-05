@@ -251,13 +251,13 @@ Breadcrumbs::for('admin.configuracion.index', function (Trail $trail) {
 
 Breadcrumbs::for('admin.configuracion.persona.index', function (Trail $trail) {
     $trail->parent('admin.configuracion.index');
-    $trail->push('Persona', route('admin.configuracion.persona.index'));
+    $trail->push('Estudiante', route('admin.configuracion.persona.index'));
 });
 
 
 Breadcrumbs::for('admin.configuracion.persona.create', function (Trail $trail) {
     $trail->parent('admin.configuracion.persona.index');
-    $trail->push('Crear Persona', route('admin.configuracion.persona.create'));
+    $trail->push('Crear Estudiante', route('admin.configuracion.persona.create'));
 });
     
 
@@ -270,7 +270,7 @@ Breadcrumbs::for('admin.configuracion.persona.show', function (Trail $trail, $id
 // Configuración > Editar Persona
 Breadcrumbs::for('admin.configuracion.persona.edit', function (Trail $trail, $id) {
     $trail->parent('admin.configuracion.persona.index');
-    $trail->push('Editar Persona', route('admin.configuracion.persona.edit', $id));
+    $trail->push('Editar Estudiante', route('admin.configuracion.persona.edit', $id));
 });
 
 // Configuración > Indexar
@@ -278,3 +278,53 @@ Breadcrumbs::for('admin.configuracion.indexar.index', function (Trail $trail) {
     $trail->parent('home');
     $trail->push('Indexar', route('admin.configuracion.indexar.index'));
 });
+
+//Configuracion Empleados
+Breadcrumbs::for('admin.configuracion.empleados.index', function (Trail $trail) {
+    $trail->parent('admin.configuracion.index');
+    $trail->push('Empleados', route('admin.configuracion.empleados.index'));
+});
+
+Breadcrumbs::for('admin.configuracion.empleados.show', function (Trail $trail, $id) {
+    $trail->parent('admin.configuracion.empleados.index');
+    $trail->push('Ver Empleado', route('admin.configuracion.empleados.show', $id));
+});
+
+Breadcrumbs::for('admin.configuracion.empleados.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.configuracion.empleados.index');
+    $trail->push('Editar Empleado', route('admin.configuracion.empleados.edit', $id));
+});
+
+//Configuracion Permisos
+Breadcrumbs::for('admin.configuracion.permisos.index', function (Trail $trail) {
+    $trail->parent('admin.configuracion.index');
+    $trail->push('Permisos', route('admin.configuracion.permisos.index'));
+});
+
+Breadcrumbs::for('admin.configuracion.permisos.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.configuracion.permisos.index');
+    $trail->push('Editar Permiso', route('admin.configuracion.permisos.edit', $id));
+});
+
+//Configuracion Roles
+Breadcrumbs::for('admin.configuracion.roles.index', function (Trail $trail) {
+    $trail->parent('admin.configuracion.index');
+    $trail->push('Roles', route('admin.configuracion.roles.index'));
+});
+
+Breadcrumbs::for('admin.configuracion.roles.create', function (Trail $trail) {
+    $trail->parent('admin.configuracion.roles.index');
+    $trail->push('Crear Rol', route('admin.configuracion.roles.create'));
+});
+
+Breadcrumbs::for('admin.configuracion.roles.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.configuracion.roles.index');
+    $trail->push('Editar Rol', route('admin.configuracion.roles.edit', $id));
+});
+
+//Configuracion Archivo
+Breadcrumbs::for('admin.configuracion.archivos.index', function (Trail $trail) {
+    $trail->parent('admin.configuracion.index');
+    $trail->push('Archivo', route('admin.configuracion.archivos.index'));
+});
+

@@ -169,12 +169,12 @@ class RegistroPersona extends Component
 
             if($finish) {
 
-                redirect()->route('admin.configuracion.persona.index')->with('success', 'Persona creada exitosamente.');
+                redirect()->route('admin.configuracion.persona.index')->with('success', 'Estudiante creado exitosamente.');
             } else {
                 $this->dispatch('alert', 
                     type: 'error',
                     title: 'Error',
-                    text: 'Error al crear la persona. Revisa los datos'
+                    text: 'Error al crear el estudiante. Revisa los datos'
                 );
             }
         } catch (Exception $e) {
@@ -199,12 +199,12 @@ class RegistroPersona extends Component
 
             if($finish) {
 
-                redirect()->route('admin.configuracion.persona.index')->with('success', 'Persona actualizada exitosamente.');
+                redirect()->route('admin.configuracion.persona.index')->with('success', 'Estudiante actualizado exitosamente.');
             } else {
                 $this->dispatch('alert', 
                     type: 'error',
                     title: 'Error',
-                    text: $error ?? 'Error al actualizar la persona. Revisa los datos'
+                    text: $error ?? 'Error al actualizar el estudiante. Revisa los datos'
                 );
             }
         } catch (Exception $e) {

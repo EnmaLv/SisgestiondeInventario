@@ -46,7 +46,7 @@ class Persona extends Model
                 'edad_persona' => Carbon::parse($data['fecha_nacimiento'])->age,
                 'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
                 'email_persona' => $data['email'],
-                'id_perfil' => 1,
+                'id_perfil' => 2,
                 'id_sede' => $data['sedeId'] ?? null,
             ]);
 
