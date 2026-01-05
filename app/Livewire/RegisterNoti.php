@@ -254,7 +254,8 @@ class RegisterNoti extends Component
         //Verifica si ya se registro un cierre de jornada hoy
         $cierreHoy = DB::table('sobrantes_comedor')->whereDate('fecha', now()->format('Y-m-d'))->exists();
 
-        if ($cierreHoy || $this->sobrante == 0) {
+        //Inhabilitar el registro si se hizo un cierre
+        if ($cierreHoy) {
             $this->enableInput = false;
             $this->showBtnFinalizar = false;
             return;

@@ -105,7 +105,7 @@
         }
 
         .rd-card .input-group:focus-within {
-            border-color: #7c3aed;
+            border-color: var(--color-primary);
             background: #ffffff;
         }
 
@@ -142,9 +142,9 @@
         }
 
         .rd-card textarea.form-control:focus {
-            border-color: #7c3aed;
+            border-color: var(--color-primary);
             background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+            box-shadow: 0 0 0 3px hsl(from var(--color-primary) h s l / 0.1);
             outline: none;
         }
 
