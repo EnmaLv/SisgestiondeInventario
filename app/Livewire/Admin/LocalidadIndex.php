@@ -14,7 +14,7 @@ class LocalidadIndex extends Component
     use WithPagination;
 
     public $nombre_localidad;
-    public $estado_id; 
+    public $estado_id;
     public $municipio_id;
     public $localidad_id;
     public $updateMode = false;
@@ -43,7 +43,7 @@ class LocalidadIndex extends Component
             })
             ->orderBy('nombre_localidad', 'asc')
             ->paginate(10);
-            
+
         return view('livewire.admin.localidad-index', compact('estados', 'localidades'));
     }
 
@@ -82,7 +82,8 @@ class LocalidadIndex extends Component
         $this->validate();
 
         if (Localidad::where('nombre_localidad', $this->nombre_localidad)->where('status', true)->exists()) {
-            $this->dispatch('swal',
+            $this->dispatch(
+                'swal',
                 icon: 'error',
                 title: 'Error',
                 text: 'Ya existe una localidad con ese nombre.'
@@ -98,10 +99,11 @@ class LocalidadIndex extends Component
 
         $this->resetInputFields();
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: '¡Éxito!',
-            text: 'Localidad registrada correctamente.'
+            text: 'Localidad registrada Exitosamente.'
         );
     }
 
@@ -135,10 +137,11 @@ class LocalidadIndex extends Component
 
         ]);
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: 'Actualizado',
-            text: 'Estado actualizado correctamente.'
+            text: 'Estado actualizado Exitosamente.'
         );
     }
 
@@ -154,10 +157,11 @@ class LocalidadIndex extends Component
             'status' => false
         ]);
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: 'Eliminado',
-            text: 'Estado eliminado correctamente.'
+            text: 'Estado eliminado Exitosamente.'
         );
     }
 }

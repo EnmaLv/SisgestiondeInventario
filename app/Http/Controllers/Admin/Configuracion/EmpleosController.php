@@ -84,7 +84,7 @@ class EmpleosController extends Controller
         $usuario->roles()->detach();
         $usuario->delete();
 
-        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado eliminado correctamente');
+        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado eliminado Exitosamente');
     }
 
     public function update(Request $request, $id)
@@ -139,7 +139,7 @@ class EmpleosController extends Controller
             }
         }
 
-        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado actualizado correctamente');
+        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado actualizado Exitosamente');
     }
 
     // Master key form and verify (simple flow for configuration access)

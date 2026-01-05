@@ -70,7 +70,7 @@ class ItemsCompra extends Component
         $prod = $producto->nombre ?? 'PROD';
         $prodPart = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $prod), 0, 3));
         $year = now()->format('Y');
-        $julianDay = now()->format('z') + 1; 
+        $julianDay = now()->format('z') + 1;
         $julian = str_pad($julianDay, 3, '0', STR_PAD_LEFT);
         $codigo = "{$julian}-{$year}-{$prodPart}";
         $contador = 1;
@@ -88,7 +88,7 @@ class ItemsCompra extends Component
     {
         $this->dispatch('confirmar-envio', compraId: $this->compra->id);
     }
-    
+
     public function agregarItems()
     {
         $producto = Producto::find($this->productoId);
@@ -117,7 +117,7 @@ class ItemsCompra extends Component
                 'codigo_lote' => $this->codigoLote,
                 'fecha_entrada' => now()->toDateString(),
                 'fecha_vencimiento' => null,
-                'cantidad_inicial' => $this->cantidad,    
+                'cantidad_inicial' => $this->cantidad,
                 'cantidad_actual' => $cantidadGramos,
                 'precio_compra' => $this->precioCompra,
                 'estado' => true,
@@ -132,14 +132,14 @@ class ItemsCompra extends Component
                 'subtotal' => $this->cantidad * $this->precioCompra,
                 'unidad_id' => $unidadId,
             ]);
-            $this->compra->load('detalleCompras'); 
+            $this->compra->load('detalleCompras');
             $this->compra->total = $this->compra->detalleCompras->sum('subtotal');
             $this->compra->save();
 
             DB::commit();
 
             $this->cargarDatos();
-            $this->aggItems(); 
+            $this->aggItems();
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch(
@@ -160,7 +160,7 @@ class ItemsCompra extends Component
         $this->dispatch(
             'mostrar-alerta',
             icono: 'success',
-            mensaje: 'Producto agregado correctamente'
+            mensaje: 'Producto agregado Exitosamente'
         );
         $this->cantidad = $this->cantidad;
     }
@@ -184,7 +184,7 @@ class ItemsCompra extends Component
             $this->dispatch(
                 'mostrar-alerta',
                 icono: 'success',
-                mensaje: 'Producto eliminado correctamente'
+                mensaje: 'Producto eliminado Exitosamente'
             );
         } catch (\Exception $e) {
             DB::rollBack();

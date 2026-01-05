@@ -49,8 +49,7 @@ class ProductoController extends Controller
 
             return redirect()
                 ->route('admin.maestros.productos.index')
-                ->with('success', 'Producto creado y precio actualizado correctamente.');
-
+                ->with('success', 'Producto creado y precio actualizado Exitosamente.');
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -159,7 +158,7 @@ class ProductoController extends Controller
                     continue;
                 }
 
-                $precioUSD = $producto->precioProducto->precio_usd 
+                $precioUSD = $producto->precioProducto->precio_usd
                     ?? $producto->precioProducto->costo_usd;
 
                 if (!$precioUSD || $precioUSD <= 0) {
@@ -187,9 +186,8 @@ class ProductoController extends Controller
 
             return redirect()->route('home')->with(
                 'success',
-                'Tasa registrada y precios recalculados correctamente.'
+                'Tasa registrada y precios recalculados Exitosamente.'
             );
-
         } catch (\Exception $e) {
             DB::rollBack();
 

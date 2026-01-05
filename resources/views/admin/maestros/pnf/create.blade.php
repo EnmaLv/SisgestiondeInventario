@@ -105,7 +105,7 @@
                     </a>    
 
                     <button type="submit" class="rd-btn rd-btn-primary">
-                        Crear Pnf
+                        Guardar
                     </button>
                 </div>
 

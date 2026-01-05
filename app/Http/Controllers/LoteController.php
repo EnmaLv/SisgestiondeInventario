@@ -59,7 +59,7 @@ class LoteController extends Controller
     public function mermarVencidos()
     {
         $this->procesarLotesVencidos();
-        return redirect()->route('admin.movimientos.lotes.index')->with('success', 'Productos vencidos mermados correctamente.');
+        return redirect()->route('admin.movimientos.lotes.index')->with('success', 'Productos vencidos mermados Exitosamente.');
     }
 
     public function index(Request $request)
@@ -68,7 +68,7 @@ class LoteController extends Controller
         $estado = $request->input('estado');
         $fecha_desde = $request->input('fecha_desde');
         $fecha_hasta = $request->input('fecha_hasta');
-        
+
         $sucursalId = 1;
 
         $query = Lote::with(['producto', 'proveedor'])
@@ -103,7 +103,7 @@ class LoteController extends Controller
         }
 
         $lotes = $query->orderBy('id', 'desc')->paginate(10);
-        
+
         $lotes->each(function ($lote) {
             $fecha = Carbon::parse($lote->fecha_vencimiento);
             $lote->is_expired = $fecha->isPast();

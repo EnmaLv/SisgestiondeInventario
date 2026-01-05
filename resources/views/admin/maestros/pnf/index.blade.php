@@ -23,7 +23,7 @@
         <!-- Imagen + Fecha -->
         <div>
             <a href="{{ url('admin/maestros/pnf/create') }}" class="rd-btn rd-btn-primary">
-                <i class="fas fa-plus"></i> Crear Nuevo PNF
+                <i class="fas fa-plus"></i> Crear Nuevo
             </a>
         </div>
 

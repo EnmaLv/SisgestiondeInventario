@@ -76,7 +76,7 @@ class MunicipioSeeder extends Seeder
             ['id' => 63, 'estado_id' => 5, 'nombre_municipio' => 'Pedraza'],
             ['id' => 64, 'estado_id' => 5, 'nombre_municipio' => 'Rojas'],
             ['id' => 65, 'estado_id' => 5, 'nombre_municipio' => 'Sosa'],
-             ['id' => 66, 'estado_id' => 6, 'nombre_municipio' => 'Caroní'],
+            ['id' => 66, 'estado_id' => 6, 'nombre_municipio' => 'Caroní'],
             ['id' => 67, 'estado_id' => 6, 'nombre_municipio' => 'Cedeño'],
             ['id' => 68, 'estado_id' => 6, 'nombre_municipio' => 'El Callao'],
             ['id' => 69, 'estado_id' => 6, 'nombre_municipio' => 'Gran Sabana'],
@@ -345,10 +345,10 @@ class MunicipioSeeder extends Seeder
             ['id' => 459, 'estado_id' => 23, 'nombre_municipio' => 'Simón Bolívar'],
             ['id' => 460, 'estado_id' => 23, 'nombre_municipio' => 'Sucre'],
             ['id' => 461, 'estado_id' => 23, 'nombre_municipio' => 'Valmore Rodríguez'],
-            ['id' => 462, 'estado_id' => 24, 'nombre_municipio' => 'Libertador'] ,
-    ];
+            ['id' => 462, 'estado_id' => 24, 'nombre_municipio' => 'Libertador'],
+        ];
 
-    $this->command->info('Municipios insertados correctamente.');
+        $this->command->info('Municipios insertados Exitosamente.');
 
         DB::table('municipios')->insert($municipios);
     }

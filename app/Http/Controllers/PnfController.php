@@ -30,7 +30,7 @@ class PnfController extends Controller
 
         Pnf::createPnf($request);
 
-        return redirect()->route('admin.maestros.pnf.index')->with('success', 'PNF creado correctamente');
+        return redirect()->route('admin.maestros.pnf.index')->with('success', 'PNF creado exitosamente');
     }
 
     public function edit($id)
@@ -49,7 +49,7 @@ class PnfController extends Controller
 
         Pnf::updatePnf($request);
 
-        return redirect()->route('admin.maestros.pnf.index')->with('success', 'PNF actualizado correctamente');
+        return redirect()->route('admin.maestros.pnf.index')->with('success', 'PNF actualizado Exitosamente');
     }
 
     public function destroy($id)
@@ -61,11 +61,11 @@ class PnfController extends Controller
         }
 
         $resultado = Pnf::activarPnf($id);
-        
+
         if ($resultado) {
             return redirect()
                 ->route('admin.maestros.pnf.index')
-                ->with('success', 'Estado del PNF actualizado correctamente');
+                ->with('success', 'Estado del PNF actualizado Exitosamente');
         }
         return redirect()
             ->route('admin.maestros.pnf.index')
@@ -76,6 +76,6 @@ class PnfController extends Controller
     {
         Pnf::activarPnf($id);
 
-        return redirect()->route('admin.maestros.pnf.index')->with('success', 'PNF activado correctamente');
+        return redirect()->route('admin.maestros.pnf.index')->with('success', 'PNF activado Exitosamente');
     }
 }

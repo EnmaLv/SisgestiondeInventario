@@ -101,7 +101,7 @@ class EstadoController extends Controller
             $estado->save();
 
             // Mensaje en la terminal confirmando la actualización
-            info('El estado con ID ' . $id . ' ha sido actualizado correctamente.');
+            info('El estado con ID ' . $id . ' ha sido actualizado Exitosamente.');
 
             // Se redirige con mensaje de éxito
             return redirect()
@@ -136,7 +136,6 @@ class EstadoController extends Controller
                 'success' => true,
                 'existe' => $existe
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
@@ -165,7 +164,7 @@ class EstadoController extends Controller
             // Se redirige con mensaje de éxito visible al usuario
             return redirect()
                 ->route('admin.estado.index')
-                ->with('success', 'Estado eliminado correctamente.');
+                ->with('success', 'Estado eliminado Exitosamente.');
         }
 
         // Si el registro no existe, se informa en la terminal

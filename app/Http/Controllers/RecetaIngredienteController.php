@@ -96,7 +96,7 @@ class RecetaIngredienteController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('admin.maestros.receta_ingredientes.index')->with('success', 'Ingredientes agregados correctamente.');
+            return redirect()->route('admin.maestros.receta_ingredientes.index')->with('success', 'Ingredientes agregados Exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
@@ -172,7 +172,7 @@ class RecetaIngredienteController extends Controller
 
             DB::commit();
             return redirect()->route('admin.maestros.receta_ingredientes.index')
-                ->with('success', 'Ingredientes de la receta actualizados correctamente.');
+                ->with('success', 'Ingredientes de la receta actualizados Exitosamente.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
@@ -185,7 +185,6 @@ class RecetaIngredienteController extends Controller
 
         return redirect()
             ->route('admin.maestros.receta_ingredientes.index')
-            ->with('success', 'Ingredientes de la receta eliminados correctamente.');
+            ->with('success', 'Ingredientes de la receta eliminados Exitosamente.');
     }
-
 }

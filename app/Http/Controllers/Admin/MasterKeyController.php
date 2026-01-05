@@ -41,6 +41,6 @@ class MasterKeyController extends Controller
         }
 
         ConfiguracionSistema::updateMasterKey($request->new_master_key);
-        return back()->with('status', 'Llave maestra actualizada correctamente.');
+        return back()->with('status', 'Llave maestra actualizada Exitosamente.');
     }
 }

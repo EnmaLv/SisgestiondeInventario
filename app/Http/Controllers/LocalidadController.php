@@ -88,7 +88,6 @@ class LocalidadController extends Controller
                 'success' => true,
                 'existe' => $existe
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
@@ -131,7 +130,7 @@ class LocalidadController extends Controller
             // Retornar con mensaje de éxito
             return redirect()
                 ->route('admin.localidad.index')
-                ->with('success', 'La localidad fue registrada correctamente.');
+                ->with('success', 'La localidad fue registrada Exitosamente.');
         } catch (\Exception $e) {
             // Retornar mensaje de error en caso de fallo
             return redirect()
@@ -176,7 +175,7 @@ class LocalidadController extends Controller
             // Retornar mensaje de éxito
             return redirect()
                 ->route('admin.localidad.index')
-                ->with('success', 'La localidad fue actualizada correctamente.');
+                ->with('success', 'La localidad fue actualizada Exitosamente.');
         } catch (\Exception $e) {
             // Retornar mensaje de error si algo falla
             return redirect()
@@ -200,7 +199,7 @@ class LocalidadController extends Controller
             // Retornar mensaje de confirmación
             return redirect()
                 ->route('admin.localidad.index')
-                ->with('success', 'La localidad fue eliminada correctamente.');
+                ->with('success', 'La localidad fue eliminada Exitosamente.');
         }
 
         // Retornar mensaje si no se encuentra la localidad

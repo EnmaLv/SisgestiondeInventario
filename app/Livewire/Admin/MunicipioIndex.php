@@ -20,14 +20,12 @@ class MunicipioIndex extends Component
     /**
      * Se ejecuta al montar el componente
      */
-    public function mount()
-    {
-    }
+    public function mount() {}
 
 
     protected $rules = [
         'nombre_municipio' => 'required|string|max:255',
-        'estado_id'=> 'required|integer|exists:estados,id',
+        'estado_id' => 'required|integer|exists:estados,id',
     ];
     public function render()
     {
@@ -71,8 +69,10 @@ class MunicipioIndex extends Component
         // Evitar duplicados
         if (Municipio::where('nombre_municipio', $this->nombre_municipio)
             ->where('estado_id', $this->estado_id)
-            ->where('status', true)->exists()) {
-            $this->dispatch('swal',
+            ->where('status', true)->exists()
+        ) {
+            $this->dispatch(
+                'swal',
                 icon: 'error',
                 title: 'Error',
                 text: 'Ya existe un municipio con ese nombre.'
@@ -88,10 +88,11 @@ class MunicipioIndex extends Component
 
         $this->resetInputFields();
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: '¡Éxito!',
-            text: 'Municipio registrado correctamente.'
+            text: 'Municipio registrado Exitosamente.'
         );
     }
 
@@ -111,10 +112,11 @@ class MunicipioIndex extends Component
         $municipio = Municipio::find($this->municipio_id);
         $municipio->update(['nombre_municipio' => $this->nombre_municipio, 'estado_id' => $this->estado_id]);
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: 'Actualizado',
-            text: 'Estado actualizado correctamente.'
+            text: 'Estado actualizado Exitosamente.'
         );
     }
 
@@ -130,13 +132,11 @@ class MunicipioIndex extends Component
             'status' => false
         ]);
 
-        $this->dispatch('swal',
+        $this->dispatch(
+            'swal',
             icon: 'success',
             title: 'Eliminado',
-            text: 'Estado eliminado correctamente.'
+            text: 'Estado eliminado Exitosamente.'
         );
-
     }
-
 }
-

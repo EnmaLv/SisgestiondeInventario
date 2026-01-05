@@ -66,7 +66,7 @@ class CompraController extends Controller
         $ok = Compra::eliminarCompra($id);
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with('success', 'Requisición Eliminada Correctamente.');
+            ->with('success', 'Requisición Eliminada Exitosamente.');
     }
 
     public function finalizarCompra(Request $request, Compra $compra)
@@ -101,7 +101,7 @@ class CompraController extends Controller
 
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with('success', 'Requisición Eliminada Correctamente.');
+            ->with('success', 'Requisición Eliminada Exitosamente.');
     }
 
     public function enviarCorreo(Compra $compra)

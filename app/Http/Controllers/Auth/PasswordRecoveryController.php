@@ -101,7 +101,7 @@ class PasswordRecoveryController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
         session()->forget('recovery_user_id');
-        return redirect()->route('login')->with('status', 'Contraseña restablecida correctamente.');
+        return redirect()->route('login')->with('status', 'Contraseña restablecida Exitosamente.');
     }
 
     public function resetMasterKey(Request $request)
@@ -114,6 +114,6 @@ class PasswordRecoveryController extends Controller
         $user->master_key = $request->master_key; // mutator encrypts
         $user->save();
         session()->forget('recovery_user_id');
-        return redirect()->route('login')->with('status', 'Llave maestra restablecida correctamente.');
+        return redirect()->route('login')->with('status', 'Llave maestra restablecida Exitosamente.');
     }
 }

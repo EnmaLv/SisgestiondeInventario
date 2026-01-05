@@ -39,7 +39,7 @@ class EstadoSeeder extends Seeder
             ['id' => 23, 'nombre_estado' => 'Yaracuy'],
             ['id' => 24, 'nombre_estado' => 'Zulia'],
         ];
-        $this->command->info('Estados insertados correctamente.');
+        $this->command->info('Estados insertados Exitosamente.');
 
         DB::table('estados')->insert($estados);
     }

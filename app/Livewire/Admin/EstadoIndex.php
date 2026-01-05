@@ -74,7 +74,7 @@ class EstadoIndex extends Component
             'swal',
             icon: 'success',
             title: '¡Éxito!',
-            text: 'Estado registrado correctamente.'
+            text: 'Estado registrado Exitosamente.'
         );
     }
 
@@ -97,7 +97,7 @@ class EstadoIndex extends Component
             'swal',
             icon: 'success',
             title: 'Actualizado',
-            text: 'Estado actualizado correctamente.'
+            text: 'Estado actualizado Exitosamente.'
         );
     }
 
@@ -117,7 +117,7 @@ class EstadoIndex extends Component
             'swal',
             icon: 'success',
             title: 'Eliminado',
-            text: 'Estado eliminado correctamente.'
+            text: 'Estado eliminado Exitosamente.'
         );
     }
 }

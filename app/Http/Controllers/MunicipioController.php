@@ -6,7 +6,7 @@ use App\Models\Municipio;
 use App\Models\Estado;
 use Illuminate\Http\Request;
 
-class MunicipioController extends Controller 
+class MunicipioController extends Controller
 {
     /**
      * Muestra la lista de municipios junto con los estados disponibles.
@@ -77,7 +77,6 @@ class MunicipioController extends Controller
                 'success' => true,
                 'existe' => $existe
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
@@ -118,7 +117,7 @@ class MunicipioController extends Controller
             // Retornar a la vista con mensaje de éxito
             return redirect()
                 ->route('admin.municipio.index')
-                ->with('success', 'El municipio fue registrado correctamente.');
+                ->with('success', 'El municipio fue registrado Exitosamente.');
         } catch (\Exception $e) {
             // Retornar mensaje de error si ocurre alguna excepción
             return redirect()
@@ -162,7 +161,7 @@ class MunicipioController extends Controller
             // Retornar mensaje de éxito
             return redirect()
                 ->route('admin.municipio.index')
-                ->with('success', 'El municipio fue actualizado correctamente.');
+                ->with('success', 'El municipio fue actualizado Exitosamente.');
         } catch (\Exception $e) {
             // Retornar mensaje de error si algo falla
             return redirect()
@@ -188,7 +187,7 @@ class MunicipioController extends Controller
             // Retornar mensaje de confirmación al usuario
             return redirect()
                 ->route('admin.municipio.index')
-                ->with('success', 'El municipio fue eliminado correctamente.');
+                ->with('success', 'El municipio fue eliminado Exitosamente.');
         }
 
         // Si no se encuentra el municipio, mostrar mensaje de error

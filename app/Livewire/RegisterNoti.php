@@ -41,7 +41,7 @@ class RegisterNoti extends Component
     public $horarioPermitido;
 
     public $enableInput = true;
-    public $showBtnFinalizar = true;   
+    public $showBtnFinalizar = true;
 
     public $alertInventario = null;
     public $alertLimite = null;
@@ -57,7 +57,7 @@ class RegisterNoti extends Component
     public function finalizarDia()
     {
         //Verificamos en bd cuantos estudiantes de registraron
-        $validated =$this->validate([
+        $validated = $this->validate([
             'fecha' => 'required|date',
             'sobrante' => 'required|numeric',
             'motivo' => 'required|string',
@@ -84,7 +84,7 @@ class RegisterNoti extends Component
 
         //Hacemos innaccesible el formulario
         $this->enableInput = false;
-        
+
         //Ocultamos el botón de finalizar
         $this->showBtnFinalizar = false;
 
@@ -93,9 +93,8 @@ class RegisterNoti extends Component
         $this->dispatch('finalizar-dia-guardado', [
             'icon' => 'success',
             'title' => 'Cierre de jornada registrado',
-            'text' => 'El cierre de jornada se ha registrado correctamente.'
+            'text' => 'El cierre de jornada se ha registrado Exitosamente.'
         ]);
-        
     }
 
     private function recalcularSobrante()
@@ -109,13 +108,15 @@ class RegisterNoti extends Component
         }
 
         $desayunoTotal = $desayunoDelDia->sum('cantidad_servido');
-        
+
         // El sobrante es el total preparado menos los que ya comieron
         $this->sobrante = $desayunoTotal - $registradosHoy;
     }
 
     public function openModal()
-    {$this->dispatch('openModal');}
+    {
+        $this->dispatch('openModal');
+    }
 
 
     public function save()
@@ -197,7 +198,7 @@ class RegisterNoti extends Component
                 //Actualizamos el sobrante
                 $this->recalcularSobrante();
                 //Si el sobrante queda en 0, ocultamos el boton de finalizar
-                if($this->sobrante == 0){
+                if ($this->sobrante == 0) {
                     $this->showBtnFinalizar = false;
                     $this->enableInput = false;
                 }
@@ -250,7 +251,8 @@ class RegisterNoti extends Component
     }
 
     //Verificar al montar el componente
-    public function mount(){
+    public function mount()
+    {
         //Verifica si ya se registro un cierre de jornada hoy
         $cierreHoy = DB::table('sobrantes_comedor')->whereDate('fecha', now()->format('Y-m-d'))->exists();
 
@@ -268,10 +270,9 @@ class RegisterNoti extends Component
         $this->fecha = now()->format('Y-m-d');
 
         //Si hay alimentos sobrantes mostrar el boton de finalizar día
-        if($this->sobrante > 0){
+        if ($this->sobrante > 0) {
             $this->showBtnFinalizar = true;
         }
-
     }
     public function render()
     {

@@ -42,17 +42,17 @@ class RegistroComida extends Component
         }
     }
 
-protected function rulesRealtime(): array
-{
-    $rules = [];
+    protected function rulesRealtime(): array
+    {
+        $rules = [];
 
-    foreach ($this->desayunos_agregados as $index => $desayuno) {
-        $rules["desayunos_agregados.$index.receta_id"] = 'required|exists:recetas,id';
-        $rules["desayunos_agregados.$index.cantidad"] = 'required|numeric|min:1';
+        foreach ($this->desayunos_agregados as $index => $desayuno) {
+            $rules["desayunos_agregados.$index.receta_id"] = 'required|exists:recetas,id';
+            $rules["desayunos_agregados.$index.cantidad"] = 'required|numeric|min:1';
+        }
+
+        return $rules;
     }
-
-    return $rules;
-}
 
     public function mount()
     {
@@ -79,7 +79,7 @@ protected function rulesRealtime(): array
             })->toArray();
         }
     }
-    
+
     public function addDesayuno()
     {
         if ($this->desayuno_registrado) return;
@@ -103,7 +103,7 @@ protected function rulesRealtime(): array
         $this->resetErrorBag();
     }
 
-    public function saveDesayuno() 
+    public function saveDesayuno()
     {
         // Validar hora
         $hora = now()->format('H:i');
@@ -119,7 +119,7 @@ protected function rulesRealtime(): array
 
         $rules = [];
         $messages = [];
-        
+
         if (empty(array_filter($this->desayunos_agregados, fn($d) => $d['receta_id'] !== null))) {
             $this->addError('general', 'Debe seleccionar al menos un desayuno con su cantidad.');
             return;
@@ -128,7 +128,7 @@ protected function rulesRealtime(): array
         foreach ($this->desayunos_agregados as $index => $desayuno) {
             $rules['desayunos_agregados.' . $index . '.receta_id'] = 'required|numeric|exists:recetas,id';
             $rules['desayunos_agregados.' . $index . '.cantidad'] = 'required|numeric|min:1';
-            
+
             $messages['desayunos_agregados.' . $index . '.receta_id.required'] = "Seleccione una opción para el Desayuno #" . ($index + 1);
             $messages['desayunos_agregados.' . $index . '.cantidad.required'] = "Ingrese la cantidad para el Desayuno #" . ($index + 1);
             $messages['desayunos_agregados.' . $index . '.cantidad.min'] = "La cantidad debe ser 1 o superior para el Desayuno #" . ($index + 1);
@@ -140,7 +140,7 @@ protected function rulesRealtime(): array
             $this->addError('duplicado', 'No puede seleccionar la misma receta más de una vez. Por favor, elimine el registro duplicado.');
             return;
         }
-        
+
         $this->validate($rules, $messages);
 
         DB::beginTransaction();
@@ -149,10 +149,10 @@ protected function rulesRealtime(): array
             $sucursalId = 1;
 
             foreach ($this->desayunos_agregados as $registro) {
-                
+
                 $recetaId = $registro['receta_id'];
                 $cantidadServido = $registro['cantidad'];
-                
+
                 DetalleRegistroDiario::create([
                     'receta_id' => $recetaId,
                     'cantidad_servido' => $cantidadServido,
@@ -171,14 +171,14 @@ protected function rulesRealtime(): array
                     }
 
                     $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
-                    ->whereHas('lote', function ($q) use ($ingrediente) {
-                        $q->where('producto_id', $ingrediente->producto_id)
-                        ->whereDate('fecha_vencimiento', '>=', now()->toDateString())
-                        ->where('estado', 1);
-                    })
-                    ->where('cantidad_gramos', '>', 0)
-                    ->orderBy('lote_id', 'asc')
-                    ->get();
+                        ->whereHas('lote', function ($q) use ($ingrediente) {
+                            $q->where('producto_id', $ingrediente->producto_id)
+                                ->whereDate('fecha_vencimiento', '>=', now()->toDateString())
+                                ->where('estado', 1);
+                        })
+                        ->where('cantidad_gramos', '>', 0)
+                        ->orderBy('lote_id', 'asc')
+                        ->get();
 
 
                     $pendiente = $totalDescontarGramos;
@@ -207,7 +207,7 @@ protected function rulesRealtime(): array
                             'sucursal_id'    => $sucursalId,
                             'tipo_movimiento' => 'SALIDA',
                             'unidad_id'      => $ingrediente->unidad_id,
-                            'cantidad'       => floor($tomarGramos / $pesoUnidad), 
+                            'cantidad'       => floor($tomarGramos / $pesoUnidad),
                             'cantidad_gramos' => $tomarGramos,
                             'fecha'          => now(),
                             'observaciones'  => "Consumo por receta {$receta->nombre} ({$cantidadServido} raciones)"
@@ -227,7 +227,7 @@ protected function rulesRealtime(): array
             $this->desayuno_registrado = true;
             $this->dispatch('swal', [
                 'title' => '¡Desayunos registrados!',
-                'text'  => 'Los desayunos del día fueron guardados correctamente.',
+                'text'  => 'Los desayunos del día fueron guardados Exitosamente.',
                 'icon'  => 'success'
             ]);
         } catch (Exception $e) {
@@ -271,7 +271,7 @@ protected function rulesRealtime(): array
             'data'    => $data,
             'buscar'  => $buscar,
             'comidas' => $comidas,
-            'desayuno_registrado' => $this->desayuno_registrado, 
+            'desayuno_registrado' => $this->desayuno_registrado,
         ]);
     }
 }
