@@ -1,329 +1,247 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+        style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Ingredientes de Receta</h1>
+            <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Nueva Composición de Receta</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
+                <i class="fas fa-mortar-pestle mr-1" style="color: var(--color-secondary)"></i>
+                Chef: <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
             </p>
         </div>
 
         <div class="d-flex align-items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted d-block" style="font-size:0.75rem;">Fecha Actual</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
             </div>
-
-            <div
-                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
-                    style="width:100%; height:100%; object-fit:cover;">
+            <div style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08); border: 2px solid #fff;">
+                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario" style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
     </div>
 @stop
 
-
 @section('content')
-    <div class="row">
-        <div class="col-md-12 m-auto">
-            <div class="rd-card p-4">
+    @include('components.alert')
 
-                <div class="rd-card-header mb-3">
-                    <h3 class="rd-title-sm">Agregar ingredientes a la receta</h3>
-
-                    <div>
+    <div class="row justify-content-center fade-in">
+        <div class="col-md-11">
+            <div class="rd-card shadow-sm border-0 overflow-hidden">
+                <div class="rd-card-body border-bottom bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="rd-title-sm m-0">
+                            <i class="fas fa-plus-circle mr-2" style="color: var(--color-secondary)"></i>Registrar Ingredientes
+                        </h3>
                         <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default">
-                            <i class="fas fa-arrow-left"></i> Volver
+                            <i class="fas fa-arrow-left"></i> Volver al Listado
                         </a>
                     </div>
                 </div>
 
-                <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST">
-                    @csrf
+                <div class="rd-card-body p-4">
+                    <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST">
+                        @csrf
 
-                    <div class="row">
-                        {{-- Receta --}}
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="font-weight-bold">Recetas</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
-                                    <select class="form-control rd-filter-input" name="recetas_id" id="recetas_id">
-                                        <option value="" selected disabled>Seleccione una receta</option>
-
-                                        @foreach ($recetas as $receta)
-                                            <option value="{{ $receta->id }}"
-                                                {{ old('recetas_id') == $receta->id ? 'selected' : '' }}>
-                                                {{ $receta->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                        <div class="row">
+                            {{-- Info Lateral: Selección de Receta --}}
+                            <div class="col-md-4 border-right pr-md-4">
+                                <div class="form-group">
+                                    <label class="rd-label mb-2">Seleccionar Receta</label>
+                                    <div class="rd-input-group">
+                                        <span><i class="fas fa-concierge-bell"></i></span>
+                                        <select class="rd-input w-100" name="recetas_id" required>
+                                            <option value="">Seleccione una receta...</option>
+                                            @foreach($recetas as $receta)
+                                                <option value="{{ $receta->id }}" {{ old('recetas_id') == $receta->id ? 'selected' : '' }}>
+                                                    {{ $receta->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded" style="background: #f8fafc; border-left: 4px solid var(--color-secondary);">
+                                        <p class="small text-muted mb-0">
+                                            <i class="fas fa-info-circle mr-1"></i> Seleccione primero la receta base para luego asignar sus ingredientes y porciones.
+                                        </p>
+                                    </div>
                                 </div>
-                                @error('recetas_id')
-                                    <div class="text-danger"><b>{{ $message }}</b></div>
-                                @enderror
-                                @if ($recetas->isEmpty())
-                                    <div>No tienes recetas registradas, <a
-                                            href="{{ route('admin.maestros.recetas.create') }}">preciona aqui</a> para crear
-                                        una receta.</div>
-                                @endif
                             </div>
-                        </div>
 
-                        {{-- Selector producto + cantidad + unidad --}}
-                        <div class="col-md-8">
-                            <label class="font-weight-bold">Agregar ingredientes</label>
-                            <div class="d-flex gap-2 mb-2">
-                                <div style="flex:1">
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="fas fa-box"></i></span>
-                                        <select class="form-control rd-filter-input" id="producto_select">
-                                            <option value="" selected disabled>Seleccione un producto</option>
-                                            @foreach ($productos as $producto)
-                                                <option value="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}">
-                                                    {{ $producto->nombre }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                            {{-- Formulario Dinámico de Ingredientes --}}
+                            <div class="col-md-8 pl-md-4">
+                                <label class="rd-label mb-2">Agregar Insumos</label>
+                                <div class="d-flex gap-2 align-items-start mb-4">
+                                    <div style="flex-grow:1">
+                                        <div class="rd-input-group">
+                                            <span><i class="fas fa-search"></i></span>
+                                            <select class="rd-input w-100" id="producto_select">
+                                                <option value="">Buscar producto...</option>
+                                                @foreach ($productos as $producto)
+                                                    <option value="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}">
+                                                        {{ $producto->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div style="width:140px">
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
-                                        <input type="number" step="any" min="0" id="cantidad_porcion"
-                                            class="form-control" placeholder="Cantidad">
+                                    <div style="width:120px">
+                                        <div class="rd-input-group">
+                                            <span><i class="fas fa-hashtag"></i></span>
+                                            <input type="number" step="any" min="0" id="cantidad_input"
+                                                class="rd-input w-100" placeholder="0.00">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div style="width:180px">
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="fas fa-ruler"></i></span>
-                                        <select class="form-control" id="unidad_select">
-                                            <option value="" selected disabled>Unidad</option>
-                                            @foreach ($unidades as $unidad)
-                                                <option value="{{ $unidad->id }}" data-nombre="{{ $unidad->nombre }}">
-                                                    {{ $unidad->nombre }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                    <div style="width:150px">
+                                        <div class="rd-input-group">
+                                            <span><i class="fas fa-balance-scale"></i></span>
+                                            <select class="rd-input w-100" id="unidad_select">
+                                                <option value="">Unidad</option>
+                                                @foreach ($unidades as $unidad)
+                                                    <option value="{{ $unidad->id }}" data-nombre="{{ $unidad->nombre }}">
+                                                        {{ $unidad->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div style="width:120px">
-                                    <button type="button" class="btn rd-btn-primary" id="agregarProducto"
-                                        style="height: 38px;" @disabled($recetas->isEmpty() || $productos->isEmpty())
-                                        style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
-                                        <i class="fas fa-plus"></i> Agregar
+                                    <button type="button" class="rd-btn rd-btn-primary shadow-sm" id="agregarProducto" style="height: 45px; width: 50px; justify-content: center;">
+                                        <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
+
+                                <h5 class="rd-title-sm mb-3" style="font-size: 0.9rem; color: #64748b;">Lista de Preparación</h5>
+                                <div class="border rounded-lg overflow-hidden" style="background: #fbfdff; border-color: #eef2f6 !important;">
+                                    <ul id="listaProductos" class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
+                                        {{-- Los items se agregarán aquí vía JS --}}
+                                        <li class="list-group-item text-center py-5 text-muted empty-msg">
+                                            <i class="fas fa-layer-group fa-3x mb-3 opacity-25"></i>
+                                            <p class="mb-0">Agregue ingredientes para comenzar la receta.</p>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                @error('producto_id.*') <div class="rd-error mt-2">{{ $message }}</div> @enderror
                             </div>
-                            @if ($productos->isEmpty())
-                                <div>No tienes productos registrados, <a
-                                        href="{{ route('admin.maestros.productos.create') }}">preciona aqui</a> para crear
-                                    un producto.</div>
-                            @endif
-
-                            {{-- Lista visual --}}
-                            <ul id="listaProductos" class="list-group">
-                                {{-- Lista vacía al crear --}}
-                            </ul>
-
-                            {{-- Errores --}}
-                            @error('producto_id.*')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
-
-                            @error('cantidad_porcion.*')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
-
-                            @error('unidad_id.*')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
                         </div>
 
-                    </div> {{-- row --}}
+                        <hr class="my-4" style="opacity: 0.4;">
 
-                    <hr class="mt-4">
-
-                    <div class="mt-4 d-flex justify-content-end">
-                        <a href="{{ url('admin/maestros/receta_ingredientes') }}"
-                            class="rd-btn rd-btn-default">Cancelar</a>
-                        <button type="submit" class="rd-btn rd-btn-primary ml-2" @disabled($recetas->isEmpty() || $productos->isEmpty())
-                            style="@if ($recetas->isEmpty() || $productos->isEmpty()) opacity: 0.5!important; cursor: not-allowed!important; @endif">
-                            <i class="fas fa-check"></i> Crear
-                        </button>
-                    </div>
-                </form>
-
+                        <div class="d-flex justify-content-end gap-3">
+                            <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default px-4">Cancelar</a>
+                            <button type="submit" class="rd-btn rd-btn-primary px-5">
+                                <i class="fas fa-save mr-1"></i> Registrar Receta
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 @stop
 
-
 @section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+<style>
+    /* Estilización del Scroll */
+    #listaProductos::-webkit-scrollbar { width: 5px; }
+    #listaProductos::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+    /* Efectos de Interacción */
+    .list-group-item { border-color: #f1f5f9 !important; }
+    .list-group-item:hover { background-color: #f8fafc !important; transition: var(--trans-default); }
+
+    /* Eliminación de bordes de foco solicitados */
+    .rd-input:focus, .rd-btn:focus, select:focus, .form-control:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        border-color: var(--color-tertiary) !important;
+    }
+
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 1rem; }
+    .rounded-lg { border-radius: 12px !important; }
+    .badge-soft-secondary { border-radius: 6px; font-weight: 600; font-size: 0.8rem; }
+</style>
 @stop
-@push('css')
-    <style>
-        .rd-card .input-group {
-            border: 1px solid #d8dee9;
-            border-radius: 12px;
-            padding-inline: 8px;
-            transition: border-color .2s ease, box-shadow .2s ease;
-            overflow: hidden;
-        }
-
-        .rd-card .input-group:focus-within {
-            border-color: #7c3aed;
-            background: #ffffff;
-        }
-
-        .rd-card .input-group-text {
-            background: transparent;
-            border: none;
-            color: #64748b;
-            font-size: 1.05rem;
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-
-        .rd-card .input-group-text i {
-            width: 22px;
-            text-align: center;
-        }
-
-        .rd-card .rd-filter-input,
-        .rd-card .form-control {
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            padding-left: 6px;
-        }
-
-        .rd-card textarea.form-control {
-            border: 1px solid #d8dee9;
-            border-radius: 12px;
-            padding: 0.5rem 1rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            width: 100%;
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .rd-card textarea.form-control:focus {
-            border-color: #7c3aed;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-            outline: none;
-        }
-
-        /* Para el caso de textarea dentro de un input-group */
-        .rd-card .input-group textarea.form-control {
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            padding-left: 6px;
-            min-height: 38px;
-            resize: none;
-        }
-
-        .rd-card .input-group:focus-within textarea.form-control {
-            background: transparent;
-        }
-    </style>
-@endpush
 
 @section('js')
-    @include('components.alert')
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
             const selectProd = document.getElementById('producto_select');
-            const cantidadInput = document.getElementById('cantidad_porcion');
+            const cantidadInput = document.getElementById('cantidad_input');
             const unidadSelect = document.getElementById('unidad_select');
             const btnAgregar = document.getElementById('agregarProducto');
             const lista = document.getElementById('listaProductos');
 
             function crearItem(prodId, prodNombre, cantidad, unidadId, unidadNombre) {
+                const empty = lista.querySelector('.empty-msg');
+                if(empty) empty.remove();
+
                 const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.className = 'list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom fade-in';
                 li.id = 'prod_' + prodId;
 
                 li.innerHTML = `
-                <div>
-                    <strong>${prodNombre}</strong> — ${cantidad} ${unidadNombre}
-                </div>
-                <div>
-                    <input type="hidden" name="producto_id[]" value="${prodId}">
-                    <input type="hidden" name="cantidad_porcion[]" value="${cantidad}">
-                    <input type="hidden" name="unidad_id[]" value="${unidadId}">
-                    <button type="button" class="btn btn-danger btn-sm">X</button>
-                </div>
-            `;
+                    <div class="d-flex align-items-center">
+                        <div class="mr-3 d-flex align-items-center justify-content-center" style="width:38px; height:38px; border-radius:10px; background: #fff; border: 1px solid #eef2f6;">
+                            <i class="fas fa-plus text-success"></i>
+                        </div>
+                        <div>
+                            <span class="font-weight-bold d-block" style="color: #1e293b; font-size: 0.95rem;">${prodNombre}</span>
+                            <small class="badge badge-soft-secondary" style="background: #f1f5f9; color: #475569; padding: 2px 8px;">
+                                ${cantidad} ${unidadNombre}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="hidden" name="producto_id[]" value="${prodId}">
+                        <input type="hidden" name="cantidad_porcion[]" value="${cantidad}">
+                        <input type="hidden" name="unidad_id[]" value="${unidadId}">
+                        <button type="button" class="rd-action rd-action-danger">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
 
-                li.querySelector('button').addEventListener('click', () => li.remove());
+                li.querySelector('.rd-action-danger').addEventListener('click', () => {
+                    li.remove();
+                    if(lista.children.length === 0) {
+                        lista.innerHTML = `<li class="list-group-item text-center py-5 text-muted empty-msg">
+                                            <i class="fas fa-layer-group fa-3x mb-3 opacity-25"></i>
+                                            <p class="mb-0">Agregue ingredientes para comenzar la receta.</p>
+                                          </li>`;
+                    }
+                });
                 return li;
             }
 
             btnAgregar.addEventListener('click', function() {
-
                 const prodId = selectProd.value;
                 const prodNombre = selectProd.options[selectProd.selectedIndex]?.text || '';
                 const cantidad = cantidadInput.value;
                 const unidadId = unidadSelect.value;
                 const unidadNombre = unidadSelect.options[unidadSelect.selectedIndex]?.text || '';
 
-                // VALIDACIONES CON SWEETALERT
-                if (!prodId) {
-                    return Swal.fire({
-                        icon: 'warning',
-                        title: 'Seleccione un producto',
-                        confirmButtonColor: '#7c3aed'
-                    });
+                if (!prodId) return Swal.fire('Error', 'Seleccione un producto.', 'error');
+                if (!cantidad || Number(cantidad) <= 0) return Swal.fire('Error', 'Ingrese una cantidad.', 'error');
+                if (!unidadId) return Swal.fire('Error', 'Seleccione unidad.', 'error');
+
+                if(document.getElementById('prod_' + prodId)){
+                    return Swal.fire('Aviso', 'Ya está en la lista.', 'info');
                 }
 
-                if (!cantidad || Number(cantidad) <= 0) {
-                    return Swal.fire({
-                        icon: 'warning',
-                        title: 'Ingrese una cantidad válida',
-                        confirmButtonColor: '#7c3aed'
-                    });
-                }
-
-                if (!unidadId) {
-                    return Swal.fire({
-                        icon: 'warning',
-                        title: 'Seleccione una unidad',
-                        confirmButtonColor: '#7c3aed'
-                    });
-                }
-
-                // Crear item en la lista
                 const item = crearItem(prodId, prodNombre, cantidad, unidadId, unidadNombre);
                 lista.appendChild(item);
 
-                // Limpiar
                 selectProd.selectedIndex = 0;
                 cantidadInput.value = '';
                 unidadSelect.selectedIndex = 0;
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Ingrediente agregado',
-                    timer: 1200,
-                    showConfirmButton: false
-                });
-
             });
-
         });
     </script>
 @endsection

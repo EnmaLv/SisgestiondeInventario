@@ -14,7 +14,7 @@
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->name }}</strong>.
+                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona ?? auth()->user()->username }}</strong>.
             </p>
         </div>
         <div>
@@ -40,11 +40,6 @@
                             placeholder="Buscar nombre o cedula" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
-
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
 
                 </div>
             </div>

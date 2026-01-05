@@ -251,13 +251,13 @@ Breadcrumbs::for('admin.configuracion.index', function (Trail $trail) {
 
 Breadcrumbs::for('admin.configuracion.persona.index', function (Trail $trail) {
     $trail->parent('admin.configuracion.index');
-    $trail->push('Persona', route('admin.configuracion.persona.index'));
+    $trail->push('Estudiante', route('admin.configuracion.persona.index'));
 });
 
 
 Breadcrumbs::for('admin.configuracion.persona.create', function (Trail $trail) {
     $trail->parent('admin.configuracion.persona.index');
-    $trail->push('Crear Persona', route('admin.configuracion.persona.create'));
+    $trail->push('Crear Estudiante', route('admin.configuracion.persona.create'));
 });
     
 
@@ -270,7 +270,7 @@ Breadcrumbs::for('admin.configuracion.persona.show', function (Trail $trail, $id
 // Configuración > Editar Persona
 Breadcrumbs::for('admin.configuracion.persona.edit', function (Trail $trail, $id) {
     $trail->parent('admin.configuracion.persona.index');
-    $trail->push('Editar Persona', route('admin.configuracion.persona.edit', $id));
+    $trail->push('Editar Estudiante', route('admin.configuracion.persona.edit', $id));
 });
 
 // Configuración > Indexar
