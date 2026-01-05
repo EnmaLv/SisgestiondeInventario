@@ -428,7 +428,7 @@ return [
             'url' => 'admin/movimientos/historial_movimientos',
             'icon' => 'fas fa-clipboard-list ',
         ],
-        ['header' => 'Registros', 'classes' => 'text-bold' ],
+        ['header' => 'Registros', 'classes' => 'text-bold'],
         [
             'text' => 'Pnf',
             'key' => 'pnf',
@@ -437,7 +437,7 @@ return [
             'active' => ['admin/maestro/pnf*'],
         ],
         [
-            'text' => 'Registrar Usuarios',
+            'text' => 'Registrar Estudiante',
             'url' => 'admin/persona',
             'icon' => 'fas fa-solid fa-address-card ',
             'active' => ['admin/persona*'],
@@ -488,7 +488,7 @@ return [
         /* ---------------------------------------------------
         | ⚙️ CONFIGURACIÓN
         --------------------------------------------------- */
-        ['header' => ' Configuración','classes' => 'text-bold'],
+        ['header' => ' Configuración', 'classes' => 'text-bold'],
 
         [
             'text' => 'Empleados',
@@ -511,7 +511,7 @@ return [
             'icon' => 'fas fa-key',
             'active' => ['admin/configuracion/permisos*'],
         ],
-        
+
         [
             'text' => 'Archivos',
             'url' => 'admin/configuracion/archivos',

@@ -3,7 +3,7 @@
 @section('content_header')
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Nuevo Persona</h1>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Nuevo Estudiante</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
