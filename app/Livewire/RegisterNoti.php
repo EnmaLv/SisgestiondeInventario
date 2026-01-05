@@ -92,7 +92,7 @@ class RegisterNoti extends Component
         //Al finalizar enviar un evento con el resultado
         $this->dispatch('finalizar-dia-guardado', [
             'icon' => 'success',
-            'title' => 'Cierre de jornada registrado',
+            'title' => 'Exito!',
             'text' => 'El cierre de jornada se ha registrado Exitosamente.'
         ]);
     }

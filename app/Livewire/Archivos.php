@@ -96,9 +96,11 @@ class Archivos extends Component
             $this->reset('archivo');
             $this->archivoKey = rand();
 
-            session()->flash(
-                'success',
-                "Proceso completado. Insertados: {$insertados}. Cédulas duplicadas omitidas: {$cedulasDuplicadas}."
+            $this->dispatch(
+                'swal',
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'El archivo fue registrado Exitosamente.'
             );
 
         } catch (\Throwable $e) {

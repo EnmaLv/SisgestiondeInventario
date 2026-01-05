@@ -226,7 +226,7 @@ class RegistroComida extends Component
 
             $this->desayuno_registrado = true;
             $this->dispatch('swal', [
-                'title' => '¡Desayunos registrados!',
+                'title' => '¡Exito!',
                 'text'  => 'Los desayunos del día fueron guardados Exitosamente.',
                 'icon'  => 'success'
             ]);

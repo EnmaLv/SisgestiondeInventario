@@ -25,6 +25,20 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('swal', data => {
+                Swal.fire({
+                    icon: data.icon,
+                    title: data.title,
+                    text: data.text,
+                    confirmButtonColor: '#7c3aed',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            });
+        });
+    </script>
 
     <div class="rd-card mb-4">
         <div class="rd-card-body">
@@ -43,11 +57,11 @@
                             style="font-size:2.2rem; color:#64748b"></i>
 
                         <p class="mb-1 fw-semibold">
-                            Arrastra el archivo aquí o selecciónalo manualmente
+                            Selecciónalo manualmente
                         </p>
 
                         <p class="mb-3" style="font-size:.85rem; color:#64748b">
-                            Formatos permitidos: Excel (.xlsx), PDF, TXT
+                            Formatos permitidos: Excel (.xlsx)
                         </p>
 
                         <div style="text-align: left;"
