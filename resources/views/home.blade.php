@@ -169,121 +169,111 @@
 
 
 
-        @if ($total_lotes_por_vencer > 0)
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const hoy = new Date().toISOString().slice(0, 10);
-                    const key = 'alerta_por_vencer';
+        <script>
+            document.addEventListener('DOMContentLoaded', async function () {
 
-                    if (localStorage.getItem(key) !== hoy) {
+                const hoy = new Date().toISOString().slice(0, 10);
+                const alertas = [];
 
-                        Swal.fire({
-                            title: 'Productos por vencer',
-                            html: `
-                <p style="font-size:15px">
-                    Hay <b>{{ $total_lotes_por_vencer }}</b> producto(s)
-                    que vencerán en los próximos <b>7 días</b>.
-                </p>
-            `,
-                            icon: 'warning',
-                            showConfirmButton: true,
-                            confirmButtonText: 'Revisar',
-                            confirmButtonColor: '#f59e0b',
-                            timer: 6000,
-                            timerProgressBar: true
-                        }).then((result) => {
+                /* ================= PRIORIDAD 1: LOTES VENCIDOS ================= */
+                @if ($total_lotes_vencidos > 0)
+                    if (localStorage.getItem('alerta_lotes_vencidos') === hoy) {
+                        alertas.push(async () => {
+                            const result = await Swal.fire({
+                                title: '⚠️ Lotes vencidos',
+                                html: `
+                                    <p style="font-size:15px">
+                                        Existen <b>{{ $total_lotes_vencidos }}</b> lote(s) vencido(s).<br>
+                                        Requieren atención inmediata.
+                                    </p>
+                                `,
+                                icon: 'error',
+                                confirmButtonText: 'Ver lotes',
+                                confirmButtonColor: '#dc2626'
+                            });
+
+                            localStorage.setItem('alerta_lotes_vencidos', hoy);
+
                             if (result.isConfirmed) {
-                                localStorage.setItem(key, hoy);
+                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=vencido') }}";
+                            }
+                        });
+                    }
+                @endif
+
+                /* ================= PRIORIDAD 2: POR VENCER ================= */
+                @if ($total_lotes_por_vencer > 0)
+                    if (localStorage.getItem('alerta_por_vencer') !== hoy) {
+                        alertas.push(async () => {
+                            const result = await Swal.fire({
+                                title: 'Productos por vencer',
+                                html: `
+                                    <p style="font-size:15px">
+                                        Hay <b>{{ $total_lotes_por_vencer }}</b> producto(s)
+                                        que vencerán en los próximos <b>7 días</b>.
+                                    </p>
+                                `,
+                                icon: 'warning',
+                                confirmButtonText: 'Revisar',
+                                confirmButtonColor: '#f59e0b'
+                            });
+
+                            localStorage.setItem('alerta_por_vencer', hoy);
+
+                            if (result.isConfirmed) {
                                 window.location.href = "{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}";
                             }
                         });
                     }
-                });
-            </script>
-        @endif
+                @endif
 
+                /* ================= PRIORIDAD 3: STOCK MÍNIMO ================= */
+                @if ($total_productos_stock_minimo > 0)
+                    if (localStorage.getItem('alerta_stock_minimo') !== hoy) {
+                        alertas.push(async () => {
+                            const result = await Swal.fire({
+                                title: '📉 Stock mínimo alcanzado',
+                                html: `
+                                    <p style="font-size:15px">
+                                        Existen <b>{{ $total_productos_stock_minimo }}</b> producto(s)
+                                        por debajo del stock mínimo.
+                                    </p>
+                                    <ul style="text-align:left; font-size:14px; max-height:200px; overflow-y:auto;">
+                                        @foreach ($productos_stock_minimo as $producto)
+                                            <li>
+                                                <strong>{{ $producto->nombre }}</strong>
+                                                <small class="text-danger">
+                                                    ({{ number_format($producto->stock_actual, 2) }} /
+                                                    {{ number_format($producto->stock_minimo, 2) }})
+                                                </small>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                `,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Revisar inventario',
+                                cancelButtonText: 'Cerrar',
+                                confirmButtonColor: '#f59e0b'
+                            });
 
+                            localStorage.setItem('alerta_stock_minimo', hoy);
 
-        @if ($total_lotes_vencidos > 0)
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const hoy = new Date().toISOString().slice(0, 10);
-                    const key = 'alerta_lotes_vencidos';
-
-                    if (localStorage.getItem(key) !== hoy) {
-
-                        Swal.fire({
-                            title: '⚠️ Lotes vencidos',
-                            html: `
-                <p style="font-size:15px">
-                    Existen <b>{{ $total_lotes_vencidos }}</b> lote(s) vencido(s).<br>
-                    Requieren atencion inmediata para ser removidos del inventario</b>.
-
-                </p>
-            `,
-                            icon: 'error',
-                            showConfirmButton: true,
-                            confirmButtonText: 'Ver lotes',
-                            confirmButtonColor: '#dc2626',
-                            timer: 7000,
-                            timerProgressBar: true
-                        }).then((result) => {
                             if (result.isConfirmed) {
-                                localStorage.setItem(key, hoy);
-                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=vencido') }}";
+                                window.location.href = "{{ url('/admin/maestros/productos?filtro=stock_minimo') }}";
                             }
                         });
-
                     }
-                });
-            </script>
-        @endif
-        
-        @if ($total_productos_stock_minimo > 0)
-            <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const hoy = new Date().toISOString().slice(0, 10);
-                const key = 'alerta_stock_minimo_' + hoy;
+                @endif
 
-                if (localStorage.getItem(key) !== 'visto') {
-                    Swal.fire({
-                        title: '📉 Stock mínimo alcanzado',
-                        html: `
-                            <p style="font-size:15px">
-                                Existen <b>{{ $total_productos_stock_minimo }}</b> producto(s)
-                                que han alcanzado o bajado del <b>stock mínimo</b> en tu sucursal.
-                            </p>
-                            <p style="font-size:14px; color:#6b7280;">
-                                Se recomienda revisarlos y realizar una compra.
-                            </p>
-                            <ul style="text-align:left; font-size:14px; max-height:200px; overflow-y:auto;">
-                            @foreach ($productos_stock_minimo as $producto)
-                                <li>
-                                    <strong>{{ $producto->nombre }}</strong>
-                                    <small class="text-danger">
-                                        ({{ number_format($producto->stock_actual, 2) }} / {{ number_format($producto->stock_minimo, 2) }})
-                                    </small>
-                                </li>
-                            @endforeach
-                            </ul>
-                        `,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Revisar inventario',
-                        cancelButtonText: 'Cerrar',
-                        confirmButtonColor: '#f59e0b',
-                        cancelButtonColor: '#6b7280'
-                    }).then((result) => {
-                        localStorage.setItem(key, 'visto');
-                        
-                        if (result.isConfirmed) {
-                            window.location.href = "{{ url('/admin/maestros/productos?filtro=stock_minimo') }}";
-                        }
-                    });
+                /* ================= EJECUCIÓN SECUENCIAL ================= */
+                for (const alerta of alertas) {
+                    await alerta();
                 }
+
             });
             </script>
-        @endif
+
 
         <!-- Lotes Vencidos -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
@@ -648,20 +638,12 @@
                 type: 'bar',
                 data: {
                     labels: [
-                        'Sucursales',
-                        'Categorías',
-                        'Productos',
-                        'Proveedores',
                         'Compras',
                         'Lotes Vencidos'
                     ],
                     datasets: [{
                         label: 'Cantidad',
                         data: [
-                            {{ $total_sucursales }},
-                            {{ $total_categorias }},
-                            {{ $total_productos }},
-                            {{ $total_proveedores }},
                             {{ $total_compras }},
                             {{ $total_lotes_vencidos }}
                         ],
