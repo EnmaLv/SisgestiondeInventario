@@ -15,6 +15,7 @@ class DetalleRegistroDiario extends Model
     protected $fillable = [
         'receta_id',
         'cantidad_servido',
+        'fecha',
     ];
 
     public function receta()

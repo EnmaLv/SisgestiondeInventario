@@ -10,6 +10,8 @@ class SobranteComedor extends Model
     /** @use HasFactory<\Database\Factories\SobranteComedorFactory> */
     use HasFactory;
 
+    protected $table = 'sobrantes_comedor';
+
     protected $fillable = [
         'fecha',
         'cantidad_sobrante',

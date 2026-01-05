@@ -22,7 +22,8 @@
                                     <div class="rd-input-group">
                                         <select
                                             wire:model.live="desayunos_agregados.{{ $index }}.receta_id"
-                                            class="rd-input @error('desayunos_agregados.' . $index . '.receta_id') rd-input-error @enderror">
+                                            class="rd-input @error('desayunos_agregados.' . $index . '.receta_id') rd-input-error @enderror"
+                                            @disabled($desayuno_registrado) @if ($desayuno_registrado) style="opacity: .8; cursor: not-allowed;" @endif>
                                             <option value="">Seleccione una opción</option>
                                             @foreach ($comidas as $comida)
                                                 <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
@@ -40,7 +41,7 @@
                                             <input type="number"
                                                 wire:model.live="desayunos_agregados.{{ $index }}.cantidad"
                                                 class="rd-input @error('desayunos_agregados.' . $index . '.cantidad') rd-input-error @enderror"
-                                                placeholder="Cant." min="1" />
+                                                placeholder="Cant." min="1" @disabled($desayuno_registrado) @if ($desayuno_registrado) style="opacity: .8; cursor: not-allowed;" @endif/>
                                         </div>
                                     </div>
                                 </div>

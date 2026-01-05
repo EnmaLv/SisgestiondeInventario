@@ -156,6 +156,7 @@ protected function rulesRealtime(): array
                 DetalleRegistroDiario::create([
                     'receta_id' => $recetaId,
                     'cantidad_servido' => $cantidadServido,
+                    'fecha' => now(),
                 ]);
 
                 $receta = Receta::with('recetaIngredientes.producto')->find($recetaId);

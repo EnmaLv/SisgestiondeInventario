@@ -4,160 +4,163 @@
 @section('content_header')
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
-
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Gestión de Empleados</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">Usuario: <strong>{{ auth()->user()->username }}</strong></p>
+            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
+                <i class="fas fa-user-circle mr-1" style="color: var(--color-secondary)"></i> 
+                Usuario: <strong>{{ auth()->user()->username }}</strong>
+            </p>
         </div>
-
-        <div></div>
     </div>
 @stop
 
 @section('content')
     @include('components.alert')
 
-    <div class="rd-card rd-card-full">
-        <div class="rd-card-body">
-            <div class="rd-card-header rd-header-space">
-                <div>
-                    <h3 class="rd-title-sm">Empleados</h3>
-                </div>
-
-                <div class="rd-actions d-flex align-items-center">
-                    <div id="filtersPanel" class="rd-filters-panel" style="min-width:320px;background:#ffffff;border:1px solid #e6e9ef;padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(15,23,42,0.06);height:0;opacity:0;overflow:hidden;transition:height .28s ease, opacity .18s ease;">
-                        <form action="{{ route('admin.configuracion.empleados.index') }}" method="GET" class="form-inline" role="search">
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                                <select name="rol" class="form-control" style="border:1px solid #cbd5e1;min-width:200px">
-                                    <option value="">Filtrar por Rol</option>
-                                    @foreach($roles as $r)
-                                        <option value="{{ $r->id_rol }}" {{ request('rol') == $r->id_rol ? 'selected' : '' }}>{{ $r->nombre }}</option>
-                                    @endforeach
-                                </select>
-
-                                <div style="display:flex;gap:6px;align-items:center">
-                                    <button id="btnBuscar" class="rd-btn rd-btn-primary" type="submit">Buscar</button>
-                                </div>
-                            </div>
-                        </form>
+    <div class="rd-card rd-card-full shadow-sm border-0 overflow-hidden">
+        <div class="rd-card-body border-bottom bg-white">
+            <form action="{{ route('admin.configuracion.empleados.index') }}" method="GET">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <h3 class="rd-title-sm">
+                            <i class="fas fa-users-cog mr-2" style="color: var(--color-secondary)"></i>Directorio de Personal
+                        </h3>
                     </div>
+                    
+                    <div class="col-md-8 d-flex justify-content-end gap-2">
+                        <div class="rd-input-group" style="min-width: 250px;">
+                            <span><i class="fas fa-filter"></i></span>
+                            <select name="rol" class="rd-input w-100">
+                                <option value="">Todos los Roles</option>
+                                @foreach($roles as $r)
+                                    <option value="{{ $r->id_rol }}" {{ request('rol') == $r->id_rol ? 'selected' : '' }}>
+                                        {{ $r->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <button id="toggleFilters" type="button" class="rd-btn rd-btn-ghost" title="Filtros" style="border-radius:8px;padding:8px 10px;margin-left:auto;">
-                        <i class="fas fa-filter" style="font-size:1rem;color:#0f172a"></i>
-                    </button>
+
+                        <button type="submit" class="rd-btn rd-btn-primary">
+                            Buscar
+                        </button>
+
+                        @if(request()->filled('rol') || request()->filled('search'))
+                            <a href="{{ route('admin.configuracion.empleados.index') }}" class="rd-btn rd-btn-default" title="Limpiar Filtros">
+                                <i class="fas fa-times text-danger"></i>
+                            </a>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            </form>
+        </div>
 
-            <div id="printArea">
-                <table class="rd-table">
-                    <thead>
+        <div class="rd-table-container p-0">
+            <table class="rd-table">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width:70px">ID</th>
+                        <th>Información del Empleado</th>
+                        <th>Usuario de Sistema</th>
+                        <th>Rol / Perfil</th>
+                        <th class="text-center" style="width:180px">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($usuarios as $usuario)
                         <tr>
-                            <th style="width:60px">#</th>
-                            <th>Usuario</th>
-                            <th>Nombre y Apellido</th>
-                            <th>Rol</th>
-                            <th style="width:150px">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($usuarios as $usuario)
-                            <tr>
-                                <td class="text-center">{{ ($usuarios->currentPage() - 1) * $usuarios->perPage() + $loop->iteration }}</td>
-                                <td>{{ $usuario->username }}</td>
-                                <td>{{ optional($usuario->persona)->nombre ?? '—' }}</td>
-                                <td>{{ $usuario->roles->pluck('nombre')->join(', ') ?: ($usuario->perfil->nombre_perfil ?? '—') }}</td>
-                                <td class="text-center">
-                                    <a href="{{ route('admin.configuracion.empleados.show', $usuario->id_usuario) }}" class="rd-action" title="Ver"><i class="fas fa-eye"></i></a>
-                                        <a href="{{ route('admin.configuracion.empleados.edit', $usuario->id_usuario) }}" class="rd-action mx-2" title="Editar"><i class="fas fa-edit"></i></a>
-                                        @php
-                                            $auth = auth()->user();
-                                            $isSelfAdmin = $auth && $auth->id_usuario == $usuario->id_usuario && $auth->roles->contains('nombre', 'Administrador');
-                                        @endphp
-                                        @if(!$isSelfAdmin)
-                                            <form action="{{ route('admin.configuracion.empleados.destroy', $usuario->id_usuario) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('¿Seguro que desea eliminar este empleado?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="rd-action" title="Eliminar" style="background:none;border:none;padding:0;color:#ef4444"><i class="fas fa-trash"></i></button>
-                                            </form>
-                                        @else
-                                            <span class="text-muted" title="No puedes eliminarte a ti mismo">—</span>
-                                        @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center py-4">No hay usuarios</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                            <td class="text-center text-muted font-weight-bold">
+                                #{{ ($usuarios->currentPage() - 1) * $usuarios->perPage() + $loop->iteration }}
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span style="font-weight: 700; color: #1e293b;">{{ optional($usuario->persona)->nombre_persona ?? 'N/A' }} {{ optional($usuario->persona)->apellido_persona ?? 'N/A' }} </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="rd-badge rd-badge-success" style="font-family: monospace;">
+                                    {{ $usuario->username }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge" style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 10px;">
+                                        {{ $usuario->roles->pluck('nombre')->first() ?: ($usuario->perfil->nombre_perfil ?? '—') }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="{{ route('admin.configuracion.empleados.show', $usuario->id_usuario) }}" 
+                                       class="rd-action" title="Ver Perfil">
+                                        <i class="fas fa-eye "></i>
+                                    </a>
+                                    
+                                    <a href="{{ route('admin.configuracion.empleados.edit', $usuario->id_usuario) }}" 
+                                       class="rd-action" title="Modificar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
 
-            <div class="mt-3 d-flex justify-content-center">
-                {{ $usuarios->onEachSide(1)->links('components.pagination') }}
-            </div>
+                                    @php
+                                        $isSelf = auth()->id() == $usuario->id_usuario;
+                                    @endphp
+
+                                    @if(!$isSelf)
+                                        <form action="{{ route('admin.configuracion.empleados.destroy', $usuario->id_usuario) }}" method="POST" onsubmit="return confirm('¿Eliminar empleado?');" class="d-inline">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="rd-action rd-action-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button class="rd-action disabled" style="opacity: 0.4; cursor: not-allowed;" title="Acción no permitida">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-folder-open fa-3x mb-3" style="opacity: 0.2"></i>
+                                    <p class="mb-0">No se encontraron empleados con los criterios de búsqueda.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="rd-card-body border-top bg-light d-flex justify-content-center">
+            {{ $usuarios->appends(request()->query())->onEachSide(1)->links('components.pagination') }}
         </div>
     </div>
-        @stop
+@stop
 
-        @section('js')
-        <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            var btn = document.getElementById('toggleFilters');
-            var panel = document.getElementById('filtersPanel');
-            if(!btn || !panel) return;
+@section('css')
+<style>
+    /* Efecto hover en las filas de la tabla usando tus variables */
+    .rd-table tbody tr:hover {
+        background-color: #f8fafc;
+        transition: var(--trans-default);
+    }
+    
+    /* Estilo adicional para los iconos de acción */
+    .rd-action {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--trans-default);
+    }
 
-            function openPanel(){
-                // Set explicit height to enable transition
-                var full = panel.scrollHeight;
-                panel.style.height = full + 'px';
-                panel.style.opacity = '1';
-                panel.classList.add('open');
-                btn.setAttribute('aria-expanded','true');
-            }
-
-            function closePanel(){
-                // From auto-height: set height to current scrollHeight then to 0
-                var full = panel.scrollHeight;
-                panel.style.height = full + 'px';
-                // force reflow
-                panel.offsetHeight;
-                panel.style.height = '0';
-                panel.style.opacity = '0';
-                panel.classList.remove('open');
-                btn.setAttribute('aria-expanded','false');
-            }
-
-            btn.addEventListener('click', function(){
-                var isOpen = panel.classList.contains('open');
-                if(!isOpen){
-                    openPanel();
-                } else {
-                    closePanel();
-                }
-            });
-
-            // When transition ends and panel is open, set height to auto to allow internal changes
-            panel.addEventListener('transitionend', function(e){
-                if(e.propertyName === 'height' && panel.classList.contains('open')){
-                    panel.style.height = 'auto';
-                }
-            });
-
-            // Ensure filter form submits properly by constructing query and redirecting
-            var filtrosForm = document.querySelector('#filtersPanel form');
-            if(filtrosForm){
-                filtrosForm.addEventListener('submit', function(evt){
-                    evt.preventDefault();
-                    var params = new URLSearchParams(window.location.search);
-                    var rol = filtrosForm.querySelector('select[name="rol"]').value;
-                    if(rol){ params.set('rol', rol); } else { params.delete('rol'); }
-                    // Preserve other existing params except page
-                    params.delete('page');
-                    var url = window.location.pathname + '?' + params.toString();
-                    window.location.href = url;
-                });
-            }
-        });
-        </script>
-        @stop
+    .rd-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+</style>
+@stop

@@ -122,9 +122,6 @@
     cursor: pointer;
     transition: scale .2s ease;
 
-    &:active {
-        scale: .95;
-    }
 }
 
 .rd-btn-primary {

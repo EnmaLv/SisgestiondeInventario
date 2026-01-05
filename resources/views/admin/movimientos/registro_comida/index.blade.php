@@ -49,4 +49,51 @@
 
 @section('content')
     <livewire:registro-comida/>
+
+    <div style="padding: 18px 12px;">
+
+        <div class="rd-card rd-card-list">
+            <div class="rd-card-header rd-header-space">
+                <div>
+                    <h3 class="rd-title-sm">Registros De Sobrantes</h3>
+                    <p class="rd-sub-sm">Últimos movimientos del día</p>
+                </div>
+            </div>
+            <div class="rd-card-body rd-list-body">
+                <div class="rd-list">
+                    <table class="rd-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha del Registro</th>
+                                <th>Cantidad Sobrante</th>
+                                <th>Motivo</th>
+                                <th>Accion Tomada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($sobrantes as $sobrante)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td>{{ $sobrante->fecha }}</td>
+                                    <td>{{ $sobrante->cantidad_sobrante }}</td>
+                                    <td>{{ $sobrante->motivo }}</td>
+                                    <td>{{ $sobrante->accion_tomada }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">No hay registros</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+    
+                <!-- Paginación (si aplica) -->
+                <div class="rd-pagination">
+                    {{ $sobrantes->appends(request()->query())->links() }}
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
