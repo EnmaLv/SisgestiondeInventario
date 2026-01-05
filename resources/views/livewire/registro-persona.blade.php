@@ -251,7 +251,7 @@
                     <i class="fas fa-undo"></i> Restablecer
                 </button>
                 <button type="submit" class="rd-btn rd-btn-primary" {{ !$formHabilitado ? 'disabled' : '' }} style="{{ !$formHabilitado ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
-                    <i class="fas fa-save"></i> {{ $isEdit ? 'Actualizar' : 'Registrar' }} Persona
+                    <i class="fas fa-save"></i> {{ $isEdit ? 'Actualizar' : 'Registrar' }} Estudiante
                 </button>
             </div>
             @endif

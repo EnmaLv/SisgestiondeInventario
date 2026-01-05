@@ -67,7 +67,7 @@
                                 <td class="text-center">{{ $persona->apellido_persona }}</td>
                                 <td class="text-center">{{ $persona->email_persona }}</td>
                                 @php
-                                    $perfil = [1=>'Estudiante', 2=>'Usuario'];
+                                    $perfil = [1=>'Estudiante'];
                                 @endphp
                                 <td class="text-center">
                                     <div class="rd-action-group">
