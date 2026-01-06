@@ -152,7 +152,7 @@ class RegisterNoti extends Component
             'hora' => date('H:i:s'),
         ];
         //Valida que la persona exista
-        $persona = Persona::where('cedula_persona', $this->cedula)->first();
+        $persona = Persona::where('cedula_persona', $this->cedula)->where('id_perfil', 2)->first();
 
         if ($persona) {
             //Valida que la persona no se haya registrado hoy
@@ -201,6 +201,12 @@ class RegisterNoti extends Component
                 if ($this->sobrante == 0) {
                     $this->showBtnFinalizar = false;
                     $this->enableInput = false;
+                    //Mostrar una notificacion
+                    $this->dispatch('swal', ['type' => 'success', 
+                    'title' => 'Exito!', 
+                    'text' => 'Se alcanzó el límite de raciones!',
+                    'icon' => 'success'
+                    ]);
                 }
             } catch (Exception $e) {
                 DB::rollBack();
@@ -256,15 +262,16 @@ class RegisterNoti extends Component
         //Verifica si ya se registro un cierre de jornada hoy
         $cierreHoy = DB::table('sobrantes_comedor')->whereDate('fecha', now()->format('Y-m-d'))->exists();
 
+        //Cargamos los sobrantes
+        $this->recalcularSobrante();
+
         //Inhabilitar el registro si se hizo un cierre
-        if ($cierreHoy) {
+        if ($cierreHoy || $this->sobrante == 0) {
             $this->enableInput = false;
             $this->showBtnFinalizar = false;
             return;
         }
 
-        //Cargamos los sobrantes
-        $this->recalcularSobrante();
 
         //Cargamos datos
         $this->fecha = now()->format('Y-m-d');

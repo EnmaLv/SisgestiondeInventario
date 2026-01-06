@@ -11,6 +11,10 @@
     /*Transiciones*/
     --trans-default: all .2s ease;
 }
+label{
+    margin-bottom: 0;
+}
+
 /*breadcrumb*/
 .breadcrumb > li > a {
     color: var(--color-secondary);
@@ -222,13 +226,11 @@
     background: transparent;
     color: #4a5568;
     border: 1px solid #e2e8f0;
-    transition: background-color 0.2s ease;
+
 }
 
 
-.rd-btn-default:not(:disabled):hover {
-    background-color: #f8f9fa;
-}
+
 
 .rd-btn-success {
     background: #10b981;
@@ -270,8 +272,8 @@
 
 .rd-filter-row {
     display: flex;
-    flex-direction: column;
     gap: 6px;
+    align-items: center;
 }
 
 .rd-filter-input {
