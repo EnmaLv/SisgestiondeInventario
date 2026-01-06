@@ -100,15 +100,19 @@ class Archivos extends Component
                 'swal',
                 icon: 'success',
                 title: '¡Éxito!',
-                text: 'El archivo fue registrado Exitosamente.'
+                text: 'El archivo fue procesado Exitosamente.'
             );
-
         } catch (\Throwable $e) {
 
             DB::rollBack();
             report($e);
 
-            session()->flash('error', 'Error al procesar el archivo.');
+            $this->dispatch(
+                'swal',
+                icon: 'error',
+                title: '¡Error!',
+                text: 'El archivo no concuerda con la informacion de los estudiantes.'
+            );
         }
     }
 
@@ -122,4 +126,3 @@ class Archivos extends Component
         ]);
     }
 }
-
