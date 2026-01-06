@@ -10,7 +10,6 @@
                 Usuario: <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
             </p>
         </div>
-
         <div class="d-flex align-items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
                 <small class="text-muted d-block" style="font-size:0.75rem;">Fecha de edición</small>
@@ -41,14 +40,11 @@
                         </a>
                     </div>
                 </div>
-
                 <div class="rd-card-body p-4">
                     <form action="{{ route('admin.maestros.receta_ingredientes.update', $receta->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-
                         <div class="row">
-                            {{-- Receta Info --}}
                             <div class="col-md-4 border-right">
                                 <div class="form-group">
                                     <label class="rd-label mb-2">Nombre de la Receta</label>
@@ -60,8 +56,6 @@
                                     <small class="text-muted mt-2 d-block">Estás editando la composición técnica de esta preparación.</small>
                                 </div>
                             </div>
-
-                            {{-- Gestión de Ingredientes --}}
                             <div class="col-md-8">
                                 <label class="rd-label mb-2">Añadir nuevos ingredientes</label>
                                 <div class="d-flex gap-2 align-items-start mb-4">
@@ -78,7 +72,6 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <div style="width:130px">
                                         <div class="rd-input-group">
                                             <span><i class="fas fa-weight-hanging"></i></span>
@@ -86,7 +79,6 @@
                                                 class="rd-input w-100" placeholder="Cant.">
                                         </div>
                                     </div>
-
                                     <div style="width:160px">
                                         <div class="rd-input-group">
                                             <span><i class="fas fa-ruler-combined"></i></span>
@@ -100,12 +92,10 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <button type="button" class="rd-btn rd-btn-primary shadow-sm d-flex justify-content-center align-items-center" id="agregarProducto" style="height: 45px; width: 45px;">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
-
                                 <h5 class="rd-title-sm mb-3" style="font-size: 0.95rem;">Ingredientes Actuales</h5>
                                 <div class="border rounded-lg" style="background: #fbfdff;">
                                     <ul id="listaProductos" class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
@@ -120,7 +110,6 @@
                                                         <div class="small text-muted">{{ $ing->cantidad_porcion }} {{ $ing->unidad->nombre }}</div>
                                                     </div>
                                                 </div>
-
                                                 <div class="d-flex align-items-center gap-2">
                                                     <input type="hidden" name="producto_id[]" value="{{ $ing->producto_id }}">
                                                     <input type="hidden" name="cantidad_porcion[]" value="{{ $ing->cantidad_porcion }}">
@@ -139,17 +128,14 @@
                                         @endforelse
                                     </ul>
                                 </div>
-
                                 @error('producto_id.*') <div class="rd-error">{{ $message }}</div> @enderror
                             </div>
                         </div>
-
                         <hr class="my-4" style="opacity: 0.5;">
-
                         <div class="d-flex justify-content-end gap-3">
                             <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default px-4">Cancelar</a>
                             <button type="submit" class="rd-btn rd-btn-primary px-5 shadow-sm">
-                                <i class="fas fa-check-circle mr-1"></i> Guardar Cambios
+                                <i class="fas fa-check-circle mr-1"></i> Guardar
                             </button>
                         </div>
                     </form>

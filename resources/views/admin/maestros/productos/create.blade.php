@@ -8,7 +8,6 @@
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-
         <div class="d-flex align-items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
                 <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
@@ -16,7 +15,6 @@
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
             </div>
-
             <div
                 style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
                 <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
@@ -26,33 +24,23 @@
     </div>
 @stop
 
-
-
 @section('content')
     <div class="row">
         <div class="col-md-12 m-auto">
             <div class="rd-card p-4">
-
                 <div class="rd-card-header mb-3">
                     <h3 class="rd-title-sm">Crear producto</h3>
-
                     <div>
                         <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">
                             <i class="fas fa-arrow-left"></i> Volver
                         </a>
                     </div>
                 </div>
-
                 <form action="{{ route('admin.maestros.productos.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
                     <div class="row">
-                        <!-- Left Column -->
                         <div class="col-md-9">
-
                             <div class="row">
-
-                                {{-- Categoría --}}
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Categoría</label>
@@ -74,8 +62,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                {{-- Código --}}
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Código</label>
@@ -89,8 +75,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                {{-- Nombre --}}
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Nombre</label>
@@ -106,8 +90,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Descripción (CKEditor) --}}
                             <div class="form-group mt-3">
                                 <label class="font-weight-bold">Descripción</label>
                                 <textarea name="descripcion" id="descripcion">{{ old('descripcion') }}</textarea>
@@ -115,10 +97,7 @@
                                     <div class="text-danger"><b>{{ $message }}</b></div>
                                 @enderror
                             </div>
-
                             <div class="row mt-3">
-
-                                {{-- Precio Compra --}}
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Precio base (USD)</label>
@@ -140,8 +119,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                {{-- Stock Mínimo --}}
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Mínimo</label>
@@ -156,8 +133,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                {{-- Stock Máximo --}}
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Stock Máximo</label>
@@ -172,8 +147,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                {{-- Unidad de Medida --}}
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Unidad de Medida</label>
@@ -193,13 +166,11 @@
                                         @enderror
                                     </div>
                                 </div>
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label class="font-weight-bold" id="label-peso">
                                             Peso del contenido
                                         </label>
-
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-weight"></i></span>
                                             <input type="number" class="form-control rd-filter-input"
@@ -213,8 +184,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        {{-- Right Column — Imagen --}}
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="font-weight-bold">Imagen del producto</label>
@@ -254,13 +223,11 @@
                             </div>
                         </div>
                     </div>
-
                     <hr>
-
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
                         <button type="submit" class="rd-btn rd-btn-primary">
-                            <i class="fas fa-check"></i>Guardar
+                            <i class="fas fa-save"></i>Guardar
                         </button>
                     </div>
 
@@ -293,177 +260,6 @@
         }
     </style>
 @stop
-
-@push('css')
-    <style>
-        .rd-card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .rd-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .rd-title-sm {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1a202c;
-            margin: 0;
-        }
-
-        .rd-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #4a5568;
-            font-size: 0.9375rem;
-        }
-
-        /* Estilos para grupos de entrada */
-        .rd-card .rd-input-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .rd-card .input-group {
-            border: 1px solid #d8dee9;
-            border-radius: 12px;
-            padding-inline: 8px;
-            transition: border-color .2s ease, box-shadow .2s ease;
-            overflow: hidden;
-        }
-
-        .input-group:focus-within {
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-        }
-
-        .input-group-text {
-            background: transparent;
-            border: none;
-            color: #64748b;
-            font-size: 1.05rem;
-            padding: 0 0.5rem;
-        }
-
-        .input-group-text i {
-            width: 22px;
-            text-align: center;
-        }
-
-        /* Estilos para inputs */
-        .rd-card .form-control,
-        .rd-card .form-select {
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            padding: 0.75rem 0.5rem;
-            height: auto;
-            font-size: 0.9375rem;
-            color: #2d3748;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        /* Estilos para el editor CKEditor */
-        .ck.ck-editor {
-            width: 100% !important;
-            margin-top: 0.5rem;
-        }
-
-        .ck.ck-editor__editable {
-            width: 100% !important;
-            min-height: 200px;
-            border: 1px solid #d8dee9 !important;
-            border-radius: 0 0 12px 12px !important;
-            padding: 1rem !important;
-            color: #2d3748;
-        }
-
-        .ck.ck-toolbar {
-            border: 1px solid #d8dee9 !important;
-            border-bottom: none !important;
-            border-radius: 12px 12px 0 0 !important;
-            background-color: #f8fafc !important;
-        }
-
-        /* Estilos para la vista previa de imágenes */
-        .image-preview {
-            width: 100%;
-            max-width: 200px;
-            height: auto;
-            border-radius: 8px;
-            border: 2px dashed #d8dee9;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        /* Botones */
-        .rd-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.6rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.9375rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
-        .rd-btn i {
-            margin-right: 0.5rem;
-        }
-
-        .rd-btn-primary {
-            background-color: #7c3aed;
-            color: white;
-        }
-
-        .rd-btn-primary:hover {
-            background-color: #6d28d9;
-        }
-
-        .rd-btn-default {
-            background-color: #f1f5f9;
-            color: #475569;
-            border-color: #e2e8f0;
-        }
-
-
-        /* Mensajes de error */
-        .text-danger {
-            color: #dc2626;
-            font-size: 0.8125rem;
-            margin-top: 0.25rem;
-            display: block;
-        }
-
-        /* Ajustes responsivos */
-        @media (max-width: 768px) {
-            .rd-card {
-                padding: 1rem;
-            }
-
-            .ck.ck-editor__editable {
-                min-height: 250px;
-            }
-        }
-    </style>
-@endpush
 
 @section('js')
     <script>

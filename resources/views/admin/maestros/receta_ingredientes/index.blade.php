@@ -55,7 +55,6 @@
 
                 </div>
             </div>
-
             <div id="printArea">
                 <table class="rd-table">
                     <thead>
@@ -115,7 +114,6 @@
                                                     const verMasBtn = document.querySelector(`.ver-mas-btn[data-recipiente-id="${recipeId}"]`);
                                                     const verMenosBtn = document.querySelector(`.ver-menos-btn[data-recipiente-id="${recipeId}"]`);
                                                     const items = document.querySelectorAll(`#receta-${recipeId} .ingrediente-item`);
-
                                                     if (verMasBtn) {
                                                         verMasBtn.addEventListener('click', function() {
                                                             items.forEach((item, index) => {
@@ -127,7 +125,6 @@
                                                             if (verMenosBtn) verMenosBtn.classList.remove('d-none');
                                                         });
                                                     }
-
                                                     if (verMenosBtn) {
                                                         verMenosBtn.addEventListener('click', function() {
                                                             items.forEach((item, index) => {
@@ -146,27 +143,23 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
-
                                         @if($receta->recetaIngredientes->isNotEmpty())
                                             <a href="{{ route('admin.maestros.receta_ingredientes.edit', $receta->id) }}"
                                                 class="rd-action"
                                                 title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-
-                                        
                                             <form
                                                 action="{{ route('admin.maestros.receta_ingredientes.destroy', $receta->id) }}"
                                                 method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="rd-action rd-action-danger btn-delete"
+                                                <button type="submit" class="rd-action rd-btn-danger"
                                                     title="Eliminar"
                                                     onclick="confirmDelete(event, this)"><i
                                                         class="fas fa-trash"></i></button>
                                             </form>
                                         @endif
-
                                         <script>
                                             function confirmDelete(event, button) {
                                                 event.preventDefault();
@@ -188,7 +181,6 @@
                                         </script>
                                     </div>
                                 </td>
-
                             </tr>
                         @empty
                             <tr>
@@ -204,8 +196,6 @@
         </div>
     </div>
 @stop
-
-
 
 @section('js')
     <script>

@@ -4,8 +4,6 @@ namespace App\Services;
 
 use App\Models\Usuario;
 use App\Models\Persona;
-use App\Models\Perfil;
-use App\Models\Rol;
 use App\Models\ConfiguracionSistema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;

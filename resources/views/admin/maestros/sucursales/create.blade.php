@@ -8,8 +8,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
          ">
-
-        <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Crear Sede
@@ -19,8 +17,6 @@
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-
-        <!-- Imagen + Fecha -->
         <div class="d-flex align-items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
                 <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
@@ -28,7 +24,6 @@
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
             </div>
-
             <div
                 style="
                 width:46px;
@@ -48,26 +43,18 @@
 @section('content')
     <div class="rd-card rd-card-form">
         <div class="rd-card-body">
-
-            {{-- Header --}}
             <div class="rd-card-header mb-3">
                 <div>
                     <h3 class="rd-title-sm">Crear Sede</h3>
                     <small class="text-muted">Complete la información requerida</small>
                 </div>
-
                 <a href="{{ url('admin/maestros/sucursales') }}" class="rd-btn rd-btn-default">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
             </div>
-
-            {{-- Formulario --}}
             <form action="{{ route('admin.maestros.sucursales.store') }}" method="POST">
                 @csrf
-
                 <div class="row g-3">
-
-                    {{-- Nombre --}}
                     <div class="col-md-4">
                         <label class="rd-label">Nombre de la Sede</label>
                         <div class="rd-input-group">
@@ -79,8 +66,6 @@
                             <span class="rd-error">Este campo es obligatorio.</span>
                         @enderror
                     </div>
-
-                    {{-- Dirección --}}
                     <div class="col-md-4">
                         <label class="rd-label">Dirección</label>
                         <div class="rd-input-group">
@@ -92,8 +77,6 @@
                             <span class="rd-error">Este campo es obligatorio.</span>
                         @enderror
                     </div>
-
-                    {{-- Teléfono --}}
                     <div class="col-md-4">
                         <label class="rd-label">Teléfono</label>
                         <div class="rd-input-group">
@@ -107,24 +90,18 @@
                         @enderror
                     </div>
                 </div>
-
-                {{-- Botones --}}
                 <div class="mt-4 d-flex gap-2 justify-content-end">
                     <a href="{{ url('admin/maestros/sucursales') }}" class="rd-btn rd-btn-default">
                         Cancelar
                     </a>
-
                     <button type="submit" class="rd-btn rd-btn-primary">
-                        Crear
+                        Guardar
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
 @endsection
-
-
 
 @section('js')
     <script>

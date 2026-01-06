@@ -10,7 +10,6 @@
                 Chef: <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
             </p>
         </div>
-
         <div class="d-flex align-items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
                 <small class="text-muted d-block" style="font-size:0.75rem;">Fecha Actual</small>
@@ -27,7 +26,6 @@
 
 @section('content')
     @include('components.alert')
-
     <div class="row justify-content-center fade-in">
         <div class="col-md-11">
             <div class="rd-card shadow-sm border-0 overflow-hidden">
@@ -37,17 +35,14 @@
                             <i class="fas fa-plus-circle mr-2" style="color: var(--color-secondary)"></i>Registrar Ingredientes
                         </h3>
                         <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default">
-                            <i class="fas fa-arrow-left"></i> Volver al Listado
+                            <i class="fas fa-arrow-left"></i> Volver
                         </a>
                     </div>
                 </div>
-
                 <div class="rd-card-body p-4">
                     <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST">
                         @csrf
-
                         <div class="row">
-                            {{-- Info Lateral: Selección de Receta --}}
                             <div class="col-md-4 border-right pr-md-4">
                                 <div class="form-group">
                                     <label class="rd-label mb-2">Seleccionar Receta</label>
@@ -69,8 +64,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Formulario Dinámico de Ingredientes --}}
                             <div class="col-md-8 pl-md-4">
                                 <label class="rd-label mb-2">Agregar Insumos</label>
                                 <div class="d-flex gap-2 align-items-start mb-4">
@@ -87,7 +80,6 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <div style="width:120px">
                                         <div class="rd-input-group">
                                             <span><i class="fas fa-hashtag"></i></span>
@@ -95,7 +87,6 @@
                                                 class="rd-input w-100" placeholder="0.00">
                                         </div>
                                     </div>
-
                                     <div style="width:150px">
                                         <div class="rd-input-group">
                                             <span><i class="fas fa-balance-scale"></i></span>
@@ -109,33 +100,27 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <button type="button" class="rd-btn rd-btn-primary shadow-sm" id="agregarProducto" style="height: 45px; width: 50px; justify-content: center;">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
-
                                 <h5 class="rd-title-sm mb-3" style="font-size: 0.9rem; color: #64748b;">Lista de Preparación</h5>
                                 <div class="border rounded-lg overflow-hidden" style="background: #fbfdff; border-color: #eef2f6 !important;">
                                     <ul id="listaProductos" class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
-                                        {{-- Los items se agregarán aquí vía JS --}}
                                         <li class="list-group-item text-center py-5 text-muted empty-msg">
                                             <i class="fas fa-layer-group fa-3x mb-3 opacity-25"></i>
                                             <p class="mb-0">Agregue ingredientes para comenzar la receta.</p>
                                         </li>
                                     </ul>
                                 </div>
-
                                 @error('producto_id.*') <div class="rd-error mt-2">{{ $message }}</div> @enderror
                             </div>
                         </div>
-
                         <hr class="my-4" style="opacity: 0.4;">
-
                         <div class="d-flex justify-content-end gap-3">
                             <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default px-4">Cancelar</a>
                             <button type="submit" class="rd-btn rd-btn-primary px-5">
-                                <i class="fas fa-save mr-1"></i> Registrar Receta
+                                <i class="fas fa-save mr-1"></i> Guardar
                             </button>
                         </div>
                     </form>

@@ -30,10 +30,7 @@
 @section('content')
     <div class="row">
         <div class="col-md-12 m-auto">
-
             <div class="rd-card p-4">
-
-                {{-- Header --}}
                 <div class="rd-card-header mb-3">
                     <h3 class="rd-title-sm">Editar Receta</h3>
 
@@ -41,13 +38,9 @@
                         <i class="fas fa-arrow-left"></i> Volver
                     </a>
                 </div>
-
-                {{-- Formulario --}}
                 <form action="{{ route('admin.maestros.recetas.update', $receta->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-
-                    {{-- Nombre --}}
                     <div class="form-group mb-3">
                         <label class="font-weight-bold">Nombre</label>
 
@@ -56,36 +49,26 @@
                             <input type="text" class="form-control rd-filter-input" id="nombre" name="nombre"
                                 value="{{ old('nombre', $receta->nombre) }}" placeholder="Nombre de la receta">
                         </div>
-
                         @error('nombre')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
                     </div>
-
-                    {{-- Descripción --}}
                     <div class="form-group mb-3">
                         <label class="font-weight-bold">Descripción</label>
                         <textarea name="descripcion" id="descripcion" rows="4" class="form-control rd-filter-input"
                             placeholder="Descripción de la receta" style="resize:none;">{{ old('descripcion', $receta->descripcion) }}</textarea>
                     </div>
-
                     <hr>
-
-                    {{-- Botones --}}
                     <div class="d-flex justify-content-end" style="gap:12px;">
                         <a href="{{ url('admin/maestros/recetas') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>
-
                         <button type="submit" class="rd-btn rd-btn-primary" style="color:white;">
-                            <i class="fas fa-save"></i> Guardar cambios
+                            <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>
-
                 </form>
-
             </div>
-
         </div>
     </div>
 @stop
