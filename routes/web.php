@@ -211,6 +211,8 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         /* Historial de Movimientos */
 
         Route::get('/movimientos/historial_movimientos', [MovimientoInventarioController::class, 'index'])->name('admin.movimientos.historial_movimientos.index');
+        
+        Route::get('/movimientos/historial_movimientos/export-pdf', [MovimientoInventarioController::class, 'generarPdf'])->name('admin.movimientos.historial_movimientos.export_pdf');
 
         /* Registro Diario */
 
