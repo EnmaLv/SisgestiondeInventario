@@ -1,6 +1,5 @@
  <div class="rd-wrapper">
     @include('components.alert')
-    <!-- Formulario único para desayuno + cantidad -->
     <div class="rd-card rd-card-desayuno mb-4 col-md-12 text-center mx-auto">
         <div class="rd-card-headerr">
             <h2 class="rd-title">Desayuno del día</h2>
@@ -9,15 +8,10 @@
         <div class="rd-card-body">
             <form wire:submit.prevent="saveDesayuno" class="rd-search-form" autocomplete="off">
                 @csrf
-            {{-- Contenedor principal para todas las entradas --}}
                 <div class="row g-3">
-
-                    {{-- ITERACIÓN SOBRE LOS DESAYUNOS AGREGADOS --}}
                     @foreach ($desayunos_agregados as $index => $desayuno)
                         <div class="col-12 fade-in">
                             <div class="row g-3 align-items-center">
-                                
-                                {{-- SELECT: Desayuno (Columna 1: 50% del ancho) --}}
                                 <div class="col-md-5">
                                     <div class="rd-input-group">
                                         <select
@@ -30,10 +24,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-
                                 </div>
-
-                                {{-- CONTENEDOR AGRUPADO: Cantidad + Eliminar (Columna 2: 50% del ancho) --}}
                                 <div class="col-md-7">
                                     <div class="d-flex align-items-center">
                                         
@@ -47,23 +38,14 @@
                                 </div>
                             </div>
                         </div>
-                            
-                        {{-- Separador entre filas --}}
                         @if(!$loop->last)
                             <div class="col-12"><hr class="my-3"></div> 
                         @endif
                     @endforeach
-
-
-                    {{-- BOTONES DE ACCIÓN --}}
                     <div class="col-md-12 d-flex mt-4 justify-content-end align-items-center">
-                        
-                        {{-- Botón para agregar más --}}
                         <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif" class="rd-btn rd-btn-default mr-4" @disabled($desayuno_registrado)>
                             Agregar Desayuno
                         </button>
-
-                        {{-- Botón principal de Guardar --}}
                         <button class="rd-btn rd-btn-primary w-90" type="submit" aria-label="Guardar desayunos"
                             @disabled($desayuno_registrado)
                             style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif">
@@ -72,7 +54,6 @@
                     </div>
 
                     <div class="rd-error mt-2" style="font-size: 1rem; text-align: left;">
-                        {{-- Literalmente las seccionde los errores --}}
                         @error('desayunos_agregados.' . $index . '.receta_id') 
                             <span class="text-danger">{{ $message }}</span> 
                         @enderror
@@ -143,11 +124,7 @@
             <small class="text-muted">Una vez guardado, no se podrá modificar</small>
         </div>
     </div>
-
-    <!-- Formulario de registro diario -->
     <div>
-
-        <!-- Right: Buscador, filtros y tabla -->
         <div class="rd-card rd-card-list">
             <div class="rd-card-header rd-header-space">
                 <div>
@@ -168,10 +145,8 @@
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
                     </button>
-
                 </div>
             </div>
-
             <div class="collapse" id="filters">
                 <div class="rd-filters">
                     <form action="" method="GET"
@@ -193,7 +168,6 @@
                     </form>
                 </div>
             </div>
-
             <div class="rd-card-body rd-list-body">
                 <div class="rd-list">
                     <table class="rd-table">
@@ -222,8 +196,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Paginación (si aplica) -->
                 <div class="rd-pagination">
                     {{ $data->appends(request()->query())->links() }}
                 </div>
@@ -231,15 +203,6 @@
         </div>
     </div>
 </div>
-
-@push('css')
-    <style>
-        
-
-    </style>
-@endpush
-
-
 
 @push('js')
     <script>
@@ -259,21 +222,15 @@
             let hideTimeout = null;
 
             @this.on('notify-saved', () => {
-                // Si ya hay una notificación visible, no hacer nada
                 if (isNotificationVisible) {
                     return;
                 }
-
                 isNotificationVisible = true;
-
-                // Ocultar después de 3 segundos
                 hideTimeout = setTimeout(() => {
                     @this.set('showNotification', false);
                     isNotificationVisible = false;
                 }, 3000);
             });
-
-            // Limpiar el estado cuando la notificación se oculta
             @this.on('notify-hidden', () => {
                 isNotificationVisible = false;
                 if (hideTimeout) {
@@ -300,40 +257,27 @@
 
         const desdeDate = document.getElementById('fecha_desde');
         const hastaDate = document.getElementById('fecha_hasta');
-
-        // Fecha actual (máximo permitido)
         const fechaActual = new Date().toISOString().split('T')[0];
-
-        // Establecer máximo hoy para ambos campos
         if (desdeDate) desdeDate.max = fechaActual;
         if (hastaDate) hastaDate.max = fechaActual;
-
-
-        // Cuando cambie "desde", ajustar el mínimo de "hasta"
         if (desdeDate && hastaDate) {
             desdeDate.addEventListener('change', function() {
                 if (!desdeDate.value) {
-                    // Si se borra la fecha desde, quitamos la restricción mínima en hasta
                     hastaDate.min = '';
                     return;
                 }
-
-                // "hasta" no puede ser menor que "desde"
                 hastaDate.min = desdeDate.value;
 
                 if (hastaDate.value && hastaDate.value < desdeDate.value) {
                     hastaDate.value = desdeDate.value;
                 }
             });
-
-            // Cuando cambie "hasta", validar contra "desde"
             hastaDate.addEventListener('change', function() {
                 if (!hastaDate.value || !desdeDate.value) {
                     return;
                 }
 
                 if (hastaDate.value < desdeDate.value) {
-                    // Si el usuario pone una fecha hasta menor, movemos "desde" a esa fecha
                     desdeDate.value = hastaDate.value;
                 }
             });

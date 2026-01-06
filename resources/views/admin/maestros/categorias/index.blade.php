@@ -24,7 +24,6 @@
 
     </div>
 @stop
-
 @section('content')
     @include('components.alert')
     <div class="rd-card rd-card-full">
@@ -163,8 +162,6 @@
         </div>
     </div>
 @stop
-
-
 
 @push('js')
     <script>

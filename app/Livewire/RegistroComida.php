@@ -2,9 +2,7 @@
 
 namespace App\Livewire;
 
-use Illuminate\Http\Request;
 use Livewire\Component;
-use Livewire\Attributes\Validate;
 use App\Models\Receta;
 use App\Models\DetalleRegistroDiario;
 use App\Models\InventarioSucursalLote;
@@ -18,7 +16,7 @@ class RegistroComida extends Component
     public $showNotification = false;
     public $notification = ['type' => 'success', 'message' => ''];
     public $desayuno_registrado = false;
-    public $horarioPermitido;
+    public $horarioPermitido; 
     public $alertInventario = null;
     public $alertLimite = null;
 
@@ -46,7 +44,7 @@ class RegistroComida extends Component
     {
         $rules = [];
 
-        foreach ($this->desayunos_agregados as $index => $desayuno) {
+        foreach ($this->desayunos_agregados as $index) {
             $rules["desayunos_agregados.$index.receta_id"] = 'required|exists:recetas,id';
             $rules["desayunos_agregados.$index.cantidad"] = 'required|numeric|min:1';
         }
@@ -70,8 +68,6 @@ class RegistroComida extends Component
         $hora = now()->format('H:i');
         $this->horarioPermitido = $hora >= '00:00' && $hora <= '22:00';
         $this->desayuno_registrado = $registroHoy;
-
-        // Si ya está registrado, carga los detalles para mostrarlos deshabilitados
         if ($this->desayuno_registrado) {
             $detalles = DetalleRegistroDiario::whereDate('created_at', $hoy)->get(['receta_id', 'cantidad_servido']);
             $this->desayunos_agregados = $detalles->map(function ($item) {
@@ -105,7 +101,6 @@ class RegistroComida extends Component
 
     public function saveDesayuno()
     {
-        // Validar hora
         $hora = now()->format('H:i');
         if (!($hora >= '00:00' && $hora <= '22:00')) {
             $this->addError('hora', 'Solo puede registrar desayuno entre 00:00am y 22:00pm.');
@@ -125,7 +120,7 @@ class RegistroComida extends Component
             return;
         }
 
-        foreach ($this->desayunos_agregados as $index => $desayuno) {
+        foreach ($this->desayunos_agregados as $index) {
             $rules['desayunos_agregados.' . $index . '.receta_id'] = 'required|numeric|exists:recetas,id';
             $rules['desayunos_agregados.' . $index . '.cantidad'] = 'required|numeric|min:1';
 
@@ -134,7 +129,7 @@ class RegistroComida extends Component
             $messages['desayunos_agregados.' . $index . '.cantidad.min'] = "La cantidad debe ser 1 o superior para el Desayuno #" . ($index + 1);
         }
 
-        $recetaIds = array_filter(array_column($this->desayunos_agregados, 'receta_id')); // Filtra IDs nulos
+        $recetaIds = array_filter(array_column($this->desayunos_agregados, 'receta_id'));
 
         if (!empty($recetaIds) && count($recetaIds) !== count(array_unique($recetaIds))) {
             $this->addError('duplicado', 'No puede seleccionar la misma receta más de una vez. Por favor, elimine el registro duplicado.');
@@ -200,7 +195,6 @@ class RegistroComida extends Component
                         $lote->cantidad_actual = $inv->cantidad_gramos;
                         $lote->save();
 
-                        // Registrar movimiento
                         MovimientoInventario::create([
                             'producto_id'    => $ingrediente->producto_id,
                             'lote_id'        => $lote->id,
@@ -245,7 +239,7 @@ class RegistroComida extends Component
     {
         $attributes = [];
 
-        foreach ($this->desayunos_agregados as $index => $desayuno) {
+        foreach ($this->desayunos_agregados as $index) {
             $attributes["desayunos_agregados.$index.receta_id"] = 'desayuno #' . ($index + 1);
             $attributes["desayunos_agregados.$index.cantidad"] = 'cantidad del desayuno #' . ($index + 1);
         }
@@ -261,8 +255,6 @@ class RegistroComida extends Component
     public function render()
     {
         $buscar = request()->input('buscar');
-        $fecha_desde = request()->input('fecha_desde');
-        $fecha_hasta = request()->input('fecha_hasta');
 
         $data = DetalleRegistroDiario::with('receta')->paginate(10);
         $comidas = Receta::orderBy('id', 'desc')->where('estado', true)->get();
