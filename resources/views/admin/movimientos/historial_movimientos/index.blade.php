@@ -190,23 +190,7 @@
 
 @push('css')
     <style>
-        /* Badges de estado */
-        .rd-badge {
-            padding: 4px 8px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .rd-badge-success {
-            background-color: #ecfdf5;
-            color: #065f46;
-        }
-
-        .rd-badge-danger {
-            background-color: #fef2f2;
-            color: #b91c1c;
-        }
+        
     </style>
 @endpush
 

@@ -163,37 +163,6 @@
     </div>
 </div>
 
-@push('css')
-    <style>
-        /* Estilos para la tabla */
-        .table {
-            width: 100%;
-            margin-bottom: 1.5rem;
-            background-color: #fff;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .table thead th {
-            background-color: #f8f9fa;
-            color: #4a5568;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            padding: 0.75rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .table tbody td {
-            padding: 1rem 1.5rem;
-            vertical-align: middle;
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-        }
-    </style>
-@endpush
 @push('js')
     <script>
     document.addEventListener('DOMContentLoaded', () => {

@@ -57,3 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const archivoInput = document.getElementById('archivo');
+    const nombreDisplay = document.getElementById('nombre-display');
+    archivoInput.addEventListener('change', function(e) {
+        let fileName = e.target.files[0].name;
+        nombreDisplay.innerText = fileName;
+    });
+});

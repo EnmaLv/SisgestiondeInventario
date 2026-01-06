@@ -187,35 +187,6 @@
 </div>
 
 @push('js')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const archivoInput = document.getElementById('archivo');
-            const nombreDisplay = document.getElementById('nombre-display');
-            archivoInput.addEventListener('change', function(e) {
-                let fileName = e.target.files[0].name;
-                nombreDisplay.innerText = fileName;
-            });
-        });
-    </script>
+    <script src="{{ asset('js/localidad.js') }}"></script>
 @endpush
 
-@push('css')
-    <style>
-        label[for="archivo"] {
-            cursor: pointer;
-            border:2px dashed #cbd5e1;
-            background:#f8fafc;
-            width: 100%;
-            cursor: pointer;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: background-color.2s ease;
-            &:hover {
-                background-color: #e5e7eb;
-            }
-        }
-    </style>
-@endpush

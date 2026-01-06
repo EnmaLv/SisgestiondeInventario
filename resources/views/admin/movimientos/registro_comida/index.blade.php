@@ -45,8 +45,6 @@
     </div>
 @stop
 
-
-
 @section('content')
     <livewire:registro-comida/>
 
@@ -96,4 +94,8 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/registro-comida.css') }}">
 @endsection
