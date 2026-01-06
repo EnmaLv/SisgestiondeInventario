@@ -1,4 +1,5 @@
 <div class="rd-wrapper">
+    @include('components.alert')
     <!-- Formulario de registro diario -->
     <div class="rd-grid">
         <!-- Left: Cedula buscador -->
@@ -15,7 +16,9 @@
                         <label for="cedula" class="sr-only">Cédula</label>
                         <input type="tel" id="cedula" wire:model.defer="cedula" @disabled(!$receta_diario || !$enableInput)
                             class="rd-input @error('cedula') rd-input-error @enderror" placeholder="Ej: 12345678"
-                            maxlength="8" inputmode="numeric" autofocus />
+                            maxlength="8" inputmode="numeric" autofocus @if (!$enableInput)
+                                style="cursor: not-allowed;"
+                            @endif/>
 
                         <button class="rd-btn rd-btn-primary" type="submit" @disabled(!$enableInput)
                          aria-label="Buscar"  @if(!$enableInput) style="opacity: .8; cursor: not-allowed;" @endif>Buscar</button>
@@ -241,11 +244,14 @@
     <script>
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('swal', data => {
+                console.log(data);
                 Swal.fire({
-                    title: data.title,
-                    text: data.text,
-                    icon: data.icon,
-                    confirmButtonText: 'Aceptar'
+                    title: data[0].title,
+                    text: data[0].text,
+                    icon: data[0].icon,
+                    confirmButtonText: 'Aceptar',
+                    timer: 5000,
+                    timerProgressBar: true,
                 });
             });
         });
