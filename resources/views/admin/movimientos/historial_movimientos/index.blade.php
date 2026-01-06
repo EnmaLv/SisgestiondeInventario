@@ -71,32 +71,41 @@
                     <div class="rd-export-group">
                         <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
                             Excel</button>
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
+                        <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i class="fas fa-file-pdf"></i>
                             PDF</button>
                     </div>
                 </div>
             </div>
 
-            {{-- <div class="collapse" id="filters">
+            <div class="collapse @if (request()->all()) show @endif" id="filters">
                 <div class="rd-filters">
-                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                    <form action="{{ route('admin.movimientos.historial_movimientos.index') }}" method="GET"
                         class="rd-filters-form">
                         <div class="rd-filter-row">
-                            <label>Desde</label>
-                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
+                            <label for="fecha_desde">Desde</label>
+                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" value="{{ request('fecha_desde') }}" />
                         </div>
                         <div class="rd-filter-row">
-                            <label>Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" />
+                            <label for="fecha_hasta">Hasta</label>
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" value="{{ request('fecha_hasta') }}" />
+                        </div>
+                        <div class="rd-filter-row">
+                            <label for="tipo_movimiento">Tipo de Movimiento</label>
+                            <select name="tipo_movimiento" id="tipo_movimiento" class="rd-filter-input" style="width:100px; background-color: white;">
+                                <option value="">Todos</option>
+                                <option value="ENTRADA" {{ request('tipo_movimiento') === 'ENTRADA' ? 'selected' : '' }}>Entrada</option>
+                                <option value="SALIDA" {{ request('tipo_movimiento') === 'SALIDA' ? 'selected' : '' }}>Salida</option>
+                            </select>
                         </div>
                         <div class="rd-filter-row rd-filter-actions">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
                             <button type="button" class="rd-btn rd-btn-default"
-                                onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
+                                onclick="document.forms[0].reset(); 
+                 document.querySelectorAll('select').forEach(s => s.value = '');">Limpiar</button>
                         </div>
                     </form>
                 </div>
-            </div> --}}
+            </div>
 
             {{-- Tabla --}}
             <div id="printArea">
@@ -168,7 +177,7 @@
 
             {{-- Paginación del servidor --}}
             <div class="mt-3 d-flex justify-content-center">
-                {{ $movimiento->onEachSide(1)->links('components.pagination') }}
+                {{ $movimiento->onEachSide(1)->appends(request()->query())->links('components.pagination') }}
             </div>
         </div>
     </div>
@@ -199,4 +208,28 @@
             color: #b91c1c;
         }
     </style>
+@endpush
+
+@push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+
+            const pdfBtn = document.getElementById('pdfBtn');
+            if (pdfBtn) {
+                pdfBtn.addEventListener('click', ()=>{
+                    // Obtener los parámetros de la URL
+                    const params = new URLSearchParams(window.location.search);
+                    const fechaDesde = params.get('fecha_desde') ?? "";
+                    const fechaHasta = params.get('fecha_hasta') ?? "";
+                    const tipoMovimiento = params.get('tipo_movimiento') ?? "";
+                    
+                    // Construir la URL con los parámetros
+                    const url = `{{ route('admin.movimientos.historial_movimientos.export_pdf') }}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}&tipo_movimiento=${tipoMovimiento}`;
+                    
+                    // Abrir en una nueva pestaña
+                    window.open(url, '_blank');
+                });
+            }
+        })
+    </script>
 @endpush

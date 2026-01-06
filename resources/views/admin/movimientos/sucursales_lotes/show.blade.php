@@ -64,40 +64,9 @@
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
 
-                    <div class="rd-export-group">
-                        <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
-                            Excel</button>
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
-                            PDF</button>
-                    </div>
                 </div>
             </div>
-
-            {{-- <div class="collapse" id="filters">
-                <div class="rd-filters">
-                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
-                        class="rd-filters-form">
-                        <div class="rd-filter-row">
-                            <label>Desde</label>
-                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" />
-                        </div>
-                        <div class="rd-filter-row">
-                            <label>Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" />
-                        </div>
-                        <div class="rd-filter-row rd-filter-actions">
-                            <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
-                            <button type="button" class="rd-btn rd-btn-default"
-                                onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
-                        </div>
-                    </form>
-                </div>
-            </div> --}}
 
             {{-- Tabla --}}
             <div id="printArea">

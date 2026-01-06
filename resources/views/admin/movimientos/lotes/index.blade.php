@@ -95,17 +95,6 @@
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
-
-                    <div class="rd-export-group">
-                        <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
-                            Excel</button>
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF"><i class="fas fa-file-pdf"></i>
-                            PDF</button>
-                    </div>
                 </div>
             </div>
 

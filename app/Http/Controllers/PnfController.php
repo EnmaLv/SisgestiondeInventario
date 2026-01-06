@@ -15,17 +15,13 @@ class PnfController extends Controller
         return view('admin.maestros.pnf.index', compact('pnfs'));
     }
 
-    public function create()
-    {
-        return view('admin.maestros.pnf.create');
-    }
+
 
     public function store(Request $request)
     {
         //Validamos los datos
         $request->validate([
             'nombre' => 'required|string',
-            'id_estatus' => 'required|numeric',
         ]);
 
         Pnf::createPnf($request);

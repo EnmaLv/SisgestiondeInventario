@@ -47,12 +47,12 @@ class Pnf extends Model
         //Verifica que no haya un pnf repetido
         $pnf = Pnf::where('nombre_pnf', $request->nombre)->first();
         if ($pnf) {
-            return redirect()->route('admin.maestros.pnf.create')->with('error', 'El PNF ya existe. Intente con otro nombre.');
+            return redirect()->route('admin.maestros.pnf.index')->with('error', 'El PNF ya existe. Intente con otro nombre.');
         }
 
         return Pnf::create([
             'nombre_pnf' => $request->nombre,
-            'id_estatus' => $request->id_estatus,
+            'id_estatus' => 1,
         ]);
     }
 
@@ -65,7 +65,8 @@ class Pnf extends Model
     {
         //Verificamos que que no vaya a guardar un pnf repetido 
         $pnf = Pnf::where('nombre_pnf', $request->nombre)->first();
-        if ($pnf) {
+
+        if ($pnf->id_pnf != $request->id && $pnf->nombre_pnf == $request->nombre) {
             return redirect()->route('admin.maestros.pnf.edit', $pnf->id_pnf)->with('error', 'El PNF ya existe. Intente con otro nombre.');
         }
 

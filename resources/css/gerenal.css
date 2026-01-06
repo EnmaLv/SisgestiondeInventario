@@ -505,6 +505,13 @@ option::checkmark{
             padding: 0.5rem 0.75rem;
             height: auto;
         }
+.form-control:focus {
+    color: #495057;
+    background-color: transparent;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: inset 0 0 0 transparent;
+}
 
         .form-control:disabled,
         .form-control[readonly] {
@@ -530,4 +537,121 @@ option::checkmark{
 }
 @media (max-width: 576px) {
     .permissions-grid { column-count: 1; }
+}
+
+/*Estilos para un toggle checkbox*/
+
+.toggle-container {
+    position: relative;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 999px;
+    background-color: #dc2626; /* rojo por defecto */
+    position: relative;
+    transition: background-color 0.25s;
+    height: 100%;
+}
+
+.toggle-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.25s;
+}
+
+.toggle-switch {
+    display: block;
+    width: 26px;
+    height: 26px;
+    background: white;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    border-radius: 50%;
+    transition: all 0.25s;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #16a34a; /* verde cuando está activo */
+}
+
+.toggle-checkbox:checked + .toggle-label .toggle-switch {
+    transform: translateX(30px);
+}
+
+
+/*CSS de algunas partes de CRUD*/
+.rd-card .input-group {
+    border: 1px solid #d8dee9;
+    border-radius: 12px;
+    padding-inline: 8px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+    overflow: hidden;
+}
+
+.rd-card .input-group:focus-within {
+    border-color: var(--color-primary);
+    background: #ffffff;
+}
+
+.rd-card .input-group-text {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-size: 1.05rem;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.rd-card .input-group-text i {
+    width: 22px;
+    text-align: center;
+}
+
+.rd-card .rd-filter-inpu{
+    border: 1px solid #e6eef6;
+    background: white;
+    box-shadow: none;
+    padding-left: 6px;
+}
+
+.rd-card textarea.form-control {
+    border: 1px solid #d8dee9;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+}
+
+.rd-card textarea.form-control:focus {
+    border-color: var(--color-primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px hsl(from var(--color-primary) h s l / 0.1);
+    outline: none;
+}
+
+/* Para el caso de textarea dentro de un input-group */
+.rd-card .input-group textarea.form-control {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding-left: 6px;
+    min-height: 38px;
+    resize: none;
+}
+
+.rd-card .input-group:focus-within textarea.form-control {
+    background: transparent;
 }

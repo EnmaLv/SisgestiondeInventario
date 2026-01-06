@@ -211,6 +211,8 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         /* Historial de Movimientos */
 
         Route::get('/movimientos/historial_movimientos', [MovimientoInventarioController::class, 'index'])->name('admin.movimientos.historial_movimientos.index');
+        
+        Route::get('/movimientos/historial_movimientos/export-pdf', [MovimientoInventarioController::class, 'generarPdf'])->name('admin.movimientos.historial_movimientos.export_pdf');
 
         /* Registro Diario */
 
@@ -227,7 +229,6 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         Route::get('/maestros/pnf',[PnfController::class, 'index'])->name('admin.maestros.pnf.index');
 
-        Route::get('/maestros/pnf/create', [PnfController::class, 'create'])->name('admin.maestros.pnf.create');
 
         Route::post('/maestros/pnf/store', [PnfController::class, 'store'])->name('admin.maestros.pnf.store');
 
