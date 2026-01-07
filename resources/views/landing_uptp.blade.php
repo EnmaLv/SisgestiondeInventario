@@ -6,14 +6,11 @@
     <title>Bienestar Estudiantil - UPTP J.J. Montilla</title>
     <meta name="description" content="Bienestar Estudiantil UPTP Juan de Jesús Montilla - Acarigua, Portuguesa. Salud, deportes, apoyo académico y programas sociales para estudiantes.">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.css') }}">
+    <link rel="stylesheet" href="{{ asset('swipe/swipe.all.css') }}" />
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
     <link rel="icon" href="{{ asset('img/uptp-logo.png') }}" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('img/uptp-logo.png') }}">
