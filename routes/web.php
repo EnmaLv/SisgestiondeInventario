@@ -31,8 +31,9 @@ use App\Http\Controllers\ArchivoController;
 
 Auth::routes();
 
+// Landing page personalizada para Bienestar Estudiantil UPTP
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing_uptp');
 });
 
 Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
