@@ -12,6 +12,7 @@ class MunicipioIndex extends Component
 {
     /* paginacion */
     use WithPagination;
+    public $filtroEstado = true;
     public $nombre_municipio;
     public $municipio_id;
     public $estado_id;
@@ -31,7 +32,7 @@ class MunicipioIndex extends Component
     {
         $estados = Estado::where('status', true)
             ->get();
-        $municipios = Municipio::where('status', true)
+        $municipios = Municipio::where('status', $this->filtroEstado)
             ->when($this->search, function ($query) {
                 $query->where('nombre_municipio', 'like', '%' . $this->search . '%')
                     ->orWhereHas('estado', function ($q) {
@@ -49,7 +50,7 @@ class MunicipioIndex extends Component
         return 'vendor.livewire.bootstrap-custom';
     }
 
-    public function updatedSearch()
+    public function buscar()
     {
         $this->resetPage();
     }
