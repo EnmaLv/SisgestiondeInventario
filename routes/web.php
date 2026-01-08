@@ -43,7 +43,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // TODAS tus rutas protegidas aquí
-    Route::prefix('/admin')->group(function () {
+    Route::prefix('/admin')->middleware(\App\Http\Middleware\CheckMenuPermission::class)->group(function () {
 
         /* Categorias */
 

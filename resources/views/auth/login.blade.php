@@ -54,7 +54,7 @@
 					<button class="btn" type="submit">INICIAR SESIÓN</button>
 				</form>
 
-				<a class="btn-outline" href="{{ url('/register') }}">REGISTRARSE</a>
+				<!-- Registro removido: solo administradores pueden crear usuarios desde el panel -->
 
 			<style>
 				.forgot{display:block;color:#b71c1c;margin:6px 0 8px;text-decoration:none;font-weight:600}
