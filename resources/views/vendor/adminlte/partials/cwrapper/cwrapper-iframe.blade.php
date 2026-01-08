@@ -75,12 +75,7 @@
             </a>
         @endif
 
-        {{-- Fullscreen Button --}}
-        @if(config('adminlte.iframe.buttons.fullscreen', true))
-            <a class="nav-link bg-light" href="#" data-widget="iframe-fullscreen">
-                <i class="fas fa-expand"></i>
-            </a>
-        @endif
+        {{-- Fullscreen Button disabled --}}
 
     </div>
 

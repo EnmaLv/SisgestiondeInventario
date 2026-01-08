@@ -34,7 +34,7 @@
                     🏠 Panel de Control
                 </h1>
                 <p class="mt-2 mb-0 text-white" style="font-size: 1.1rem; opacity: 0.95;">
-                    Bienvenido de nuevo, <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
+                    Bienvenido de nuevo, <strong>{{ auth()->user()->persona?->nombre_persona ?? auth()->user()->name }}</strong>
                 </p>
                 <p class="mb-0 text-white" style="font-size: 0.9rem; opacity: 0.8;">
                     Gestiona tu inventario de manera eficiente
@@ -76,6 +76,7 @@
 @section('content')
     <div class="row">
 
+        @if($visibleModules['sucursales'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/sucursales') }}" class="module-link">
                 <div class="module-card-light">
@@ -87,8 +88,10 @@
                 </div>
             </a>
         </div>
+        @endif
 
         <!-- Categorías -->
+        @if($visibleModules['categorias'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/categorias') }}" class="module-link">
                 <div class="module-card-light">
@@ -100,8 +103,10 @@
                 </div>
             </a>
         </div>
+        @endif
 
         <!-- Productos -->
+        @if($visibleModules['productos'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/productos') }}" class="module-link">
                 <div class="module-card-light">
@@ -113,8 +118,10 @@
                 </div>
             </a>
         </div>
+        @endif
 
         <!-- Proveedores -->
+        @if($visibleModules['proveedores'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/proveedores') }}" class="module-link">
                 <div class="module-card-light">
@@ -126,8 +133,10 @@
                 </div>
             </a>
         </div>
+        @endif
 
         <!-- Compras -->
+        @if($visibleModules['compras'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/movimientos/compras') }}" class="module-link">
                 <div class="module-card-light">
@@ -139,8 +148,10 @@
                 </div>
             </a>
         </div>
+        @endif
 
         <!-- Compras -->
+        @if($visibleModules['comidas'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/recetas') }}" class="module-link">
                 <div class="module-card-light">
@@ -152,8 +163,10 @@
                 </div>
             </a>
         </div>
+        @endif
 
         <!-- Productos por Vencer -->
+        @if($visibleModules['por_vencer'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}" class="module-link">
                 <div class="module-card-light">
@@ -165,6 +178,7 @@
                 </div>
             </a>
         </div>
+        @endif
 
 
 
@@ -275,6 +289,7 @@
 
 
         <!-- Lotes Vencidos -->
+        @if($visibleModules['por_vencer'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}" class="module-link">
                 <div class="module-card-light">
@@ -286,6 +301,7 @@
                 </div>
             </a>
         </div>
+        @endif
 
     </div>
 

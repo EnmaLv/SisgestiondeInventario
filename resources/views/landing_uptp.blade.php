@@ -39,7 +39,9 @@
 
         <div class="header-ctas">
             <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
-            <a href="/register" class="btn btn-outline">Registrarse</a>
+            @if(! (isset($hasEmployees) && $hasEmployees))
+                <a href="/register" class="btn btn-outline">Registrarse</a>
+            @endif
             <button class="mobile-menu" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
         </div>
     </div>

@@ -10,6 +10,7 @@ use \App\Models\Proveedor;
 use \App\Models\Compra;
 use \App\Models\Lote;
 use \App\Models\ExchangeRates;
+use \App\Models\Rol;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +26,30 @@ class HomeController extends Controller
         $hoy = Carbon::now();
         $limite = Carbon::now()->addDays(7);
 
-        $sucursalId = Auth::user()->persona->sucursal_id ?? 1;
+        // avoid errors when persona is null
+        $sucursalId = Auth::user()->persona?->sucursal_id ?? 1;
+
+        // Role-based menu permissions
+        $user = Auth::user();
+
+        // Try field first, then relation `roles` (many apps use pivot table)
+        $roleName = $user->role ?? null;
+        if (empty($roleName) && method_exists($user, 'roles')) {
+            $firstRole = $user->roles()->first();
+            $roleName = $firstRole?->nombre ?? null;
+        }
+
+        // Redirect obrero to registro_comida
+        if ($roleName && strtolower($roleName) === 'obrero') {
+            return redirect()->route('admin.movimientos.registro_comida.index');
+        }
+
+        // Resolve menu permissions from Rol model (if exists) or empty array
+        $rol = $roleName ? Rol::where('nombre', $roleName)->first() : null;
+        $menuPermissions = $rol?->menu_permissions ?? [];
+
+        // Administrador shortcut (in case menu_permissions not populated)
+        $isAdministrator = $roleName && strtolower($roleName) === 'administrador';
 
         $total_sucursales = Sucursal::count();
         $total_categorias = Categoria::count();
@@ -64,23 +88,54 @@ class HomeController extends Controller
 
         $total_productos_stock_minimo = $productos_stock_minimo->count();
 
-        return view(
-            'home',
-            [
-                'variacion_dolar' => $ultimaTasa?->variacion,
-                'tasa_actual' => $ultimaTasa?->tasa,
-            ],
-            compact(
-                'total_sucursales',
-                'total_categorias',
-                'total_productos',
-                'total_proveedores',
-                'total_compras',
-                'total_lotes_vencidos',
-                'total_lotes_por_vencer',
-                'productos_stock_minimo',
-                'total_productos_stock_minimo'
-            )
-        );
+        // Determine which modules should be visible according to adminlte menu keys
+        $menuConfig = config('adminlte.menu');
+
+        $findKeyForUrl = function ($items, $targetUrl) use (&$findKeyForUrl) {
+            foreach ($items as $item) {
+                if (isset($item['url']) && trim($item['url'], '/') === trim($targetUrl, '/')) {
+                    return $item['key'] ?? null;
+                }
+                if (isset($item['submenu']) && is_array($item['submenu'])) {
+                    $found = $findKeyForUrl($item['submenu'], $targetUrl);
+                    if ($found !== null) return $found;
+                }
+            }
+            return null;
+        };
+
+        $modules = [
+            'sucursales' => 'admin/maestros/sucursales',
+            'categorias' => 'admin/maestros/categorias',
+            'productos' => 'admin/maestros/productos',
+            'proveedores' => 'admin/maestros/proveedores',
+            'compras' => 'admin/movimientos/compras',
+            'comidas' => 'admin/maestros/recetas',
+            'por_vencer' => 'admin/movimientos/lotes',
+            'registro_comida' => 'admin/movimientos/registro_comida',
+        ];
+
+        $visibleModules = [];
+        foreach ($modules as $key => $url) {
+            $menuKey = $findKeyForUrl($menuConfig, $url);
+            $visible = $isAdministrator || ($menuKey && in_array($menuKey, $menuPermissions));
+            $visibleModules[$key] = $visible;
+        }
+
+        return view('home', [
+            'variacion_dolar' => $ultimaTasa?->variacion,
+            'tasa_actual' => $ultimaTasa?->tasa,
+            'visibleModules' => $visibleModules,
+        ], compact(
+            'total_sucursales',
+            'total_categorias',
+            'total_productos',
+            'total_proveedores',
+            'total_compras',
+            'total_lotes_vencidos',
+            'total_lotes_por_vencer',
+            'productos_stock_minimo',
+            'total_productos_stock_minimo'
+        ));
     }
 }

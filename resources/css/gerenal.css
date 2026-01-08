@@ -181,6 +181,11 @@ label{
     cursor: pointer;
 }
 
+/* Logout icon color to match system icons */
+.rd-icon-btn i {
+    color: var(--color-primary);
+}
+
 .rd-btn {
     display: inline-flex;
     gap: 8px;

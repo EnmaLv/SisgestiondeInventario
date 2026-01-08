@@ -50,6 +50,21 @@
                                 <i class="fas fa-times text-danger"></i>
                             </a>
                         @endif
+
+                        @php
+                            $user = auth()->user();
+                            $isAdmin = false;
+                            if ($user) {
+                                $roleField = strtolower($user->role ?? '');
+                                $isAdmin = $roleField === 'administrador' || ($user->roles && $user->roles->pluck('nombre')->contains('Administrador'));
+                            }
+                        @endphp
+
+                        @if($isAdmin)
+                            <a href="/register" class="rd-btn rd-btn-primary" title="Registrar empleados">
+                                <i class="fas fa-user-plus me-1"></i> Registrar empleados
+                            </a>
+                        @endif
                     </div>
                 </div>
             </form>

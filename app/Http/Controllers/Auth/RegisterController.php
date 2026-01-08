@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -26,7 +27,9 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsers {
+        register as traitRegister;
+    }
 
     /**
      * Where to redirect users after registration.
@@ -45,8 +48,55 @@ class RegisterController extends Controller
 
         // Allow showing the registration form even if a user is authenticated
         // (prevents redirect to /home when clicking the register link while logged in)
-        $this->middleware('guest')->except('showRegistrationForm');
+        // Allow guests to access showRegistrationForm; also allow authenticated admins
+        // to submit the registration form, so we exclude the 'register' action
+        // from the guest middleware and handle auth checks in the method.
+        $this->middleware('guest')->except(['showRegistrationForm', 'register']);
 
+    }
+
+    /**
+     * Override register to allow authenticated administrators to register employees.
+     */
+    public function register(Request $request)
+    {
+        // If the request is from an authenticated user, only allow if they're an admin
+        if (auth()->check()) {
+            if (! $this->isAdmin(auth()->user())) {
+                abort(403, 'No autorizado');
+            }
+
+            // For admin-created employees: validate, create, fire Registered event,
+            // but DO NOT log in as the created user. Redirect back to employees list.
+            $this->validator($request->all())->validate();
+            $user = $this->create($request->all());
+            event(new Registered($user));
+
+            return redirect()->route('admin.configuracion.empleados.index');
+        }
+
+        return $this->traitRegister($request);
+    }
+
+    /**
+     * Determine if a user is an administrator (checks both `role` field and roles relation).
+     */
+    private function isAdmin($user)
+    {
+        if (! $user) return false;
+
+        $roleField = strtolower($user->role ?? '');
+        if ($roleField === 'administrador') return true;
+
+        try {
+            if ($user->roles()->whereRaw("LOWER(nombre) = ?", ['administrador'])->exists()) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+            // ignore and fallback
+        }
+
+        return false;
     }
 
     /**
@@ -184,6 +234,13 @@ class RegisterController extends Controller
         }
 
         $usuario->save();
+
+        // Flash success message so SweetAlert shows after redirect
+        try {
+            session()->flash('success', 'Empleado registrado satisfactoriamente');
+        } catch (\Throwable $e) {
+            // ignore if session not available in this context
+        }
 
         return $usuario;
     }
