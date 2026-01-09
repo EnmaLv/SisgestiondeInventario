@@ -20,8 +20,6 @@
                     </button>
 
                     <div class="rd-export-group">
-                        {{-- <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
-                            Excel</button> --}}
                         <button class="rd-btn rd-btn-danger" id="pdfBtn" title="Exportar PDF"><i
                                 class="fas fa-file-pdf"></i>
                             PDF</button>
@@ -29,9 +27,9 @@
                 </div>
             </div>
 
-            {{-- <div class="collapse" id="filters">
+            <div class="collapse" id="filters">
                 <div class="rd-filters">
-                    <form action="{{ route('admin.movimientos.registro_diario.index') }}" method="GET"
+                    <form action="{{ route('admin.movimientos.compras.index') }}" method="GET"
                         class="rd-filters-form">
                         <div class="rd-filter-row">
                             <label>Desde</label>
@@ -48,7 +46,7 @@
                         </div>
                     </form>
                 </div>
-            </div> --}}
+            </div>
 
             {{-- Tabla --}}
             <div id="printArea">
