@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Unidad extends Model
 {
-    /** @use HasFactory<\Database\Factories\UnidadFactory> */
     use HasFactory;
 
     protected $table = 'unidades';

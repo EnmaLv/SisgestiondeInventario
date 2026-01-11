@@ -72,7 +72,6 @@ class RolesController extends Controller
             'nombre.required' => 'El nombre del rol es requerido',
             'nombre.unique' => 'Este nombre de rol ya existe',
         ]);
-        // If this is the Administrador role, lock menu_permissions to all menu keys
         if (($rol->nombre ?? '') === 'Administrador') {
             $menu = config('adminlte.menu', []);
             $all = [];

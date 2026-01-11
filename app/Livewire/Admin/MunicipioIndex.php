@@ -10,16 +10,12 @@ use Livewire\Attributes\On;
 
 class MunicipioIndex extends Component
 {
-    /* paginacion */
     use WithPagination;
     public $nombre_municipio;
     public $municipio_id;
     public $estado_id;
     public $updateMode = false;
     public $search = '';
-    /**
-     * Se ejecuta al montar el componente
-     */
     public function mount() {}
 
 
@@ -66,7 +62,6 @@ class MunicipioIndex extends Component
     {
         $this->validate();
 
-        // Evitar duplicados
         if (Municipio::where('nombre_municipio', $this->nombre_municipio)
             ->where('estado_id', $this->estado_id)
             ->where('status', true)->exists()

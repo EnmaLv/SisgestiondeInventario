@@ -147,7 +147,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No hay sucursales</td>
+                                <td colspan="6" class="text-center py-4">No hay Sedes</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -178,10 +178,8 @@
     <script>
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
-                // Activos
                 window.location.href = "{{ route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 1])) }}";
             } else {
-                // Inactivos
                 window.location.href = "{{ route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 0])) }}";
             }
         });

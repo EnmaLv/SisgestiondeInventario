@@ -15,9 +15,6 @@ class Pnf extends Model
         'id_estatus'
     ];
 
-
-
-
     public function personaPnf()
     {
         return $this->hasMany(PersonaPnf::class, 'id_pnf');
@@ -37,14 +34,8 @@ class Pnf extends Model
         return Pnf::paginate($paginacion);   
     }
 
-    /**
-     * Funcion para crear un pnf
-     * @param Request $request
-     * @return Pnf|\Illuminate\Http\RedirectResponse
-     */
     public static function createPnf(Request $request)
     {
-        //Verifica que no haya un pnf repetido
         $pnf = Pnf::where('nombre_pnf', $request->nombre)->first();
         if ($pnf) {
             return redirect()->route('admin.maestros.pnf.index')->with('error', 'El PNF ya existe. Intente con otro nombre.');
@@ -56,14 +47,8 @@ class Pnf extends Model
         ]);
     }
 
-    /**
-     * Funcion que actualiza un pnf
-     * @param Request $request
-     * @return bool|\Illuminate\Http\RedirectResponse
-     */
     public static function updatePnf(Request $request)
     {
-        //Verificamos que que no vaya a guardar un pnf repetido 
         $pnf = Pnf::where('nombre_pnf', $request->nombre)->first();
 
         if ($pnf->id_pnf != $request->id && $pnf->nombre_pnf == $request->nombre) {
@@ -76,26 +61,16 @@ class Pnf extends Model
         ]);
     }
 
-
-    /** Funcion para activar o desactivar un pnf
-     * /
-     * @param int $id
-     * @return bool
-     */
-    public static function activarPnf($id){
-
-        //Verficamos que estus tiene para hacer diferentes operaciones
+    public static function activarPnf($id)
+    {
         $pnf = Pnf::where('id_pnf', $id)->first();
         
         if (!$pnf) {
-            return false; // O lanzar una excepción si prefieres
+            return false;
         }
-        // Alternar entre activo (1) e inactivo (2)
         $nuevoEstado = $pnf->id_estatus == 1 ? 2 : 1;
         return Pnf::where('id_pnf', $id)->update([
             'id_estatus' => $nuevoEstado
         ]);
     }
-
-
 }

@@ -1,11 +1,5 @@
 <div class="main-container">
 
-    {{-- Modales incluidos DENTRO del componente Livewire --}}
-    @include('admin.municipio.modales.createModal')
-    @include('admin.municipio.modales.editModal')
-
-    {{-- Alertas --}}
-
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.on('swal', data => {
@@ -20,14 +14,9 @@
             });
         });
     </script>
-    
-    {{-- INCLUYE LAS MODALES DENTRO DEL MISMO DIV PRINCIPAL --}}
     @include('admin.municipio.modales.createModal')
     @include('admin.municipio.modales.editModal')
-
-    {{-- Tarjeta moderna --}}
     <div class="rd-card rd-card-full">
-        {{-- Header de la tarjeta --}}
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
@@ -81,7 +70,6 @@
                     </thead>
 
                     <tbody>
-                        {{-- SI NO HAY ESTADOS --}}
                         @if ($municipios->isEmpty())
                             <tr>
                                 <td colspan="4">
@@ -112,11 +100,8 @@
                                         </span>
                                     @endif
                                 </td>
-
-                                {{-- ACCIONES --}}
                                 <td class="text-center">
                                     <div class="rd-action-group">
-                                        {{-- Botón Editar --}}
                                         <button wire:click="edit({{ $datos->id }})"
                                             class="rd-action"
                                             data-bs-toggle="modal"

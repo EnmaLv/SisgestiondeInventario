@@ -15,11 +15,8 @@ class PnfController extends Controller
         return view('admin.maestros.pnf.index', compact('pnfs'));
     }
 
-
-
     public function store(Request $request)
     {
-        //Validamos los datos
         $request->validate([
             'nombre' => 'required|string',
         ]);
@@ -37,7 +34,6 @@ class PnfController extends Controller
 
     public function update(Request $request)
     {
-        //Validamos los datos
         $request->validate([
             'nombre' => 'required|string',
             'id_estatus' => 'required|numeric',
@@ -50,7 +46,6 @@ class PnfController extends Controller
 
     public function destroy($id)
     {
-        //Verificamos que el pnf no tenga personas asociadas
         $personaPnf = PersonaPnf::where('id_pnf', $id)->first();
         if ($personaPnf) {
             return redirect()->route('admin.maestros.pnf.index')->with('error', 'El PNF tiene personas asociadas. No se puede desactivar.');

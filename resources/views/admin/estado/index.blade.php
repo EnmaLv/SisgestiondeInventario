@@ -10,8 +10,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
          ">
-
-        <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Estados
@@ -22,7 +20,6 @@
             </p>
         </div>
         <div>
-            {{-- Botón crear --}}
             <button type="button"
                     class="rd-btn rd-btn-primary"
                     data-bs-toggle="modal"
@@ -35,7 +32,6 @@
     </div>
 @stop
 
-{{-- Estilos --}}
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
@@ -45,7 +41,6 @@
 @endsection
 
 @section('js')
-    <!-- Incluir el archivo de validaciones -->
     <script src="{{ asset('js/validations/estado.js') }}"></script>
     
     <script>

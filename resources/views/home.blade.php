@@ -12,8 +12,6 @@
             position: relative;
             overflow: hidden;
          ">
-
-        <!-- Patrón de fondo decorativo -->
         <div
             style="
             position: absolute;
@@ -28,7 +26,6 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center" style="position: relative; z-index: 1;">
-            <!-- Texto principal -->
             <div>
                 <h1 class="m-0 text-white" style="font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;">
                     🏠 Panel de Control
@@ -40,8 +37,6 @@
                     Gestiona tu inventario de manera eficiente
                 </p>
             </div>
-
-            <!-- Tarjeta de fecha con avatar -->
             <div class="d-none d-md-flex align-items-center" style="gap: 1.5rem;">
                 <div class="text-right text-white">
                     <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.25rem;">
@@ -87,8 +82,6 @@
                 </div>
             </a>
         </div>
-
-        <!-- Categorías -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/categorias') }}" class="module-link">
                 <div class="module-card-light">
@@ -100,8 +93,6 @@
                 </div>
             </a>
         </div>
-
-        <!-- Productos -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/productos') }}" class="module-link">
                 <div class="module-card-light">
@@ -113,8 +104,6 @@
                 </div>
             </a>
         </div>
-
-        <!-- Proveedores -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/proveedores') }}" class="module-link">
                 <div class="module-card-light">
@@ -126,8 +115,6 @@
                 </div>
             </a>
         </div>
-
-        <!-- Compras -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/movimientos/compras') }}" class="module-link">
                 <div class="module-card-light">
@@ -139,8 +126,6 @@
                 </div>
             </a>
         </div>
-
-        <!-- Compras -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/maestros/recetas') }}" class="module-link">
                 <div class="module-card-light">
@@ -152,8 +137,6 @@
                 </div>
             </a>
         </div>
-
-        <!-- Productos por Vencer -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}" class="module-link">
                 <div class="module-card-light">
@@ -173,8 +156,6 @@
 
                 const hoy = new Date().toISOString().slice(0, 10);
                 const alertas = [];
-
-                /* ================= PRIORIDAD 1: LOTES VENCIDOS ================= */
                 @if ($total_lotes_vencidos > 0)
                     if (localStorage.getItem('alerta_lotes_vencidos') === hoy) {
                         alertas.push(async () => {
@@ -199,8 +180,6 @@
                         });
                     }
                 @endif
-
-                /* ================= PRIORIDAD 2: POR VENCER ================= */
                 @if ($total_lotes_por_vencer > 0)
                     if (localStorage.getItem('alerta_por_vencer') !== hoy) {
                         alertas.push(async () => {
@@ -225,8 +204,6 @@
                         });
                     }
                 @endif
-
-                /* ================= PRIORIDAD 3: STOCK MÍNIMO ================= */
                 @if ($total_productos_stock_minimo > 0)
                     if (localStorage.getItem('alerta_stock_minimo') !== hoy) {
                         alertas.push(async () => {
@@ -264,8 +241,6 @@
                         });
                     }
                 @endif
-
-                /* ================= EJECUCIÓN SECUENCIAL ================= */
                 for (const alerta of alertas) {
                     await alerta();
                 }
@@ -273,8 +248,6 @@
             });
             </script>
 
-
-        <!-- Lotes Vencidos -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
             <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}" class="module-link">
                 <div class="module-card-light">
@@ -286,10 +259,7 @@
                 </div>
             </a>
         </div>
-
     </div>
-
-    <!-- Resumen rápido con estadísticas destacadas -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="stats-summary"
@@ -345,11 +315,7 @@
             </div>
         </div>
     </div>
-
-
-    <!-- Sección de Gráficas -->
     <div class="row ">
-        <!-- Gráfica de Barras -->
         <div class="col-lg-8 mb-4">
             <div
                 style="
@@ -365,8 +331,6 @@
                 <canvas id="mainChart" height="100"></canvas>
             </div>
         </div>
-
-        <!-- Gráfica de Dona -->
         <div class="col-lg-4 mb-4">
             <div
                 style="
@@ -407,8 +371,6 @@
                         Tasa estable: {{ number_format($tasa_actual, 2) }} Bs
                     </div>
                 @endif
-
-                {{-- Dona --}}
                 <div class="mt-3">
                     <canvas id="doughnutChartID" width="400" height="400"></canvas>
                 </div>

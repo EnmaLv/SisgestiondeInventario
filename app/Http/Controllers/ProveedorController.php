@@ -7,30 +7,21 @@ use Illuminate\Http\Request;
 
 class ProveedorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $proveedores = Proveedor::listarProveedores(
             $request->input('buscar'),
-            $request->input('estado', 1)  // Por defecto 1 (activos)
+            $request->input('estado', 1)
         );
 
         return view('admin.maestros.proveedores.index', compact('proveedores'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('admin.maestros.proveedores.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -47,9 +38,6 @@ class ProveedorController extends Controller
             ->route('admin.maestros.proveedores.index')->with('success', 'Proveedor creado exitosamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
         $proveedor = Proveedor::obtenerProveedorConCompras($id);
@@ -64,9 +52,6 @@ class ProveedorController extends Controller
         return view('admin.maestros.proveedores.show', compact('proveedor'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
         $proveedor = Proveedor::obtenerProveedor($id);
@@ -81,9 +66,6 @@ class ProveedorController extends Controller
         return view('admin.maestros.proveedores.edit', compact('proveedor'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -101,12 +83,8 @@ class ProveedorController extends Controller
             ->with('success', 'Proveedor actualizado exitosamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        // Verificar si tiene compras antes de eliminar
         if (Proveedor::tieneCompras($id)) {
             return redirect()
                 ->route('admin.maestros.proveedores.index')

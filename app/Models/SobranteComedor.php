@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SobranteComedor extends Model
 {
-    /** @use HasFactory<\Database\Factories\SobranteComedorFactory> */
     use HasFactory;
 
     protected $table = 'sobrantes_comedor';

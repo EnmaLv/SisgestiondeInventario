@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Localidad extends Model
 {
-    /** @use HasFactory<\Database\Factories\LocalidadFactory> */
     use HasFactory;
 
     protected $table = 'localidads';
@@ -26,8 +25,5 @@ class Localidad extends Model
     public function estado(){
         return $this->belongsTo(Estado::class, "estado_id", "id");
     }
-
-
-   
     
 }
