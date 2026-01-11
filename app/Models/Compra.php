@@ -55,7 +55,7 @@ class Compra extends Model
         ];
     }
 
-    public static function listarCompras($buscar, $estado)
+    public static function listarCompras($buscar, $estado, $fechas = null)
     {
         $query = DB::table('compras')
             ->join('proveedors', 'proveedors.id', '=', 'compras.proveedor_id')
@@ -73,6 +73,10 @@ class Compra extends Model
 
         if ($estado !== null && $estado !== '') {
             $query->where('compras.estado', (int) $estado);
+        }
+
+        if ($fechas !== null) {
+            $query->whereBetween('compras.fecha', [$fechas['fecha_desde'], $fechas['fecha_hasta']]);
         }
 
         return $query->orderBy('compras.id', 'desc')->paginate(10);

@@ -316,7 +316,8 @@
         </div>
     </div>
     <div class="row ">
-        <div class="col-lg-8 mb-4">
+        <!-- Gráfica de Barras -->
+        <div class="col-lg-12 mb-4">
             <div
                 style="
                 background: var(--color-bg-card);
@@ -329,51 +330,6 @@
                     📈 Estadísticas del Sistema
                 </h5>
                 <canvas id="mainChart" height="100"></canvas>
-            </div>
-        </div>
-        <div class="col-lg-4 mb-4">
-            <div
-                style="
-                    background: var(--color-bg-card);
-                    border-radius: 16px;
-                    padding: 1.5rem;
-                    border: 1px solid var(--color-border-soft);
-                    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-                    height: 100%;
-                "
-                class="text-center"
-            >
-                <h5 style="color: var(--color-text-main); font-weight: 700;">
-                    💵 Estado del Dólar BCV
-                </h5>
-
-                @if ($variacion_dolar === 'subio')
-                    <div style="color:#dc2626;font-weight:800;font-size:1.4rem;">
-                        📈 SUBIÓ
-                    </div>
-                    <div style="font-size:1rem;opacity:.85;">
-                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
-                    </div>
-
-                @elseif ($variacion_dolar === 'bajo')
-                    <div style="color:#16a34a;font-weight:800;font-size:1.4rem;">
-                        📉 BAJÓ
-                    </div>
-                    <div style="font-size:1rem;opacity:.85;">
-                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
-                    </div>
-
-                @else
-                    <div style="color:#6b7280;font-weight:800;font-size:1.3rem;">
-                        ➖ SIN VARIACIÓN
-                    </div>
-                    <div style="font-size:1rem;opacity:.85;">
-                        Tasa estable: {{ number_format($tasa_actual, 2) }} Bs
-                    </div>
-                @endif
-                <div class="mt-3">
-                    <canvas id="doughnutChartID" width="400" height="400"></canvas>
-                </div>
             </div>
         </div>
 

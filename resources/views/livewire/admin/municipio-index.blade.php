@@ -24,36 +24,24 @@
                 </div>
 
                 <div class="rd-actions">
-                    <form action="{{ route('admin.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
+                    <div class="d-flex gap-3 align-items-center">
+                        <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
+                        <div class="toggle-container">
+                            <input wire:model.live="filtroEstado" type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ $filtroEstado ? 'checked' : '' }}>
+                            <label for="estadoToggle" class="toggle-label">
+                                <span class="toggle-inner"></span>
+                                <span class="toggle-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <form wire:submit.prevent="buscar" class="rd-search-inline"
                         role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba la categoria" />
+                        <input type="text" name="buscar" value="{{ $search ?? '' }}" class="rd-search-input"
+                            placeholder="Escriba un Municipio" wire:model="search"/>
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
 
-                </div>
-            </div>
-
-            <div class="collapse" id="filters">
-                <div class="rd-filters">
-                    <div class="d-flex gap-3 align-items-center mb-3">
-                        <span class="font-weight-bold" style="margin-right:5px; ">Filtrar por estado:</span>
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}"
-                                class="btn {{ request('estado', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
-                                Activos
-                            </a>
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}"
-                                class="btn {{ request('estado', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
-                                Inactivos
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -70,21 +58,8 @@
                     </thead>
 
                     <tbody>
-                        @if ($municipios->isEmpty())
-                            <tr>
-                                <td colspan="4">
-                                    <div class="empty-state">
-                                        <div class="empty-icon">
-                                            <i class="fas fa-inbox"></i>
-                                        </div>
-                                        <h4>No hay estados registrados</h4>
-                                        <p>Agrega un nuevo estado con el botón superior</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endif
 
-                        @foreach ($municipios as $index => $datos)
+                        @forelse ($municipios as $index => $datos)
                             <tr>
                                 <td class="text-center">{{ ($municipios->currentPage() - 1) * $municipios->perPage() + $loop->iteration }}</td></td>
                                 <td class="text-center">{{ $datos->nombre_municipio }}</td>
@@ -123,7 +98,19 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">
+                                        <div class="empty-icon">
+                                            <i class="fas fa-inbox"></i>
+                                        </div>
+                                        <h4 class="text-center">No hay municipios registrados</h4>
+                                        <p class="text-center">Agrega un nuevo municipio con el botón superior</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
                         <script>
                             document.addEventListener('livewire:init', () => {
 

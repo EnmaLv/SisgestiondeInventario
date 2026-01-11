@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Gestion de Inventario',
+    'title' => 'Bienestar Estudiantil',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,8 +63,8 @@ return [
     |
     */
 
-    'logo' => '<b>Gestión</b> de Inventario',
-    'logo_img' => 'vendor/adminlte/dist/img/logo_inv.png',
+    'logo' => '<b>Bienestar Estudiantil</b>',
+    'logo_img' => 'img/Logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -86,7 +86,7 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/logo.png',
+            'path' => 'img/Logo.png',
             'alt' => 'Auth Logo',
             'class' => '',
             'width' => 50,
@@ -113,11 +113,11 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/logo_inv.png',
+            'path' => 'img/Logo.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 90,
-            'height' => 60,
+            'height' => 90,
         ],
     ],
 
@@ -639,7 +639,7 @@ return [
             ],
         ],
         'Chartjs' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                     'type' => 'js',

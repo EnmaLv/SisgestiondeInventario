@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    container_name: SisgestiondeBienestraEstudiantil
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+      - "5731:5731"
+    volumes:
+      - .:/app
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    networks:
+      - laravelConnect
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysqlbienestraestudiantil
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_DATABASE=bienestraestudiantil
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=11223344
+      - MYSQL_ROOT_PASSWORD=supersecreto
+    volumes:
+      - datos_db:/var/lib/mysql
+    networks:
+      - laravelConnect
+
+volumes:
+  datos_db:
+
+networks:
+  laravelConnect:
+    driver: bridge
