@@ -13,9 +13,18 @@ class CompraController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->fecha_desde == null && $request->fecha_hasta == null) {
+            $fechas = null;
+        } else {
+            $fechas = [
+                'fecha_desde' => $request->fecha_desde,
+                'fecha_hasta' => $request->fecha_hasta
+            ];
+        }
         $compras = Compra::listarCompras(
             $request->buscar,
-            $request->estado
+            $request->estado,
+            $fechas
         );
 
         return view('admin.movimientos.compras.index', compact('compras'));

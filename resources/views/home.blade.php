@@ -12,8 +12,6 @@
             position: relative;
             overflow: hidden;
          ">
-
-        <!-- Patrón de fondo decorativo -->
         <div
             style="
             position: absolute;
@@ -28,7 +26,6 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center" style="position: relative; z-index: 1;">
-            <!-- Texto principal -->
             <div>
                 <h1 class="m-0 text-white" style="font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;">
                     🏠 Panel de Control
@@ -40,8 +37,6 @@
                     Gestiona tu inventario de manera eficiente
                 </p>
             </div>
-
-            <!-- Tarjeta de fecha con avatar -->
             <div class="d-none d-md-flex align-items-center" style="gap: 1.5rem;">
                 <div class="text-right text-white">
                     <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.25rem;">
@@ -187,8 +182,6 @@
 
                 const hoy = new Date().toISOString().slice(0, 10);
                 const alertas = [];
-
-                /* ================= PRIORIDAD 1: LOTES VENCIDOS ================= */
                 @if ($total_lotes_vencidos > 0)
                     if (localStorage.getItem('alerta_lotes_vencidos') === hoy) {
                         alertas.push(async () => {
@@ -213,8 +206,6 @@
                         });
                     }
                 @endif
-
-                /* ================= PRIORIDAD 2: POR VENCER ================= */
                 @if ($total_lotes_por_vencer > 0)
                     if (localStorage.getItem('alerta_por_vencer') !== hoy) {
                         alertas.push(async () => {
@@ -239,8 +230,6 @@
                         });
                     }
                 @endif
-
-                /* ================= PRIORIDAD 3: STOCK MÍNIMO ================= */
                 @if ($total_productos_stock_minimo > 0)
                     if (localStorage.getItem('alerta_stock_minimo') !== hoy) {
                         alertas.push(async () => {
@@ -278,8 +267,6 @@
                         });
                     }
                 @endif
-
-                /* ================= EJECUCIÓN SECUENCIAL ================= */
                 for (const alerta of alertas) {
                     await alerta();
                 }
@@ -304,8 +291,6 @@
         @endif
 
     </div>
-
-    <!-- Resumen rápido con estadísticas destacadas -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="stats-summary"
@@ -361,12 +346,9 @@
             </div>
         </div>
     </div>
-
-
-    <!-- Sección de Gráficas -->
     <div class="row ">
         <!-- Gráfica de Barras -->
-        <div class="col-lg-8 mb-4">
+        <div class="col-lg-12 mb-4">
             <div
                 style="
                 background: var(--color-bg-card);
@@ -379,55 +361,6 @@
                     📈 Estadísticas del Sistema
                 </h5>
                 <canvas id="mainChart" height="100"></canvas>
-            </div>
-        </div>
-
-        <!-- Gráfica de Dona -->
-        <div class="col-lg-4 mb-4">
-            <div
-                style="
-                    background: var(--color-bg-card);
-                    border-radius: 16px;
-                    padding: 1.5rem;
-                    border: 1px solid var(--color-border-soft);
-                    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-                    height: 100%;
-                "
-                class="text-center"
-            >
-                <h5 style="color: var(--color-text-main); font-weight: 700;">
-                    💵 Estado del Dólar BCV
-                </h5>
-
-                @if ($variacion_dolar === 'subio')
-                    <div style="color:#dc2626;font-weight:800;font-size:1.4rem;">
-                        📈 SUBIÓ
-                    </div>
-                    <div style="font-size:1rem;opacity:.85;">
-                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
-                    </div>
-
-                @elseif ($variacion_dolar === 'bajo')
-                    <div style="color:#16a34a;font-weight:800;font-size:1.4rem;">
-                        📉 BAJÓ
-                    </div>
-                    <div style="font-size:1rem;opacity:.85;">
-                        Nueva tasa: {{ number_format($tasa_actual, 2) }} Bs
-                    </div>
-
-                @else
-                    <div style="color:#6b7280;font-weight:800;font-size:1.3rem;">
-                        ➖ SIN VARIACIÓN
-                    </div>
-                    <div style="font-size:1rem;opacity:.85;">
-                        Tasa estable: {{ number_format($tasa_actual, 2) }} Bs
-                    </div>
-                @endif
-
-                {{-- Dona --}}
-                <div class="mt-3">
-                    <canvas id="doughnutChartID" width="400" height="400"></canvas>
-                </div>
             </div>
         </div>
 

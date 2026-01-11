@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExchangeRates extends Model
 {
-    /** @use HasFactory<\Database\Factories\ExchangeRatesFactory> */
     use HasFactory;
 
     protected $table = 'exchange_rates';

@@ -1,10 +1,7 @@
 <div class="main-container">
 
-    {{-- Modales incluidos DENTRO del componente Livewire --}}
     @include('admin.localidad.modales.createModal')
     @include('admin.localidad.modales.editModal')
-
-    {{-- Alertas --}}
 
     <script>
         document.addEventListener('livewire:init', () => {
@@ -20,8 +17,6 @@
             });
         });
     </script>
-    
-    {{-- Tarjeta moderna --}}
     <div class="rd-card rd-card-full">
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
@@ -30,41 +25,25 @@
                 </div>
 
                 <div class="rd-actions">
-                    <form action="{{ route('admin.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
+                    <div class="d-flex gap-3 align-items-center">
+                        <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
+                        <div class="toggle-container">
+                            <input wire:model.live="filtroEstado" type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ $filtroEstado ? 'checked' : '' }}>
+                            <label for="estadoToggle" class="toggle-label">
+                                <span class="toggle-inner"></span>
+                                <span class="toggle-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <form wire:submit.prevent="buscar" class="rd-search-inline"
                         role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba la categoria" />
+                        <input type="text" name="buscar" value="{{ $search ?? '' }}" class="rd-search-input"
+                            placeholder="Escriba una localidad" wire:model="search"/>
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
-                        aria-controls="filters" title="Filtros">
-                        <i class="fas fa-filter"></i>
-                    </button>
-
                 </div>
             </div>
-
-            <div class="collapse" id="filters">
-                <div class="rd-filters">
-                    <div class="d-flex gap-3 align-items-center mb-3">
-                        <span class="font-weight-bold" style="margin-right:5px; ">Filtrar por estado:</span>
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}"
-                                class="btn {{ request('estado', 1) == 1 ? 'btn-primary' : 'btn-outline-primary' }}">
-                                Activos
-                            </a>
-                            <a href="{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}"
-                                class="btn {{ request('estado', 1) == 0 ? 'btn-danger' : 'btn-outline-danger' }}">
-                                Inactivos
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Cuerpo con tabla moderna --}}
-
             <div id="printArea">
                 <table class="rd-table">
                     <thead>
@@ -79,7 +58,6 @@
                     </thead>
 
                     <tbody class="text-center">
-                        {{-- SI NO HAY LOCALIDADES --}}
                         @if ($localidades->isEmpty())
                             <tr>
                                 <td colspan="6">
@@ -93,24 +71,12 @@
                                 </td>
                             </tr>
                         @endif
-
-                        {{-- LISTADO --}}
                         @foreach ($localidades as $index => $datos)
                             <tr>
-
-                                {{-- Número --}}
                                 <td class="text-center">{{ ($localidades->currentPage() - 1) * $localidades->perPage() + $loop->iteration }}</td></td>
-
-                                {{-- Nombre de la localidad --}}
                                 <td class="text-center">{{ $datos->nombre_localidad }}</td>
-
-                                {{-- Nombre del municipio --}}
                                 <td class="text-center">{{ $datos->municipio->nombre_municipio }}</td>
-
-                                {{-- Estado al que pertenece --}}
                                 <td class="text-center">{{ $datos->municipio->estado->nombre_estado }}</td>
-
-                                {{-- Badge --}}
                                 <td class="text-center">
                                     @if ($datos->status)
                                         <span class="status-badge status-active">
@@ -122,11 +88,8 @@
                                         </span>
                                     @endif
                                 </td>
-
-                                {{-- ACCIONES --}}
                                 <td class="text-center">
                                     <div class="rd-action-group">
-                                        {{-- Botón Editar --}}
                                         <button wire:click="edit({{ $datos->id }})"
                                             class="rd-action" 
                                             data-bs-toggle="modal"
@@ -174,8 +137,6 @@
                 </table>
             </div>
         </div>
-
-        {{-- Paginación --}}
         <div class="mt-3">
             {{ $localidades->onEachSide(1)->links('components.pagination-livewire') }}
         </div>

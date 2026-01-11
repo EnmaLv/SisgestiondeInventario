@@ -11,6 +11,7 @@ class EstadoIndex extends Component
 {
     use WithPagination;
 
+    public $filtroEstado = true;
     public $nombre_estado;
     public $estado_id;
     public $updateMode = false;
@@ -22,7 +23,7 @@ class EstadoIndex extends Component
 
     public function render()
     {
-        $estados = Estado::where('status', true)
+        $estados = Estado::where('status', $this->filtroEstado)
             ->when($this->search, function ($query) {
                 $query->where('nombre_estado', 'like', '%' . $this->search . '%');
             })
@@ -37,7 +38,7 @@ class EstadoIndex extends Component
         return 'vendor.livewire.bootstrap-custom';
     }
 
-    public function updatedSearch()
+    public function buscar()
     {
         $this->resetPage();
     }

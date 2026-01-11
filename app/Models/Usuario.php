@@ -65,7 +65,6 @@ class Usuario extends Authenticatable
 
             return Hash::check($candidate, $stored);
         } catch (\RuntimeException $e) {
-            // Fallback: if hasher enforces bcrypt algorithm, try native password_verify
             $stored = $this->getOriginal('master_key') ?: $this->master_key;
             if (is_string($stored) && $stored !== '') {
                 return password_verify($candidate, $stored);

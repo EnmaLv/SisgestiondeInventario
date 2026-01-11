@@ -31,11 +31,6 @@ class Proveedor extends Model
         return $this->hasMany(Compra::class);
     }
 
-    // ========== MÉTODOS ESTÁTICOS CON QUERY BUILDER ==========
-
-    /**
-     * Listar proveedores con filtros
-     */
     public static function listarProveedores($buscar = null, $activo = null)
     {
         $query = DB::table('proveedors')
@@ -52,16 +47,12 @@ class Proveedor extends Model
         if ($activo !== null && $activo !== '') {
             $query->where('estado', (int)$activo);
         } else {
-            // Por defecto, mostrar solo activos
             $query->where('estado', 1);
         }
 
         return $query->orderBy('id', 'desc')->paginate(10);
     }
 
-    /**
-     * Crear un nuevo proveedor
-     */
     public static function crearProveedor(array $data)
     {
         return DB::table('proveedors')->insertGetId([
@@ -76,9 +67,6 @@ class Proveedor extends Model
         ]);
     }
 
-    /**
-     * Obtener un proveedor por ID
-     */
     public static function obtenerProveedor($id)
     {
         return DB::table('proveedors')
@@ -86,9 +74,6 @@ class Proveedor extends Model
             ->first();
     }
 
-    /**
-     * Actualizar un proveedor
-     */
     public static function actualizarProveedor($id, array $data)
     {
         return DB::table('proveedors')
@@ -103,9 +88,6 @@ class Proveedor extends Model
             ]);
     }
 
-    /**
-     * Eliminar un proveedor
-     */
     public static function eliminarProveedor($id)
     {
         return DB::table('proveedors')
@@ -126,9 +108,6 @@ class Proveedor extends Model
             ]);
     }
 
-    /**
-     * Cambiar estado del proveedor (soft delete)
-     */
     public static function cambiarEstado($id, $estado)
     {
         return DB::table('proveedors')
@@ -139,9 +118,6 @@ class Proveedor extends Model
             ]);
     }
 
-    /**
-     * Obtener proveedor con sus compras
-     */
     public static function obtenerProveedorConCompras($id)
     {
         $proveedor = DB::table('proveedors')
@@ -158,9 +134,6 @@ class Proveedor extends Model
         return $proveedor;
     }
 
-    /**
-     * Verificar si el proveedor tiene compras
-     */
     public static function tieneCompras($id)
     {
         return DB::table('compras')

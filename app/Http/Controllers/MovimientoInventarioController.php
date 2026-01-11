@@ -24,8 +24,6 @@ class MovimientoInventarioController extends Controller
             'activo' => $activo,
         ], false);
 
-        
-
         return view('admin.movimientos.historial_movimientos.index', compact('movimiento'));
     }
 
@@ -40,15 +38,10 @@ class MovimientoInventarioController extends Controller
         ];
         
         $movimiento = MovimientoInventario::getData($filtro, true);
-
-        //guardamos todo en un array para pasarselo al pdf
         $datos = [
             'movimiento' => $movimiento,
             'filtro' => $filtro,
         ];
-
-        
-        // Generar PDF aquí
         return PdfGeneratorUtil::ShowPdf('pdf.movimiento_inventario', $datos, "MovimientoInventario");
     }
 }

@@ -13,6 +13,7 @@ class LocalidadIndex extends Component
 {
     use WithPagination;
 
+    public $filtroEstado = true;
     public $nombre_localidad;
     public $estado_id;
     public $municipio_id;
@@ -31,7 +32,7 @@ class LocalidadIndex extends Component
     {
         $estados = Estado::where('status', true)->get();
 
-        $localidades = Localidad::where('status', true)
+        $localidades = Localidad::where('status', $this->filtroEstado)
             ->when($this->search, function ($query) {
                 $query->where('nombre_localidad', 'like', '%' . $this->search . '%')
                     ->orWhereHas('municipio', function ($q) {
@@ -52,7 +53,7 @@ class LocalidadIndex extends Component
         return 'vendor.livewire.bootstrap-custom';
     }
 
-    public function updatedSearch()
+    public function buscar()
     {
         $this->resetPage();
     }

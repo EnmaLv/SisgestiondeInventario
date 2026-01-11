@@ -8,8 +8,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
          ">
-
-        <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Historial de Movimientos de Inventario
@@ -19,8 +17,6 @@
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-
-        <!-- Imagen + Fecha -->
         <div class="d-flex align-items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
                 <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
@@ -69,8 +65,6 @@
                     </button>
 
                     <div class="rd-export-group">
-                        <button class="rd-btn rd-btn-success" title="Exportar Excel"><i class="fas fa-file-excel"></i>
-                            Excel</button>
                         <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i class="fas fa-file-pdf"></i>
                             PDF</button>
                     </div>
@@ -106,8 +100,6 @@
                     </form>
                 </div>
             </div>
-
-            {{-- Tabla --}}
             <div id="printArea">
                 <table class="rd-table">
                     <thead>
@@ -174,8 +166,6 @@
                     </tbody>
                 </table>
             </div>
-
-            {{-- Paginación del servidor --}}
             <div class="mt-3 d-flex justify-content-center">
                 {{ $movimiento->onEachSide(1)->appends(request()->query())->links('components.pagination') }}
             </div>
@@ -188,12 +178,6 @@
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
 
-@push('css')
-    <style>
-        
-    </style>
-@endpush
-
 @push('js')
     <script>
         document.addEventListener('DOMContentLoaded', ()=>{
@@ -201,16 +185,11 @@
             const pdfBtn = document.getElementById('pdfBtn');
             if (pdfBtn) {
                 pdfBtn.addEventListener('click', ()=>{
-                    // Obtener los parámetros de la URL
                     const params = new URLSearchParams(window.location.search);
                     const fechaDesde = params.get('fecha_desde') ?? "";
                     const fechaHasta = params.get('fecha_hasta') ?? "";
                     const tipoMovimiento = params.get('tipo_movimiento') ?? "";
-                    
-                    // Construir la URL con los parámetros
                     const url = `{{ route('admin.movimientos.historial_movimientos.export_pdf') }}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}&tipo_movimiento=${tipoMovimiento}`;
-                    
-                    // Abrir en una nueva pestaña
                     window.open(url, '_blank');
                 });
             }

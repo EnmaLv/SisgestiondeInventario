@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class RecetaIngrediente extends Model
 {
-    /** @use HasFactory<\Database\Factories\RecetaIngredienteFactory> */
     use HasFactory;
 
     protected $table = 'receta_ingredientes';
