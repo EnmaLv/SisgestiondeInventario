@@ -19,7 +19,7 @@
         </div>
         <div>
             <a href="{{ url('admin/maestros/productos/create') }}" class="rd-btn rd-btn-primary">
-                <i class="fas fa-plus"></i> Crear Nuevo
+                <i class="fas fa-plus"></i> Crear Producto
             </a>
         </div>
 
@@ -61,67 +61,27 @@
                     </button>
                 </div>
             </div>
-            <style>
-                .toggle-container {
-                    position: relative;
-                    width: 60px;
-                    height: 30px;
-                }
-
-                .toggle-checkbox {
-                    display: none;
-                }
-
-                .toggle-label {
-                    display: block;
-                    overflow: hidden;
-                    cursor: pointer;
-                    border-radius: 999px;
-                    background-color: #dc2626; /* rojo por defecto */
-                    position: relative;
-                    transition: background-color 0.25s;
-                    height: 100%;
-                }
-
-                .toggle-inner {
-                    display: block;
-                    width: 200%;
-                    margin-left: -100%;
-                    transition: margin 0.25s;
-                }
-
-                .toggle-switch {
-                    display: block;
-                    width: 26px;
-                    height: 26px;
-                    background: white;
-                    position: absolute;
-                    top: 2px;
-                    left: 2px;
-                    border-radius: 50%;
-                    transition: all 0.25s;
-                }
-
-                .toggle-checkbox:checked + .toggle-label {
-                    background-color: #16a34a; /* verde cuando está activo */
-                }
-
-                .toggle-checkbox:checked + .toggle-label .toggle-switch {
-                    transform: translateX(30px);
-                }
-
-            </style>
-            <script>
-                document.getElementById('estadoToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        // Activos
-                        window.location.href = "{{ route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 1])) }}";
-                    } else {
-                        // Inactivos
-                        window.location.href = "{{ route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 0])) }}";
-                    }
-                });
-            </script>
+            <div class="collapse" id="filters">
+                <div class="rd-filters">
+                    <form action="{{ route('admin.maestros.productos.index') }}" method="GET"
+                        class="rd-filters-form">
+                        <div class="rd-filter-row">
+                            <label>Categoría</label>
+                            <select name="categoria" id="categoria" class="rd-filter-input" style="width:125px; background-color: white;">
+                                <option value="">Todas</option>
+                                @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}" @if(request('categoria') == $categoria->id) selected @endif>{{ $categoria->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="rd-filter-row rd-filter-actions">
+                            <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
+                            <button type="button" class="rd-btn rd-btn-default"
+                                onclick="document.getElementById('categoria').value='';">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div id="printArea">
                 <table class="rd-table">
                     <thead>
@@ -241,3 +201,17 @@
         </div>
     </div>
 @stop
+
+@push('js')
+        <script>
+        document.getElementById('estadoToggle').addEventListener('change', function() {
+            if (this.checked) {
+                // Activos
+                window.location.href = "{{ route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 1])) }}";
+            } else {
+                // Inactivos
+                window.location.href = "{{ route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 0])) }}";
+            }
+        });
+    </script>
+@endpush

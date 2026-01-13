@@ -57,7 +57,7 @@
                 @csrf
                 @method('PUT')
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="rd-label">Nombre de la Sede</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
@@ -68,7 +68,7 @@
                             <span class="rd-error">Este campo es obligatorio.</span>
                         @enderror
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="rd-label">Dirección</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-map-marker-alt"></i></span>
@@ -79,7 +79,7 @@
                             <span class="rd-error">Este campo es obligatorio.</span>
                         @enderror
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="rd-label">Teléfono</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-phone"></i></span>
@@ -88,20 +88,6 @@
                                 data-inputmask="'mask': '(999) 999-9999'" data-mask>
                         </div>
                         @error('telefono')
-                            <span class="rd-error">Este campo es obligatorio.</span>
-                        @enderror
-                    </div>
-                    <div class="col-md-6">
-                        <label class="rd-label">Estado</label>
-                        <div class="rd-input-group">
-                            <span class="rd-input-icon"><i class="fas fa-toggle-on"></i></span>
-                            <select name="activo" class="rd-input w-100">
-                                <option value="" selected disabled>Seleccione...</option>
-                                <option value="1" {{ $sucursal->activo == '1' ? 'selected' : '' }}>Activo</option>
-                                <option value="0" {{ $sucursal->activo == '0' ? 'selected' : '' }}>Inactivo</option>
-                            </select>
-                        </div>
-                        @error('activo')
                             <span class="rd-error">Este campo es obligatorio.</span>
                         @enderror
                     </div>

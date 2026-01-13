@@ -204,7 +204,7 @@
                                 <label class="font-weight-bold">Imagen del producto</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer;">Seleccione una foto</label>
+                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer; width: 90%;">Seleccione una foto</label>
                                     <input type="file" name="imagen" id="imagen"
                                         class="form-control rd-filter-input" accept="image/*"
                                         onchange="previewImage(event)" style="display: none">
@@ -245,9 +245,6 @@
     </div>
 @stop
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-@stop
 
 @section('css')
     <style>
@@ -296,7 +293,6 @@
                         'bold', 'italic', 'underline', 'strikethrough', 'subscript', '|',
                         'link', 'bulletedList', 'numberedList', '|',
                         'outdent', 'indent', '|',
-                        'blockQuote', 'insertTable', 'mediaEmbed', '|',
                         'undo', 'redo'
                     ],
                     shouldNotGroupWhenFull: true

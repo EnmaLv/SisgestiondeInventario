@@ -18,7 +18,7 @@
         </div>
         <div>
             <a href="{{ url('admin/maestros/sucursales/create') }}" class="rd-btn rd-btn-primary">
-                <i class="fas fa-plus"></i> Crear Nuevo
+                <i class="fas fa-plus"></i> Crear Nueva Sede
             </a>
         </div>
     </div>

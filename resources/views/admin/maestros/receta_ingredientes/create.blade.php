@@ -7,7 +7,7 @@
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Nueva Composición de Receta</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
                 <i class="fas fa-mortar-pestle mr-1" style="color: var(--color-secondary)"></i>
-                Chef: <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
+                Bienvenido: <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
             </p>
         </div>
         <div class="d-flex align-items-center" style="gap:14px;">

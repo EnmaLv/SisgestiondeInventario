@@ -78,7 +78,7 @@ class Producto extends Model
         return $this->hasMany(RecetaIngrediente::class);
     }
 
-    public static function listarProductos($buscar = null, $activo = 1, $perPage = 10, $cantidadMin = null, $cantidadMax = null)
+    public static function listarProductos($buscar = null, $activo = 1, $categoria = null, $perPage = 10, $cantidadMin = null, $cantidadMax = null)
     {
         $query = self::with(['categoria', 'unidad'])
             ->withSum([
@@ -105,6 +105,10 @@ class Producto extends Model
         }
         if ($cantidadMax !== null) {
             $query->having('cantidad_actual', '<=', $cantidadMax);
+        }
+
+        if ($categoria !== null) {
+            $query->where('categoria_id', $categoria);
         }
 
         return $query->orderByDesc('cantidad_actual')->paginate($perPage);
@@ -155,7 +159,7 @@ class Producto extends Model
                 'codigo'        => $data['codigo'],
                 'nombre'        => $data['nombre'],
                 'descripcion'   => $data['descripcion'] ?? null,
-                'imagen'        => $data['imagen'] ?? 'imagenes/productos/default.png',
+                'imagen'        => $data['imagen'] ?? 'imagenes/productos/product-defect.webp',
                 'precio_compra' => 0,
                 'stock_minimo'  => $data['stock_minimo'] ?? 0,
                 'stock_maximo'  => $data['stock_maximo'] ?? 0,

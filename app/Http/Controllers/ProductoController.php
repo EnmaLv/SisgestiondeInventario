@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Models\ExchangeRates;
 use Illuminate\Support\Facades\Http;
@@ -17,8 +18,10 @@ class ProductoController extends Controller
     public function index(Request $request)
     {
         $activo = $request->input('activo', 1);
-        $productos = Producto::listarProductos($request->buscar, $activo);
-        return view('admin.maestros.productos.index', compact('productos'));
+        $categoria = $request->input('categoria', null);
+        $productos = Producto::listarProductos($request->buscar, $activo, $categoria);
+        $categorias = Categoria::select('id', 'nombre')->where('estado', 1)->get();
+        return view('admin.maestros.productos.index', compact('productos', 'categorias'));
     }
 
     public function create()
@@ -38,7 +41,7 @@ class ProductoController extends Controller
                 $validated['imagen'] = $request->file('imagen')
                     ->store('imagenes/productos', 'public');
             } else {
-                $validated['imagen'] = 'imagenes/productos/default.png';
+                $validated['imagen'] = 'imagenes/productos/product-defect.webp';
             }
 
             $productoId = Producto::crearProducto($validated);

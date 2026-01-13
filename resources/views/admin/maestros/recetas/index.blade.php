@@ -18,7 +18,7 @@
         </div>
         <div>
             <a href="{{ url('admin/maestros/recetas/create') }}" class="rd-btn rd-btn-primary">
-                <i class="fas fa-plus"></i> Crear Nuevo
+                <i class="fas fa-plus"></i> Crear Nueva Receta
             </a>
         </div>
     </div>
