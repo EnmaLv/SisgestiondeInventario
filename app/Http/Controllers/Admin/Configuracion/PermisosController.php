@@ -14,30 +14,25 @@ class PermisosController extends Controller
         $this->middleware(\App\Http\Middleware\RequireMasterKey::class);
     }
 
-    // List users with pagination to manage permissions
     public function index(Request $request)
     {
         $usuarios = Usuario::with(['persona', 'perfil', 'roles'])->orderBy('id_usuario', 'asc')->paginate(15);
         return view('admin.configuracion.permisos.index', compact('usuarios'));
     }
 
-    // Show permission editor for a given user
     public function edit($id)
     {
         $usuario = Usuario::with(['persona','perfil','roles'])->findOrFail($id);
         $auth = auth()->user();
-        // Prevent an administrator from editing their own permissions here; only another admin may do this
         if ($auth && $auth->id_usuario == $usuario->id_usuario && $auth->roles->contains('nombre', 'Administrador')) {
             return redirect()->route('admin.configuracion.permisos.index')->withErrors(['permisos' => 'No puedes editar tus propios permisos. Pide a otro Administrador que lo haga.']);
         }
         $menu = config('adminlte.menu', []);
 
-            // user extra allows
-            $extra = is_string($usuario->extra_permissions) ? json_decode($usuario->extra_permissions, true) : ($usuario->extra_permissions ?? []);
-            $allow = $extra['allow'] ?? [];
-            $deny = $extra['deny'] ?? [];
+        $extra = is_string($usuario->extra_permissions) ? json_decode($usuario->extra_permissions, true) : ($usuario->extra_permissions ?? []);
+        $allow = $extra['allow'] ?? [];
+        $deny = $extra['deny'] ?? [];
 
-        // compute permissions provided by roles (these cannot be removed here)
         $rolePerms = [];
         foreach ($usuario->roles as $r) {
             $perms = $r->menu_permissions ?? [];
@@ -45,13 +40,53 @@ class PermisosController extends Controller
         }
         $rolePerms = array_values(array_unique($rolePerms));
 
-            // compute effective permissions: role-provided minus denies, plus user allow
-            $effective = array_values(array_unique(array_merge(array_values(array_diff($rolePerms, $deny)), $allow)));
+        // Build mapping of menu keys to concrete patterns (urls/routes/active)
+        $keyToPatterns = [];
+        $collector = function ($items) use (&$collector, &$keyToPatterns) {
+            foreach ($items as $it) {
+                if (isset($it['submenu']) && is_array($it['submenu'])) {
+                    $collector($it['submenu']);
+                }
+                $key = $it['key'] ?? null;
+                $patterns = [];
+                if (!empty($it['active']) && is_array($it['active'])) {
+                    $patterns = array_merge($patterns, $it['active']);
+                }
+                if (!empty($it['url'])) {
+                    $patterns[] = ltrim($it['url'], '/');
+                }
+                if (!empty($it['route'])) {
+                    $patterns[] = $it['route'];
+                }
+                if ($key && ! empty($patterns)) {
+                    $keyToPatterns[$key] = array_values(array_unique($patterns));
+                }
+            }
+        };
+        $collector($menu);
 
-        return view('admin.configuracion.permisos.edit', compact('usuario','menu','allow','effective','rolePerms'));
+        // Expand role perms, allow and deny into concrete patterns
+        $expand = function ($arr) use ($keyToPatterns) {
+            $out = [];
+            foreach ($arr as $p) {
+                if (isset($keyToPatterns[$p])) {
+                    foreach ($keyToPatterns[$p] as $pat) $out[] = $pat;
+                } else {
+                    $out[] = $p;
+                }
+            }
+            return array_values(array_unique($out));
+        };
+
+        $rolePatterns = $expand($rolePerms);
+        $denyPatterns = $expand($deny);
+        $allowPatterns = $expand($allow);
+
+        $effective = array_values(array_unique(array_merge(array_values(array_diff($rolePatterns, $denyPatterns)), $allowPatterns)));
+
+        return view('admin.configuracion.permisos.edit', compact('usuario','menu','allow','effective','rolePerms','rolePatterns','keyToPatterns'));
     }
 
-    // Persist overrides (allow array)
     public function update(Request $request, $id)
     {
         $usuario = Usuario::findOrFail($id);

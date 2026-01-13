@@ -176,10 +176,8 @@
     <script>
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
-                // Activos
                 window.location.href = "{{ route('admin.maestros.proveedores.index', array_merge(request()->query(), ['estado' => 1])) }}";
             } else {
-                // Inactivos
                 window.location.href = "{{ route('admin.maestros.proveedores.index', array_merge(request()->query(), ['estado' => 0])) }}";
             }
         });

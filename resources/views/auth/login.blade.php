@@ -4,6 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="{{ asset('img/uptp-logo.png') }}" type="image/png">
 	<title>Iniciar sesión</title>
 	<style>
 		body{margin:0;font-family:Arial,Helvetica,sans-serif;position:relative}
@@ -29,7 +30,7 @@
 </head>
 <body>
 <div class="logo">
-    <img src="{{ asset('img/logo.png') }}" alt="Logo">
+    <img src="{{ asset('img/Logo.png') }}" alt="Logo">
 </div>
 <div class="wrap">
 	<div class="left">

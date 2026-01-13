@@ -39,45 +39,14 @@
 
                             <div class="permissions-grid p-4" 
                                  style="border: 1px solid #eef2f6; border-radius: 12px; background: #fbfdff;">
-                                @php
-                                    if (!function_exists('renderPermissionMatrix')) {
-                                        function renderPermissionMatrix($items, $rolePerms, $effective, $depth = 0) {
-                                            foreach ($items as $it) {
-                                                $margin = $depth * 15;
-                                                if (isset($it['submenu'])) {
-                                                    echo '<div class="permission-group-title mt-2 mb-2" style="margin-left:'.$margin.'px;">
-                                                            <strong class="text-uppercase small text-muted" style="letter-spacing:0.5px; color:var(--color-secondary) !important;">
-                                                                <i class="fas fa-folder-open mr-1"></i> '.$it['text'].'
-                                                            </strong>
-                                                          </div>';
-                                                    renderPermissionMatrix($it['submenu'], $rolePerms, $effective, $depth + 1);
-                                                } else {
-                                                    $val = $it['key'] ?? ($it['url'] ?? ($it['route'] ?? null));
-                                                    if (!$val) continue;
-
-                                                    $isRoleProvided = in_array($val, (array)$rolePerms);
-                                                    $checked = in_array($val, (array)$effective) ? 'checked' : '';
-                                                    $id = 'check_' . Str::slug($val);
-
-                                                    echo '<div class="custom-control custom-checkbox mb-2 permission-item d-flex align-items-center justify-content-between" style="margin-left:'.$margin.'px;">
-                                                            <div class="flex-grow-1">
-                                                                <input type="checkbox" class="custom-control-input perm-chk" 
-                                                                       id="'.$id.'" value="'.e($val).'" '.$checked.' 
-                                                                       data-role="'.($isRoleProvided ? '1' : '0').'">
-                                                                <label class="custom-control-label font-weight-normal" style="cursor:pointer; font-size:0.9rem;" for="'.$id.'">
-                                                                    '.e($it['text']).'
-                                                                </label>
-                                                            </div>';
-                                                    if ($isRoleProvided) {
-                                                        echo '<i class="fas fa-id-badge text-muted ml-2" title="Provisto por Rol" style="font-size:0.75rem;"></i>';
-                                                    }
-                                                    echo '</div>';
-                                                }
-                                            }
-                                        }
-                                    }
-                                    renderPermissionMatrix($menu, $rolePerms ?? [], $effective ?? $allow);
-                                @endphp
+                                @include('admin.configuracion.permisos._matrix', [
+                                    'items' => $menu ?? [],
+                                    'rolePerms' => $rolePerms ?? [],
+                                    'rolePatterns' => $rolePatterns ?? [],
+                                    'effective' => $effective ?? $allow ?? [],
+                                    'keyToPatterns' => $keyToPatterns ?? [],
+                                    'depth' => 0,
+                                ])
                             </div>
                         </div>
 

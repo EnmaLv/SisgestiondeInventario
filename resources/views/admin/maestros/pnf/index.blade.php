@@ -8,8 +8,6 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
          ">
-
-        <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 PNF
@@ -19,8 +17,6 @@
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-
-        <!-- Imagen + Fecha -->
         <div>
             <button type="button" class="rd-btn rd-btn-primary" data-toggle="modal" data-target="#modalCrearPnf">
                 <i class="fas fa-plus"></i> Crear Nuevo
@@ -61,10 +57,6 @@
 
                 </div>
             </div>
-            
-
-
-            {{-- Tabla --}}
             <div id="printArea">
                 <table class="rd-table" >
                     <thead>
@@ -167,14 +159,11 @@
                     </tbody>
                 </table>
             </div>
-
-            {{-- Paginación del servidor --}}
             <div class="mt-3 d-flex justify-content-center">
                 {{ $pnfs->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>
-    {{-- Modal Crear PNF --}}
     <div class="modal fade" id="modalCrearPnf" tabindex="-1" role="dialog" aria-labelledby="modalCrearPnfLabel" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
@@ -188,7 +177,6 @@
                 <form action="{{ route('admin.maestros.pnf.store') }}" method="POST">
                     @csrf
                     <div class="modal-body p-4">
-                        {{-- Nombre --}}
                         <div>
                             <label class="rd-label">Nombre del PNF</label>
                             <div class="rd-input-group">

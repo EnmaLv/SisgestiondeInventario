@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\PrecioProducto;
 class Producto extends Model
@@ -83,7 +82,6 @@ class Producto extends Model
         $query = self::with(['categoria', 'unidad'])
             ->withSum([
                 'inventarioSucursalAcarigua as cantidad_actual' => function ($query) {
-                    // Ya no necesitas poner la condición aquí porque está en la relación
                 }
             ], 'cantidad');
 
@@ -289,7 +287,7 @@ class Producto extends Model
         return DB::table('inventario_sucursal_lotes as isl')
             ->join('lotes as l', 'l.id', '=', 'isl.lote_id')
             ->where('l.producto_id', $productoId)
-            ->where('isl.sucursal_id', 1) // Acarigua
+            ->where('isl.sucursal_id', 1)
             ->where('isl.cantidad', '>', 0)
             ->exists();
     }

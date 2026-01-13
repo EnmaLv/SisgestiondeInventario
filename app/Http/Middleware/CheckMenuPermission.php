@@ -16,7 +16,6 @@ class CheckMenuPermission
             return $next($request);
         }
 
-        // Always allow access to master-key endpoints so RequireMasterKey can handle auth
         $allowedPaths = [
             'admin/configuracion/master-key',
             'admin/configuracion/master-key/verify',
@@ -32,10 +31,8 @@ class CheckMenuPermission
             return $next($request);
         }
 
-        // Gather role-based patterns (could be menu keys or direct path patterns)
         $rolePatterns = collect($user->roles)->pluck('menu_permissions')->flatten()->filter()->unique()->values()->all();
 
-        // Expand menu 'keys' into actual path patterns by consulting config('adminlte.menu')
         $menu = config('adminlte.menu', []);
         $keyToPatterns = [];
         $collector = function ($items) use (&$collector, &$keyToPatterns) {
@@ -61,7 +58,6 @@ class CheckMenuPermission
         };
         $collector($menu);
 
-        // Build expanded patterns list: if a role pattern matches a known key, use that key's patterns
         $expandedRolePatterns = [];
         foreach ($rolePatterns as $p) {
             if (isset($keyToPatterns[$p])) {
@@ -72,35 +68,56 @@ class CheckMenuPermission
                 $expandedRolePatterns[] = $p;
             }
         }
-        // replace rolePatterns with expanded list
         $rolePatterns = array_values(array_unique($expandedRolePatterns));
-
-        // Gather user extra allow/deny from extra_permissions JSON
         $extra = is_array($user->extra_permissions ?? null) ? $user->extra_permissions : (is_string($user->extra_permissions) ? json_decode($user->extra_permissions, true) : []);
         $userAllow = $extra['allow'] ?? [];
         $userDeny = $extra['deny'] ?? [];
 
+        // Expand user allow/deny entries to concrete patterns using keyToPatterns
+        $expandUser = function ($arr) use ($keyToPatterns) {
+            $out = [];
+            foreach ($arr as $p) {
+                if (isset($keyToPatterns[$p])) {
+                    foreach ($keyToPatterns[$p] as $pat) $out[] = $pat;
+                } else {
+                    $out[] = $p;
+                }
+            }
+            return array_values(array_unique($out));
+        };
+
+        $userAllow = $expandUser($userAllow);
+        $userDeny = $expandUser($userDeny);
+
         $path = ltrim($request->path(), '/');
         $routeName = $request->route() ? $request->route()->getName() : null;
 
-        // Deny if any user deny pattern matches (match against path or route name)
         foreach ($userDeny as $p) {
             if (Str::is($p, $path) || ($routeName && Str::is($p, $routeName))) {
                 abort(403);
             }
         }
 
-        // If user allow patterns exist, allow if matches (path or route name)
         foreach ($userAllow as $p) {
             if (Str::is($p, $path) || ($routeName && Str::is($p, $routeName))) {
                 return $next($request);
             }
         }
 
-        // If role patterns exist, require at least one match (path or route name)
         if (! empty($rolePatterns)) {
             foreach ($rolePatterns as $p) {
+                // Exact match
                 if (Str::is($p, $path) || ($routeName && Str::is($p, $routeName))) {
+                    return $next($request);
+                }
+
+                // Allow wildcarded patterns stored without trailing star
+                if (Str::is($p . '*', $path) || ($routeName && Str::is($p . '*', $routeName))) {
+                    return $next($request);
+                }
+
+                // Also allow simple substring matches for menu keys (e.g. 'sucursales' matching 'admin/maestros/sucursales/create')
+                if (Str::contains($path, $p) || ($routeName && Str::contains($routeName, $p))) {
                     return $next($request);
                 }
             }
@@ -108,7 +125,6 @@ class CheckMenuPermission
             abort(403);
         }
 
-        // No role restrictions configured, allow by default
         return $next($request);
     }
 }

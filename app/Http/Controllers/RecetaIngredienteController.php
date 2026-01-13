@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class RecetaIngredienteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
@@ -38,10 +35,6 @@ class RecetaIngredienteController extends Controller
         return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar', 'estado'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $recetas = Receta::all();
@@ -50,9 +43,6 @@ class RecetaIngredienteController extends Controller
         return view('admin.maestros.receta_ingredientes.create', compact('recetas', 'productos', 'unidades'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -72,7 +62,6 @@ class RecetaIngredienteController extends Controller
             'unidad_id.*' => 'required|exists:unidades,id',
         ]);
 
-        // Guardar múltiples ingredientes en transacción
         DB::beginTransaction();
         try {
             foreach ($validated['producto_id'] as $index => $productoId) {
@@ -82,8 +71,6 @@ class RecetaIngredienteController extends Controller
                 $unidad = Unidad::find($unidadId);
                 $cantidadGramos = $cantidad * $unidad->factor_a_gramo;
 
-
-                // seguridad: saltar si faltan datos
                 if (!$cantidad || !$unidadId) continue;
 
                 RecetaIngrediente::create([
@@ -103,10 +90,6 @@ class RecetaIngredienteController extends Controller
         }
     }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($recetaId)
     {
         $receta = Receta::with('recetaIngredientes.producto', 'recetaIngredientes.unidad')
@@ -122,12 +105,6 @@ class RecetaIngredienteController extends Controller
         ));
     }
 
-
-
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $recetaId)
     {
         $validated = $request->validate([
@@ -140,17 +117,14 @@ class RecetaIngredienteController extends Controller
             'unidad_id.*' => 'required|exists:unidades,id',
         ]);
 
-        // seguridad: ensure ruta y form coinciden
         if ((int)$validated['recetas_id'] !== (int)$recetaId) {
             return redirect()->back()->withInput()->with('error', 'Id de receta inválido.');
         }
 
         DB::beginTransaction();
         try {
-            // 1) eliminar ingredientes actuales de la receta
             RecetaIngrediente::where('recetas_id', $recetaId)->delete();
 
-            // 2) insertar los nuevos (o los mismos)
             foreach ($validated['producto_id'] as $index => $productoId) {
                 $cantidad = $validated['cantidad_porcion'][$index] ?? null;
                 $unidadId = $validated['unidad_id'][$index] ?? null;
