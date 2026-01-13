@@ -28,9 +28,10 @@ class PermisosController extends Controller
             return redirect()->route('admin.configuracion.permisos.index')->withErrors(['permisos' => 'No puedes editar tus propios permisos. Pide a otro Administrador que lo haga.']);
         }
         $menu = config('adminlte.menu', []);
-            $extra = is_string($usuario->extra_permissions) ? json_decode($usuario->extra_permissions, true) : ($usuario->extra_permissions ?? []);
-            $allow = $extra['allow'] ?? [];
-            $deny = $extra['deny'] ?? [];
+
+        $extra = is_string($usuario->extra_permissions) ? json_decode($usuario->extra_permissions, true) : ($usuario->extra_permissions ?? []);
+        $allow = $extra['allow'] ?? [];
+        $deny = $extra['deny'] ?? [];
 
         $rolePerms = [];
         foreach ($usuario->roles as $r) {
@@ -38,9 +39,52 @@ class PermisosController extends Controller
             if (is_array($perms)) $rolePerms = array_merge($rolePerms, $perms);
         }
         $rolePerms = array_values(array_unique($rolePerms));
-            $effective = array_values(array_unique(array_merge(array_values(array_diff($rolePerms, $deny)), $allow)));
 
-        return view('admin.configuracion.permisos.edit', compact('usuario','menu','allow','effective','rolePerms'));
+        // Build mapping of menu keys to concrete patterns (urls/routes/active)
+        $keyToPatterns = [];
+        $collector = function ($items) use (&$collector, &$keyToPatterns) {
+            foreach ($items as $it) {
+                if (isset($it['submenu']) && is_array($it['submenu'])) {
+                    $collector($it['submenu']);
+                }
+                $key = $it['key'] ?? null;
+                $patterns = [];
+                if (!empty($it['active']) && is_array($it['active'])) {
+                    $patterns = array_merge($patterns, $it['active']);
+                }
+                if (!empty($it['url'])) {
+                    $patterns[] = ltrim($it['url'], '/');
+                }
+                if (!empty($it['route'])) {
+                    $patterns[] = $it['route'];
+                }
+                if ($key && ! empty($patterns)) {
+                    $keyToPatterns[$key] = array_values(array_unique($patterns));
+                }
+            }
+        };
+        $collector($menu);
+
+        // Expand role perms, allow and deny into concrete patterns
+        $expand = function ($arr) use ($keyToPatterns) {
+            $out = [];
+            foreach ($arr as $p) {
+                if (isset($keyToPatterns[$p])) {
+                    foreach ($keyToPatterns[$p] as $pat) $out[] = $pat;
+                } else {
+                    $out[] = $p;
+                }
+            }
+            return array_values(array_unique($out));
+        };
+
+        $rolePatterns = $expand($rolePerms);
+        $denyPatterns = $expand($deny);
+        $allowPatterns = $expand($allow);
+
+        $effective = array_values(array_unique(array_merge(array_values(array_diff($rolePatterns, $denyPatterns)), $allowPatterns)));
+
+        return view('admin.configuracion.permisos.edit', compact('usuario','menu','allow','effective','rolePerms','rolePatterns','keyToPatterns'));
     }
 
     public function update(Request $request, $id)

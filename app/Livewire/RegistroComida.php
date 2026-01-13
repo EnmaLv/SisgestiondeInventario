@@ -44,9 +44,9 @@ class RegistroComida extends Component
     {
         $rules = [];
 
-        foreach ($this->desayunos_agregados as $index) {
-            $rules["desayunos_agregados.$index.receta_id"] = 'required|exists:recetas,id';
-            $rules["desayunos_agregados.$index.cantidad"] = 'required|numeric|min:1';
+        foreach ($this->desayunos_agregados as $i => $item) {
+            $rules["desayunos_agregados.$i.receta_id"] = 'required|exists:recetas,id';
+            $rules["desayunos_agregados.$i.cantidad"] = 'required|numeric|min:1';
         }
 
         return $rules;
@@ -120,13 +120,13 @@ class RegistroComida extends Component
             return;
         }
 
-        foreach ($this->desayunos_agregados as $index) {
-            $rules['desayunos_agregados.' . $index . '.receta_id'] = 'required|numeric|exists:recetas,id';
-            $rules['desayunos_agregados.' . $index . '.cantidad'] = 'required|numeric|min:1';
+        foreach ($this->desayunos_agregados as $i => $registro) {
+            $rules['desayunos_agregados.' . $i . '.receta_id'] = 'required|numeric|exists:recetas,id';
+            $rules['desayunos_agregados.' . $i . '.cantidad'] = 'required|numeric|min:1';
 
-            $messages['desayunos_agregados.' . $index . '.receta_id.required'] = "Seleccione una opción para el Desayuno #" . ($index + 1);
-            $messages['desayunos_agregados.' . $index . '.cantidad.required'] = "Ingrese la cantidad para el Desayuno #" . ($index + 1);
-            $messages['desayunos_agregados.' . $index . '.cantidad.min'] = "La cantidad debe ser 1 o superior para el Desayuno #" . ($index + 1);
+            $messages['desayunos_agregados.' . $i . '.receta_id.required'] = "Seleccione una opción para el Desayuno #" . ($i + 1);
+            $messages['desayunos_agregados.' . $i . '.cantidad.required'] = "Ingrese la cantidad para el Desayuno #" . ($i + 1);
+            $messages['desayunos_agregados.' . $i . '.cantidad.min'] = "La cantidad debe ser 1 o superior para el Desayuno #" . ($i + 1);
         }
 
         $recetaIds = array_filter(array_column($this->desayunos_agregados, 'receta_id'));
@@ -239,9 +239,9 @@ class RegistroComida extends Component
     {
         $attributes = [];
 
-        foreach ($this->desayunos_agregados as $index) {
-            $attributes["desayunos_agregados.$index.receta_id"] = 'desayuno #' . ($index + 1);
-            $attributes["desayunos_agregados.$index.cantidad"] = 'cantidad del desayuno #' . ($index + 1);
+        foreach ($this->desayunos_agregados as $i => $registro) {
+            $attributes["desayunos_agregados.$i.receta_id"] = 'desayuno #' . ($i + 1);
+            $attributes["desayunos_agregados.$i.cantidad"] = 'cantidad del desayuno #' . ($i + 1);
         }
 
         return $attributes;

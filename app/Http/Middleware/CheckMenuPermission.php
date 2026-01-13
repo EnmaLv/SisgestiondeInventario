@@ -73,6 +73,22 @@ class CheckMenuPermission
         $userAllow = $extra['allow'] ?? [];
         $userDeny = $extra['deny'] ?? [];
 
+        // Expand user allow/deny entries to concrete patterns using keyToPatterns
+        $expandUser = function ($arr) use ($keyToPatterns) {
+            $out = [];
+            foreach ($arr as $p) {
+                if (isset($keyToPatterns[$p])) {
+                    foreach ($keyToPatterns[$p] as $pat) $out[] = $pat;
+                } else {
+                    $out[] = $p;
+                }
+            }
+            return array_values(array_unique($out));
+        };
+
+        $userAllow = $expandUser($userAllow);
+        $userDeny = $expandUser($userDeny);
+
         $path = ltrim($request->path(), '/');
         $routeName = $request->route() ? $request->route()->getName() : null;
 
@@ -90,7 +106,18 @@ class CheckMenuPermission
 
         if (! empty($rolePatterns)) {
             foreach ($rolePatterns as $p) {
+                // Exact match
                 if (Str::is($p, $path) || ($routeName && Str::is($p, $routeName))) {
+                    return $next($request);
+                }
+
+                // Allow wildcarded patterns stored without trailing star
+                if (Str::is($p . '*', $path) || ($routeName && Str::is($p . '*', $routeName))) {
+                    return $next($request);
+                }
+
+                // Also allow simple substring matches for menu keys (e.g. 'sucursales' matching 'admin/maestros/sucursales/create')
+                if (Str::contains($path, $p) || ($routeName && Str::contains($routeName, $p))) {
                     return $next($request);
                 }
             }
