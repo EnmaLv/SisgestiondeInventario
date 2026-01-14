@@ -135,7 +135,9 @@
                 <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">*Agregue
                     productos para
                     enviar a compras.</span>
-
+            @elseif ($compra->estado == 'Enviado al proveedor')
+                <span class="text-danger" style="display: inline-block; margin-left: 20px; float: right">Ya fue hecho el
+                    pedido</span>
             @else
                 <button class="rd-btn rd-btn-primary" wire:click="confirmarEnvio" style="float:right;">
                     <i class="fas fa-paper-plane"></i> Enviar Correo a Compras
