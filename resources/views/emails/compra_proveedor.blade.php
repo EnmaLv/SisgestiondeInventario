@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Orden de compra Nro: {{ $compra->id }}</title>
+    <title>Orden de Compra Nro: {{ $compra->id }}</title>
 </head>
 
 <body>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica', 'Arial', sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
@@ -19,106 +19,283 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
             background-color: #ffffff;
-            padding: 20px 30px;
+            padding: 0;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
-        .header {
+        .institutional-header {
+            background-color: #ffffff;
+            padding: 15px 30px;
+            border-bottom: 4px solid #d41002;
+            margin-bottom: 0;
+        }
+
+        .header-content {
+            display: table;
+            width: 100%;
+        }
+
+        .header-left,
+        .header-right {
+            display: table-cell;
+            vertical-align: middle;
+            width: 20%;
+        }
+
+        .header-center {
+            display: table-cell;
+            vertical-align: middle;
             text-align: center;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            width: 60%;
         }
 
-        .header h1 {
-            font-size: 24px;
+        .header-left img,
+        .header-right img {
+            max-height: 70px;
+            width: auto;
+        }
+
+        .header-center h1 {
+            font-size: 16px;
+            color: #333;
+            margin: 0 0 5px 0;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .header-center h2 {
+            font-size: 14px;
+            color: #d41002;
             margin: 0;
-            color: #007bff;
+            font-weight: bold;
         }
 
-        .container p {
-            line-height: 1.5;
-            margin: 0 0 10px;
+        .header-center p {
+            font-size: 11px;
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+
+        .decorative-lines {
+            height: 8px;
+            background: linear-gradient(to bottom, 
+                #d41002 0%, #d41002 33%, 
+                #333 33%, #333 66%, 
+                #ffc107 66%, #ffc107 100%);
+            margin-bottom: 0;
+        }
+
+        .document-header {
+            background-color: #f5f5f5;
+            padding: 20px 30px;
+            text-align: left;
+            border-bottom: 2px solid #d41002;
+        }
+
+        .document-header h3 {
+            font-size: 20px;
+            margin: 0 0 8px 0;
+            font-weight: bold;
+            color: #d41002;
+        }
+
+        .document-header p {
+            margin: 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .content-wrapper {
+            padding: 30px;
         }
 
         .info-section {
             background-color: #f9f9f9;
-            padding: 15px;
-            border-left: 4px solid #007bff;
-            margin-bottom: 20px;
+            padding: 18px;
+            border-left: 4px solid #d41002;
+            margin-bottom: 25px;
+            border-radius: 4px;
         }
 
         .info-section p {
-            margin: 0;
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-section strong {
+            color: #d41002;
+            font-weight: bold;
+        }
+
+        .greeting {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .greeting p {
+            margin: 0 0 10px 0;
             font-size: 14px;
         }
 
-        .info-section p span {
+        .section-title {
+            font-size: 16px;
             font-weight: bold;
+            color: #333;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #d41002;
         }
 
         .product-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            font-size: 14px;
         }
 
         .product-table th,
         .product-table td {
-            border: 1px solid #dddddd;
-            padding: 10px;
+            border: 1px solid #ddd;
+            padding: 12px;
             text-align: left;
-            font-size: 14px;
         }
 
         .product-table th {
-            background-color: #007bff;
-            color: #ffffff;
+            background-color: #f0f0f0;
+            color: #333;
+            font-weight: bold;
             text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
 
-        .total-row {
+        .product-table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .product-table tbody tr:hover {
+            background-color: #fff5f5;
+        }
+
+        .product-table td:first-child {
+            text-align: center;
             font-weight: bold;
-            background-color: #e9f5ff;
+            color: #666;
+            width: 60px;
+        }
+
+        .product-table td:last-child {
+            text-align: center;
+            width: 100px;
+        }
+
+        .observaciones-section {
+            background-color: #fff8e6;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .observaciones-section p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .observaciones-section strong {
+            color: #f57c00;
+        }
+
+        .closing {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .closing p {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .signature {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #d41002;
         }
 
         .footer {
+            background-color: #f9f9f9;
             text-align: center;
             font-size: 12px;
-            color: #888;
-            border-top: 1px solid #dddddd;
-            padding-top: 20px;
-            margin-top: 20px;
+            color: #666;
+            padding: 20px 30px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            line-height: 1.5;
         }
     </style>
 
-
     <div class="container">
-        <div class="header">
-            <h1>Detalles de la Compra Nro: {{ $compra->id }}</h1>
+        <div class="institutional-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href='https://postimg.cc/F7pD0F56' target='_blank'><img src='https://i.postimg.cc/F7pD0F56/ministerio-Logo.png' border='0' alt='ministerio-Logo'></a>
+                </div>
+                <div class="header-center">
+                    <h1>Universidad Politécnica Territorial del Estado Portuguesa</h1>
+                    <h2>Juan Jesus Montilla</h2>
+                    <p>Comedor Universitario</p>
+                </div>
+                <div class="header-right">
+                    <a href='https://postimg.cc/QB9mLp9s' target='_blank'><img src='https://i.postimg.cc/QB9mLp9s/uptp-logo.png' border='0' alt='uptp-logo'></a>
+                </div>
+            </div>
         </div>
 
-        <div class="info-section">
-            <p><strong>Proveedor: </strong>{{ $proveedor->nombre }}</p>
-            <p><strong>Fecha de la Orden: </strong>{{ \Carbon\Carbon::parse($compra->fecha)->format('d/m/Y') }}</p>
+        <div class="decorative-lines"></div>
+
+        <div class="document-header">
+            <h3>Orden de Compra Nro: {{ $compra->id }}</h3>
+            <p>Fecha de emisión: {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</p>
         </div>
 
-        <div class="content">
-            <p>Estimado/a Proveedor: {{ $proveedor->nombre }}</p>
-            <p>Adjuntamos los detalles de la orden Nro: {{ $compra->id }}</p>
-        </div>
+        <div class="content-wrapper">
+            <div class="info-section">
+                <p><strong>Proveedor:</strong> {{ $proveedor->nombre }}</p>
+                <p><strong>Empresa:</strong> {{ $proveedor->empresa ?? 'N/A' }}</p>
+                <p><strong>Fecha de Orden:</strong> {{ \Carbon\Carbon::parse($compra->fecha)->format('d/m/Y') }}</p>
+                <p><strong>Registro en Sistema:</strong> {{ \Carbon\Carbon::parse($compra->created_at)->format('d/m/Y H:i:s') }}</p>
+            </div>
 
-        <div class="product-table">
-            <table>
+            <div class="greeting">
+                <p>Estimado/a <strong>{{ $proveedor->nombre }}</strong>,</p>
+                <p>Por medio del presente, le enviamos los detalles de la orden de compra <strong>Nro: {{ $compra->id }}</strong> para su procesamiento.</p>
+            </div>
+
+            <h2 class="section-title">Productos Solicitados</h2>
+
+            <table class="product-table">
                 <thead>
                     <tr>
                         <th>Nro</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
+                        <th>Unidad</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -126,15 +303,29 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $detalle->producto->nombre }}</td>
-                            <td>{{ $detalle->cantidad }}</td>
+                            <td>{{ number_format($detalle->cantidad, 2, ',', '.') }}</td>
+                            <td>{{ $detalle->unidad->abreviatura ?? 'UND' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+
+            @if($compra->observaciones)
+            <div class="observaciones-section">
+                <p><strong>Observaciones:</strong> {{ $compra->observaciones }}</p>
+            </div>
+            @endif
+
+            <div class="closing">
+                <p>Agradecemos su atención y pronta respuesta a esta solicitud.</p>
+                <p>Quedamos a su disposición para cualquier consulta o aclaración.</p>
+                <p class="signature">Atentamente,<br>Comedor Universitario UPTP JJ Montilla</p>
+            </div>
         </div>
-        <div class="content">
-            <p>Gracias por su colaboración.</p>
-            <p>Atentamente, Comedor Universitario UPTP JJ Montilla</p>
+
+        <div class="footer">
+            <p><strong>Comedor Universitario UPTP JJ Montilla</strong></p>
+            <p>Este es un correo automático generado por el sistema de gestión de compras.</p>
         </div>
     </div>
 </body>
