@@ -42,6 +42,9 @@ EXPOSE 8000
 # Hacemos un link para las imagenes
 RUN php artisan storage:link
 
+#Generamos la llave del proyecto
+RUN php artisan key:generate
+
 
 # Comando para iniciar el servidor interno de PHP 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
