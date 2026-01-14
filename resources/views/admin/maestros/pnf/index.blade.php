@@ -19,7 +19,7 @@
         </div>
         <div>
             <button type="button" class="rd-btn rd-btn-primary" data-toggle="modal" data-target="#modalCrearPnf">
-                <i class="fas fa-plus"></i> Crear Nuevo
+                <i class="fas fa-plus"></i> Nuevo PNF
             </button>
         </div>
 
