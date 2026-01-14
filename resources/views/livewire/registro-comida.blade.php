@@ -34,6 +34,13 @@
                                                 class="rd-input @error('desayunos_agregados.' . $index . '.cantidad') rd-input-error @enderror"
                                                 placeholder="Cant." min="1" @disabled($desayuno_registrado) @if ($desayuno_registrado) style="opacity: .8; cursor: not-allowed;" @endif/>
                                         </div>
+                                        {{-- Botón de Eliminar (Pequeño, solo visible si hay más de una entrada) --}}
+                                        @if(count($desayunos_agregados) > 1 && !$desayuno_registrado)
+                                            <button type="button" wire:click="removeDesayuno({{ $index }})" 
+                                                class="rd-btn rd-btn-eliminar ml-auto"> 
+                                                Eliminar
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -41,6 +48,7 @@
                         @if(!$loop->last)
                             <div class="col-12"><hr class="my-3"></div> 
                         @endif
+
                     @endforeach
                     <div class="col-md-12 d-flex mt-4 justify-content-end align-items-center">
                         <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif" class="rd-btn rd-btn-default mr-4" @disabled($desayuno_registrado)>

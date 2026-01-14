@@ -24,10 +24,10 @@ services:
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_DATABASE=bienestraestudiantil
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=11223344
-      - MYSQL_ROOT_PASSWORD=supersecreto
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - datos_db:/var/lib/mysql
     networks:

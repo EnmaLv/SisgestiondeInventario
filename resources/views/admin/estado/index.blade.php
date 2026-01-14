@@ -25,7 +25,7 @@
                     data-bs-toggle="modal"
                     data-bs-target="#modalCrear">
                 <i class="fas fa-plus"></i>
-                <span>Crear Nuevo</span>
+                <span>Nuevo Estado</span>
             </button>
         </div>
 
