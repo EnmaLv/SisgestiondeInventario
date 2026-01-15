@@ -48,11 +48,18 @@ class PermissionFilter implements FilterInterface
         }
         $allowed = array_values(array_unique($allowed));
 
-        // Apply explicit user deny overrides if present (can only remove, not add).
+        // Apply explicit user deny/allow overrides if present.
+        // Deny removes keys from role-derived allowed list; Allow adds explicit keys.
         $extra = is_array($user->extra_permissions) ? $user->extra_permissions : (is_string($user->extra_permissions) ? json_decode($user->extra_permissions, true) : []);
         $userDeny = $extra['deny'] ?? [];
+        $userAllow = $extra['allow'] ?? [];
+
         if (! empty($userDeny) && is_array($userDeny)) {
             $allowed = array_values(array_diff($allowed, $userDeny));
+        }
+
+        if (! empty($userAllow) && is_array($userAllow)) {
+            $allowed = array_values(array_unique(array_merge($allowed, $userAllow)));
         }
 
         // derive a key if not explicitly provided
