@@ -114,29 +114,30 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+
+            // Reset names to avoid stale values
+            document.querySelectorAll('.perm-chk').forEach(i => i.removeAttribute('name'));
+
             const allow = [];
             const deny = [];
-            
+
             document.querySelectorAll('.perm-chk').forEach(i => {
                 const val = i.value;
                 const isRole = i.dataset.role === '1';
                 if (isRole) {
-                    if (!i.checked) deny.push(val);
+                    if (!i.checked) {
+                        deny.push(val);
+                        i.name = 'deny[]';
+                    }
                 } else {
-                    if (i.checked) allow.push(val);
+                    if (i.checked) {
+                        allow.push(val);
+                        i.name = 'allow[]';
+                    }
                 }
             });
 
-            // Limpiar inputs ocultos previos
-            document.querySelectorAll('input[name="allow[]"], input[name="deny[]"]').forEach(n => n.remove());
-            
-            allow.forEach(v => {
-                const ip = document.createElement('input'); ip.type='hidden'; ip.name='allow[]'; ip.value=v; form.appendChild(ip);
-            });
-            deny.forEach(v => {
-                const ip = document.createElement('input'); ip.type='hidden'; ip.name='deny[]'; ip.value=v; form.appendChild(ip);
-            });
-
+            // If nothing to change, submit (checkboxes with names will be sent)
             if (allow.length === 0 && deny.length === 0) {
                 form.submit();
                 return;

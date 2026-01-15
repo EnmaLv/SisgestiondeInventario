@@ -104,8 +104,8 @@
 	</div>
 	<div class="right">
 		<div style="max-width:600px;" class="corner-text">
-			<h1 class="corner-text">Bienvenido</h1>
-			<p style="opacity:0.9;text-align:right">Crea tu cuenta para continuar</p>
+			<h1 class="corner-text"></h1>
+			<p style="opacity:0.9;text-align:right"></p>
 		</div>
 	</div>
 		<script>
