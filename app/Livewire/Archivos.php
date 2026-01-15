@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\DB;
 use App\Models\Persona;
+use App\Models\PersonaPnf;
 
 class Archivos extends Component
 {
@@ -34,31 +35,22 @@ class Archivos extends Component
         DB::beginTransaction();
 
         try {
-
-            // 1. Guardar archivo
             $ruta = $this->archivo->store('informacion', 'public');
             $fullPath = storage_path('app/public/' . $ruta);
-
-            // 2. BORRAR TODOS LOS ESTUDIANTES ACTUALES
-            Persona::where('id_perfil', 2)->delete();
-
-            // 3. Leer Excel
             $spreadsheet = IOFactory::load($fullPath);
             $rows = $spreadsheet->getActiveSheet()->toArray();
 
-            unset($rows[0]); // eliminar encabezado
+            unset($rows[0]);
 
-            // 👇 NUEVO: control de duplicados
+            $cedulasEnBd = Persona::where('id_perfil', 2)->pluck('cedula_persona')->toArray();
             $cedulasProcesadas = [];
             $cedulasDuplicadas = 0;
             $insertados = 0;
 
-            // 4. Procesar filas
             foreach ($rows as $row) {
 
                 $cedula = trim($row[4]);
 
-                // 👇 Si la cédula ya fue procesada, se omite
                 if (in_array($cedula, $cedulasProcesadas)) {
                     $cedulasDuplicadas++;
                     continue;
@@ -66,7 +58,11 @@ class Archivos extends Component
 
                 $cedulasProcesadas[] = $cedula;
 
-                Persona::create([
+                if (in_array($cedula, $cedulasEnBd)) {
+                    continue;
+                }
+
+                $persona = Persona::create([
                     'nombre_persona' => $row[0],
                     'segundo_nombre_persona' => $row[1] ?: null,
                     'apellido_persona' => $row[2],
@@ -81,10 +77,16 @@ class Archivos extends Component
                     'id_sede' => 1,
                 ]);
 
+                PersonaPnf::create([
+                    'id_persona'  => $persona->id_persona,
+                    'id_pnf'      => $row[11],
+                    'fecha_inicio' => now()->toDateString(),
+                    'fecha_fin'   => now()->toDateString(),
+                ]);
+
                 $insertados++;
             }
 
-            // 5. Guardar historial
             Archivo::create([
                 'info_estudiantes' => $ruta,
                 'fecha' => now()->toDateString(),

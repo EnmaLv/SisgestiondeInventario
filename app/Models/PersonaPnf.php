@@ -10,7 +10,7 @@ class PersonaPnf extends Model
     protected $id = 'id_persona_pnf';
     protected $fillable = [
         "id_persona",
-        "id_persona_pnf ",
+        "id_pnf",
         "fecha_inicio",
         "fecha_fin"
     ];

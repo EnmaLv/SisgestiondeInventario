@@ -25,7 +25,7 @@
                             <span><i class="fas fa-calendar-day"></i></span>
                             <input wire:model="fecha_nacimiento" type="date" name="fecha_nacimiento" class="rd-input form-control" 
                             {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" value="{{ old('fecha_nacimiento') }}" 
-                            max="{{ Carbon\Carbon::now()->format('Y-m-d') }}">
+                            max="{{ Carbon\Carbon::now()->subYears(15)->format('Y-m-d') }}">
                         </div>
                         @error('fecha_nacimiento')
                             <small class="text-danger">{{ $message }}</small>
@@ -107,7 +107,7 @@
                         <label class="rd-label">Teléfono Móvil</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-mobile-alt"></i></span>
-                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="412 1234567" value="{{ old('telefono') }}"
+                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" data-inputmask="'mask': '(999) 999-9999'" data-mask placeholder="(123) 456-7890" value="{{ old('telefono') }}"
                             >
                         </div>
                         @error('telefono')
@@ -261,31 +261,26 @@
 
 @section('js')
     <script>
+        $(document).ready(function() {
+            $("[data-mask]").inputmask();
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            //Validar input de telefono
             const telefonoInput = document.querySelector('#telefono');
             telefonoInput.addEventListener('input', (e) => {
-                // Eliminar todo lo que no sea número
                 let value = e.target.value.replace(/\D/g, '');
-                
-                // Limitar a 10 dígitos
                 value = value.substring(0, 10);
-                
-                // Agregar espacio después del 3er dígito
                 if (value.length > 3) {
                     value = value.substring(0, 3) + ' ' + value.substring(3);
                 }
                 
-                // Actualizar el valor
                 e.target.value = value;
             })
             
             const cedulaInput = document.querySelector('input[name="cedula"]');
             if (cedulaInput) {
                 cedulaInput.addEventListener('input', function() {
-                    // Limpiar el valor para que solo tenga números del 0 al 9
                     this.value = this.value.replace(/[^0-9]/g, '');
-                    // Limitar a 8 caracteres
                     if (this.value.length > 8) {
                         this.value = this.value.slice(0, 8);
                     }
