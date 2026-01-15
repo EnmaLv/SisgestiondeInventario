@@ -96,7 +96,6 @@
 				@endif
 
 				<button class="btn" type="submit">REGISTRARSE</button>
-				<a href="{{ route('login') }}" class="btn-outline" style="margin-top:8px;">VOLVER AL LOGIN</a>
 			</form>
 
 				<!-- inline security questions added above inside form -->
