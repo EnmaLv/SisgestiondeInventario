@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const desdeDate = document.getElementById('fecha_desde');
     const hastaDate = document.getElementById('fecha_hasta');
 
+    //Si no existen los campos, no hacer nada
+    if (!desdeDate || !hastaDate) {
+        return;
+    }
+
     // Fecha actual (máximo permitido)
     const fechaActual = new Date().toISOString().split('T')[0];
 
@@ -61,6 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const archivoInput = document.getElementById('archivo');
     const nombreDisplay = document.getElementById('nombre-display');
+    
+    //Si no existen los campos, no hacer nada
+    if (!archivoInput || !nombreDisplay) {
+        return;
+    }
+
     archivoInput.addEventListener('change', function(e) {
         let fileName = e.target.files[0].name;
         nombreDisplay.innerText = fileName;

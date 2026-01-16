@@ -75,7 +75,7 @@
                                 class="form-control rd-filter-input"
                                 wire:model="archivo"
                                 wire:key="{{ $archivoKey }}"
-                                accept=".xlsx,.xls,.pdf,.txt"
+                                accept=".xlsx,.xls"
                                 style="padding: 20px; font-size: 1rem; height: auto;" id="archivo" hidden>
                                 
                                 @error('archivo')
