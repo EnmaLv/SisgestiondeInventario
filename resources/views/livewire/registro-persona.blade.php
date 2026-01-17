@@ -145,7 +145,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        @error('pnfId') <small class="text-danger"><b>El PNF es obligatorio</b></small> @enderror
+                        @error('pnfId') <small class="text-danger">El PNF es obligatorio</small> @enderror
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="rd-label">Sede del Estudiante</label>
@@ -157,8 +157,8 @@
                                     <option value="{{ $sed->id_sede }}">{{ $sed->nombre_sede }}</option>
                                 @endforeach
                             </select>
-                            @error('sedeId') <small class="text-danger"><b>La Sede es obligatoria</b></small> @enderror
                         </div>
+                        @error('sedeId') <small class="text-danger">La Sede es obligatoria</small> @enderror
                         
                     </div>
                 </div>

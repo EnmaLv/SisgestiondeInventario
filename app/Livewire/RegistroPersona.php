@@ -163,7 +163,7 @@ class RegistroPersona extends Component
     public function create()
     {
         //Validamos todos los campos
-        try {
+
             $data = $this->validate();
             $finish = Persona::crearPersona($data);
 
@@ -177,13 +177,7 @@ class RegistroPersona extends Component
                     text: 'Error al crear el estudiante. Revisa los datos'
                 );
             }
-        } catch (Exception $e) {
-            $this->dispatch('alert', 
-                type: 'error',
-                title: 'Error',
-                text: $e->getMessage() ?: 'Ocurrió un error al procesar la solicitud'
-            );
-        }
+
 
     }
 
