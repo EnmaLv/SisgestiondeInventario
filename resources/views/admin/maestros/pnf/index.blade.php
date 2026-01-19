@@ -102,7 +102,7 @@
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea inactivar la sede?",
+                                                        text: "Desea inactivar el Pnf?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -133,7 +133,7 @@
                                                     event.preventDefault();
                                                     Swal.fire({
                                                         title: '¿Estás seguro?',
-                                                        text: "Desea activar la sede?",
+                                                        text: "Desea activar el PNF?",
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',

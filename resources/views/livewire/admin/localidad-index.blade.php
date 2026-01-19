@@ -66,7 +66,7 @@
                                             <i class="fas fa-inbox"></i>
                                         </div>
                                         <h4>No hay localidades registradas</h4>
-                                        <p>Agrega un nuevo estado con el botón superior</p>
+                                        <p>Agrega una nueva localidad con el botón superior</p>
                                     </div>
                                 </td>
                             </tr>

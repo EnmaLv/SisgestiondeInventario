@@ -31,7 +31,7 @@
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Estudiantes Registradas</h3>
+                    <h3 class="rd-title-sm">Estudiantes Registrados</h3>
                 </div>
                 <div class="rd-actions">
                     <form action="{{ route('admin.configuracion.persona.index') }}" method="GET" class="rd-search-inline"
