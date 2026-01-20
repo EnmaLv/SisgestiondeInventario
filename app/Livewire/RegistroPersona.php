@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;  
+use Illuminate\Support\Facades\DB;
 use App\Models\Persona;
 use App\Models\PersonaPnf;
 use Livewire\Attributes\Validate;
@@ -16,9 +16,9 @@ class RegistroPersona extends Component
 
     public $isEdit = false;
     public $onlyShow = false;
-    public $cedula; 
-    public $estadosVeId; 
-    public $municipiosId; 
+    public $cedula;
+    public $estadosVeId;
+    public $municipiosId;
     public $parroquiaId;
     public $municipiosVE = [];
     public $parroquiasVE = [];
@@ -58,7 +58,7 @@ class RegistroPersona extends Component
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+                'before_or_equal:' . now()->subYears(15)->format('Y-m-d'),
             ],
             'genero' => 'required',
             'telefono' => 'required',
@@ -71,11 +71,11 @@ class RegistroPersona extends Component
             'sedeId' => 'required|numeric',
             'pnfId' => 'required|numeric',
         ];
-        
+
         if ($this->isEdit) {
             $rules['cedula'] = 'required|min:100000|numeric';
         }
-        
+
         return $rules;
     }
 
@@ -99,16 +99,16 @@ class RegistroPersona extends Component
 
     public function updatedCedula($value)
     {
-        
+
         if (empty($value)) {
             $this->formHabilitado = false;
             return;
         }
 
         try {
-            $this->validateOnly('cedula'); 
-        
-            $this->formHabilitado = true; 
+            $this->validateOnly('cedula');
+
+            $this->formHabilitado = true;
         } catch (Exception $e) {
             $this->formHabilitado = false;
             throw $e;
@@ -124,7 +124,7 @@ class RegistroPersona extends Component
             ->where('estado_id', $value)
             ->where('status', 1)
             ->get();
-        
+
         $this->enabledMunicipio = ($value && $this->formHabilitado);
     }
 
@@ -133,7 +133,7 @@ class RegistroPersona extends Component
         $this->validateOnly('municipiosId');
 
         $this->parroquiasVE = DB::table('localidads')->where('municipio_id', $value)->where('status', 1)->get();
-        
+
         $this->enabledParroquia = ($value && $this->formHabilitado);
     }
 
@@ -141,21 +141,20 @@ class RegistroPersona extends Component
     {
         //Validamos todos los campos
 
-            $data = $this->validate();
-            $finish = Persona::crearPersona($data);
+        $data = $this->validate();
+        $finish = Persona::crearPersona($data);
 
-            if($finish) {
+        if ($finish) {
 
-                redirect()->route('admin.configuracion.persona.index')->with('success', 'Estudiante creado exitosamente.');
-            } else {
-                $this->dispatch('alert', 
-                    type: 'error',
-                    title: 'Error',
-                    text: 'Error al crear el estudiante. Revisa los datos'
-                );
-            }
-
-
+            redirect()->route('admin.configuracion.persona.index')->with('success', 'Estudiante creado exitosamente.');
+        } else {
+            $this->dispatch(
+                'alert',
+                type: 'error',
+                title: 'Error',
+                text: 'Error al crear el estudiante. Revisa los datos'
+            );
+        }
     }
 
     public $personaId;
@@ -166,24 +165,25 @@ class RegistroPersona extends Component
 
             [$finish, $error] = Persona::actualizarPersona($data, $this->personaId);
 
-            if($finish) {
+            if ($finish) {
 
                 redirect()->route('admin.configuracion.persona.index')->with('success', 'Estudiante actualizado exitosamente.');
             } else {
-                $this->dispatch('alert', 
+                $this->dispatch(
+                    'alert',
                     type: 'error',
                     title: 'Error',
                     text: $error ?? 'Error al actualizar el estudiante. Revisa los datos'
                 );
             }
         } catch (Exception $e) {
-            $this->dispatch('alert', 
+            $this->dispatch(
+                'alert',
                 type: 'error',
                 title: 'Error',
                 text: $e->getMessage() ?: 'Ocurrió un error al procesar la solicitud'
             );
         }
-
     }
 
     public $perfil = [];
@@ -194,8 +194,7 @@ class RegistroPersona extends Component
 
     public function mount()
     {
-        if($this->isEdit)
-        {
+        if ($this->isEdit) {
             $this->formHabilitado = true;
             $this->enabledMunicipio = true;
             $this->enabledParroquia = true;
@@ -227,43 +226,41 @@ class RegistroPersona extends Component
             $this->showPnf = true;
             $this->pnfId = $personaPnf->id_pnf;
             $this->sedeId = $persona->id_sede;
-            
-            if(!$direccion)
-            {
+
+            if (!$direccion) {
                 $this->enabledMunicipio = false;
                 $this->enabledParroquia = false;
                 $this->estadosVE = DB::table('estados')->get();
 
-                $this->dispatch('alert',
+                $this->dispatch(
+                    'alert',
                     type: 'warning',
                     title: 'Usuario sin Dirección',
-                    text: 'El usuario no tiene una dirección registrada. Por favor, complete los datos de dirección.');
+                    text: 'El usuario no tiene una dirección registrada. Por favor, complete los datos de dirección.'
+                );
                 return;
             }
             $this->estadosVeId = $direccion->estado_id;
             $this->municipiosVE = DB::table('municipios')
                 ->where('estado_id', $this->estadosVeId)
                 ->get();
-            
+
             $this->municipiosId = $direccion->municipio_id;
-            
+
             $this->parroquiasVE = DB::table('localidads')
                 ->where('municipio_id', $this->municipiosId)
                 ->get();
-                
+
             $this->parroquiaId = $direccion->id_localidad;
             $this->calle = $direccion->calle;
             $this->sector = $direccion->sector;
-                
-
-
         }
 
         $this->pnfs = DB::table('pnf')->where('id_estatus', 1)->get();
         $this->estadosVE = DB::table('estados')->where('status', 1)->get();
         $this->sede = DB::table('sede')->get();
     }
-    
+
     public function render()
     {
         return view('livewire.registro-persona');

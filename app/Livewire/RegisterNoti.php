@@ -180,7 +180,7 @@ class RegisterNoti extends Component
             try {
                 //Iniciamos las transacciones
                 DB::beginTransaction();
-                $personaPnf = PersonaPnf::where('id_persona_pnf', $persona->id_persona)->first();
+                $personaPnf = PersonaPnf::where('id_persona', $persona->id_persona)->first();
 
                 //Insertamos el registro diario
                 DB::table('registro_diario_c')->insert([

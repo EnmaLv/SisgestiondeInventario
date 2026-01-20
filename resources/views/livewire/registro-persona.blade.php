@@ -107,7 +107,7 @@
                         <label class="rd-label">Teléfono Móvil</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-mobile-alt"></i></span>
-                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" data-inputmask="'mask': '(999) 999-9999'" data-mask placeholder="(123) 456-7890" value="{{ old('telefono') }}"
+                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" value="{{ old('telefono') }}" placeholder="4245994343"
                             >
                         </div>
                         @error('telefono')
