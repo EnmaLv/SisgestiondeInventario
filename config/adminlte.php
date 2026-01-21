@@ -311,215 +311,244 @@ return [
             'type' => 'sidebar-menu-search',
             'text' => 'Buscar',
         ],
+
+
+
+        /* ---------------------------------------------------
+        | 🍽️ GESTIÓN DE COMEDOR
+        --------------------------------------------------- */
         [
-            'header' => 'Gestion de Comedor y Recetas',
+            'header' => 'Gestión de Comedor',
             'classes' => 'text-bold'
         ],
 
         [
-            'text' => 'Platos del Día',
-            'icon' => 'fas fa-utensils ',
-            'active' => ['admin/maestros/platos*'],
+            'text' => 'Recetas y Platos',
+            'icon' => 'fas fa-utensils',
+            'active' => ['admin/maestros/recetas*', 'admin/maestros/receta_ingredientes*'],
             'submenu' => [
                 [
                     'text' => 'Recetas',
                     'url' => 'admin/maestros/recetas',
-                    'icon' => 'fas fa-book-open ',
+                    'icon' => 'fas fa-book-open',
                     'active' => ['admin/maestros/recetas*'],
                 ],
                 [
                     'text' => 'Ingredientes',
                     'url' => 'admin/maestros/receta_ingredientes',
-                    'icon' => 'fas fa-carrot ',
+                    'icon' => 'fas fa-carrot',
                     'active' => ['admin/maestros/receta_ingredientes*'],
                 ],
             ]
         ],
 
         [
-            'text' => 'Sede y Anexos',
-            'url' => 'admin/maestros/sucursales',
-            'icon' => 'fas fa-store ',
-            'active' => ['admin/maestros/sucursales*'],
+            'text' => 'Registro de Comidas',
+            'icon' => 'fas fa-clipboard-check',
+            'active' => ['admin/movimientos/registro_comida*', 'admin/movimientos/registro_diario*'],
+            'submenu' => [
+                [
+                    'text' => 'Registrar Comida',
+                    'key' => 'registro_comida',
+                    'url' => 'admin/movimientos/registro_comida',
+                    'icon' => 'fas fa-utensils',
+                    'active' => ['admin/movimientos/registro_comida*'],
+                ],
+                [
+                    'text' => 'Registro Diario',
+                    'key' => 'registro_diario',
+                    'url' => 'admin/movimientos/registro_diario',
+                    'icon' => 'fas fa-concierge-bell',
+                    'active' => ['admin/movimientos/registro_diario*'],
+                ],
+            ]
         ],
+
+        /* ---------------------------------------------------
+        | 📦 GESTIÓN DE INVENTARIO
+        --------------------------------------------------- */
         [
-            'header' => 'Catálogo y Suministros',
+            'header' => 'Gestión de Inventario',
             'classes' => 'text-bold'
         ],
 
         [
-            'text' => 'Categorías de Productos',
-            'key' => 'productos_categorias',
-            'url' => 'admin/maestros/categorias',
-            'icon' => 'fas fa-tags ',
-            'active' => ['admin/maestros/categorias*'],
+            'text' => 'Catálogo de Productos',
+            'icon' => 'fas fa-boxes',
+            'active' => ['admin/maestros/categorias*', 'admin/maestros/productos*'],
+            'submenu' => [
+                [
+                    'text' => 'Categorías',
+                    'key' => 'productos_categorias',
+                    'url' => 'admin/maestros/categorias',
+                    'icon' => 'fas fa-tags',
+                    'active' => ['admin/maestros/categorias*'],
+                ],
+                [
+                    'text' => 'Productos',
+                    'key' => 'productos',
+                    'url' => 'admin/maestros/productos',
+                    'icon' => 'fas fa-box',
+                    'active' => ['admin/maestros/productos*'],
+                ],
+            ]
         ],
 
         [
-            'text' => 'Productos y Alimentos',
-            'key' => 'productos',
-            'url' => 'admin/maestros/productos',
-            'icon' => 'fas fa-box ',
-            'active' => ['admin/maestros/productos*'],
-        ],
-
-        [
-            'text' => 'Proveedores',
-            'key' => 'proveedores',
-            'url' => 'admin/maestros/proveedores',
-            'icon' => 'fas fa-truck ',
-            'active' => ['admin/maestros/proveedores*'],
-        ],
-
-        [
-            'header' => 'Movimientos y Control de Stock',
-            'classes' => 'text-bold'
-        ],
-
-        [
-            'text' => 'Ordenar Requisicion',
+            'text' => 'Compras y Requisiciones',
             'url' => 'admin/movimientos/compras',
-            'icon' => 'fas fa-shopping-cart ',
+            'icon' => 'fas fa-shopping-cart',
             'active' => ['admin/movimientos/compras*'],
         ],
 
         [
-            'text' => 'Inventario',
-            'icon' => 'fas fa-warehouse ',
-            'active' => ['admin/movimientos/inventario*'],
+            'text' => 'Control de Stock',
+            'icon' => 'fas fa-warehouse',
+            'active' => ['admin/movimientos/inventario*', 'admin/movimientos/lotes*', 'admin/movimientos/sucursales_lotes*'],
             'submenu' => [
                 [
                     'text' => 'Lotes',
                     'url' => 'admin/movimientos/lotes',
-                    'icon' => 'fas fa-boxes ',
+                    'icon' => 'fas fa-boxes',
+                    'active' => ['admin/movimientos/lotes*'],
                 ],
                 [
                     'text' => 'Existencias por Sede',
                     'url' => 'admin/movimientos/sucursales_lotes',
-                    'icon' => 'fas fa-store-alt ',
+                    'icon' => 'fas fa-store-alt',
                     'active' => ['admin/movimientos/sucursales_lotes*'],
                 ],
             ]
         ],
 
         [
-            'header' => 'Registros y Consumo',
+            'text' => 'Historial de Movimientos',
+            'url' => 'admin/movimientos/historial_movimientos',
+            'icon' => 'fas fa-clipboard-list',
+            'active' => ['admin/movimientos/historial_movimientos*'],
+        ],
+
+        /* ---------------------------------------------------
+        | 🏢 CONFIGURACIÓN INSTITUCIONAL
+        --------------------------------------------------- */
+        [
+            'header' => 'Configuración Institucional',
             'classes' => 'text-bold'
         ],
-        [
-            'text' => 'Registro Comida',
-            'key' => 'registro_comida',
-            'url' => 'admin/movimientos/registro_comida',
-            'icon' => 'fas fa-clipboard-check ',
-            'active' => ['admin/movimientos/registro_comida*'],
-        ],
-
 
         [
-            'text' => 'Registro Diario de Comidas',
-            'key' => 'registro_diario',
-            'url' => 'admin/movimientos/registro_diario',
-            'icon' => 'fas fa-concierge-bell ',
-            'active' => ['admin/movimientos/registro_diario*'],
-        ],
-
-        [
-            'text' => 'Historial de Inventario',
-            'url' => 'admin/movimientos/historial_movimientos',
-            'icon' => 'fas fa-clipboard-list ',
-        ],
-        ['header' => 'Registros', 'classes' => 'text-bold'],
-        [
-            'text' => 'Pnf',
-            'key' => 'pnf',
-            'url' => 'admin/maestros/pnf',
-            'icon' => 'fas fa-graduation-cap ',
-            'active' => ['admin/maestro/pnf*'],
-        ],
-        [
-            'text' => 'Registrar Estudiante',
-            'url' => 'admin/persona',
-            'icon' => 'fas fa-solid fa-address-card ',
-            'active' => ['admin/persona*'],
-        ],
-
-        ['header' => 'Ubicacion Geográfica', 'classes' => 'text-bold'],
-
-        [
-            'text' => 'Ubicaciones',
-            'key' => 'ubicaciones',
-            'icon' => 'fas fa-map-marked-alt',
-            'active' => ['admin/estado*'],
+            'text' => 'Configuración General',
+            'icon' => 'fas fa-cog',
+            'active' => ['admin/maestros/sucursales*', 'admin/maestros/proveedores*', 'admin/maestros/pnf*'],
             'submenu' => [
                 [
-                    'text' => 'Estados',
-                    'key' => 'ubicaciones_estados',
-                    'url'  => 'admin/estado',
-                    'icon' => 'fas fa-globe',
+                    'text' => 'Sedes y Anexos',
+                    'url' => 'admin/maestros/sucursales',
+                    'icon' => 'fas fa-store',
+                    'active' => ['admin/maestros/sucursales*'],
                 ],
                 [
-                    'text' => 'Municipios',
-                    'key' => 'ubicaciones_municipios',
-                    'url'  => 'admin/municipio',
-                    'icon' => 'fas fa-city',
+                    'text' => 'Proveedores',
+                    'key' => 'proveedores',
+                    'url' => 'admin/maestros/proveedores',
+                    'icon' => 'fas fa-truck',
+                    'active' => ['admin/maestros/proveedores*'],
+                ],
+
+                [
+                    'text' => 'Ubicaciones Geográficas',
+                    'key' => 'ubicaciones',
+                    'icon' => 'fas fa-map-marked-alt',
+                    'active' => ['admin/estado*', 'admin/municipio*', 'admin/localidad*'],
+                    'submenu' => [
+                        [
+                            'text' => 'Estados',
+                            'key' => 'ubicaciones_estados',
+                            'url'  => 'admin/estado',
+                            'icon' => 'fas fa-globe',
+                            'active' => ['admin/estado*'],
+                        ],
+                        [
+                            'text' => 'Municipios',
+                            'key' => 'ubicaciones_municipios',
+                            'url'  => 'admin/municipio',
+                            'icon' => 'fas fa-city',
+                            'active' => ['admin/municipio*'],
+                        ],
+                        [
+                            'text' => 'Localidades',
+                            'key' => 'ubicaciones_localidades',
+                            'url'  => 'admin/localidad',
+                            'icon' => 'fas fa-home',
+                            'active' => ['admin/localidad*'],
+                        ],
+                    ],
                 ],
                 [
-                    'text' => 'Localidades',
-                    'key' => 'ubicaciones_localidades',
-                    'url'  => 'admin/localidad',
-                    'icon' => 'fas fa-home',
+                    'text' => 'Estudiantes',
+                    'url' => 'admin/persona',
+                    'icon' => 'fas fa-user-graduate',
+                    'active' => ['admin/persona*'],
                 ],
-            ],
+
+                [
+                    'text' => 'Programas de Formación',
+                    'key' => 'pnf',
+                    'url' => 'admin/maestros/pnf',
+                    'icon' => 'fas fa-graduation-cap',
+                    'active' => ['admin/maestro/pnf*'],
+                ],
+            ]
         ],
 
 
-        /* ---------------------------------------------------
-        | 📊 REPORTES
-        --------------------------------------------------- */
-        /* ['header' => '📊 REPORTES Y CONSULTAS'],
 
-        [
-            'text' => 'Reportes Generales',
-            'url' => 'admin/consultas/reportes',
-            'icon' => 'fas fa-file-alt ',
-        ], */
 
 
         /* ---------------------------------------------------
-        | ⚙️ CONFIGURACIÓN
+        | ⚙️ ADMINISTRACIÓN DEL SISTEMA
         --------------------------------------------------- */
-        ['header' => ' Configuración', 'classes' => 'text-bold'],
+        [
+            'header' => 'Administración del Sistema',
+            'classes' => 'text-bold'
+        ],
 
         [
-            'text' => 'Empleados',
-            'key' => 'config_empleados',
-            'url' => 'admin/configuracion/empleados',
+            'text' => 'Gestión de Usuarios',
             'icon' => 'fas fa-users-cog',
-            'active' => ['admin/configuracion/empleados*'],
-        ],
-        [
-            'text' => 'Roles',
-            'key' => 'config_roles',
-            'url' => 'admin/configuracion/roles',
-            'icon' => 'fas fa-user-tag',
-            'active' => ['admin/configuracion/roles*'],
-        ],
-        [
-            'text' => 'Permisos',
-            'key' => 'config_permisos',
-            'url' => 'admin/configuracion/permisos',
-            'icon' => 'fas fa-key',
-            'active' => ['admin/configuracion/permisos*'],
+            'active' => ['admin/configuracion/empleados*', 'admin/configuracion/roles*', 'admin/configuracion/permisos*'],
+            'submenu' => [
+                [
+                    'text' => 'Empleados',
+                    'key' => 'config_empleados',
+                    'url' => 'admin/configuracion/empleados',
+                    'icon' => 'fas fa-users',
+                    'active' => ['admin/configuracion/empleados*'],
+                ],
+                [
+                    'text' => 'Roles',
+                    'key' => 'config_roles',
+                    'url' => 'admin/configuracion/roles',
+                    'icon' => 'fas fa-user-tag',
+                    'active' => ['admin/configuracion/roles*'],
+                ],
+                [
+                    'text' => 'Permisos',
+                    'key' => 'config_permisos',
+                    'url' => 'admin/configuracion/permisos',
+                    'icon' => 'fas fa-key',
+                    'active' => ['admin/configuracion/permisos*'],
+                ],
+            ]
         ],
 
         [
-            'text' => 'Archivos',
+            'text' => 'Archivos del Sistema',
             'url' => 'admin/configuracion/archivos',
-            'icon' => 'fas fa-users-cog',
+            'icon' => 'fas fa-folder-open',
             'active' => ['admin/configuracion/archivos*'],
         ],
     ],
-
 
 
     /*
