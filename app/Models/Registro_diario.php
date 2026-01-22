@@ -88,13 +88,14 @@ class Registro_diario extends Model
     public static function showData(array $filter = [], bool $isPdf = false)
     {
         $query = self::relacionTable()
-            ->select('registro_diario_c.*', 'persona.nombre_persona', 'persona.apellido_persona', 'pnf.nombre_pnf');
+            ->select('registro_diario_c.*', 'persona.nombre_persona', 'persona.apellido_persona', 'persona.cedula_persona', 'pnf.nombre_pnf');
 
 
         //Por si hay que buscar por el input
         if (isset($filter['buscar']) && $filter['buscar']) {
             $query->where('persona.nombre_persona', 'like', '%' . $filter['buscar'] . '%')
                 ->orWhere('persona.apellido_persona', 'like', '%' . $filter['buscar'] . '%')
+                ->orWhere('persona.cedula_persona', 'like', '%' . $filter['buscar'] . '%')
                 ->orWhere('pnf.nombre_pnf', 'like', "%{$filter['buscar']}%");
         }
 

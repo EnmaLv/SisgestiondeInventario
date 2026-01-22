@@ -79,29 +79,36 @@ class RegistroDiarioController extends Controller
     //Reportes
     public function exportPdf(Request $request)
     {
-        $filter = [];
+        // Aumentar límites
+        set_time_limit(120);
+        ini_set('memory_limit', '512M');
 
         $Hoy = date('Y-m-d');
-
-        //Recuperamos la informacion de la fecha desde y hasta
-        $fecha_desde = $request->input('fecha_desde') == "" ?  date('Y-m-d', strtotime('-1 month')) : $request->input('fecha_desde');
-        $fecha_hasta = $request->input('fecha_hasta') == "" ? $Hoy : $request->input('fecha_hasta');
-
+        
+        $fecha_desde = $request->input('fecha_desde', date('Y-m-d', strtotime('-1 month')));
+        $fecha_hasta = $request->input('fecha_hasta', $Hoy);
 
         $filter = [
             'fecha_desde' => $fecha_desde,
             'fecha_hasta' => $fecha_hasta,
         ];
 
-
-
+        // Obtener registros con límite
         $register = Registro_diario::showData($filter, true);
+        
+        // Verificar si hay demasiados registros
+        if ($register->count() >= 5000) {
+            return redirect()->back()
+                ->with('mensaje', 'Demasiados registros')
+                ->with('icono', 'warning')
+                ->with('texto', 'El rango de fechas contiene más de 5000 registros. Por favor, reduce el rango de fechas.');
+        }
 
         $datos = [
             'registros' => $register,
             'fecha_desde' => $fecha_desde,
             'fecha_hasta' => $fecha_hasta,
-            'registros_pnf' => Registro_diario::getAllByPnf()
+            'registros_pnf' => Registro_diario::getAllByPnf($filter)
         ];
 
         return PdfGeneratorUtil::ShowPdf('pdf.registro_diario', $datos, "Registro Diario");

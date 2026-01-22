@@ -304,15 +304,37 @@
     <div class="institutional-header">
         <div class="header-content">
             <div class="header-left">
-                <img src="img\ministerioLogo.png" alt="Logo UPTP">
+                @php
+                    $logoPath = public_path('img/ministerioLogo.png');
+                    if (file_exists($logoPath)) {
+                        $logoData = base64_encode(file_get_contents($logoPath));
+                        $logoSrc = 'data:image/png;base64,' . $logoData;
+                    } else {
+                        $logoSrc = '';
+                    }
+                @endphp
+                @if($logoSrc)
+                    <img src="{{ $logoSrc }}" alt="Logo Ministerio">
+                @endif
             </div>
             <div class="header-center">
                 <h1>Universidad Politécnica Territorial del Estado Portuguesa</h1>
-                <h2>Juan Jesus Montilla</h2>
+                <h2>Juan Jesús Montilla</h2>
                 <p>Comedor Universitario</p>
             </div>
             <div class="header-right">
-                <img src="img/Logo.png" alt="Logo Comedor">
+                @php
+                    $logoPath2 = public_path('img/Logo.png');
+                    if (file_exists($logoPath2)) {
+                        $logoData2 = base64_encode(file_get_contents($logoPath2));
+                        $logoSrc2 = 'data:image/png;base64,' . $logoData2;
+                    } else {
+                        $logoSrc2 = '';
+                    }
+                @endphp
+                @if($logoSrc2)
+                    <img src="{{ $logoSrc2 }}" alt="Logo Universidad">
+                @endif
             </div>
         </div>
     </div>
@@ -387,8 +409,8 @@
         @endforelse
 
         <div class="footer">
-            <p><strong>Comedor Universitario - UPTP Juan José Montilla</strong></p>
-            <p>Sistema de Gestión de Compras | Documento generado automáticamente</p>
+            <p><strong>Comedor Universitario - UPTP Juan Jesus Montilla</strong></p>
+            <p>Sistema de Bienestar Estudiantil | Documento generado automáticamente</p>
         </div>
     </div>
 

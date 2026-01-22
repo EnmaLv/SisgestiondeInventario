@@ -319,13 +319,12 @@
             <div class="closing">
                 <p>Agradecemos su atención y pronta respuesta a esta solicitud.</p>
                 <p>Quedamos a su disposición para cualquier consulta o aclaración.</p>
-                <p class="signature">Atentamente,<br>Comedor Universitario UPTP JJ Montilla</p>
             </div>
         </div>
 
         <div class="footer">
-            <p><strong>Comedor Universitario UPTP JJ Montilla</strong></p>
-            <p>Este es un correo automático generado por el sistema de gestión de compras.</p>
+            <p><strong>Comedor Universitario - UPTP Juan Jesus Montilla</strong></p>
+            <p>Sistema de Bienestar Estudiantil | Documento generado automáticamente</p>
         </div>
     </div>
 </body>

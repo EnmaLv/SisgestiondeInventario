@@ -36,7 +36,7 @@ class MovimientoInventarioController extends Controller
             'fecha_hasta' => $request->input('fecha_hasta'),
             'activo' => $request->input('estado'),
         ];
-        
+
         $movimiento = MovimientoInventario::getData($filtro, true);
         $datos = [
             'movimiento' => $movimiento,
