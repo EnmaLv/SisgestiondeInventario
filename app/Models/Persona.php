@@ -26,9 +26,35 @@ class Persona extends Model
         'id_perfil',
         'id_sede',
     ];
+    /**
+     * Formatea un número de teléfono al estilo (999) 999-9999
+     * @param string|null $numero Ej: 0322232332
+     * @return string
+     */
+    private static function formatearTelefono($numero) {
+        // 1. Limpiamos el valor por si trae espacios o caracteres extraños
+        $limpio = preg_replace('/\D/', '', $numero);
+
+        // 2. Verificamos que tenga la longitud esperada (ej. 10 dígitos)
+        if (strlen($limpio) == 10) {
+            return "(" . substr($limpio, 0, 3) . ") " . substr($limpio, 3, 3) . "-" . substr($limpio, 6);
+        }
+
+        // Si es un número con 11 dígitos (típico en Venezuela: 04121234567)
+        if (strlen($limpio) == 11) {
+            return "(" . substr($limpio, 0, 4) . ") " . substr($limpio, 4, 3) . "-" . substr($limpio, 7);
+        }
+
+        // Si no cumple el formato, devolvemos el original
+        return $numero;
+    }
 
     public static function crearPersona($data)
     {
+
+        //Formateamos el numero de telefono
+        $telefono = self::formatearTelefono($data['telefono']);
+        
         //Iniciamos una transsaccion para crear la persona
 
         DB::beginTransaction();
@@ -41,7 +67,7 @@ class Persona extends Model
                 'segundo_nombre_persona' => $data['segundo_nombre'],
                 'apellido_persona' => $data['apellido'],
                 'segundo_apellido_persona' => $data['segundo_apellido'],
-                'telefono_persona' => $data['telefono'],
+                'telefono_persona' => $telefono,
                 'genero_persona' => $data['genero'],
                 'edad_persona' => Carbon::parse($data['fecha_nacimiento'])->age,
                 'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
