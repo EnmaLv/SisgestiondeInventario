@@ -23,7 +23,7 @@
         <div class="col-md-11">
             <div class="rd-card shadow-sm border-0">
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.configuracion.roles.update', $rol->id_rol) }}" method="POST">
+                    <form action="{{ route('admin.configuracion.roles.update', $rol->id_rol) }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         @method('PUT')
                         
@@ -117,7 +117,7 @@
                                 Cancelar
                             </a>
                             @if(!($isProtected ?? false))
-                                <button type="submit" class="rd-btn rd-btn-primary px-5" style="height: 48px; justify-content: center;">
+                                <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5" style="height: 48px; justify-content: center;">
                                     <i class="fas fa-sync-alt"></i> Actualizar Rol
                                 </button>
                             @else

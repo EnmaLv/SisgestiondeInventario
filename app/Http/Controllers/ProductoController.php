@@ -8,9 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\ExchangeRates;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
-
-
 use App\Http\Requests\ProductoRequest;
+use Illuminate\Support\Facades\Log;
 
 class ProductoController extends Controller
 {
@@ -56,7 +55,7 @@ class ProductoController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
-            \Log::error('Error al crear producto', ['error' => $e->getMessage()]);
+            Log::error('Error al crear producto', ['error' => $e->getMessage()]);
 
             return redirect()
                 ->back()

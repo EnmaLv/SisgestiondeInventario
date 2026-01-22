@@ -23,7 +23,7 @@
         <div class="col-md-11">
             <div class="rd-card shadow-sm border-0">
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.configuracion.permisos.update', $usuario->id_usuario) }}" method="POST">
+                    <form action="{{ route('admin.configuracion.permisos.update', $usuario->id_usuario) }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         @method('PUT')
 
@@ -56,7 +56,7 @@
                             <a href="{{ route('admin.configuracion.permisos.index') }}" class="rd-btn rd-btn-default px-4 d-flex align-items-center">
                                 Cancelar
                             </a>
-                            <button type="submit" id="save-perms" class="rd-btn rd-btn-primary px-5" style="height: 48px; justify-content: center;">
+                            <button type="submit" id="save-perms" class="rd-btn rd-btn-primary rd-submit-btn px-5" style="height: 48px; justify-content: center;">
                                 <i class="fas fa-save"></i> Aplicar Ajustes
                             </button>
                         </div>

@@ -120,7 +120,7 @@ class Producto extends Model
             ->where('inventario_sucursal_lotes.sucursal_id', $sucursalId)
             ->sum('inventario_sucursal_lotes.cantidad');
     }
-
+    
     public static function getDatosFormulario()
     {
         return [

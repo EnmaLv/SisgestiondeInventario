@@ -205,12 +205,12 @@
                     </div>
                     <div class="card-body">
                         <livewire:admin.movimientos.compras.fechas-compra :compra="$compra" />
-                        <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST">
+                        <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST" class="rd-prevent-double-submit">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group" style="text-align: right;">
-                                        <button type="submit" class="rd-btn rd-btn-primary"><i class="fas fa-check"></i>
+                                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"><i class="fas fa-check"></i>
                                             Finalizar
                                             Requisicion
                                         </button>

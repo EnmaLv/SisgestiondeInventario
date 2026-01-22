@@ -55,12 +55,12 @@
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
             </div>
-            <form action="{{ route('admin.maestros.pnf.update', ['id' => $pnf->id_pnf]) }}" method="POST">
+            <form action="{{ route('admin.maestros.pnf.update', ['id' => $pnf->id_pnf]) }}" method="POST" class="rd-prevent-double-submit">
                 @csrf
                 @method('PUT')
 
-                <div class="row g-3 justify-content-center">
-                    <div class="col-md-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
                         <label class="rd-label">Nombre del PNF</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
@@ -71,7 +71,7 @@
                             <span class="rd-error">Este campo es obligatorio.</span>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="rd-label">Estado</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-toggle-on"></i></span>
@@ -91,7 +91,7 @@
                         Cancelar
                     </a>    
 
-                    <button type="submit" class="rd-btn rd-btn-primary">
+                    <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                         Editar PNF
                     </button>
                 </div>

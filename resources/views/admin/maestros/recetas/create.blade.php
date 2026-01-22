@@ -39,7 +39,7 @@
                     </div>
                 </div>
 
-                <form action="{{ route('admin.maestros.recetas.store') }}" method="POST">
+                <form action="{{ route('admin.maestros.recetas.store') }}" method="POST" class="rd-prevent-double-submit">
                     @csrf
                     <div class="form-group">
                         <label class="font-weight-bold">Nombre</label>
@@ -61,7 +61,7 @@
                         <a href="{{ url('admin/maestros/recetas') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>
-                        <button type="submit" class="rd-btn rd-btn-primary">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn rd-submit-btn">
                             <i class="fas fa-check"></i> Guardar
                         </button>
                     </div>
@@ -74,3 +74,5 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
+
+

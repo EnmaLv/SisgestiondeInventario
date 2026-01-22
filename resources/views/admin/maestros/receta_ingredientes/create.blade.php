@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST">
+                    <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         <div class="row">
                             <div class="col-md-4 border-right pr-md-4">
@@ -119,7 +119,7 @@
                         <hr class="my-4" style="opacity: 0.4;">
                         <div class="d-flex justify-content-end gap-3">
                             <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default px-4">Cancelar</a>
-                            <button type="submit" class="rd-btn rd-btn-primary px-5">
+                            <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5">
                                 <i class="fas fa-save mr-1"></i> Guardar
                             </button>
                         </div>

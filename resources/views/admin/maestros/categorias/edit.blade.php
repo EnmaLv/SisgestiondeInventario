@@ -34,7 +34,7 @@
                         <i class="fas fa-arrow-left"></i> Volver
                     </a>
                 </div>
-                <form action="{{ route('admin.maestros.categorias.update', $categoria->id) }}" method="POST">
+                <form action="{{ route('admin.maestros.categorias.update', $categoria->id) }}" method="POST" class="rd-prevent-double-submit">
                     @csrf
                     @method('PUT')
                     <div class="form-group mb-3">
@@ -58,7 +58,7 @@
                         <a href="{{ url('admin/maestros/categorias') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>
-                        <button type="submit" class="rd-btn rd-btn-primary" style="color:white;">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn" style="color:white;">
                             <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>

@@ -4,13 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Receta;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class RecetaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
@@ -35,64 +32,67 @@ class RecetaController extends Controller
         return view('admin.maestros.recetas.index', compact('recetas', 'buscar', 'estado'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('admin.maestros.recetas.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //Validamos los datos de la solicitud
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:recetas,nombre'
+            ],
             'descripcion' => 'nullable|string',
+        ], [
+            'nombre.unique' => 'Ya existe una receta con este nombre',
         ]);
 
         $receta = new Receta();
         $receta->nombre = $validated['nombre'];
         $receta->descripcion = $validated['descripcion'];
-        $receta->estado = true; //Activo por defecto
+        $receta->estado = true;
         $receta->save();
 
-        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta creada exitosamente.');
+        return redirect()
+            ->route('admin.maestros.recetas.index')
+            ->with('success', 'Receta creada exitosamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit($id)
     {
         $receta = Receta::findOrFail($id);
         return view('admin.maestros.recetas.edit', compact('receta'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Receta $receta)
     {
-        //Validamos los datos de la solicitud
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('recetas', 'nombre')->ignore($receta->id),
+            ],
             'descripcion' => 'nullable|string',
+        ], [
+            'nombre.unique' => 'Ya existe una receta con este nombre',
         ]);
 
         $receta->nombre = $validated['nombre'];
         $receta->descripcion = $validated['descripcion'];
         $receta->save();
 
-        return redirect()->route('admin.maestros.recetas.index')->with('success', 'Receta actualizada exitosamente.');
+        return redirect()
+            ->route('admin.maestros.recetas.index')
+            ->with('success', 'Receta actualizada exitosamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy($id)
     {
         if (Receta::tieneIngredienes($id)) {

@@ -36,7 +36,7 @@
                         </a>
                     </div>
                 </div>
-                <form action="{{ route('admin.maestros.categorias.store') }}" method="POST">
+                <form action="{{ route('admin.maestros.categorias.store') }}" method="POST" class="rd-prevent-double-submit">
                     @csrf
                     <div class="form-group">
                         <label class="font-weight-bold">Nombre</label>
@@ -58,7 +58,7 @@
                         <a href="{{ url('admin/maestros/categorias') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>
-                        <button type="submit" class="rd-btn rd-btn-primary">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                             <i class="fas fa-check"></i> Guardar
                         </button>
                     </div>

@@ -26,7 +26,7 @@
             </div>
 
             <div class="p-4">
-                <form action="{{ route('admin.configuracion.master_key.verify') }}" method="POST">
+                <form action="{{ route('admin.configuracion.master_key.verify') }}" method="POST" class="rd-prevent-double-submit">
                     @csrf
                     <div class="form-group">
                         <label for="master_key" style="font-weight: 600; color: #334155; font-size: 0.9rem;">
@@ -60,7 +60,7 @@
                     </div>
 
                     <div class="mt-4">
-                        <button type="submit" class="rd-btn rd-btn-primary w-100 text-center d-flex justify-content-center align-items-center">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn w-100 text-center d-flex justify-content-center align-items-center">
                             Verificar Acceso
                         </button>
                     </div>

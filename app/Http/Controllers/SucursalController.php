@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Sucursal;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
 class SucursalController extends Controller
 {
     public function index(Request $request)
@@ -23,9 +25,16 @@ class SucursalController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre'    => 'required|string|max:255',
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:sucursals,nombre'
+            ],
             'direccion' => 'required|string|max:255',
             'telefono'  => 'required|string|max:20',
+        ], [
+            'nombre.unique' => 'Ya existe una sede con este nombre',
         ]);
 
         Sucursal::crearSucursal($validated);
@@ -65,9 +74,16 @@ class SucursalController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'nombre'    => 'required|string|max:255',
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('sucursals', 'nombre')->ignore($id),
+            ],
             'direccion' => 'required|string|max:255',
             'telefono'  => 'required|string|max:20',
+        ], [
+            'nombre.unique' => 'Ya existe una sede con este nombre',
         ]);
 
         Sucursal::actualizarSucursal($id, $validated);

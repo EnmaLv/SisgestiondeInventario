@@ -53,7 +53,7 @@
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
             </div>
-            <form action="{{ route('admin.maestros.sucursales.update', $sucursal->id) }}" method="POST">
+            <form action="{{ route('admin.maestros.sucursales.update', $sucursal->id) }}" method="POST" class="rd-prevent-double-submit">
                 @csrf
                 @method('PUT')
                 <div class="row g-3">
@@ -65,7 +65,7 @@
                                 placeholder="Ingrese el nombre">
                         </div>
                         @error('nombre')
-                            <span class="rd-error">Este campo es obligatorio.</span>
+                            <b> <span class="rd-error">{{ $message }}</span></b>
                         @enderror
                     </div>
                     <div class="col-md-4">
@@ -76,7 +76,7 @@
                                 placeholder="Ingrese la dirección">
                         </div>
                         @error('direccion')
-                            <span class="rd-error">Este campo es obligatorio.</span>
+                            <b> <span class="rd-error">Este campo es obligatorio.</span></b>
                         @enderror
                     </div>
                     <div class="col-md-4">
@@ -88,7 +88,7 @@
                                 data-inputmask="'mask': '(999) 999-9999'" data-mask>
                         </div>
                         @error('telefono')
-                            <span class="rd-error">Este campo es obligatorio.</span>
+                            <b> <span class="rd-error">Este campo es obligatorio.</span></b>
                         @enderror
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                     <a href="{{ url('admin/maestros/sucursales') }}" class="rd-btn rd-btn-default">
                         Cancelar
                     </a>
-                    <button type="submit" class="rd-btn rd-btn-primary">
+                    <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                         Guardar
                     </button>
                 </div>

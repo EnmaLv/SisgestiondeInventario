@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.configuracion.empleados.update', $usuario->id_usuario) }}" method="POST">
+                    <form action="{{ route('admin.configuracion.empleados.update', $usuario->id_usuario) }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         @method('PUT')
 
@@ -98,7 +98,7 @@
                             <a href="{{ route('admin.configuracion.empleados.index') }}" class="rd-btn rd-btn-alter px-4" style="height: 45px; justify-content: center;">
                                 Cancelar
                             </a>
-                            <button type="submit" class="rd-btn rd-btn-primary px-4" style="height: 45px; justify-content: center;">
+                            <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-4" style="height: 45px; justify-content: center;">
                                 <i class="fas fa-save"></i> Guardar Cambios
                             </button>
                         </div>

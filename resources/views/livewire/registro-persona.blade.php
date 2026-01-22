@@ -1,6 +1,6 @@
 <div class="row fade-in">
     <div class="col-md-12 m-auto">
-        <form wire:submit="{{ $isEdit ? 'update' : 'create' }}" method="POST">
+        <form wire:submit="{{ $isEdit ? 'update' : 'create' }}" method="POST" class="rd-prevent-double-submit">
             @csrf
 
             <div class="mb-4">
@@ -250,7 +250,7 @@
                 <button type="reset" class="rd-btn rd-btn-default" wire:click="$set('formHabilitado', false)">
                     <i class="fas fa-undo"></i> Restablecer
                 </button>
-                <button type="submit" class="rd-btn rd-btn-primary" {{ !$formHabilitado ? 'disabled' : '' }} style="{{ !$formHabilitado ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
+                <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn" {{ !$formHabilitado ? 'disabled' : '' }} style="{{ !$formHabilitado ? 'opacity: 0.5; cursor: not-allowed;' : '' }}">
                     <i class="fas fa-save"></i> {{ $isEdit ? 'Actualizar' : 'Registrar' }} Estudiante
                 </button>
             </div>

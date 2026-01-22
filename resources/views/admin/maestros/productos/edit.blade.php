@@ -46,7 +46,7 @@
                         </ul>
                     </div>
                 @endif
-                <form action="{{ route('admin.maestros.productos.update', $producto->id) }}" method="POST"
+                <form action="{{ route('admin.maestros.productos.update', $producto->id) }}" method="POST" class="rd-prevent-double-submit"
                     enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -235,7 +235,7 @@
                     <hr>
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
-                        <button type="submit" class="rd-btn rd-btn-primary">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                             <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>

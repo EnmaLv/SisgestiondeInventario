@@ -36,7 +36,7 @@
                         </a>
                     </div>
                 </div>
-                <form action="{{ route('admin.maestros.productos.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.maestros.productos.store') }}" method="POST" enctype="multipart/form-data" class="rd-prevent-double-submit">
                     @csrf
                     <div class="row">
                         <div class="col-md-9">
@@ -111,7 +111,6 @@
                                                 placeholder="0.00"
                                                 min="0"
                                                 step="0.01"
-                                                required
                                             >
                                         </div>
                                         @error('costo_usd')
@@ -225,7 +224,7 @@
                     <hr>
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
-                        <button type="submit" class="rd-btn rd-btn-primary">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                             <i class="fas fa-save"></i>Guardar
                         </button>
                     </div>

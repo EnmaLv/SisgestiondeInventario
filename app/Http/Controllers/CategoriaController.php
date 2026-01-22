@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Http\Requests\CategoriaRequest;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategoriaController extends Controller
 {
@@ -25,7 +26,17 @@ class CategoriaController extends Controller
 
     public function store(CategoriaRequest $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:categorias,nombre'
+            ],
+            'descripcion' => 'nullable|string',
+        ], [
+            'nombre.unique' => 'Ya existe una categoria con este nombre',
+        ]);
         Categoria::crearCategoria($validated);
 
         return redirect()
@@ -61,7 +72,17 @@ class CategoriaController extends Controller
     }
     public function update(CategoriaRequest $request, $id)
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('categorias', 'nombre')->ignore($id),
+            ],
+            'descripcion' => 'nullable|string',
+        ], [
+            'nombre.unique' => 'Ya existe una categoria con este nombre',
+        ]);
         Categoria::actualizarCategoria($id, $validated);
 
         return redirect()

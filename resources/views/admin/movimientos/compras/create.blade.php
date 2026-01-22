@@ -61,7 +61,7 @@
                     </a>
                 </div>
 
-                <form action="{{ route('admin.movimientos.compras.store') }}" method="POST">
+                <form action="{{ route('admin.movimientos.compras.store') }}" method="POST" class="rd-prevent-double-submit">
                     @csrf
 
                     <div class="row">
@@ -126,7 +126,7 @@
                             Cancelar
                         </a>
 
-                        <button type="submit" class="rd-btn rd-btn-primary" @disabled($proveedores->isEmpty())
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn" @disabled($proveedores->isEmpty())
                             style="@if ($proveedores->isEmpty()) opacity: 0.5!important; cursor: not-allowed; @endif">
                             Crear Requisicion
                         </button>

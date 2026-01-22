@@ -22,7 +22,7 @@
     <div class="row justify-content-center fade-in">
         <div class="col-md-11"> <div class="rd-card shadow-sm border-0">
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.configuracion.roles.store') }}" method="POST">
+                    <form action="{{ route('admin.configuracion.roles.store') }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         
                         <div class="row mb-4">
@@ -93,7 +93,7 @@
                             <a href="{{ route('admin.configuracion.roles.index') }}" class="rd-btn rd-btn-default px-4" style="height: 48px; justify-content: center;">
                                 Cancelar
                             </a>
-                            <button type="submit" class="rd-btn rd-btn-primary px-5" style="height: 48px;justify-content: center;">
+                            <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5" style="height: 48px;justify-content: center;">
                                 <i class="fas fa-save"></i> Guardar Nuevo Rol
                             </button>
                         </div>

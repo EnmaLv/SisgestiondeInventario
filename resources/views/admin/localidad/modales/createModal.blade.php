@@ -6,7 +6,7 @@
                     <h3 class="rd-title-sm">Crear Nueva Localidad</h3>
                 </div>
                 <hr>
-                <form wire:submit.prevent="store" id="formCrearLocalidad">
+                <form wire:submit.prevent="store" id="formCrearLocalidad" class="rd-prevent-double-submit">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="rd-label">Estado</label>
@@ -80,7 +80,7 @@
                         <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="rd-btn rd-btn-primary">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                             Guardar
                         </button>
                     </div>

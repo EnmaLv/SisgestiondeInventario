@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.maestros.receta_ingredientes.update', $receta->id) }}" method="POST">
+                    <form action="{{ route('admin.maestros.receta_ingredientes.update', $receta->id) }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -92,7 +92,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <button type="button" class="rd-btn rd-btn-primary shadow-sm d-flex justify-content-center align-items-center" id="agregarProducto" style="height: 45px; width: 45px;">
+                                    <button type="button" class="rd-btn rd-btn-primary rd-submit-btn shadow-sm d-flex justify-content-center align-items-center" id="agregarProducto" style="height: 45px; width: 45px;">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
@@ -134,7 +134,7 @@
                         <hr class="my-4" style="opacity: 0.5;">
                         <div class="d-flex justify-content-end gap-3">
                             <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default px-4">Cancelar</a>
-                            <button type="submit" class="rd-btn rd-btn-primary px-5 shadow-sm">
+                            <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5 shadow-sm">
                                 <i class="fas fa-check-circle mr-1"></i> Guardar
                             </button>
                         </div>

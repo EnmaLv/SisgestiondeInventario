@@ -103,10 +103,6 @@
                             <li>La inserción se realiza en una transacción</li>
                         </ul>
                         <div class="d-flex justify-content-end gap-2 mt-4">
-                            <button class="rd-btn rd-btn-default">
-                                Cancelar
-                            </button>
-
                             <button wire:click="save" class="rd-btn rd-btn-primary">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 Procesar archivo
