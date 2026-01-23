@@ -3,13 +3,12 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Persona;
 use App\Models\PersonaPnf;
 use Livewire\Attributes\Validate;
 use Exception;
-use Livewire\Attributes\Title;
+use Illuminate\Validation\Rule;
 
 class RegistroPersona extends Component
 {
@@ -51,7 +50,13 @@ class RegistroPersona extends Component
     protected function rules()
     {
         $rules = [
-            'cedula' => 'required|min:1000000|numeric|unique:persona,cedula_persona',
+            'cedula' => [
+                'required',
+                'numeric',
+                'min:1000000',
+                Rule::unique('persona', 'cedula_persona')
+                    ->where(fn($q) => $q->where('estado', 1)),
+            ],
             'nombre' => 'required|min:3|max:50',
             'segundo_nombre' => 'nullable',
             'apellido' => 'required|min:3|max:50',
@@ -71,7 +76,7 @@ class RegistroPersona extends Component
             'parroquiaId' => 'required|numeric',
             'sedeId' => 'required|numeric',
             'pnfId' => 'required|numeric',
-            'semestreId' => 'required|numeric',
+            'semestreId' => 'required',
         ];
 
         if ($this->isEdit) {
@@ -102,21 +107,41 @@ class RegistroPersona extends Component
 
     public function updatedCedula($value)
     {
-
         if (empty($value)) {
             $this->formHabilitado = false;
             return;
         }
 
+        $persona = Persona::where('cedula_persona', $value)->first();
+
+        if ($persona) {
+            if ($persona->estado === 0) {
+                // Disparamos el evento con Livewire 3
+                $this->dispatch('confirm-reactivate', cedula: $value);
+                $this->formHabilitado = false;
+                return;
+            } elseif ($persona->estado === 1) {
+                $this->formHabilitado = false;
+                $this->dispatch(
+                    'alert',
+                    type: 'info',
+                    title: 'Estudiante ya activo',
+                    text: 'El estudiante ya está activo en el sistema.'
+                );
+                return;
+            }
+        } else {
+            $this->formHabilitado = true;
+        }
+
         try {
             $this->validateOnly('cedula');
-
-            $this->formHabilitado = true;
         } catch (Exception $e) {
             $this->formHabilitado = false;
             throw $e;
         }
     }
+
 
 
     public function updatedEstadosVeId($value)
@@ -140,23 +165,152 @@ class RegistroPersona extends Component
         $this->enabledParroquia = ($value && $this->formHabilitado);
     }
 
-    public function create()
+    public function reactivarEstudiante($cedula)
     {
-        //Validamos todos los campos
+        try {
+            $persona = Persona::where('cedula_persona', $cedula)->first();
 
-        $data = $this->validate();
-        $finish = Persona::crearPersona($data);
+            if (!$persona) {
+                $this->dispatch(
+                    'alert',
+                    type: 'error',
+                    title: 'Error',
+                    text: 'Estudiante no encontrado.'
+                );
+                return;
+            }
 
-        if ($finish) {
+            if ($persona->estado === 0) {
+                // Reactivamos el estudiante
+                $persona->update([
+                    'estado' => 1,
+                    'updated_at' => now(),
+                ]);
 
-            redirect()->route('admin.configuracion.persona.index')->with('success', 'Estudiante creado exitosamente.');
-        } else {
+                // Cargamos los datos en el formulario
+                $this->cedula = $persona->cedula_persona;
+                $this->nombre = $persona->nombre_persona;
+                $this->segundo_nombre = $persona->segundo_nombre_persona;
+                $this->apellido = $persona->apellido_persona;
+                $this->segundo_apellido = $persona->segundo_apellido_persona;
+                $this->fecha_nacimiento = $persona->fecha_nacimiento_persona;
+                $this->genero = $persona->genero_persona;
+                $this->telefono = $persona->telefono_persona;
+                $this->email = $persona->email_persona;
+                $this->semestreId = $persona->semestre_persona;
+                $this->sedeId = $persona->id_sede;
+
+                // Cargamos datos de dirección si existen
+                $direccion = DB::table('direccion')
+                    ->join('localidads', 'direccion.id_localidad', '=', 'localidads.id')
+                    ->join('municipios', 'localidads.municipio_id', '=', 'municipios.id')
+                    ->where('direccion.id_persona', $persona->id_persona)
+                    ->select('direccion.*', 'localidads.municipio_id', 'municipios.estado_id')
+                    ->first();
+
+                if ($direccion) {
+                    $this->estadosVeId = $direccion->estado_id;
+                    $this->municipiosId = $direccion->municipio_id;
+                    $this->parroquiaId = $direccion->id_localidad;
+                    $this->calle = $direccion->calle;
+                    $this->sector = $direccion->sector;
+
+                    // Cargamos municipios y parroquias
+                    $this->municipiosVE = DB::table('municipios')
+                        ->where('estado_id', $this->estadosVeId)
+                        ->where('status', 1)
+                        ->get();
+
+                    $this->parroquiasVE = DB::table('localidads')
+                        ->where('municipio_id', $this->municipiosId)
+                        ->where('status', 1)
+                        ->get();
+
+                    $this->enabledMunicipio = true;
+                    $this->enabledParroquia = true;
+                }
+
+                // Cargamos PNF
+                $personaPnf = PersonaPnf::where('id_persona', $persona->id_persona)->first();
+                if ($personaPnf) {
+                    $this->pnfId = $personaPnf->id_pnf;
+                    $this->showPnf = true;
+                }
+
+                // Habilitamos el formulario
+                $this->formHabilitado = false;
+
+                // Alerta de éxito
+                $this->dispatch(
+                    'alert',
+                    type: 'success',
+                    title: 'Estudiante reactivado',
+                    text: 'El estudiante ha sido reactivado correctamente. Puede editar los datos si es necesario.'
+                );
+            } else {
+                $this->dispatch(
+                    'alert',
+                    type: 'info',
+                    title: 'Estudiante ya activo',
+                    text: 'El estudiante ya está activo en el sistema.'
+                );
+            }
+        } catch (Exception $e) {
             $this->dispatch(
                 'alert',
                 type: 'error',
                 title: 'Error',
-                text: 'Error al crear el estudiante. Revisa los datos'
+                text: 'Ocurrió un error al reactivar el estudiante: ' . $e->getMessage()
             );
+        }
+    }
+
+
+    public function create()
+    {
+        $data = $this->validate();
+        $persona = Persona::where('cedula_persona', $data['cedula'])->first();
+
+        if ($persona) {
+            if ($persona->estado === 0) {
+                $persona->update([
+                    'estado' => 1,
+                    'nombre_persona' => $data['nombre'],
+                    'apellido_persona' => $data['apellido'],
+                    'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
+                    'updated_at' => now(),
+                ]);
+
+                $this->dispatch(
+                    'alert',
+                    type: 'success',
+                    title: 'Estudiante activado',
+                    text: 'El estudiante estaba inactivo y ahora ha sido activado.'
+                );
+
+                return;
+            } else {
+                $this->dispatch(
+                    'alert',
+                    type: 'info',
+                    title: 'Estudiante ya activo',
+                    text: 'El estudiante ya está activo en el sistema.'
+                );
+                return;
+            }
+        } else {
+            $finish = Persona::crearPersona($data);
+
+            if ($finish) {
+                redirect()->route('admin.configuracion.persona.index')->with('success', 'Estudiante creado exitosamente.');
+            } else {
+                $this->dispatch(
+                    'alert',
+                    type: 'error',
+                    title: 'Error',
+                    text: 'Error al crear el estudiante. Revisa los datos'
+                );
+            }
         }
     }
 
@@ -204,7 +358,7 @@ class RegistroPersona extends Component
 
             $id = request("id");
             $this->personaId = $id;
-            $persona = Persona::where('id_persona', $id)->first();
+            $persona = Persona::where('id_persona', $id)->where('estado', true)->first();
             $personaPnf = PersonaPnf::with('pnf')->where('id_persona', $id)->first();
             $direccion = DB::table('direccion')
                 ->join('localidads', 'direccion.id_localidad', '=', 'localidads.id')

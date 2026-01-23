@@ -14,7 +14,7 @@ class Persona extends Model
 
     protected $table = 'persona';
     protected $primaryKey = 'id_persona';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'nombre_persona',
@@ -28,8 +28,10 @@ class Persona extends Model
         'fecha_nacimiento_persona',
         'email_persona',
         'semestre_persona',
+        'estado',
         'id_perfil',
         'id_sede',
+        
     ];
     /**
      * Formatea un número de teléfono al estilo (999) 999-9999
@@ -57,8 +59,6 @@ class Persona extends Model
 
     public static function crearPersona($data)
     {
-
-        //Formateamos el numero de telefono
         $telefono = self::formatearTelefono($data['telefono']);
 
         $helper = new self();
@@ -111,12 +111,10 @@ class Persona extends Model
                 'fecha_fin' => Carbon::now(),
             ]);
 
-
-
-
             DB::commit();
             return true;
-        } catch (Exception $e) {
+        } 
+        catch (Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
             return false;
@@ -147,18 +145,27 @@ class Persona extends Model
                 'id_sede'                  => $data['sedeId'] ?? null,
             ]);
 
-            //En el dado caso de cambiar la cedula, debemos verificar que no exista otra persona con esa cedula
             $personaExistente = DB::table('persona')
                 ->where('cedula_persona', $data['cedula'])
                 ->where('id_persona', '!=', $personaId)
+                ->where(function ($query) {
+                    $query->where('id_perfil', '!=', 1)
+                        ->orWhereNull('id_perfil');
+                })
                 ->first();
 
             if ($personaExistente) {
                 throw new Exception('Ya existe otra persona con esa cédula');
             } else {
-                DB::table('persona')->where('id_persona', $personaId)->update([
-                    'cedula_persona' => $data['cedula']
-                ]);
+                DB::table('persona')
+                    ->where('id_persona', $personaId)
+                    ->where(function ($query) {
+                        $query->where('id_perfil', '!=', 1)
+                              ->orWhereNull('id_perfil');
+                    })
+                    ->update([
+                        'cedula_persona' => $data['cedula']
+                    ]);
             }
 
             // 2. Actualizar la dirección

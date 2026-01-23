@@ -13,9 +13,19 @@ class PnfSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('pnf')->insert([
-            'nombre_pnf' => 'Informatica',
-            'id_estatus' => 1,
-        ]);
+        $pnfs = [
+            ['nombre_pnf' => 'INFORMATICA', 'id_estatus' => 1],
+            ['nombre_pnf' => 'ELECTRICIDAD', 'id_estatus' => 1],
+            ['nombre_pnf' => 'AGROALIMENTACION', 'id_estatus' => 1],
+            ['nombre_pnf' => 'ADMINISTRACION', 'id_estatus' => 1],
+            ['nombre_pnf' => 'VETERINARIA', 'id_estatus' => 1],
+            ['nombre_pnf' => 'MECANICA', 'id_estatus' => 1],
+            ['nombre_pnf' => 'MANTENIMIENTO', 'id_estatus' => 1],
+            ['nombre_pnf' => 'DISTRIBUCIÓN LOGÍSTICA', 'id_estatus' => 1],
+            ['nombre_pnf' => 'PROC. Y DIST. DE ALIMENTOS', 'id_estatus' => 1],
+            ['nombre_pnf' => 'SEGURIDAD ALIMENTARIA', 'id_estatus' => 1],
+        ];
+        $this->command->info('Pnfs insertados Exitosamente.');
+        DB::table('pnf')->insert($pnfs);
     }
 }

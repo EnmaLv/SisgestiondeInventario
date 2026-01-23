@@ -235,13 +235,6 @@ class RegisterController extends Controller
 
         $usuario->save();
 
-        // Flash success message so SweetAlert shows after redirect
-        try {
-            session()->flash('success', 'Empleado registrado satisfactoriamente');
-        } catch (\Throwable $e) {
-            // ignore if session not available in this context
-        }
-
         return $usuario;
     }
     

@@ -14,16 +14,17 @@ class PersonaSeeder extends Seeder
     public function run(): void
     {
         DB::table('persona')->insert([
-            'nombre_persona' => 'Pepito ',
-            'segundo_nombre_persona' => 'Canela',
-            'apellido_persona' => 'Perez',
-            'segundo_apellido_persona' => 'Perez',
-            'cedula_persona' => '12345678',
-            'telefono_persona' => '12345678',
-            'genero_persona' => 'Masculino',
-            'edad_persona' => 18,
-            'fecha_nacimiento_persona' => '2000-01-01',
-            'email_persona' => 'persona@persona.com',
+            'nombre_persona' => 'ENMANUEL',
+            'segundo_nombre_persona' => 'JESUS',
+            'apellido_persona' => 'MEDINA',
+            'segundo_apellido_persona' => 'BARROS',
+            'cedula_persona' => '31008661',
+            'telefono_persona' => '04245994343',
+            'genero_persona' => 'MASCULINO',
+            'edad_persona' => \Carbon\Carbon::parse('2005-07-11')->age,
+            'fecha_nacimiento_persona' => '2005-07-11',
+            'email_persona' => 'medina.enma1234@gmail.com',
+            'semestre_persona' => '4to SEMESTRE',
             'id_perfil' => 2,
             'id_sede' => 1,
         ]);
@@ -31,21 +32,22 @@ class PersonaSeeder extends Seeder
         DB::table('persona_pnf')->insert([
             'id_persona' => 1,
             'id_pnf' => 1,
-            'fecha_inicio' => '2000-01-01',
-            'fecha_fin' => '2000-01-01',
+            'fecha_inicio' => now()->toDateString(),
+            'fecha_fin' => now()->toDateString(),
         ]);
 
         DB::table('persona')->insert([
-            'nombre_persona' => 'Enmanuel ',
-            'segundo_nombre_persona' => 'Jesus',
-            'apellido_persona' => 'Medina',
-            'segundo_apellido_persona' => 'Barros',
-            'cedula_persona' => '31008661',
-            'telefono_persona' => '12345678',
-            'genero_persona' => 'Masculino',
-            'edad_persona' => 20,
-            'fecha_nacimiento_persona' => '2000-01-01',
-            'email_persona' => 'medina1234@gmail.com',
+            'nombre_persona' => 'ANGEL ',
+            'segundo_nombre_persona' => 'JESUS',
+            'apellido_persona' => 'LINAREZ',
+            'segundo_apellido_persona' => 'MARTINEZ',
+            'cedula_persona' => '31216160',
+            'telefono_persona' => '04245720593',
+            'genero_persona' => 'MASCULINO',
+            'edad_persona' => \Carbon\Carbon::parse('2006-02-08')->age,
+            'fecha_nacimiento_persona' => '2006-02-08',
+            'email_persona' => 'angeljlinarez@gmail.com',
+            'semestre_persona' => '4to SEMESTRE',
             'id_perfil' => 2,
             'id_sede' => 1,
         ]);
@@ -53,22 +55,22 @@ class PersonaSeeder extends Seeder
         DB::table('persona_pnf')->insert([
             'id_persona' => 2,
             'id_pnf' => 1,
-            'fecha_inicio' => '2000-01-01',
-            'fecha_fin' => '2000-01-01',
+            'fecha_inicio' => now()->toDateString(),
+            'fecha_fin' => now()->toDateString(),
         ]);
 
-
         DB::table('persona')->insert([
-            'nombre_persona' => 'Abdias ',
-            'segundo_nombre_persona' => 'Samuel',
-            'apellido_persona' => 'Campos',
-            'segundo_apellido_persona' => 'Nose',
-            'cedula_persona' => '30133077',
-            'telefono_persona' => '12345678',
-            'genero_persona' => 'Masculino',
-            'edad_persona' => 20,
-            'fecha_nacimiento_persona' => '2000-01-01',
-            'email_persona' => 'abdias.scc@gmail.com',
+            'nombre_persona' => 'NOHELY',
+            'segundo_nombre_persona' => 'ROXANA',
+            'apellido_persona' => 'SOSA',
+            'segundo_apellido_persona' => 'QUINTERO',
+            'cedula_persona' => '31710990',
+            'telefono_persona' => '04129242220',
+            'genero_persona' => 'FEMENINO',
+            'edad_persona' => \Carbon\Carbon::parse('2006-11-20')->age,
+            'fecha_nacimiento_persona' => '2006-11-20',
+            'email_persona' => 'nohelysq2006@gmail.com',
+            'semestre_persona' => '4to SEMESTRE',
             'id_perfil' => 2,
             'id_sede' => 1,
         ]);
@@ -76,96 +78,8 @@ class PersonaSeeder extends Seeder
         DB::table('persona_pnf')->insert([
             'id_persona' => 3,
             'id_pnf' => 1,
-            'fecha_inicio' => '2000-01-01',
-            'fecha_fin' => '2000-01-01',
-        ]);
-
-        DB::table('persona')->insert([
-            'nombre_persona' => 'Angel ',
-            'segundo_nombre_persona' => 'Jesus',
-            'apellido_persona' => 'Linarez',
-            'segundo_apellido_persona' => 'Nose',
-            'cedula_persona' => '31216160',
-            'telefono_persona' => '12345678',
-            'genero_persona' => 'Masculino',
-            'edad_persona' => 20,
-            'fecha_nacimiento_persona' => '2000-01-01',
-            'email_persona' => 'AngelLinarez@gmail.com',
-            'id_perfil' => 2,
-            'id_sede' => 1,
-        ]);
-
-        DB::table('persona_pnf')->insert([
-            'id_persona' => 4,
-            'id_pnf' => 1,
-            'fecha_inicio' => '2000-01-01',
-            'fecha_fin' => '2000-01-01',
-        ]);
-
-        DB::table('persona')->insert([
-            'nombre_persona' => 'Michele ',
-            'segundo_nombre_persona' => 'Nose',
-            'apellido_persona' => 'Piñuela',
-            'segundo_apellido_persona' => 'Nose',
-            'cedula_persona' => '11223344',
-            'telefono_persona' => '12345678',
-            'genero_persona' => 'Masculino',
-            'edad_persona' => 20,
-            'fecha_nacimiento_persona' => '2000-01-01',
-            'email_persona' => 'medina1234@gmail.com',
-            'id_perfil' => 2,
-            'id_sede' => 1,
-        ]);
-
-        DB::table('persona_pnf')->insert([
-            'id_persona' => 5,
-            'id_pnf' => 1,
-            'fecha_inicio' => '2000-01-01',
-            'fecha_fin' => '2000-01-01',
-        ]);
-
-        DB::table('persona')->insert([
-            'nombre_persona' => 'Deiby',
-            'segundo_nombre_persona' => 'Nose',
-            'apellido_persona' => 'De Armas',
-            'segundo_apellido_persona' => 'Nose',
-            'cedula_persona' => '12345679',
-            'telefono_persona' => '12345678',
-            'genero_persona' => 'Masculino',
-            'edad_persona' => 20,
-            'fecha_nacimiento_persona' => '2000-01-01',
-            'email_persona' => 'medina1234@gmail.com',
-            'id_perfil' => 2,
-            'id_sede' => 1,
-        ]);
-
-        DB::table('persona_pnf')->insert([
-            'id_persona' => 6,
-            'id_pnf' => 1,
-            'fecha_inicio' => '2000-01-01',
-            'fecha_fin' => '2000-01-01',
-        ]);
-
-        DB::table('persona')->insert([
-            'nombre_persona' => 'Nohely',
-            'segundo_nombre_persona' => 'Roxana',
-            'apellido_persona' => 'Sosa',
-            'segundo_apellido_persona' => 'Quintero',
-            'cedula_persona' => '31710990',
-            'telefono_persona' => '12345678',
-            'genero_persona' => 'Femenino',
-            'edad_persona' => 19,
-            'fecha_nacimiento_persona' => '2000-01-01',
-            'email_persona' => 'medina1234@gmail.com',
-            'id_perfil' => 2,
-            'id_sede' => 1,
-        ]);
-
-        DB::table('persona_pnf')->insert([
-            'id_persona' => 7,
-            'id_pnf' => 1,
-            'fecha_inicio' => '2000-01-01',
-            'fecha_fin' => '2000-01-01',
+            'fecha_inicio' => now()->toDateString(),
+            'fecha_fin' => now()->toDateString(),
         ]);
     }
 }

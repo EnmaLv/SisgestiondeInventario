@@ -46,17 +46,13 @@ class RegisterNoti extends Component
     public $alertInventario = null;
     public $alertLimite = null;
 
-
-    //Funcion para pasar datos al form de finalizar
     public $fecha;
     public $sobrante;
     public $motivo;
     public $accion;
-    //Saber cuantos es la cantidad de estudiantes que se registraron
     public $registradosHoy;
     public function finalizarDia()
     {
-        //Verificamos en bd cuantos estudiantes de registraron
         $validated = $this->validate([
             'fecha' => 'required|date',
             'sobrante' => 'required|numeric',
@@ -71,8 +67,6 @@ class RegisterNoti extends Component
             'accion.required' => 'La acción es requerida'
         ]);
 
-        //Guardamos los datos en la tabla de sobrantes 
-
         SobranteComedor::create([
             'fecha' => $validated['fecha'],
             'cantidad_sobrante' => $validated['sobrante'],
@@ -82,14 +76,9 @@ class RegisterNoti extends Component
             'updated_at' => now()
         ]);
 
-        //Hacemos innaccesible el formulario
         $this->enableInput = false;
-
-        //Ocultamos el botón de finalizar
         $this->showBtnFinalizar = false;
 
-
-        //Al finalizar enviar un evento con el resultado
         $this->dispatch('finalizar-dia-guardado', [
             'icon' => 'success',
             'title' => 'Exito!',
@@ -109,7 +98,6 @@ class RegisterNoti extends Component
 
         $desayunoTotal = $desayunoDelDia->sum('cantidad_servido');
 
-        // El sobrante es el total preparado menos los que ya comieron
         $this->sobrante = $desayunoTotal - $registradosHoy;
     }
 
@@ -121,10 +109,6 @@ class RegisterNoti extends Component
 
     public function save()
     {
-
-
-
-        // 🚨 Validación de límite de raciones
         $detalleHoy = DetalleRegistroDiario::whereDate('created_at', now())->first();
 
         if (!$detalleHoy) {
@@ -151,15 +135,12 @@ class RegisterNoti extends Component
             'fecha' => date('Y-m-d'),
             'hora' => date('H:i:s'),
         ];
-        //Valida que la persona exista
-        $persona = Persona::where('cedula_persona', $this->cedula)->where('id_perfil', 2)->first();
+        $persona = Persona::where('cedula_persona', $this->cedula)->where('estado', true)->where('id_perfil', 2)->first();
 
         if ($persona) {
-            //Valida que la persona no se haya registrado hoy
             $is_register = Registro_diario::where('id_persona', $persona->id_persona)->where('fecha_regis_diario_c', date('Y-m-d'))->exists();
 
             if ($is_register) {
-                //retornamos un mensaje de erro
                 $this->notification = [
                     'type' => 'danger',
                     'message' => "El estudiante {$persona->nombre_persona} {$persona->apellido_persona} ya se registro hoy"
@@ -172,17 +153,14 @@ class RegisterNoti extends Component
                 $this->showNotification();
                 $this->cedula = '';
 
-                //hacemos un evento para recuperar los datos
                 $this->dispatch('cedula-validada', datos: $DatosHistorial);
                 return;
             }
 
             try {
-                //Iniciamos las transacciones
                 DB::beginTransaction();
-                $personaPnf = PersonaPnf::where('id_persona', $persona->id_persona)->first();
+                $personaPnf = PersonaPnf::where('id_persona', $persona->id_persona)->where('estado', true)->first();
 
-                //Insertamos el registro diario
                 DB::table('registro_diario_c')->insert([
                     'id_persona' => $persona->id_persona,
                     'id_persona_pnf' => $personaPnf->id_persona_pnf,
@@ -190,27 +168,20 @@ class RegisterNoti extends Component
                     'hora' => date('H:i:s'),
                 ]);
 
-                //Codigo para la parte del inventario
-
-
-                //Aplicamos en la base de datos
                 DB::commit();
-                //Actualizamos el sobrante
                 $this->recalcularSobrante();
-                //Si el sobrante queda en 0, ocultamos el boton de finalizar
                 if ($this->sobrante == 0) {
                     $this->showBtnFinalizar = false;
                     $this->enableInput = false;
-                    //Mostrar una notificacion
-                    $this->dispatch('swal', ['type' => 'success', 
-                    'title' => 'Exito!', 
-                    'text' => 'Se alcanzó el límite de raciones!',
-                    'icon' => 'success'
+                    $this->dispatch('swal', [
+                        'type' => 'success',
+                        'title' => 'Exito!',
+                        'text' => 'Se alcanzó el límite de raciones!',
+                        'icon' => 'success'
                     ]);
                 }
             } catch (Exception $e) {
                 DB::rollBack();
-                //retornamos un mensaje de error
                 $this->notification = [
                     'type' => 'danger',
                     'message' => "Error al registrar el estudiante {$persona->nombre_persona} {$persona->apellido_persona}, Intente de nuevo."
@@ -220,11 +191,9 @@ class RegisterNoti extends Component
                 $DatosHistorial['estado'] = 'Rechazado';
                 $DatosHistorial['observacion'] = 'Error al registrar el estudiante';
 
-                //hacemos un evento para recuperar los datos
                 $this->dispatch('cedula-validada', datos: $DatosHistorial);
             }
 
-            //retornamos un mensaje de exito
             $this->notification = [
                 'type' => 'success',
                 'message' => "El estudiante {$persona->nombre_persona} {$persona->apellido_persona} se registro exitosamente!"
@@ -237,7 +206,6 @@ class RegisterNoti extends Component
             $this->dispatch('cedula-validada', datos: $DatosHistorial);
         } else {
 
-            //retornamos un mensaje de error
             $this->notification = [
                 'type' => 'danger',
                 'message' => 'No se encontró un registro para la cédula: ' . $this->cedula
@@ -247,7 +215,6 @@ class RegisterNoti extends Component
         $this->showNotification();
         $this->cedula = '';
 
-        // Ocultar la notificación después de 5 segundos
         $this->dispatch('notify-saved');
     }
 
@@ -256,27 +223,20 @@ class RegisterNoti extends Component
         $this->showNotification = true;
     }
 
-    //Verificar al montar el componente
     public function mount()
     {
-        //Verifica si ya se registro un cierre de jornada hoy
         $cierreHoy = DB::table('sobrantes_comedor')->whereDate('fecha', now()->format('Y-m-d'))->exists();
 
-        //Cargamos los sobrantes
         $this->recalcularSobrante();
 
-        //Inhabilitar el registro si se hizo un cierre
         if ($cierreHoy || $this->sobrante == 0) {
             $this->enableInput = false;
             $this->showBtnFinalizar = false;
             return;
         }
 
-
-        //Cargamos datos
         $this->fecha = now()->format('Y-m-d');
 
-        //Si hay alimentos sobrantes mostrar el boton de finalizar día
         if ($this->sobrante > 0) {
             $this->showBtnFinalizar = true;
         }
@@ -284,7 +244,6 @@ class RegisterNoti extends Component
     public function render()
     {
         $receta_diario = DetalleRegistroDiario::whereDate('created_at', now())->exists();
-        // usa el helper request(), NO la inyección por parámetro
         $buscar = request()->input('buscar');
         $fecha_desde = request()->input('fecha_desde');
         $fecha_hasta = request()->input('fecha_hasta');
@@ -298,8 +257,6 @@ class RegisterNoti extends Component
         $data = Registro_diario::showData($filter);
         $comidas = Receta::orderBy('id', 'desc')->where('estado', true)->get();
 
-
-        // envía también $buscar a la vista (evita "undefined variable")
         return view('livewire.register-noti', [
             'data'   => $data,
             'buscar' => $buscar,

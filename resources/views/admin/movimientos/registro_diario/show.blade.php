@@ -122,15 +122,9 @@
                         <span class="info-label">PNF asociado</span>
                         <p class="info-value">{{ $registro->nombre_pnf }}</p>
                     </div>
-                    @php
-                        $ordinales = [
-                            1 => '1er', 2 => '2do', 3 => '3er', 4 => '4to', 5 => '5to', 
-                            6 => '6to', 7 => '7mo', 8 => '8vo', 9 => '9no', 10 => '10mo'
-                        ];
-                    @endphp
                     <div class="info-item">
                         <span class="info-label">Semestre</span>
-                        <p class="info-value">{{ $ordinales[$registro->semestre_persona] }} Semestre</p>
+                        <p class="info-value">{{ $registro->semestre_persona }}</p>
                     </div>
                 </div>
             </article>

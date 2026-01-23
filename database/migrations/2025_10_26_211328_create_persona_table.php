@@ -36,12 +36,14 @@ return new class extends Migration
             $table->string('cedula_persona');
             $table->string('telefono_persona');
             $table->string('genero_persona');
-            $table->integer('edad_persona');
-            $table->date('fecha_nacimiento_persona');
+            $table->integer('edad_persona')->nullable();
+            $table->date('fecha_nacimiento_persona')->nullable();
             $table->string('email_persona');
-            $table->integer('semestre_persona')->nullable();
+            $table->string('semestre_persona')->nullable();
+            $table->boolean('estado')->default(true);
             $table->foreignId('id_perfil')->references('id_perfil')->on('perfil')->onDelete('cascade');
             $table->foreignId('id_sede')->references('id_sede')->on('sede')->onDelete('cascade');
+            $table->timestamps();
         });
 
         Schema::create('direccion', function (Blueprint $table) {

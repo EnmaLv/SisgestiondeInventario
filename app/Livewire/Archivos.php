@@ -28,32 +28,127 @@ class Archivos extends Component
         $this->archivoKey = rand();
     }
 
+    private function normalizarPnf(string $pnfExcel): int
+    {
+        // Normalizar el texto
+        $pnfExcel = strtoupper(trim($pnfExcel));
+        $pnfExcel = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $pnfExcel);
+        $pnfExcel = preg_replace('/\s+/', ' ', $pnfExcel);
+        
+        // Obtener todos los PNF de la BD
+        $pnfs = DB::table('pnf')
+            ->where('id_estatus', 1)
+            ->get(['id_pnf', 'nombre_pnf']);
+        
+        $mejorCoincidencia = null;
+        $mejorSimilitud = 0;
+        
+        foreach ($pnfs as $pnf) {
+            $nombreBD = strtoupper($pnf->nombre_pnf);
+            $nombreBD = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $nombreBD);
+            
+            // Calcular similitud
+            similar_text($pnfExcel, $nombreBD, $porcentaje);
+            
+            if ($porcentaje > $mejorSimilitud) {
+                $mejorSimilitud = $porcentaje;
+                $mejorCoincidencia = $pnf->id_pnf;
+            }
+            
+            // Si la similitud es del 90% o más, retornar inmediatamente
+            if ($porcentaje >= 90) {
+                return $pnf->id_pnf;
+            }
+        }
+        
+        // Si la mejor similitud es al menos 70%, usarla
+        if ($mejorSimilitud >= 70) {
+            return $mejorCoincidencia;
+        }
+        
+        // Si no hay buena coincidencia, log para revisar
+        logger()->warning('PNF no identificado', [
+            'pnf_excel' => $pnfExcel,
+            'mejor_similitud' => $mejorSimilitud
+        ]);
+        
+        return 1; // ID por defecto
+    }
+
     private function parseFechaNacimiento($fecha)
     {
-        if (!$fecha) {
+        if ($fecha === null || $fecha === '' || trim($fecha) === '') {
             return null;
         }
 
-        // Limpiar espacios y caracteres raros
-        $fecha = trim($fecha);
-
-        // Validar formato manualmente
-        if (!preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fecha)) {
-            return null;
+        if (is_numeric($fecha) && $fecha > 0 && $fecha < 100000) {
+            try {
+                $fechaConvertida = Carbon::instance(
+                    \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($fecha)
+                );
+                
+                if ($fechaConvertida->year >= 1900 && $fechaConvertida->year <= 2010) {
+                    return $fechaConvertida->format('Y-m-d');
+                }
+            } catch (\Exception $e) {
+            }
         }
 
-        try {
-            return Carbon::createFromFormat('d/m/Y', $fecha)->format('Y-m-d');
-        } catch (\Exception $e) {
+        $fechaLimpia = trim((string)$fecha);
+        $fechaLimpia = preg_replace('/[^0-9\/\-]/', '', $fechaLimpia); 
+        $fechaLimpia = str_replace(['-', '.', ','], '/', $fechaLimpia);
+        $fechaLimpia = preg_replace('/\/+/', '/', $fechaLimpia); 
+        
+        if (substr_count($fechaLimpia, '/') !== 2) {
+            logger()->warning('Fecha inválida - formato incorrecto', ['fecha' => $fecha]);
             return null;
         }
+        
+        $partes = explode('/', $fechaLimpia);
+        $partes = array_map('intval', $partes);
+        
+        if (count($partes) !== 3) {
+            return null;
+        }
+        
+        $combinaciones = [
+            ['d' => $partes[0], 'm' => $partes[1], 'y' => $partes[2]], 
+            ['y' => $partes[0], 'm' => $partes[1], 'd' => $partes[2]], 
+            ['m' => $partes[0], 'd' => $partes[1], 'y' => $partes[2]], 
+        ];
+        
+        foreach ($combinaciones as $combo) {
+            try {
+                $dia = $combo['d'];
+                $mes = $combo['m'];
+                $anio = $combo['y'];
+                
+                if ($anio < 100) {
+                    $anio = $anio < 50 ? 2000 + $anio : 1900 + $anio;
+                }
+                
+                if ($anio < 1900 || $anio > 2010 || $mes < 1 || $mes > 12 || $dia < 1 || $dia > 31) {
+                    continue;
+                }
+                
+                $fechaCreada = Carbon::createFromDate($anio, $mes, $dia);
+                
+                if ($fechaCreada->day == $dia && $fechaCreada->month == $mes && $fechaCreada->year == $anio) {
+                    return $fechaCreada->format('Y-m-d');
+                }
+                
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+        
+        logger()->warning('No se pudo parsear la fecha', ['fecha' => $fecha]);
+        return null;
     }
 
     private function obtenerPnfId(string $nombrePnf)
     {
-        return DB::table('pnf')
-            ->where('nombre_pnf', 'like', "%{$nombrePnf}%")
-            ->value('id_pnf') ?? 1;
+        return $this->normalizarPnf($nombrePnf);
     }
 
 
@@ -74,89 +169,114 @@ class Archivos extends Component
             // Eliminar encabezado
             unset($rows[0]);
 
-            $cedulasEnBd = Persona::where('id_perfil', 2)
-                ->pluck('cedula_persona')
-                ->toArray();
-
             $cedulasProcesadas = [];
+
+            $total = 0;
+            $insertados = 0;
+            $omitidosFecha = 0;
+            $omitidosCedulaVacia = 0;
+            $omitidosDuplicadosExcel = 0;
+            $actualizados = 0;
+
 
             foreach ($rows as $row) {
 
-                // CÉDULA
+                $total++;
+
                 $cedula = trim($row[2]);
 
                 if (!$cedula) {
+                    $omitidosCedulaVacia++;
                     continue;
                 }
 
-                // Evitar duplicados en el mismo Excel
                 if (in_array($cedula, $cedulasProcesadas)) {
+                    $omitidosDuplicadosExcel++;
                     continue;
                 }
 
                 $cedulasProcesadas[] = $cedula;
 
-                // Evitar duplicados en BD
-                if (in_array($cedula, $cedulasEnBd)) {
-                    continue;
-                }
-
                 $fechaNacimiento = $this->parseFechaNacimiento($row[8]);
 
                 if (!$fechaNacimiento) {
-                    // Saltar fila si la fecha es inválida
-                    continue;
+                    $omitidosFecha++;
+                    $edad = null;
+                } else {
+                    $edad = Carbon::parse($fechaNacimiento)->age;
                 }
 
-                $edad = Carbon::parse($fechaNacimiento)->age;
-
-
-                // EDAD
-                $edad = Carbon::parse($fechaNacimiento)->age;
 
                 $sexoRaw = strtoupper(trim($row[7]));
-
                 $sexo = match ($sexoRaw) {
-                    'M' => 'Masculino',
-                    'F' => 'Femenino',
-                    default => 'Otro',
+                    'M' => 'MASCULINO',
+                    'F' => 'FEMENINO',
+                    default => 'NO DEFINIDO',
                 };
 
-
-                // TELÉFONO (limpio)
                 $telefono = preg_replace('/\D/', '', $row[9]);
 
-                // CREAR PERSONA
-                $persona = Persona::create([
-                    'nombre_persona'          => trim($row[3]),
-                    'segundo_nombre_persona'  => trim($row[4]) ?: null,
-                    'apellido_persona'        => trim($row[5]),
-                    'segundo_apellido_persona' => trim($row[6]) ?: null,
-                    'cedula_persona'          => $cedula,
-                    'telefono_persona'        => $telefono,
-                    'genero_persona'          => $sexo,
-                    'edad_persona'            => $edad,
-                    'fecha_nacimiento_persona' => $fechaNacimiento,
-                    'email_persona'           => trim($row[11]),
-                    'id_perfil'               => 2,
-                    'id_sede'                 => 1,
-                ]);
+                $persona = Persona::updateOrCreate(
+                    ['cedula_persona' => $cedula],
+                    [
+                        'nombre_persona'            => trim($row[3]),
+                        'segundo_nombre_persona'    => trim($row[4]) ?: null,
+                        'apellido_persona'          => trim($row[5]),
+                        'segundo_apellido_persona'  => trim($row[6]) ?: null,
+                        'telefono_persona'          => $telefono,
+                        'genero_persona'            => $sexo,
+                        'edad_persona'              => $edad,
+                        'fecha_nacimiento_persona'  => $fechaNacimiento,
+                        'email_persona'             => trim($row[11]),
+                        'semestre_persona'          => $row[13] ?? null,
+                        'id_perfil'                 => 2,
+                        'id_sede'                   => 1,
+                    ]
+                );
 
-                // RELACIÓN PERSONA - PNF
-                PersonaPnf::create([
-                    'id_persona'   => $persona->id_persona,
-                    'id_pnf'       => $this->obtenerPnfId(trim($row[12])),
-                    'fecha_inicio' => now()->toDateString(),
-                    'fecha_fin'    => now()->toDateString(),
+                if ($persona->wasRecentlyCreated) {
+                    $insertados++;
+                } else {
+                    $actualizados++;
+                }
 
-                    // 'semestre' => $row[13],
-                ]);
+
+                PersonaPnf::updateOrCreate(
+                    [
+                        'id_persona' => $persona->id_persona,
+                    ],
+                    [
+                        'id_pnf'       => $this->normalizarPnf(trim($row[12])), // <-- CAMBIO AQUÍ
+                        'fecha_inicio' => now()->toDateString(),
+                        'fecha_fin'    => now()->toDateString(),
+                    ]
+                );
             }
 
+            $fechaLimite = Carbon::now()->subYears(2);
+
+            $inactivados = Persona::where('updated_at', '<', $fechaLimite)
+                ->where('id_perfil', 2)
+                ->update([
+                    'estado' => false,
+                ]);
+
+
             Archivo::create([
-                'info_estudiantes' => $ruta,
+                'info_estudiantes' => 'Estudiantes UPTP - ' . now()->format('Y-m-d H:i:s'),
                 'fecha' => now()->toDateString(),
                 'estado' => 'Procesado',
+            ]);
+
+            logger()->info('IMPORTACIÓN EXCEL', [
+                'total_filas' => $total,
+                'insertados' => $insertados,
+                'actualizados' => $actualizados,
+                'omitidos_fecha' => $omitidosFecha,
+                'omitidos_cedula_vacia' => $omitidosCedulaVacia,
+                'omitidos_duplicados_excel' => $omitidosDuplicadosExcel,
+                'cantidad_inactivados' => $inactivados,
+                'fecha_limite' => $fechaLimite->toDateString(),
             ]);
 
             DB::commit();

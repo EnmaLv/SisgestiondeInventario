@@ -94,9 +94,8 @@
                             <span><i class="fas fa-venus-mars"></i></span>
                             <select wire:model="genero" name="genero" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="" selected>Seleccione</option>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Otro">Otro</option>
+                                <option value="MASCULINO">MASCULINO</option>
+                                <option value="FEMENINO">FEMENINO</option>
                             </select>                            
                         </div>
                         @error('genero')
@@ -179,7 +178,7 @@
                             @endphp
 
                             @for ($i = 1; $i <= 10; $i++)
-                                <option value="{{ $i }}">
+                                <option value="{{ $ordinales[$i] . ' SEMESTRE' }}">
                                     {{ $ordinales[$i] }} Semestre
                                 </option>
                             @endfor
@@ -288,6 +287,25 @@
 
 @section('js')
     <script>
+       document.addEventListener('livewire:init', () => {
+            Livewire.on('confirm-reactivate', (event) => {
+                Swal.fire({
+                    title: 'Estudiante inactivo detectado',
+                    text: 'Este estudiante está inactivo. ¿Desea reactivarlo?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, reactivar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.reactivarEstudiante(event.cedula);
+                    }
+                });
+            });
+        });
+
         $(document).ready(function() {
             $("[data-mask]").inputmask();
         });
