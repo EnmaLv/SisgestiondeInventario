@@ -138,7 +138,8 @@
                         <label class="rd-label">PNF</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-university"></i></span>
-                            <select wire:model="pnfId" class="rd-input form-control" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} >
+                            <select wire:model="pnfId" class="rd-input form-control" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
+                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione PNF</option>
                                 @foreach($pnfs as $pnf)
                                     <option value="{{ $pnf->id_pnf }}">{{ $pnf->nombre_pnf }}</option>
@@ -151,7 +152,8 @@
                         <label class="rd-label">Sede del Estudiante</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-university"></i></span>
-                            <select wire:model="sedeId" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}>
+                            <select wire:model="sedeId" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}
+                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione Sede</option>
                                 @foreach($sede as $sed)
                                     <option value="{{ $sed->id_sede }}">{{ $sed->nombre_sede }}</option>
@@ -159,6 +161,31 @@
                             </select>
                         </div>
                         @error('sedeId') <small class="text-danger">La Sede es obligatoria</small> @enderror
+                        
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label class="rd-label">Semestre del Estudiante</label>
+                        <div class="rd-input-group">
+                            <span><i class="fas fa-university"></i></span>
+                            <select wire:model="semestreId" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}
+                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
+                                <option value="">Seleccione Semestre</option>
+                            @php
+                                $ordinales = [
+                                    1 => '1er', 2 => '2do', 3 => '3er', 4 => '4to', 5 => '5to', 
+                                    6 => '6to', 7 => '7mo', 8 => '8vo', 9 => '9no', 10 => '10mo'
+                                ];
+                            @endphp
+
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}">
+                                    {{ $ordinales[$i] }} Semestre
+                                </option>
+                            @endfor
+                            </select>
+                        </div>
+                        @error('semestreId') <small class="text-danger">El Semestre es obligatorio</small> @enderror
                         
                     </div>
                 </div>
@@ -273,13 +300,7 @@
                 if (value.length > 3) {
                     value = value.substring(0, 3) + ' ' + value.substring(3);
                 }
-
-                //Agregar guion
-                if (value.length > 7) {
-                    value = value.substring(0, 7) + '-' + value.substring(7);
-                }
                 
-                // Actualizar el valor
                 e.target.value = value;
             })
             

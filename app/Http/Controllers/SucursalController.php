@@ -121,7 +121,7 @@ class SucursalController extends Controller
     public function activar($id)
     {
         Sucursal::activarSucursal($id);
-        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Categoria activada exitosamente.');
+        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sede activada exitosamente.');
     }
 
     public function exportCsv(Request $request)

@@ -27,6 +27,7 @@ class Persona extends Model
         'edad_persona',
         'fecha_nacimiento_persona',
         'email_persona',
+        'semestre_persona',
         'id_perfil',
         'id_sede',
     ];
@@ -79,6 +80,7 @@ class Persona extends Model
                 'edad_persona' => Carbon::parse($data['fecha_nacimiento'])->age,
                 'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
                 'email_persona' => $data['email'],
+                'semestre_persona' => $data['semestreId'],
                 'id_perfil' => 2,
                 'id_sede' => $data['sedeId'] ?? null,
             ]);
@@ -141,6 +143,7 @@ class Persona extends Model
                 'edad_persona'             => Carbon::parse($data['fecha_nacimiento'])->age,
                 'fecha_nacimiento_persona' => $data['fecha_nacimiento'],
                 'email_persona'            => $data['email'],
+                'semestre_persona'         => $data['semestreId'],
                 'id_sede'                  => $data['sedeId'] ?? null,
             ]);
 

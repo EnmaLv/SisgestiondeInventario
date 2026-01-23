@@ -22,7 +22,8 @@ return new class extends Migration
         Schema::create('sede', function (Blueprint $table) {
             $table->id('id_sede');
             $table->string('nombre_sede');
-            $table->foreignId('id_estado')->constrained('estados')->onDelete('cascade');
+            $table->integer('estatus')->default(1);
+            $table->foreignId('id_sucursal')->constrained('sucursals')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -38,6 +39,7 @@ return new class extends Migration
             $table->integer('edad_persona');
             $table->date('fecha_nacimiento_persona');
             $table->string('email_persona');
+            $table->integer('semestre_persona')->nullable();
             $table->foreignId('id_perfil')->references('id_perfil')->on('perfil')->onDelete('cascade');
             $table->foreignId('id_sede')->references('id_sede')->on('sede')->onDelete('cascade');
         });

@@ -66,6 +66,7 @@ class Registro_diario extends Model
             'edad_persona',
             'fecha_nacimiento_persona',
             'email_persona',
+            'semestre_persona'
         ], 'persona');
 
         $pnfColumn = formatColumn([

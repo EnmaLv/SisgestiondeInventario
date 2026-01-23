@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\SucursalObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Traits\ConvierteAMayusculasNoEloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+#[ObservedBy(SucursalObserver::class)]
 class Sucursal extends Model
 {
     use ConvierteAMayusculasNoEloquent;
@@ -61,7 +64,7 @@ class Sucursal extends Model
         $helper = new self();
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'direccion']);
-        return DB::table('sucursals')->insertGetId([
+        $sucursal =Sucursal::create([
             'nombre'     => $data['nombre'],
             'direccion'  => $data['direccion'],
             'telefono'   => $data['telefono'],
@@ -69,6 +72,8 @@ class Sucursal extends Model
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        return $sucursal->id;
     }
 
     public static function obtenerSucursal($id)
@@ -80,9 +85,6 @@ class Sucursal extends Model
 
     public static function actualizarSucursal($id, array $data)
     {
-        $helper = new self();
-
-        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'direccion']);
         return DB::table('sucursals')
             ->where('id', $id)
             ->update([
@@ -96,22 +98,38 @@ class Sucursal extends Model
 
     public static function eliminarSucursal($id)
     {
-        return DB::table('sucursals')
+        $sucursal = DB::table('sucursals')
             ->where('id', $id)
             ->update([
                 'activo' => 0,
                 'updated_at' => now()
             ]);
+        //Aplicamos el estado a la sede
+        DB::table('sede')
+            ->where('id_sucursal', $id)
+            ->update([
+                'estatus' => 0,
+                'updated_at' => now()
+            ]);
+        return $sucursal;
     }
 
     public static function activarSucursal($id)
     {
-        return DB::table('sucursals')
+        $sucursal = DB::table('sucursals')
             ->where('id', $id)
             ->update([
                 'activo' => 1,
                 'updated_at' => now()
             ]);
+        //Activamos tambien la sede
+        DB::table('sede')
+            ->where('id_sucursal', $id)
+            ->update([
+                'estatus' => 1,
+                'updated_at' => now()
+            ]);
+        return $sucursal;
     }
 
     public static function obtenerSucursalConInventario($id)

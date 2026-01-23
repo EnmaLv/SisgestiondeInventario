@@ -38,6 +38,7 @@ class RegistroPersona extends Component
 
     public $pnfId;
     public $sedeId;
+    public $semestreId;
 
     public $calle;
     public $sector;
@@ -70,6 +71,7 @@ class RegistroPersona extends Component
             'parroquiaId' => 'required|numeric',
             'sedeId' => 'required|numeric',
             'pnfId' => 'required|numeric',
+            'semestreId' => 'required|numeric',
         ];
 
         if ($this->isEdit) {
@@ -94,6 +96,7 @@ class RegistroPersona extends Component
         'parroquiaId.required' => 'Debe seleccionar una parroquia',
         'pnfId.required' => 'El PNF es obligatorio',
         'sedeId.required' => 'La Sede es obligatoria',
+        'semestreId.required' => 'El Semestre es obligatorio',
     ];
 
 
@@ -223,6 +226,7 @@ class RegistroPersona extends Component
             $this->email = $persona->email_persona;
             $this->pnfs = DB::table('pnf')->where('id_estatus', 1)->get();
             $this->sede = DB::table('sede')->get();
+            $this->semestreId = $persona->semestre_persona;
             $this->showPnf = true;
             $this->pnfId = $personaPnf->id_pnf;
             $this->sedeId = $persona->id_sede;
@@ -258,7 +262,7 @@ class RegistroPersona extends Component
 
         $this->pnfs = DB::table('pnf')->where('id_estatus', 1)->get();
         $this->estadosVE = DB::table('estados')->where('status', 1)->get();
-        $this->sede = DB::table('sede')->get();
+        $this->sede = DB::table('sede')->where('estatus', 1)->get();
     }
 
     public function render()
