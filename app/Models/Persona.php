@@ -35,7 +35,8 @@ class Persona extends Model
      * @param string|null $numero Ej: 0322232332
      * @return string
      */
-    private static function formatearTelefono($numero) {
+    private static function formatearTelefono($numero)
+    {
         // 1. Limpiamos el valor por si trae espacios o caracteres extraños
         $limpio = preg_replace('/\D/', '', $numero);
 
@@ -58,8 +59,10 @@ class Persona extends Model
 
         //Formateamos el numero de telefono
         $telefono = self::formatearTelefono($data['telefono']);
-        
-        //Iniciamos una transsaccion para crear la persona
+
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'segundo_nombre', 'apellido', 'segundo_apellido', 'email', 'sector', 'calle']);
 
         DB::beginTransaction();
 
