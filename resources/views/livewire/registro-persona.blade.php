@@ -107,7 +107,7 @@
                         <label class="rd-label">Teléfono Móvil</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-mobile-alt"></i></span>
-                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" value="{{ old('telefono') }}" placeholder="4245994343"
+                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="412 123-4567" value="{{ old('telefono') }}"
                             >
                         </div>
                         @error('telefono')
@@ -273,7 +273,13 @@
                 if (value.length > 3) {
                     value = value.substring(0, 3) + ' ' + value.substring(3);
                 }
+
+                //Agregar guion
+                if (value.length > 7) {
+                    value = value.substring(0, 7) + '-' + value.substring(7);
+                }
                 
+                // Actualizar el valor
                 e.target.value = value;
             })
             
