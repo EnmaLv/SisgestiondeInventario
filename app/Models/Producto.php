@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 use App\Models\PrecioProducto;
+use App\Traits\ConvierteAMayusculasNoEloquent;
+
 class Producto extends Model
 {
+    use ConvierteAMayusculasNoEloquent;
     use HasFactory;
     use WithPagination;
 
@@ -131,6 +134,9 @@ class Producto extends Model
 
     public static function crearProducto(array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
         return DB::transaction(function () use ($data) {
 
             if (empty($data['codigo'])) {
@@ -208,6 +214,10 @@ class Producto extends Model
 
     public static function actualizarProducto($id, array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
+        
         $unidad = DB::table('unidades')
             ->where('id', $data['unidad_id'])
             ->first();

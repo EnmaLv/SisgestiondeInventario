@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\ConvierteAMayusculasNoEloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Compra extends Model
 {
+    use ConvierteAMayusculasNoEloquent;
     protected $table = 'compras';
 
     protected $fillable = [
-        'proveedor_id',    
-        'fecha',           
-        'total',           
-        'estado',          
-        'observaciones',   
+        'proveedor_id',
+        'fecha',
+        'total',
+        'estado',
+        'observaciones',
     ];
 
     protected $casts = [
@@ -37,19 +39,19 @@ class Compra extends Model
         return [
             'proveedores' => DB::table('proveedors')
                 ->select('id', 'nombre', 'email')
-                ->where('estado', 1) 
+                ->where('estado', 1)
                 ->orderBy('nombre')
                 ->get(),
 
             'productos' => DB::table('productos')
                 ->select('id', 'codigo', 'nombre')
-                ->where('estado', 1) 
+                ->where('estado', 1)
                 ->orderBy('nombre')
                 ->get(),
 
             'sucursales' => DB::table('sucursals')
                 ->select('id', 'nombre')
-                ->where('activo', 1) 
+                ->where('activo', 1)
                 ->orderBy('nombre')
                 ->get(),
         ];
@@ -82,13 +84,17 @@ class Compra extends Model
         return $query->orderBy('compras.id', 'desc')->paginate(10);
     }
 
-    public static function crearCompra($data)
+    public static function crearCompra(array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['observaciones']);
+
         return DB::table('compras')->insertGetId([
             'proveedor_id'  => $data['proveedor_id'],
             'fecha'         => $data['fecha'],
             'observaciones' => $data['observaciones'] ?? null,
-            'total'         => 0, 
+            'total'         => 0,
             'estado'        => 'Pendiente',
             'created_at'    => now(),
             'updated_at'    => now(),
@@ -220,7 +226,7 @@ class Compra extends Model
                     DB::table('inventario_sucursal_lotes')
                         ->where('id', $inventario->id)
                         ->update([
-                            'cantidad'         => $inventario->cantidad + $detalle->cantidad, 
+                            'cantidad'         => $inventario->cantidad + $detalle->cantidad,
                             'cantidad_gramos'  => $inventario->cantidad_gramos + $detalle->cantidad_gramos
                         ]);
                 } else {
@@ -349,7 +355,7 @@ class Compra extends Model
                         ]);
                     }
                 }
-                
+
                 if ($cantidadRestante > 0) {
                     $gramosAsignados = $cantidadRestante * $gramosPorUnidad;
 
@@ -396,7 +402,6 @@ class Compra extends Model
 
             DB::commit();
             return true;
-
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

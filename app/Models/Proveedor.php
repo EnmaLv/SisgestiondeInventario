@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ConvierteAMayusculasNoEloquent;
 
 class Proveedor extends Model
 {
+    use ConvierteAMayusculasNoEloquent;
     use HasFactory;
 
     protected $table = 'proveedors';
@@ -55,6 +57,9 @@ class Proveedor extends Model
 
     public static function crearProveedor(array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['empresa', 'direccion', 'nombre', 'email']);
         return DB::table('proveedors')->insertGetId([
             'empresa'    => $data['empresa'],
             'direccion'  => $data['direccion'],
@@ -76,6 +81,9 @@ class Proveedor extends Model
 
     public static function actualizarProveedor($id, array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['empresa', 'direccion', 'nombre', 'email']);
         return DB::table('proveedors')
             ->where('id', $id)
             ->update([

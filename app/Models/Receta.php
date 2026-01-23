@@ -2,18 +2,24 @@
 
 namespace App\Models;
 
+use App\Traits\ConvierteAMayusculas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Receta extends Model
 {
-    /** @use HasFactory<\Database\Factories\RecetaFactory> */
+    use ConvierteAMayusculas;
     use HasFactory;
 
     protected $table = 'recetas';
 
     protected $fillable = [
+        'nombre',
+        'descripcion',
+    ];
+
+    protected $mayusculas = [
         'nombre',
         'descripcion',
     ];

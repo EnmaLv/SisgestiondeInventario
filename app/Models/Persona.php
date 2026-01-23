@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\ConvierteAMayusculasNoEloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Exception;
+
 class Persona extends Model
 {
+    use ConvierteAMayusculasNoEloquent;
+
     protected $table = 'persona';
     protected $primaryKey = 'id_persona';
     public $timestamps = false;
@@ -29,7 +33,9 @@ class Persona extends Model
 
     public static function crearPersona($data)
     {
-        //Iniciamos una transsaccion para crear la persona
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'segundo_nombre', 'apellido', 'segundo_apellido', 'email', 'sector', 'calle']);
 
         DB::beginTransaction();
 
@@ -75,24 +81,25 @@ class Persona extends Model
                 'fecha_inicio' => Carbon::now(),
                 'fecha_fin' => Carbon::now(),
             ]);
-                
-            
+
+
 
 
             DB::commit();
             return true;
         } catch (Exception $e) {
-            DB::rollBack(); 
+            DB::rollBack();
             dd($e->getMessage());
             return false;
-
         }
-
     }
 
     public static function actualizarPersona($data, $personaId)
     {
-        // Lógica para actualizar la persona
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'segundo_nombre', 'apellido', 'segundo_apellido', 'email', 'sector', 'calle']);
+
         DB::beginTransaction();
 
         try {
@@ -115,10 +122,10 @@ class Persona extends Model
                 ->where('cedula_persona', $data['cedula'])
                 ->where('id_persona', '!=', $personaId)
                 ->first();
-            
+
             if ($personaExistente) {
                 throw new Exception('Ya existe otra persona con esa cédula');
-            }else{
+            } else {
                 DB::table('persona')->where('id_persona', $personaId)->update([
                     'cedula_persona' => $data['cedula']
                 ]);
@@ -135,7 +142,7 @@ class Persona extends Model
                 ]
             );
 
-                
+
             // Actualizar o insertar el PNF relacionado
             DB::table('persona_pnf')->updateOrInsert(
                 ['id_persona' => $personaId], // Condición
@@ -148,7 +155,6 @@ class Persona extends Model
 
             DB::commit();
             return [true, null];
-
         } catch (Exception $e) {
             DB::rollBack();
             return [false, $e->getMessage()];

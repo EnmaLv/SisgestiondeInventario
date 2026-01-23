@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ConvierteAMayusculasNoEloquent;
 
 class Categoria extends Model
 {
+    use ConvierteAMayusculasNoEloquent;
     use HasFactory;
 
     protected $table = 'categorias';
@@ -41,6 +43,10 @@ class Categoria extends Model
 
     public static function crearCategoria(array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
+
         return DB::table('categorias')->insertGetId([
             'nombre'      => $data['nombre'],
             'descripcion' => $data['descripcion'],
@@ -59,6 +65,10 @@ class Categoria extends Model
 
     public static function actualizarCategoria($id, array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
+
         return DB::table('categorias')
             ->where('id', $id)
             ->update([
@@ -67,6 +77,7 @@ class Categoria extends Model
                 'updated_at'  => now(),
             ]);
     }
+
 
     public static function eliminarCategoria($id)
     {

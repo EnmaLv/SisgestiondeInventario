@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\ConvierteAMayusculas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Localidad extends Model
 {
+    use ConvierteAMayusculas;
     use HasFactory;
 
     protected $table = 'localidads';
@@ -16,6 +18,10 @@ class Localidad extends Model
         'municipio_id',
         'nombre_localidad',
         'status',
+    ];
+
+    protected $mayusculas = [
+        'nombre_localidad'
     ];
 
     public function municipio(){

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\ConvierteAMayusculasNoEloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Sucursal extends Model
 {
+    use ConvierteAMayusculasNoEloquent;
     use HasFactory;
 
     protected $table = 'sucursals';
@@ -56,6 +58,9 @@ class Sucursal extends Model
 
     public static function crearSucursal(array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'direccion']);
         return DB::table('sucursals')->insertGetId([
             'nombre'     => $data['nombre'],
             'direccion'  => $data['direccion'],
@@ -75,6 +80,9 @@ class Sucursal extends Model
 
     public static function actualizarSucursal($id, array $data)
     {
+        $helper = new self();
+
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'direccion']);
         return DB::table('sucursals')
             ->where('id', $id)
             ->update([

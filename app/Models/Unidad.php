@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\ConvierteAMayusculas;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Unidad extends Model
 {
+    use ConvierteAMayusculas;
     use HasFactory;
 
     protected $table = 'unidades';
@@ -15,6 +17,11 @@ class Unidad extends Model
         'nombre',
         'abreviatura',
         'factor_a_gramo',
+    ];
+
+    protected $mayusculas = [
+        'nombre',
+        'abreviatura',
     ];
 
     public function movimientos()
