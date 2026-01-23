@@ -59,7 +59,7 @@ class Proveedor extends Model
     {
         $helper = new self();
 
-        $data = $helper->convertirCamposAMayusculas($data, ['empresa', 'direccion', 'nombre', 'email']);
+        $data = $helper->convertirCamposAMayusculas($data, ['empresa', 'direccion', 'nombre']);
         return DB::table('proveedors')->insertGetId([
             'empresa'    => $data['empresa'],
             'direccion'  => $data['direccion'],
@@ -83,7 +83,7 @@ class Proveedor extends Model
     {
         $helper = new self();
 
-        $data = $helper->convertirCamposAMayusculas($data, ['empresa', 'direccion', 'nombre', 'email']);
+        $data = $helper->convertirCamposAMayusculas($data, ['empresa', 'direccion', 'nombre']);
         return DB::table('proveedors')
             ->where('id', $id)
             ->update([

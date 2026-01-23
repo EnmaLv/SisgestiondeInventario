@@ -62,7 +62,7 @@ class Persona extends Model
 
         $helper = new self();
 
-        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'segundo_nombre', 'apellido', 'segundo_apellido', 'email', 'sector', 'calle']);
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'segundo_nombre', 'apellido', 'segundo_apellido', 'sector', 'calle']);
 
         DB::beginTransaction();
 
@@ -125,7 +125,7 @@ class Persona extends Model
     {
         $helper = new self();
 
-        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'segundo_nombre', 'apellido', 'segundo_apellido', 'email', 'sector', 'calle']);
+        $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'segundo_nombre', 'apellido', 'segundo_apellido', 'sector', 'calle']);
 
         DB::beginTransaction();
 
