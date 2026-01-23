@@ -318,6 +318,16 @@
                 if (value.length > 3) {
                     value = value.substring(0, 3) + ' ' + value.substring(3);
                 }
+
+                // Agregar espacio después del 3er dígito
+                if (value.length > 3) {
+                    value = value.substring(0, 3) + ' ' + value.substring(3);
+                }
+
+                //Agregar guion
+                if (value.length > 8) {
+                    value = value.substring(0, 8) + '-' + value.substring(8);
+                }
                 
                 e.target.value = value;
             })
