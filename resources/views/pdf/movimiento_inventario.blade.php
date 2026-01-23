@@ -298,9 +298,9 @@
                 <th style="width: 5%;">#</th>
                 <th style="width: 12%;">FECHA</th>
                 <th style="width: 20%;">LOTE</th>
-                <th style="width: 23%;">PRODUCTO / ÍTEM</th>
+                <th style="width: 20%;">PRODUCTO / ÍTEM</th>
                 <th style="width: 15%;">TIPO</th>
-                <th style="width: 10%;">CANT.</th>
+                <th style="width: 10%;">CANT. (g)</th>
                 <th style="width: 15%;">SEDE</th>
             </tr>
         </thead>
@@ -316,7 +316,7 @@
                         {{ $item->tipo_movimiento }}
                     </span>
                 </td>
-                <td class="right">{{ number_format($item->cantidad, 2, ',', '.') }} g</td>
+                <td class="right">{{ number_format($item->cantidad_gramos, 2, ',', '.') }}</td>
                 <td>{{ $item->sucursal->nombre ?? 'N/A' }}</td>
             </tr>
             @endforeach
