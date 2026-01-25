@@ -17,7 +17,7 @@
                                         <select
                                             wire:model.live="desayunos_agregados.{{ $index }}.receta_id"
                                             class="rd-input @error('desayunos_agregados.' . $index . '.receta_id') rd-input-error @enderror"
-                                            @disabled($desayuno_registrado) @if ($desayuno_registrado) style="opacity: .8; cursor: not-allowed;" @endif>
+                                            @disabled($desayuno_registrado || !$horarioPermitido) @if ($desayuno_registrado || !$horarioPermitido) style="opacity: .8; cursor: not-allowed;" @endif>
                                             <option value="">Seleccione una opción</option>
                                             @foreach ($comidas as $comida)
                                                 <option value="{{ $comida->id }}">{{ $comida->nombre }}</option>
@@ -32,7 +32,7 @@
                                             <input type="number"
                                                 wire:model.live="desayunos_agregados.{{ $index }}.cantidad"
                                                 class="rd-input @error('desayunos_agregados.' . $index . '.cantidad') rd-input-error @enderror"
-                                                placeholder="Cant." min="1" @disabled($desayuno_registrado) @if ($desayuno_registrado) style="opacity: .8; cursor: not-allowed;" @endif/>
+                                                placeholder="Cant." min="1" @disabled($desayuno_registrado || !$horarioPermitido) @if ($desayuno_registrado || !$horarioPermitido) style="opacity: .8; cursor: not-allowed;" @endif/>
                                         </div>
                                         {{-- Botón de Eliminar (Pequeño, solo visible si hay más de una entrada) --}}
                                         @if(count($desayunos_agregados) > 1 && !$desayuno_registrado)
@@ -51,12 +51,13 @@
 
                     @endforeach
                     <div class="col-md-12 d-flex mt-4 justify-content-end align-items-center">
-                        <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif" class="rd-btn rd-btn-default mr-4" @disabled($desayuno_registrado)>
+                        <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado || !$horarioPermitido) opacity: 0.5; cursor: not-allowed; @endif" 
+                        class="rd-btn rd-btn-default mr-4" @disabled($desayuno_registrado || !$horarioPermitido)>
                             Agregar Desayuno
                         </button>
                         <button class="rd-btn rd-btn-primary w-90" type="submit" aria-label="Guardar desayunos"
-                            @disabled($desayuno_registrado)
-                            style="@if ($desayuno_registrado) opacity: 0.5; cursor: not-allowed; @endif">
+                            @disabled($desayuno_registrado || !$horarioPermitido)
+                            style="@if ($desayuno_registrado || !$horarioPermitido) opacity: 0.5; cursor: not-allowed; @endif">
                             Guardar Desayunos
                         </button>
                     </div>
