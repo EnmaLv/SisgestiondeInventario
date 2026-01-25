@@ -98,8 +98,8 @@
                                 <h3 style="margin: 0; font-size: 0.875rem; font-weight: 500; color: #991b1b;">Horario no
                                     permitido</h3>
                                 <div style="margin-top: 0.25rem; font-size: 0.875rem; color: #b91c1c;">
-                                    <p style="margin: 0.25rem 0;">El registro de comedor solo está disponible de 12:00
-                                        AM a 12:00 PM.</p>
+                                    <p style="margin: 0.25rem 0;">El registro de comedor solo está disponible de 6:00
+                                        AM a 10:00 PM.</p>
                                     <p style="margin: 0.25rem 0 0;">Por favor, inténtalo de nuevo dentro del horario
                                         establecido.</p>
                                 </div>

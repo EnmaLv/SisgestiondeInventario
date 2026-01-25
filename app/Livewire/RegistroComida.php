@@ -16,7 +16,7 @@ class RegistroComida extends Component
     public $showNotification = false;
     public $notification = ['type' => 'success', 'message' => ''];
     public $desayuno_registrado = false;
-    public $horarioPermitido; 
+    public $horarioPermitido;
     public $alertInventario = null;
     public $alertLimite = null;
 
@@ -66,7 +66,7 @@ class RegistroComida extends Component
         $registroHoy = DetalleRegistroDiario::whereDate('created_at', $hoy)->exists();
 
         $hora = now()->format('H:i');
-        $this->horarioPermitido = $hora >= '00:00' && $hora <= '22:00';
+        $this->horarioPermitido = $hora >= '06:00' && $hora <= '10:00';
         $this->desayuno_registrado = $registroHoy;
         if ($this->desayuno_registrado) {
             $detalles = DetalleRegistroDiario::whereDate('created_at', $hoy)->get(['receta_id', 'cantidad_servido']);
@@ -102,8 +102,7 @@ class RegistroComida extends Component
     public function saveDesayuno()
     {
         $hora = now()->format('H:i');
-        if (!($hora >= '00:00' && $hora <= '22:00')) {
-            $this->addError('hora', 'Solo puede registrar desayuno entre 00:00am y 22:00pm.');
+        if (!($hora >= '06:00' && $hora <= '10:00')) {
             return;
         }
 
