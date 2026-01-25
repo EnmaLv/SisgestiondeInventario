@@ -147,6 +147,7 @@
                         </div>
                         @error('pnfId') <small class="text-danger">El PNF es obligatorio</small> @enderror
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
                                 ¿No encuentras tu PNF?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
@@ -156,6 +157,7 @@
                                     Créalo aquí
                                 </a>
                             </small>
+                            @endif
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
@@ -172,6 +174,7 @@
                         </div>
                         @error('sedeId') <small class="text-danger">La Sede es obligatoria</small> @enderror
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
                                 ¿No encuentras tu sede?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
@@ -181,6 +184,7 @@
                                     Créala aquí
                                 </a>
                             </small>
+                            @endif
                         </div>
                     </div>
                     
@@ -234,6 +238,7 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
                                 ¿No encuentras tu Estado?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
@@ -243,6 +248,7 @@
                                     Créalo aquí
                                 </a>
                             </small>
+                            @endif
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
@@ -260,6 +266,7 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
                                 ¿No encuentras tu Municipio?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
@@ -269,6 +276,7 @@
                                     Créalo aquí
                                 </a>
                             </small>
+                            @endif
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
@@ -286,15 +294,17 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
-                            <small style="color: #64748b; font-size: 0.85rem;">
-                                ¿No encuentras tu Localidad?
-                                <a wire:model.lazy="parroquiaId" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
-                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.localidad.index', [
-                                    'from' => url()->current()
-                                ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
-                                    Créala aquí
-                                </a>
-                            </small>
+                            @if(!$isEdit)
+                                <small style="color: #64748b; font-size: 0.85rem;">
+                                    ¿No encuentras tu Localidad?
+                                    <a wire:model.lazy="parroquiaId" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
+                                style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.localidad.index', [
+                                        'from' => url()->current()
+                                    ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
+                                        Créala aquí
+                                    </a>
+                                </small>
+                            @endif
                         </div>
                     </div>
                 </div>
