@@ -38,6 +38,7 @@
                 </div>
                 <form action="{{ route('admin.maestros.productos.store') }}" method="POST" enctype="multipart/form-data" class="rd-prevent-double-submit">
                     @csrf
+                    <input type="hidden" name="from" value="{{ request('from') }}">
                     <div class="row">
                         <div class="col-md-9">
                             <div class="row">
@@ -51,7 +52,7 @@
                                                 <option value="" selected disabled>Seleccione una categoría</option>
                                                 @foreach ($categorias as $categoria)
                                                     <option value="{{ $categoria->id }}"
-                                                        {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
+                                                        {{ old('categoria_id', request('categoria_id')) == $categoria->id ? 'selected' : '' }}>
                                                         {{ $categoria->nombre }}
                                                     </option>
                                                 @endforeach
@@ -60,6 +61,16 @@
                                         @error('categoria_id')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
+                                        <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                                            <small style="color: #64748b; font-size: 0.85rem;">
+                                                ¿No encuentras tu categoria?
+                                                <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.categorias.create', [
+                                                    'from' => url()->current()
+                                                ]) }}">
+                                                    Créala aquí
+                                                </a>
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">

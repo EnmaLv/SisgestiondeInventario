@@ -54,6 +54,7 @@
             </div>
             <form action="{{ route('admin.maestros.sucursales.store') }}" method="POST" class="rd-prevent-double-submit">
                 @csrf
+                <input type="hidden" name="from" value="{{ request('from') }}">
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="rd-label">Nombre de la Sede</label>

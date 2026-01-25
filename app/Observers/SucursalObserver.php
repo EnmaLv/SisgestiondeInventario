@@ -13,7 +13,7 @@ class SucursalObserver
         DB::table('sede')->insert([
             'nombre_sede' => $sucursal->nombre,
             'id_sucursal' => $sucursal->id,
-            'id_estatus' => 1,
+            'estatus' => 1,
         ]);
     }
 

@@ -75,19 +75,25 @@
                                     <option value="">Seleccione un proveedor</option>
                                     @foreach ($proveedores as $proveedor)
                                         <option value="{{ $proveedor->id }}"
-                                            {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                            {{ old('proveedor_id', request('proveedor_id')) == $proveedor->id ? 'selected' : '' }}>
                                             {{ $proveedor->nombre }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            @if ($proveedores->isEmpty())
-                                <div class="pt-2">No tienes proveedores registrados, <a
-                                        href="{{ route('admin.maestros.proveedores.create') }}">agrega uno</a></div>
-                            @endif
                             @error('proveedor_id')
                                 <div class="rd-error">Este campo es obligatorio.</div>
                             @enderror
+                            <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                                <small style="color: #64748b; font-size: 0.85rem;">
+                                    ¿No encuentras tu proveedor?
+                                    <a style="color: #3b82f6; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.proveedores.create', [
+                                        'from' => url()->current()
+                                    ]) }}">
+                                        Créalo aquí
+                                    </a>
+                                </small>
+                            </div>
                         </div>
 
                         {{-- Fecha --}}

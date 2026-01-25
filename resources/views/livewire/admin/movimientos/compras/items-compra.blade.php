@@ -8,7 +8,7 @@
                     class="form-control select2">
                     <option value="">Seleccione un producto</option>
                     @foreach ($productos as $producto)
-                        <option value="{{ $producto->id }}">{{ $producto->codigo }} -
+                        <option value="{{ $producto->id }}" {{ old('productoId', request('productoId')) == $producto->id ? 'selected' : '' }}>{{ $producto->codigo }} -
                             {{ $producto->nombre }}</option>
                     @endforeach
                 </select>
@@ -18,6 +18,16 @@
                     <b>{{ 'Este campo es obligatorio.' }}</b>
                 </div>
             @enderror
+            <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                <small style="color: #64748b; font-size: 0.85rem;">
+                    ¿No encuentras tu producto?
+                    <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.productos.create', [
+                        'from' => url()->current()
+                    ]) }}">
+                        Créalo aquí
+                    </a>
+                </small>
+            </div>
         </div>
 
         <div class="col-md-2">

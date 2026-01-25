@@ -7,6 +7,7 @@
                 </div>
                 <hr>
                 <form wire:submit.prevent="store" id="formCrearMunicipio" class="rd-prevent-double-submit">
+                    <input type="hidden" wire:model="from">
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label class="rd-label">Estado</label>

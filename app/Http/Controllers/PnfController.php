@@ -21,9 +21,17 @@ class PnfController extends Controller
             'nombre' => 'required|string',
         ]);
 
-        Pnf::createPnf($request);
+        $fromidreuse = Pnf::createPnf($request);
 
-        return redirect()->route('admin.maestros.pnf.index')->with('success', 'PNF creado exitosamente');
+        $from = $request->input('from');
+
+        if ($from) {
+            return redirect($from . '?pnf_id=' . $fromidreuse->id)
+                ->with('success', 'PNF creado exitosamente');
+        } else {
+            return redirect()->route('admin.maestros.recetas.index')
+                ->with('success', 'PNF creado exitosamente');
+        }
     }
 
     public function edit($id)

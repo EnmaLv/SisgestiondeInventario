@@ -176,6 +176,7 @@
                 
                 <form action="{{ route('admin.maestros.pnf.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="from" value="{{ request('from') }}">
                     <div class="modal-body p-4">
                         <div>
                             <label class="rd-label">Nombre del PNF</label>

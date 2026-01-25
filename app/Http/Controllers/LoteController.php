@@ -68,6 +68,8 @@ class LoteController extends Controller
         $estado = $request->input('estado');
         $fecha_desde = $request->input('fecha_desde');
         $fecha_hasta = $request->input('fecha_hasta');
+        $filtro = $request->input('filtro');
+
 
         $sucursalId = 1;
 
@@ -83,6 +85,14 @@ class LoteController extends Controller
                     ->whereColumn('inventario_sucursal_lotes.lote_id', 'lotes.id')
                     ->where('inventario_sucursal_lotes.sucursal_id', $sucursalId)
             ]);
+
+        if ($filtro === 'vencido') {
+            $query->whereDate('fecha_vencimiento', '<', now()->addDays(1));
+        }
+
+        if ($filtro === 'por_vencer') {
+            $query->whereDate('fecha_vencimiento', '>', now());
+        }
 
         if ($request->filled('estado')) {
             $query->where('estado', (int) $estado);

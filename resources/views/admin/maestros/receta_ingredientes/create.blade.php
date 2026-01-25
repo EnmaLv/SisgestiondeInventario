@@ -51,11 +51,21 @@
                                         <select class="rd-input w-100" name="recetas_id" required>
                                             <option value="">Seleccione una receta...</option>
                                             @foreach($recetas as $receta)
-                                                <option value="{{ $receta->id }}" {{ old('recetas_id') == $receta->id ? 'selected' : '' }}>
+                                                <option value="{{ $receta->id }}" {{ old('recetas_id', request('recetas_id')) == $receta->id ? 'selected' : '' }}>
                                                     {{ $receta->nombre }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                    </div>
+                                    <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                                        <small style="color: #64748b; font-size: 0.85rem;">
+                                            ¿No encuentras tu receta?
+                                            <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.recetas.create', [
+                                                'from' => url()->current()
+                                            ]) }}">
+                                                Créala aquí
+                                            </a>
+                                        </small>
                                     </div>
                                     <div class="mt-4 p-3 rounded" style="background: #f8fafc; border-left: 4px solid var(--color-secondary);">
                                         <p class="small text-muted mb-0">

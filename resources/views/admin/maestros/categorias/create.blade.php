@@ -38,6 +38,8 @@
                 </div>
                 <form action="{{ route('admin.maestros.categorias.store') }}" method="POST" class="rd-prevent-double-submit">
                     @csrf
+                    <input type="hidden" name="from" value="{{ request('from') }}">
+
                     <div class="form-group">
                         <label class="font-weight-bold">Nombre</label>
                         <div class="input-group mb-2">

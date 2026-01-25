@@ -57,9 +57,15 @@ class RecetaController extends Controller
         $receta->estado = true;
         $receta->save();
 
-        return redirect()
-            ->route('admin.maestros.recetas.index')
-            ->with('success', 'Receta creada exitosamente.');
+        $from = $request->input('from');
+
+        if ($from) {
+            return redirect($from . '?recetas_id=' . $receta->id)
+                ->with('success', 'Receta creada exitosamente.');
+        } else {
+            return redirect()->route('admin.maestros.recetas.index')
+                ->with('success', 'Receta creada exitosamente.');
+        }
     }
 
 

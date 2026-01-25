@@ -141,11 +141,22 @@
                             style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione PNF</option>
                                 @foreach($pnfs as $pnf)
-                                    <option value="{{ $pnf->id_pnf }}">{{ $pnf->nombre_pnf }}</option>
+                                    <option value="{{ $pnf->id_pnf }}" {{ old('pnf_id', request('pnf_id')) == $pnf->id_pnf ? 'selected' : '' }}>{{ $pnf->nombre_pnf }}</option>
                                 @endforeach
                             </select>
                         </div>
                         @error('pnfId') <small class="text-danger">El PNF es obligatorio</small> @enderror
+                        <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            <small style="color: #64748b; font-size: 0.85rem;">
+                                ¿No encuentras tu PNF?
+                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
+                                style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.pnf.index', [
+                                    'from' => url()->previous()
+                                    ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
+                                    Créalo aquí
+                                </a>
+                            </small>
+                        </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="rd-label">Sede del Estudiante</label>
@@ -155,12 +166,22 @@
                             style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione Sede</option>
                                 @foreach($sede as $sed)
-                                    <option value="{{ $sed->id_sede }}">{{ $sed->nombre_sede }}</option>
+                                    <option value="{{ $sed->id_sede }}" {{ old('sucursal_id', request('sucursal_id')) == $sed->id_sede ? 'selected' : '' }}>{{ $sed->nombre_sede }}</option>
                                 @endforeach
                             </select>
                         </div>
                         @error('sedeId') <small class="text-danger">La Sede es obligatoria</small> @enderror
-                        
+                        <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            <small style="color: #64748b; font-size: 0.85rem;">
+                                ¿No encuentras tu sede?
+                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
+                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.sucursales.create', [
+                                    'from' => url()->current()
+                                ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
+                                    Créala aquí
+                                </a>
+                            </small>
+                        </div>
                     </div>
                     
                     <div class="col-md-4 mb-3">
@@ -212,6 +233,17 @@
                         @error('estadosVeId')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
+                        <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            <small style="color: #64748b; font-size: 0.85rem;">
+                                ¿No encuentras tu Estado?
+                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
+                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.estado.index', [
+                                    'from' => url()->current()
+                                ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
+                                    Créalo aquí
+                                </a>
+                            </small>
+                        </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="rd-label">Municipio</label>
@@ -227,6 +259,17 @@
                         @error('municipiosId')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
+                        <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            <small style="color: #64748b; font-size: 0.85rem;">
+                                ¿No encuentras tu Municipio?
+                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
+                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.municipio.index', [
+                                    'from' => url()->current()
+                                ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
+                                    Créalo aquí
+                                </a>
+                            </small>
+                        </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="rd-label">Localidad</label>
@@ -242,6 +285,17 @@
                         @error('parroquiaId')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
+                        <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                            <small style="color: #64748b; font-size: 0.85rem;">
+                                ¿No encuentras tu Localidad?
+                                <a wire:model.lazy="parroquiaId" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
+                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.localidad.index', [
+                                    'from' => url()->current()
+                                ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
+                                    Créala aquí
+                                </a>
+                            </small>
+                        </div>
                     </div>
                 </div>
                 

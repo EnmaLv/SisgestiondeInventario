@@ -17,7 +17,11 @@ class MunicipioIndex extends Component
     public $estado_id;
     public $updateMode = false;
     public $search = '';
-    public function mount() {}
+    public $from;
+    public function mount()
+    {
+        $this->from = request('from');
+    }
 
 
     protected $rules = [
@@ -76,11 +80,18 @@ class MunicipioIndex extends Component
             return;
         }
 
-        Municipio::create([
+        $municipio = Municipio::create([
             'nombre_municipio' => $this->nombre_municipio,
             'estado_id' => $this->estado_id,
             'status' => true,
         ]);
+
+        if ($this->from) {
+            return redirect()->to(
+                $this->from . '?municipio_id=' . $municipio->id
+            );
+
+        }
 
         $this->resetInputFields();
 

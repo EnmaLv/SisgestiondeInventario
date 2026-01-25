@@ -37,11 +37,17 @@ class SucursalController extends Controller
             'nombre.unique' => 'Ya existe una sede con este nombre',
         ]);
 
-        Sucursal::crearSucursal($validated);
-        return redirect()
-            ->route('admin.maestros.sucursales.index')
-            ->with('success', 'Sucursal creada exitosamente.')
-            ->with('icono', 'success');
+        $fromidreuse = Sucursal::crearSucursal($validated);
+
+        $from = $request->input('from');
+
+        if ($from) {
+            return redirect($from . '?sucursal_id=' . $fromidreuse)
+                ->with('success', 'Sucursal creada exitosamente.');
+        } else {
+            return redirect()->route('admin.maestros.sucursales.index')
+                ->with('success', 'Sucursal creada exitosamente.');
+        }
     }
 
     public function show($id)

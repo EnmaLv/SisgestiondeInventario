@@ -37,6 +37,7 @@
                 </div>
                 <form action="{{ route('admin.maestros.proveedores.store') }}" method="POST" class="rd-prevent-double-submit">
                     @csrf
+                    <input type="hidden" name="from" value="{{ request('from') }}">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">

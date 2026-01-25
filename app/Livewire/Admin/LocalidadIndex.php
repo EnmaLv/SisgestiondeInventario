@@ -20,6 +20,7 @@ class LocalidadIndex extends Component
     public $localidad_id;
     public $updateMode = false;
     public $search = '';
+    public $from;
     public $municipios = [];
 
     protected $rules = [
@@ -27,6 +28,11 @@ class LocalidadIndex extends Component
         'estado_id' => 'required|integer|exists:estados,id',
         'municipio_id' => 'required|integer|exists:municipios,id',
     ];
+
+    public function mount()
+    {
+        $this->from = request('from');
+    }
 
     public function render()
     {
@@ -92,11 +98,18 @@ class LocalidadIndex extends Component
             return;
         }
 
-        Localidad::create([
+        $localidad = Localidad::create([
             'nombre_localidad' => $this->nombre_localidad,
             'municipio_id' => $this->municipio_id,
             'status' => true,
         ]);
+
+        if ($this->from) {
+            return redirect()->to(
+                $this->from . '?localidad_id=' . $localidad->id
+            );
+
+        }
 
         $this->resetInputFields();
 

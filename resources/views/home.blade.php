@@ -179,12 +179,17 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', async function () {
+                const tasaPendiente = @json(session()->has('tasa_pendiente'));
 
+                if (tasaPendiente) {
+                    return;
+                }
+                
                 const hoy = new Date().toISOString().slice(0, 10);
                 const alertas = [];
                 @if ($total_lotes_vencidos > 0)
                     if (localStorage.getItem('alerta_lotes_vencidos') === hoy) {
-                        alertas.unshift(async () => {
+                        alertas.push(async () => {
                             const result = await Swal.fire({
                                 title: '⚠️ Lotes vencidos',
                                 html: `

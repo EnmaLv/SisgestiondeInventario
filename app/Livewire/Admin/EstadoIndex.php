@@ -16,10 +16,17 @@ class EstadoIndex extends Component
     public $estado_id;
     public $updateMode = false;
     public $search = '';
+    public $from;
+
 
     protected $rules = [
         'nombre_estado' => 'required|string|max:255',
     ];
+
+    public function mount()
+    {
+        $this->from = request('from');
+    }
 
     public function render()
     {
@@ -54,7 +61,11 @@ class EstadoIndex extends Component
     {
         $this->validate();
 
-        if (Estado::where('nombre_estado', $this->nombre_estado)->where('status', true)->exists()) {
+        if (Estado::where('nombre_estado', $this->nombre_estado)
+            ->where('status', true)
+            ->exists()
+        ) {
+
             $this->dispatch(
                 'swal',
                 icon: 'error',
@@ -64,10 +75,16 @@ class EstadoIndex extends Component
             return;
         }
 
-        Estado::create([
+        $estado = Estado::create([
             'nombre_estado' => $this->nombre_estado,
             'status' => true,
         ]);
+
+        if ($this->from) {
+            return redirect()->to(
+                $this->from . '?estado_id=' . $estado->id
+            );
+        }
 
         $this->resetInputFields();
 

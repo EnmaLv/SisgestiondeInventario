@@ -49,9 +49,16 @@ class ProductoController extends Controller
 
             DB::commit();
 
-            return redirect()
-                ->route('admin.maestros.productos.index')
-                ->with('success', 'Producto creado y precio actualizado Exitosamente.');
+            $from = $request->input('from');
+
+            if ($from) {
+                return redirect($from . '?productoId=' . $productoId)
+                    ->with('success', 'Producto creado exitosamente.');
+            } else {
+                return redirect()->route('admin.maestros.productos.index')
+                    ->with('success', 'Producto creado y precio actualizado Exitosamente.');
+            }
+
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -193,7 +200,7 @@ class ProductoController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::error('Error al actualizar la tasa', [
+            Log::error('Error al actualizar la tasa', [
                 'error' => $e->getMessage()
             ]);
 

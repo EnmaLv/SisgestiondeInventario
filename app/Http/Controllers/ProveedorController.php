@@ -32,10 +32,17 @@ class ProveedorController extends Controller
             'email'     => 'required|email|max:255|unique:proveedors,email',
         ]);
 
-        Proveedor::crearProveedor($validated);
+        $fromidreuse = Proveedor::crearProveedor($validated);
 
-        return redirect()
-            ->route('admin.maestros.proveedores.index')->with('success', 'Proveedor creado exitosamente.');
+        $from = $request->input('from');
+
+        if ($from) {
+            return redirect($from . '?proveedor_id=' . $fromidreuse)
+                ->with('success', 'Proveedor creado exitosamente.');
+        } else {
+            redirect()->route('admin.maestros.proveedores.index')
+                ->with('success', 'Proveedor creado exitosamente.');
+        }
     }
 
     public function show($id)

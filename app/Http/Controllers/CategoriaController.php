@@ -37,10 +37,17 @@ class CategoriaController extends Controller
         ], [
             'nombre.unique' => 'Ya existe una categoria con este nombre',
         ]);
-        Categoria::crearCategoria($validated);
+        $fromidreuse = Categoria::crearCategoria($validated);
 
-        return redirect()
-            ->route('admin.maestros.categorias.index')->with('success', 'Categoría creada exitosamente.');
+        $from = $request->input('from');
+
+        if ($from) {
+            return redirect($from . '?categoria_id=' . $fromidreuse)
+                ->with('success', 'Categoría creada exitosamente.');
+        } else {
+            redirect()->route('admin.maestros.categorias.index')
+                ->with('success', 'Categoría creada exitosamente.');
+        }
     }
 
     public function show($id)
