@@ -123,7 +123,7 @@
                                     @if(!$isSelf)
                                         <form action="{{ route('admin.configuracion.empleados.destroy', $usuario->id_usuario) }}" method="POST" onsubmit="return confirm('¿Eliminar empleado?');" class="d-inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="rd-action rd-action-danger">
+                                            <button type="submit" class="rd-action rd-btn-danger">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

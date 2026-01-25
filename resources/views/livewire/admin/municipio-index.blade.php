@@ -87,7 +87,7 @@
 
                                         @if ($datos->status)
                                             <button
-                                                class="rd-action rd-action-danger"
+                                                class="rd-action rd-btn-danger"
                                                 wire:click="confirmDestroy({{ $datos->id }})"
                                                 type="button"
                                                 title="Eliminar"

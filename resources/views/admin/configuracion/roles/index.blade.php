@@ -86,7 +86,7 @@
                                               method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="rd-action rd-action-danger btn-delete" title="Eliminar Rol">
+                                            <button type="button" class="rd-action rd-btn-danger" title="Eliminar Rol">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

@@ -1,55 +1,58 @@
-:root{
+:root {
     --color-primary: hsl(358, 80%, 45%);
     --color-secondary: hsl(357, 43%, 46%);
     --color-tertiary: hsl(357, 87%, 47%);
     --color-bg-light-dark-red: hsl(357, 28%, 30%);
     --color-bg-dark: hsl(356, 15%, 18%);
-    --color-text-white:hsl(0, 0%, 85%);
-    --color-btn-hover:hsl(358, 75%, 30%);
-
-    /*Transiciones*/
+    --color-text-white: hsl(0, 0%, 85%);
+    --color-btn-hover: hsl(358, 75%, 30%);
     --trans-default: all .2s ease;
 }
-/* RD INPUT GROUP */
-        .rd-input-group {
-            display: flex;
-            align-items: center;
-            border: 1px solid #cbd5e1;
-            background: #f8fafc;
-            border-radius: 10px;
-            padding-left: 10px;
-            transition: .25s ease;
-        }
 
-        .rd-input-group span {
-            color: #64748b;
-            margin-right: 8px;
-            font-size: 1rem;
-        }
+/* ========================================
+   RD INPUT GROUP
+   ======================================== */
+.rd-input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding-left: 10px;
+    transition: .25s ease;
+}
 
-        .rd-input-group .rd-input {
-            border: none !important;
-            background: transparent !important;
-            box-shadow: none !important;
-        }
+.rd-input-group span {
+    color: #64748b;
+    margin-right: 8px;
+    font-size: 1rem;
+}
 
-        .rd-input-group:focus-within {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
+.rd-input-group .rd-input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
 
-        .rd-label {
-            font-weight: 600;
-            color: #334155;
-        }
+.rd-input-group:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
 
-        .rd-error {
-            color: #dc2626;
-            font-size: 0.85rem;
-            margin-top: 3px;
-        }
+.rd-label {
+    font-weight: 600;
+    color: #334155;
+}
 
-/* RD condensed styles for the registro diario block */
+.rd-error {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 3px;
+}
+
+/* ========================================
+   RD CARD STYLES
+   ======================================== */
 .rd-card {
     background: #fff;
     border-radius: 10px;
@@ -82,13 +85,18 @@
     color: #0f172a;
 }
 
+/* ========================================
+   RD ACTIONS & SEARCH
+   ======================================== */
 .rd-actions {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .rd-search-inline {
+    display: flex;
     gap: 6px;
 }
 
@@ -109,8 +117,17 @@
     border: 1px solid #e6eef6;
     background: #fff;
     cursor: pointer;
+    transition: var(--trans-default);
 }
 
+.rd-icon-btn:hover {
+    background: #f8f9fa;
+    border-color: #cbd5e1;
+}
+
+/* ========================================
+   RD BUTTONS
+   ======================================== */
 .rd-btn {
     display: inline-flex;
     gap: 8px;
@@ -121,7 +138,7 @@
     border: 0;
     cursor: pointer;
     transition: scale .2s ease;
-
+    white-space: nowrap;
 }
 
 .rd-btn-primary {
@@ -132,10 +149,10 @@
 
 .rd-btn-primary:hover {
     color: white;
-    background: var(--color-btn-hover); 
+    background: var(--color-btn-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(183, 28, 28, 0.2);
 }
-
-
 
 .rd-btn-default {
     background: transparent;
@@ -143,7 +160,6 @@
     border: 1px solid #e2e8f0;
     transition: background-color 0.2s ease;
 }
-
 
 .rd-btn-default:hover {
     background-color: #f8f9fa;
@@ -154,9 +170,17 @@
     color: #fff;
 }
 
+.rd-btn-success:hover {
+    background: #059669;
+}
+
 .rd-btn-danger {
     background: #ef4444;
     color: #fff;
+}
+
+.rd-btn-danger:hover {
+    background: #dc2626;
 }
 
 .rd-btn-warning {
@@ -164,10 +188,13 @@
     color: #fff;
 }
 
-.rd-filters .form-control {
-    border-radius: 8px;
+.rd-btn-warning:hover {
+    background: #d97706;
 }
 
+/* ========================================
+   RD TABLE
+   ======================================== */
 .rd-table {
     width: 100%;
     border-collapse: collapse;
@@ -181,12 +208,21 @@
     border-bottom: 1px solid #eef2f6;
     font-weight: 700;
     color: #374151;
+    font-size: 0.9rem;
 }
 
 .rd-table tbody td {
     padding: 12px 10px;
     border-bottom: 1px solid #f6f8fb;
     vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.rd-action-group {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
 }
 
 .rd-action {
@@ -195,6 +231,8 @@
     background: transparent;
     color: #374151;
     border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--trans-default);
 }
 
 .rd-action:hover {
@@ -207,10 +245,15 @@
     color: #dc2626;
 }
 
+/* ========================================
+   RD BADGES
+   ======================================== */
 .rd-badge {
     padding: 6px 10px;
     border-radius: 999px;
     font-weight: 700;
+    font-size: 0.75rem;
+    display: inline-block;
 }
 
 .rd-badge-secondary {
@@ -232,22 +275,14 @@
 }
 
 .rd-badge-danger {
-    background: #fffbeb;
+    background: #fef2f2;
     color: #b91c1c;
     border: 1px solid #fecaca;
 }
 
-@media (max-width: 768px) {
-    .rd-actions {
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-
-    .rd-search-input {
-        min-width: 140px;
-    }
-}
-
+/* ========================================
+   TOGGLE SWITCH
+   ======================================== */
 .toggle-container {
     position: relative;
     width: 60px;
@@ -295,6 +330,10 @@
 .toggle-checkbox:checked + .toggle-label .toggle-switch {
     transform: translateX(30px);
 }
+
+/* ========================================
+   UTILITIES
+   ======================================== */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -310,35 +349,362 @@ a:hover {
 
 label[for="archivo"] {
     cursor: pointer;
-    border:2px dashed #cbd5e1;
-    background:#f8fafc;
+    border: 2px dashed #cbd5e1;
+    background: #f8fafc;
     width: 100%;
-    cursor: pointer;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: background-color.2s ease;
-    &:hover {
-        background-color: #e5e7eb;
+    transition: background-color .2s ease;
+}
+
+label[for="archivo"]:hover {
+    background-color: #e5e7eb;
+}
+
+.rd-filters .form-control {
+    border-radius: 8px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* TABLET - 1024px y menos */
+@media (max-width: 1024px) {
+    .rd-card-header {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .rd-header-space {
+        width: 100%;
+    }
+
+    .rd-search-input {
+        min-width: 180px;
+    }
+
+    .rd-table thead th,
+    .rd-table tbody td {
+        padding: 10px 8px;
+        font-size: 0.85rem;
     }
 }
 
-/* Badges de estado */
-.rd-badge {
-    padding: 4px 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 600;
+/* TABLET PEQUEÑA - 768px y menos */
+@media (max-width: 768px) {
+    /* Header principal */
+    .content_header .rd-card {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 16px;
+    }
+
+    .content_header .rd-card > div:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .rd-title-sm {
+        font-size: 1.1rem !important;
+    }
+
+    /* Acciones y búsqueda */
+    .rd-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .rd-actions > * {
+        width: 100%;
+    }
+
+    .rd-search-inline {
+        width: 100%;
+    }
+
+    .rd-search-input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .rd-header-space {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Botones */
+    .rd-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .rd-card-header .rd-btn {
+        width: auto;
+    }
+
+    /* Toggle en mobile */
+    .rd-actions .d-flex.gap-3 {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Tabla responsive */
+    .rd-table {
+        font-size: 0.8rem;
+    }
+
+    .rd-table thead {
+        display: none;
+    }
+
+    .rd-table tbody tr {
+        display: block;
+        margin-bottom: 16px;
+        border: 1px solid #eef2f6;
+        border-radius: 8px;
+        padding: 12px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .rd-table tbody td {
+        display: block;
+        text-align: right;
+        padding: 8px 0;
+        border-bottom: 1px solid #f6f8fb;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .rd-table tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .rd-table tbody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 0;
+        font-weight: 700;
+        text-align: left;
+        color: #374151;
+    }
+
+    .rd-table tbody td:first-child::before {
+        content: "#";
+    }
+
+    .rd-action-group {
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+
+    /* Formularios */
+    .form-group .input-group {
+        flex-wrap: nowrap;
+    }
+
+    .input-group-text {
+        padding: 0.5rem 0.75rem;
+    }
 }
 
-.rd-badge-success {
-    background-color: #ecfdf5;
-    color: #065f46;
+/* MOBILE - 480px y menos */
+@media (max-width: 480px) {
+    .rd-card-body {
+        padding: 12px;
+    }
+
+    .rd-title-sm {
+        font-size: 1rem !important;
+    }
+
+    /* Header */
+    .content_header .rd-card {
+        padding: 16px !important;
+    }
+
+    .content_header .rd-card h1 {
+        font-size: 1.2rem !important;
+    }
+
+    .content_header .rd-card p {
+        font-size: 0.85rem !important;
+    }
+
+    /* Botones más pequeños en mobile */
+    .rd-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .rd-icon-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    /* Search input */
+    .rd-search-input {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Badge más pequeño */
+    .rd-badge {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+
+    /* Toggle más pequeño */
+    .toggle-container {
+        width: 50px;
+        height: 26px;
+    }
+
+    .toggle-switch {
+        width: 22px;
+        height: 22px;
+    }
+
+    .toggle-checkbox:checked + .toggle-label .toggle-switch {
+        transform: translateX(24px);
+    }
+
+    /* Acciones en mobile */
+    .rd-actions .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 8px !important;
+        align-items: flex-start !important;
+    }
+
+    .rd-actions .d-flex.gap-3 span {
+        margin-right: 0 !important;
+    }
+
+    /* Formulario */
+    .form-group label {
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    /* Imagen de usuario en header */
+    .content_header .rd-card img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Paginación */
+    .pagination {
+        font-size: 0.85rem;
+    }
+
+    /* Card spacing */
+    .rd-card.p-4 {
+        padding: 12px !important;
+    }
 }
 
-.rd-badge-danger {
-    background-color: #fef2f2;
-    color: #b91c1c;
+/* MOBILE EXTRA PEQUEÑO - 360px y menos */
+@media (max-width: 360px) {
+    .rd-title-sm {
+        font-size: 0.95rem !important;
+    }
+
+    .rd-btn {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+
+    .rd-search-input {
+        font-size: 0.85rem;
+    }
+
+    .rd-table {
+        font-size: 0.75rem;
+    }
+
+    .rd-badge {
+        font-size: 0.65rem;
+        padding: 3px 6px;
+    }
+}
+
+/* ========================================
+   HELPERS PARA RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+    /* Ocultar elementos en mobile si es necesario */
+    .d-mobile-none {
+        display: none !important;
+    }
+
+    /* Columnas completas en mobile */
+    .col-mobile-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Espaciado reducido en mobile */
+    .p-mobile-2 {
+        padding: 0.5rem !important;
+    }
+
+    .mb-mobile-3 {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* ========================================
+   MEJORAS DE ACCESIBILIDAD
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus visible para accesibilidad */
+.rd-btn:focus-visible,
+.rd-action:focus-visible,
+.rd-icon-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ========================================
+   OPTIMIZACIONES PARA IMPRESIÓN
+   ======================================== */
+@media print {
+    .rd-actions,
+    .rd-btn,
+    .no-print {
+        display: none !important;
+    }
+
+    .rd-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .rd-table {
+        page-break-inside: auto;
+    }
+
+    .rd-table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
 }

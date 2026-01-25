@@ -484,12 +484,6 @@ return [
                         ],
                     ],
                 ],
-                [
-                    'text' => 'Estudiantes',
-                    'url' => 'admin/persona',
-                    'icon' => 'fas fa-user-graduate',
-                    'active' => ['admin/persona*'],
-                ],
 
                 [
                     'text' => 'Programas de Formación',
@@ -498,6 +492,14 @@ return [
                     'icon' => 'fas fa-graduation-cap',
                     'active' => ['admin/maestro/pnf*'],
                 ],
+
+                [
+                    'text' => 'Estudiantes',
+                    'url' => 'admin/persona',
+                    'icon' => 'fas fa-user-graduate',
+                    'active' => ['admin/persona*'],
+                ],
+                
             ]
         ],
 

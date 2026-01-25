@@ -94,7 +94,7 @@
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="rd-action rd-action-danger btn-delete"
+                                                <button type="submit" class="rd-action rd-btn-danger"
                                                     onclick="confirmDelete(event, this)">
                                                     <i class="fas fa-trash"></i>
                                                 </button>

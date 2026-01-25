@@ -87,7 +87,7 @@
                             <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                                 <small style="color: #64748b; font-size: 0.85rem;">
                                     ¿No encuentras tu proveedor?
-                                    <a style="color: #3b82f6; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.proveedores.create', [
+                                    <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.proveedores.create', [
                                         'from' => url()->current()
                                     ]) }}">
                                         Créalo aquí
