@@ -184,7 +184,7 @@
                 const alertas = [];
                 @if ($total_lotes_vencidos > 0)
                     if (localStorage.getItem('alerta_lotes_vencidos') === hoy) {
-                        alertas.push(async () => {
+                        alertas.unshift(async () => {
                             const result = await Swal.fire({
                                 title: '⚠️ Lotes vencidos',
                                 html: `
@@ -194,7 +194,9 @@
                                     </p>
                                 `,
                                 icon: 'error',
+                                showCancelButton: true,
                                 confirmButtonText: 'Ver lotes',
+                                cancelButtonText: 'Cerrar',
                                 confirmButtonColor: '#dc2626'
                             });
 
@@ -206,8 +208,9 @@
                         });
                     }
                 @endif
+
                 @if ($total_lotes_por_vencer > 0)
-                    if (localStorage.getItem('alerta_por_vencer') !== hoy) {
+                    if (localStorage.getItem('alerta_por_vencer') === hoy) {
                         alertas.push(async () => {
                             const result = await Swal.fire({
                                 title: 'Productos por vencer',
@@ -218,7 +221,9 @@
                                     </p>
                                 `,
                                 icon: 'warning',
+                                showCancelButton: true,
                                 confirmButtonText: 'Revisar',
+                                cancelButtonText: 'Cerrar',
                                 confirmButtonColor: '#f59e0b'
                             });
 
@@ -231,7 +236,7 @@
                     }
                 @endif
                 @if ($total_productos_stock_minimo > 0)
-                    if (localStorage.getItem('alerta_stock_minimo') !== hoy) {
+                    if (localStorage.getItem('alerta_stock_minimo') === hoy) {
                         alertas.push(async () => {
                             const result = await Swal.fire({
                                 title: '📉 Stock mínimo alcanzado',
