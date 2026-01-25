@@ -429,12 +429,12 @@
 				<h2 class="title">Registro de Empleado</h2>
 				<p class="subtitle">Completa el formulario para registrar al nuevo empleado</p>
 
-				<!-- Simulación de error para el demo -->
-				<div class="error-message" style="display:none;">
-					Por favor, completa todos los campos requeridos
-				</div>
+				@if($errors->any())
+					<div style="color:#b71c1c;margin-bottom:12px">{{ implode(', ', $errors->all()) }}</div>
+				@endif
 
-				<form method="POST" action="#" onsubmit="return validateForm(event);">
+				<form method="POST" action="{{ route('register') }}">
+					@csrf
 					<div class="form-row">
 						<div class="form-group">
 							<input 
@@ -555,15 +555,23 @@
 							>
 						</div>
 					</div>
-
-					<!-- Campo de llave maestra (mostrar solo si no hay admin) -->
-					<div class="form-group" style="display:none;" id="master-key-group">
-						<input 
-							class="input" 
-							name="master_key" 
-							placeholder="Llave Maestra (requerida para administrador)"
-						>
-					</div>
+					
+					@php
+						try {
+							$adminRol = \App\Models\Rol::where('nombre','Administrador')->first();
+							$hasAdmin = $adminRol ? $adminRol->usuarios()->count() > 0 : false;
+						} catch (\Throwable $e) {
+							$hasAdmin = \App\Models\Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')->where('perfil.nombre_perfil','Administrador')->count() > 0;
+						}
+					@endphp
+					@if(!$hasAdmin)
+						<div class="form-group" id="master-key-group">
+							<input 
+								class="input" 
+								name="master_key" 
+								placeholder="Llave Maestra (requerida para administrador)">
+						</div>
+					@endif
 
 					<button class="btn" type="submit">REGISTRARSE</button>
 				</form>

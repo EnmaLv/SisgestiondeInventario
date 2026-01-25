@@ -374,12 +374,12 @@
 				<h2 class="title">Bienvenido</h2>
 				<p class="subtitle">Ingresa tus credenciales para continuar</p>
 
-				<!-- Simulación de error para el demo -->
-				<div class="error-message" style="display:none;">
-					Las credenciales proporcionadas son incorrectas
-				</div>
+				@if($errors->any())
+					<div style="color:#b71c1c;margin-bottom:12px">{{ $errors->first() }}</div>
+				@endif
 
-				<form method="POST" action="#" onsubmit="event.preventDefault(); alert('Formulario enviado');">
+				<form method="POST" action="{{ route('login') }}">
+					@csrf
 					<div class="form-group">
 						<input 
 							class="input" 
@@ -401,7 +401,7 @@
 						>
 					</div>
 
-					<a class="forgot" href="#">¿Olvidaste tu contraseña?</a>
+					<a class="forgot" href="{{ route('password.recover.email') }}">¿Olvidaste tu contraseña?</a>
 
 					<button class="btn" type="submit">INICIAR SESIÓN</button>
 				</form>
