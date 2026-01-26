@@ -56,11 +56,32 @@ class RegisterController extends Controller
     }
 
     /**
+     * Show the application registration form.
+     * Only allow access to this page when either no Administrador exists (first-time setup)
+     * or the current user is an authenticated administrator.
+     */
+    public function showRegistrationForm()
+    {
+        if ($this->adminExists()) {
+            if (! auth()->check() || ! $this->isAdmin(auth()->user())) {
+                abort(403, 'Acceso restringido');
+            }
+        }
+
+        return view('auth.register');
+    }
+
+    /**
      * Override register to allow authenticated administrators to register employees.
      */
     public function register(Request $request)
     {
         // If the request is from an authenticated user, only allow if they're an admin
+        // If an administrator already exists, block unauthenticated users from registering
+        if (! auth()->check() && $this->adminExists()) {
+            abort(403, 'Acceso restringido');
+        }
+
         if (auth()->check()) {
             if (! $this->isAdmin(auth()->user())) {
                 abort(403, 'No autorizado');
@@ -76,6 +97,23 @@ class RegisterController extends Controller
         }
 
         return $this->traitRegister($request);
+    }
+
+    /**
+     * Returns true if at least one Administrador role/user exists in the system.
+     */
+    private function adminExists()
+    {
+        try {
+            $adminRol = Rol::where('nombre', 'Administrador')->first();
+            $adminCount = $adminRol ? $adminRol->usuarios()->count() : 0;
+        } catch (\Throwable $e) {
+            $adminCount = Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')
+                ->where('perfil.nombre_perfil', 'Administrador')
+                ->count();
+        }
+
+        return ($adminCount > 0);
     }
 
     /**

@@ -209,6 +209,29 @@
 			letter-spacing: 0.5px;
 		}
 
+		.boton {
+			width: 100%;
+			background: #ffffff; 
+			color: #1a1a1a; 
+			padding: 14px 24px;
+			border: 1px solid rgba(0,0,0,0.06);
+			border-radius: 12px;
+			font-size: 16px;
+			font-weight: 700;
+			cursor: pointer;
+			transition: all 0.25s ease;
+			box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+			letter-spacing: 0.5px;
+			margin-top: 24px;
+		}
+
+		.boton:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+			border-color: rgba(0,0,0,0.12);
+		}
+
+
 		.btn:hover {
 			transform: translateY(-2px);
 			box-shadow: 0 6px 20px rgba(183, 28, 28, 0.4);
@@ -404,6 +427,7 @@
 					<a class="forgot" href="{{ route('password.recover.email') }}">¿Olvidaste tu contraseña?</a>
 
 					<button class="btn" type="submit">INICIAR SESIÓN</button>
+					<button class="boton" type="button" onclick="window.location='{{ url()->previous() }}'">VOLVER A LA HOME</button>
 				</form>
 			</div>
 		</div>
