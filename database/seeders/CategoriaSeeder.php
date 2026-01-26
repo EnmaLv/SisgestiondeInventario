@@ -23,7 +23,10 @@ class CategoriaSeeder extends Seeder
             ['nombre' => 'Cereales', 'descripcion' => null],
             ['nombre' => 'Aceite', 'descripcion' => null],
             ['nombre' => 'Carbohidrato', 'descripcion' => null],
-            ['nombre' => 'Grasas', 'descripcion' => null]
+            ['nombre' => 'Grasas', 'descripcion' => null],
+            ['nombre' => 'Bebidas', 'descripcion' => null],
+            ['nombre' => 'Enlatados', 'descripcion' => null],
+            ['nombre' => 'Condimentos', 'descripcion' => null],
         ]);
     }
 }

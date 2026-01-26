@@ -17,12 +17,12 @@ class ProveedorFactory extends Factory
     public function definition(): array
     {
         return [
-            'empresa' => $this->faker->company(),
-            'nombre' => $this->faker->name(),
-            'direccion' => $this->faker->address(),
-            'telefono' => $this->faker->phoneNumber(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'estado' => $this->faker->boolean(80),
+            'empresa' => "Hiper Sol",
+            'nombre' => "Orianna",
+            'direccion' => "Prados del Sol Acarigua",
+            'telefono' => "0424-5345568",
+            'email' => "oriana@gmail.com",
+            'estado' => 1,
         ];
     }
 }
