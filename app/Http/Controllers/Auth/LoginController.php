@@ -15,41 +15,16 @@ use App\Models\Usuario;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
     protected $redirectTo = '/home';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
 
-
-    /**
-     * Override login to use new usuario table and AuthService
-     */
     public function login(\Illuminate\Http\Request $request)
     {
         $request->validate([
@@ -66,26 +41,19 @@ class LoginController extends Controller
             return back()->withErrors(['email' => 'Credenciales inválidas.']);
         }
 
-        // If usuario is admin, start second step: ask for master key
         $perfil = $usuario->perfil()->first();
         if ($perfil && $perfil->nombre_perfil === 'Administrador') {
             session(['pending_admin_id' => $usuario->id_usuario]);
             return redirect()->route('admin.configuracion.master_key.form');
         }
 
-        // Non-admin: log in the usuario and redirect
         AuthFacade::login($usuario);
 
         return redirect()->intended($this->redirectTo);
     }
 
-    /**
-     * After user credentials are validated and user is authenticated.
-     * If user is Administrator, require master key verification before granting access.
-     */
     protected function authenticated(Request $request, $user)
     {
-        // If user belongs to Administrador role, require master key before granting session
         try {
             $isAdmin = $user->roles()->where('nombre', 'Administrador')->exists();
         } catch (\Exception $e) {
@@ -93,7 +61,6 @@ class LoginController extends Controller
         }
 
         if ($isAdmin) {
-            // Log out the session and require master key step
             Auth::logout();
             session(['pending_admin_id' => $user->id_usuario ?? $user->id]);
             return redirect()->route('admin.configuracion.master_key.form');

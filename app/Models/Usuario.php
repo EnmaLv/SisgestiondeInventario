@@ -17,18 +17,22 @@ class Usuario extends Authenticatable
         'id_perfil',
         'username',
         'password',
-        'role',
         'master_key',
         'security_questions',
         'extra_permissions',
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'master_key'];
 
     protected $casts = [
         'security_questions' => 'array',
         'extra_permissions' => 'array',
     ];
+
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
 
     public function perfil()
     {

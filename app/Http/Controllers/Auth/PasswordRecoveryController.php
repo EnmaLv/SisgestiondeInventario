@@ -98,7 +98,7 @@ class PasswordRecoveryController extends Controller
 
         $request->validate(['password' => 'required|string|min:8|confirmed']);
         $user = Usuario::find($id);
-        $user->password = Hash::make($request->password);
+        $user->password = $request->password;
         $user->save();
         session()->forget('recovery_user_id');
         return redirect()->route('login')->with('status', 'Contraseña restablecida Exitosamente.');
@@ -111,7 +111,7 @@ class PasswordRecoveryController extends Controller
 
         $request->validate(['master_key' => 'required|string|min:6']);
         $user = Usuario::find($id);
-        $user->master_key = $request->master_key; // mutator encrypts
+        $user->master_key = $request->master_key;
         $user->save();
         session()->forget('recovery_user_id');
         return redirect()->route('login')->with('status', 'Llave maestra restablecida Exitosamente.');
