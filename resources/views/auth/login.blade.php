@@ -427,7 +427,7 @@
 					<a class="forgot" href="{{ route('password.recover.email') }}">¿Olvidaste tu contraseña?</a>
 
 					<button class="btn" type="submit">INICIAR SESIÓN</button>
-					<button class="boton" type="button" onclick="window.location='{{ url()->previous() }}'">VOLVER A LA HOME</button>
+					<button class="boton" type="button" onclick="window.location='{{ url()->previous() }}'">VOLVER AL INICIO</button>
 				</form>
 			</div>
 		</div>

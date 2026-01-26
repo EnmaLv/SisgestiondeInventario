@@ -313,11 +313,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
                 Route::get('/roles/{id}/edit', [RolesController::class, 'edit'])->name('admin.configuracion.roles.edit');
                 Route::put('/roles/{id}', [RolesController::class, 'update'])->name('admin.configuracion.roles.update');
                 Route::delete('/roles/{id}', [RolesController::class, 'destroy'])->name('admin.configuracion.roles.destroy');
-
                 
-
-
-                // Master key routes
                 Route::get('/master-key', [EmpleosController::class, 'masterKeyForm'])->name('admin.configuracion.master_key.form');
                 Route::post('/master-key/verify', [EmpleosController::class, 'verifyMasterKey'])->name('admin.configuracion.master_key.verify');
             });
