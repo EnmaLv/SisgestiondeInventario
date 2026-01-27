@@ -174,6 +174,17 @@ class RegisterNoti extends Component
                 ]);
 
                 DB::commit();
+                $this->recalcularSobrante();
+                if ($this->sobrante == 0) {
+                    $this->showBtnFinalizar = false;
+                    $this->enableInput = false;
+                    $this->dispatch('swal', [
+                        'type' => 'success',
+                        'title' => 'Exito!',
+                        'text' => 'Se alcanzó el límite de raciones!',
+                        'icon' => 'success'
+                    ]);
+                }
 
                 $this->notification = [
                     'type' => 'success',

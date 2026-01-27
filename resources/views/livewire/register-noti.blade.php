@@ -120,11 +120,17 @@
                                         <div class="mb-3">
                                             <label class="rd-label mb-2">Motivo del Cierre</label>
                                             <select wire:model="motivo" class="form-select rd-filter-input w-100" id="motivoCierre" >
-                                                <option value="" selected >Seleccione el motivo...</option>
-                                                <option value="Falta de insumos">Falta de insumos</option>
-                                                <option value="Baja asistencia de Personal">Baja asistencia de personal</option>
-                                                <option value="Emergencia / Contingencia">Emergencia / Contingencia</option>
-                                                <option value="Suspensión de Actividades">Suspensión de Actividades (Paros/Asambleas)</option>
+                                                <option value="">Seleccione el motivo...</option>
+
+                                                <option value="Baja personal">Baja asistencia del personal operativo</option>
+                                                <option value="Suspension actividades">Suspensión de actividades académicas (paros, asambleas, elecciones)</option>
+                                                <option value="Horario reducido">Reducción de jornada académica</option>
+                                                <option value="Baja asistencia estudiantil">Baja asistencia estudiantil no prevista</option>
+                                                <option value="Cambio horario estudiantes">Cambio inesperado en horarios académicos</option>
+                                                <option value="Sobreestimacion demanda">Sobreestimación de la demanda diaria</option>
+                                                <option value="Entrega tardia">Entrega tardía de alimentos preparados</option>
+                                                <option value="Emergencia">Emergencia o contingencia (climática, sanitaria, seguridad)</option>
+                                                <option value="Otro">Otro (especificar en observaciones)</option>
                                             </select>
                                             @error('motivo')
                                                 <div class="text-danger small">{{ $message }}</div>

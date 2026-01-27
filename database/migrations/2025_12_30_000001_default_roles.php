@@ -7,7 +7,7 @@ return new class extends Migration
 {
     public function up()
     {
-        
+
         if (DB::getSchemaBuilder()->hasTable('rol')) {
             $hasSlug = DB::getSchemaBuilder()->hasColumn('rol', 'slug');
 
@@ -17,7 +17,9 @@ return new class extends Migration
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-            if ($hasSlug) { $adminData['slug'] = 'administrador'; }
+            if ($hasSlug) {
+                $adminData['slug'] = 'administrador';
+            }
 
             DB::table('rol')->updateOrInsert(
                 ['nombre' => 'Administrador'],
@@ -26,11 +28,13 @@ return new class extends Migration
 
             $obreroData = [
                 'descripcion' => 'Rol por defecto Obrero',
-                'menu_permissions' => json_encode(['registro_comida','registro_diario']),
+                'menu_permissions' => json_encode(['registro_comida', 'registro_diario', 'persona']),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-            if ($hasSlug) { $obreroData['slug'] = 'obrero'; }
+            if ($hasSlug) {
+                $obreroData['slug'] = 'obrero';
+            }
 
             DB::table('rol')->updateOrInsert(
                 ['nombre' => 'Obrero'],

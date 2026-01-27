@@ -495,11 +495,12 @@ return [
 
                 [
                     'text' => 'Estudiantes',
+                    'key' => 'persona',
                     'url' => 'admin/persona',
                     'icon' => 'fas fa-user-graduate',
                     'active' => ['admin/persona*'],
                 ],
-                
+
             ]
         ],
 
