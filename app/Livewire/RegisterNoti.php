@@ -159,7 +159,12 @@ class RegisterNoti extends Component
 
             try {
                 DB::beginTransaction();
-                $personaPnf = PersonaPnf::where('id_persona', $persona->id_persona)->where('estado', true)->first();
+
+                $personaPnf = PersonaPnf::where('id_persona', $persona->id_persona)->first();
+
+                if (!$personaPnf) {
+                    throw new Exception('El estudiante no tiene un PNF asignado');
+                }
 
                 DB::table('registro_diario_c')->insert([
                     'id_persona' => $persona->id_persona,
@@ -169,41 +174,34 @@ class RegisterNoti extends Component
                 ]);
 
                 DB::commit();
-                $this->recalcularSobrante();
-                if ($this->sobrante == 0) {
-                    $this->showBtnFinalizar = false;
-                    $this->enableInput = false;
-                    $this->dispatch('swal', [
-                        'type' => 'success',
-                        'title' => 'Exito!',
-                        'text' => 'Se alcanzó el límite de raciones!',
-                        'icon' => 'success'
-                    ]);
-                }
-            } catch (Exception $e) {
-                DB::rollBack();
+
                 $this->notification = [
-                    'type' => 'danger',
-                    'message' => "Error al registrar el estudiante {$persona->nombre_persona} {$persona->apellido_persona}, Intente de nuevo."
+                    'type' => 'success',
+                    'message' => "El estudiante {$persona->nombre_persona} {$persona->apellido_persona} se registró exitosamente!"
                 ];
 
-                $DatosHistorial['nombre'] = "Sin Nombre";
+                $DatosHistorial['nombre'] = $persona->nombre_persona;
+                $DatosHistorial['estado'] = 'Aprobado';
+                $DatosHistorial['observacion'] = 'Registro exitoso';
+
+                $this->dispatch('cedula-validada', datos: $DatosHistorial);
+
+            } catch (Exception $e) {
+
+                DB::rollBack();
+
+                $this->notification = [
+                    'type' => 'danger',
+                    'message' => "No se pudo registrar al estudiante: " . $e->getMessage()
+                ];
+
+                $DatosHistorial['nombre'] = $persona->nombre_persona ?? 'Sin nombre';
                 $DatosHistorial['estado'] = 'Rechazado';
-                $DatosHistorial['observacion'] = 'Error al registrar el estudiante';
+                $DatosHistorial['observacion'] = $e->getMessage();
 
                 $this->dispatch('cedula-validada', datos: $DatosHistorial);
             }
 
-            $this->notification = [
-                'type' => 'success',
-                'message' => "El estudiante {$persona->nombre_persona} {$persona->apellido_persona} se registro exitosamente!"
-            ];
-
-            $DatosHistorial['nombre'] = $persona->nombre_persona;
-            $DatosHistorial['estado'] = 'Aprobado';
-            $DatosHistorial['observacion'] = 'El estudiante se registro exitosamente';
-
-            $this->dispatch('cedula-validada', datos: $DatosHistorial);
         } else {
 
             $this->notification = [

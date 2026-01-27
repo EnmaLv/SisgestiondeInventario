@@ -66,7 +66,7 @@ class RegistroComida extends Component
         $registroHoy = DetalleRegistroDiario::whereDate('created_at', $hoy)->exists();
 
         $hora = now()->format('H:i');
-        $this->horarioPermitido = $hora >= '06:00' && $hora <= '10:00';
+        $this->horarioPermitido = $hora >= '06:00' && $hora <= '23:00';
         $this->desayuno_registrado = $registroHoy;
         if ($this->desayuno_registrado) {
             $detalles = DetalleRegistroDiario::whereDate('created_at', $hoy)->get(['receta_id', 'cantidad_servido']);
@@ -102,7 +102,7 @@ class RegistroComida extends Component
     public function saveDesayuno()
     {
         $hora = now()->format('H:i');
-        if (!($hora >= '06:00' && $hora <= '10:00')) {
+        if (!($hora >= '06:00' && $hora <= '23:00')) {
             return;
         }
 

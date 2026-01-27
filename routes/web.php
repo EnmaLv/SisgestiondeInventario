@@ -322,6 +322,12 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
     
 });
 
+Route::post('/tasa/ignorar-hoy', function (\Illuminate\Http\Request $request) {
+    session()->put('tasa_ignorada_hasta', now()->toDateString());
+    return response()->json(['ok' => true]);
+})->middleware('auth')->name('tasa.ignorar');
+
+
 // Custom auth routes (replacing adminlte auth views)
 // Login
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');

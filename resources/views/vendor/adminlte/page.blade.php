@@ -31,21 +31,31 @@
             <script>
             document.addEventListener('DOMContentLoaded', () => {
                 Swal.fire({
-                    title: '🔄 Actualización obligatoria',
+                    title: '🔄 Tasa no actualizada',
                     html: `
                         <p style="font-size:15px">
-                            Para garantizar precios correctos es <b>obligatorio</b>
-                            actualizar la tasa del dólar BCV.
+                            Hay una tasa registrada, pero no corresponde al día de hoy.<br>
+                            ¿Desea actualizarla ahora?
                         </p>
                     `,
                     icon: 'warning',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    confirmButtonText: 'Actualizar ahora',
+                    showCancelButton: true,
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Más tarde',
                     confirmButtonColor: '#16a34a'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         document.getElementById('form-actualizar-tasa').submit();
+                    } else {
+                        // 👇 Guardar que hoy decidió ignorar
+                        fetch('{{ route("tasa.ignorar") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
                     }
                 });
             });
@@ -53,7 +63,27 @@
         @endif
 
 
-
+        @if(session()->has('tasa_obligatoria'))
+            <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    title: '🚨 Tasa requerida',
+                    html: `
+                        <p style="font-size:15px">
+                            Debe registrar la <b>tasa del dólar</b> para poder usar el sistema.
+                        </p>
+                    `,
+                    icon: 'error',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    confirmButtonText: 'Registrar tasa',
+                    confirmButtonColor: '#dc2626'
+                }).then(() => {
+                    document.getElementById('form-actualizar-tasa').submit();
+                });
+            });
+            </script>
+        @endif
 
         {{-- Top Navbar --}}
         @if ($layoutHelper->isLayoutTopnavEnabled())
