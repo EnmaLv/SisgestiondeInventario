@@ -382,7 +382,6 @@
                                 —
                             @endif
                         </td>
-                        <td class="center">Aprobado</td>
                     </tr>
                 @endforeach
             </tbody>

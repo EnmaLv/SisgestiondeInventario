@@ -23,6 +23,11 @@ use function Symfony\Component\Clock\now;
 class RegisterNoti extends Component
 {
     use WithPagination;
+    protected $queryString = [
+        'fecha_desde' => ['except' => ''],
+        'fecha_hasta' => ['except' => ''],
+        'buscar'      => ['except' => ''],
+    ];
 
     #[Validate('required|numeric|min:7', message: ['required' => 'La cédula es requerida', 'numeric' => 'La cédula debe ser un número', 'min' => 'La cédula debe tener al menos 7 dígitos'])]
     public $cedula = '';
@@ -45,6 +50,11 @@ class RegisterNoti extends Component
 
     public $alertInventario = null;
     public $alertLimite = null;
+
+    public $buscar = '';
+    public $fecha_desde;
+    public $fecha_hasta;
+
 
     public $fecha;
     public $sobrante;
@@ -232,9 +242,18 @@ class RegisterNoti extends Component
         $this->showNotification = true;
     }
 
+
     public function mount()
     {
-        $cierreHoy = DB::table('sobrantes_comedor')->whereDate('fecha', now()->format('Y-m-d'))->exists();
+        $hoy = now()->format('Y-m-d');
+
+        $this->fecha_desde = empty($this->fecha_desde) ? $hoy : $this->fecha_desde;
+        $this->fecha_hasta = empty($this->fecha_hasta) ? $hoy : $this->fecha_hasta;
+
+
+        $cierreHoy = DB::table('sobrantes_comedor')
+            ->whereDate('fecha', now()->format('Y-m-d'))
+            ->exists();
 
         $this->recalcularSobrante();
 
@@ -250,27 +269,27 @@ class RegisterNoti extends Component
             $this->showBtnFinalizar = true;
         }
     }
+
     public function render()
     {
         $receta_diario = DetalleRegistroDiario::whereDate('created_at', now())->exists();
-        $buscar = request()->input('buscar');
-        $fecha_desde = request()->input('fecha_desde');
-        $fecha_hasta = request()->input('fecha_hasta');
 
         $filter = [
-            'fecha_desde' => $fecha_desde ?? null,
-            'fecha_hasta' => $fecha_hasta ?? null,
-            'buscar'      => $buscar ?? null,
+            'fecha_desde' => $this->fecha_desde,
+            'fecha_hasta' => $this->fecha_hasta,
+            'buscar'      => $this->buscar,
         ];
 
         $data = Registro_diario::showData($filter);
-        $comidas = Receta::orderBy('id', 'desc')->where('estado', true)->get();
+        $comidas = Receta::orderBy('id', 'desc')
+            ->where('estado', true)
+            ->get();
 
         return view('livewire.register-noti', [
             'data'   => $data,
-            'buscar' => $buscar,
             'comidas' => $comidas,
-            "receta_diario" => $receta_diario,
+            'receta_diario' => $receta_diario,
         ]);
     }
+
 }

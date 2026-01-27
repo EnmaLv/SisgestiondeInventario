@@ -190,7 +190,7 @@
                         <div class="rd-filter-actions">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
                             <button type="button" class="rd-btn rd-btn-default"
-                                onclick="document.getElementById('fecha_desde').value=''; document.getElementById('fecha_hasta').value='';">Limpiar</button>
+                                onclick="window.location='{{ route('admin.movimientos.registro_diario.index') }}'">Limpiar</button>
                         </div>
                     </form>
                 </div>
