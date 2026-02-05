@@ -52,7 +52,7 @@ class Receta extends Model
 
     public static function eliminarReceta($id)
     {
-        return DB::table('receta')
+        return DB::table('recetas')
             ->where('id', $id)
             ->update([
                 'estado' => 0,
@@ -62,7 +62,7 @@ class Receta extends Model
 
     public static function activarReceta($id)
     {
-        return DB::table('receta')
+        return DB::table('recetas')
             ->where('id', $id)
             ->update([
                 'estado' => 1,
