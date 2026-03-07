@@ -551,7 +551,16 @@ return [
             'icon' => 'fas fa-folder-open',
             'active' => ['admin/configuracion/archivos*'],
         ],
-    ],
+
+        [
+            'text' => 'Envases Primarios',
+            'key' => 'envases_primarios',
+            'url' => 'admin/salud/maestros/envases_primarios',
+            'icon' => 'fas fa-box',
+            'active' => ['admin/salud/maestros/envases_primarios*'],
+        ],
+    ],  
+
 
 
     /*
