@@ -28,11 +28,13 @@ use App\Http\Controllers\MovimientoInventarioController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArchivoController;
+use App\Http\Controllers\Salud\EnvasePrimarioController;
 
 Auth::routes();
 
 // Landing page personalizada para Bienestar Estudiantil UPTP
 use App\Models\Usuario;
+
 Route::get('/', function () {
     $hasEmployees = Usuario::count() > 0;
     return view('landing_uptp', compact('hasEmployees'));
@@ -49,19 +51,19 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         //Index 
         Route::get('/maestros/categorias', [CategoriaController::class, 'index'])->name('admin.maestros.categorias.index');
-        
+
         //Crear una nueva categoría
         Route::get('/maestros/categorias/create', [CategoriaController::class, 'create'])->name('admin.maestros.categorias.create');
-            
+
         //Almacenar una nueva categoría
         Route::post('/maestros/categorias/store', [CategoriaController::class, 'store'])->name('admin.maestros.categorias.store');
-            
+
         //Mostrar una categoría específica
         Route::get('/maestros/categorias/{categoria}', [CategoriaController::class, 'show'])->name('admin.maestros.categorias.show');
-            
+
         //Editar una categoría específica
         Route::get('/maestros/categorias/{categoria}/edit', [CategoriaController::class, 'edit'])->name('admin.maestros.categorias.edit');
-        
+
         //Actualizar una categoría específica
         Route::put('/maestros/categorias/{categoria}', [CategoriaController::class, 'update'])->name('admin.maestros.categorias.update');
 
@@ -108,7 +110,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         Route::put('/maestros/productos/{producto}/activar', [ProductoController::class, 'activar'])->name('admin.maestros.productos.activar');
 
-        Route::post('/maestros/productos/actualizar-tasa',[ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
+        Route::post('/maestros/productos/actualizar-tasa', [ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
 
         /* Proveedores */
 
@@ -131,46 +133,46 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         /* Requisicion de Compra */
 
         Route::get('/movimientos/compras', [CompraController::class, 'index'])->name('admin.movimientos.compras.index');
-        
+
         Route::get('/movimientos/compras/create', [CompraController::class, 'create'])->name('admin.movimientos.compras.create');
-        
+
         Route::post('/movimientos/compras/store', [CompraController::class, 'store'])->name('admin.movimientos.compras.store');
-        
+
         Route::get('/movimientos/compras/{id}', [CompraController::class, 'show'])->name('admin.movimientos.compras.show');
-        
+
         Route::get('/movimientos/compras/{id}/edit', [CompraController::class, 'edit'])->name('admin.movimientos.compras.edit');
-        
+
         Route::get('/movimientos/compras/{compra}/enviar-correo', [CompraController::class, 'enviarCorreo'])->name('admin.movimientos.compras.enviarCorreo');
-        
+
         Route::post('/movimientos/compras/{compra}/finalizar-compra', [CompraController::class, 'finalizarCompra'])->name('admin.movimientos.compras.finalizarCompra');
-        
+
         Route::delete('/movimientos/compras/{id}', [CompraController::class, 'destroy'])->name('admin.movimientos.compras.destroy');
-        
+
         Route::get('/movimientos/compras/e/export-pdf', [CompraController::class, 'exportPdf'])->name('admin.movimientos.compras.export_pdf');
-        
-        Route::post('admin/movimientos/compras/{compra}/cancelar',[CompraController::class, 'cancelar'])->name('admin.movimientos.compras.cancelar');
+
+        Route::post('admin/movimientos/compras/{compra}/cancelar', [CompraController::class, 'cancelar'])->name('admin.movimientos.compras.cancelar');
 
         /* Lotes */
 
         Route::get('/movimientos/lotes', [LoteController::class, 'index'])->name('admin.movimientos.lotes.index');
-        
+
         Route::get('/movimientos/lotes/create', [LoteController::class, 'create'])->name('admin.movimientos.lotes.create');
-        
+
         Route::post('/movimientos/lotes/store', [LoteController::class, 'store'])->name('admin.movimientos.lotes.store');
-        
+
         Route::get('/movimientos/lotes/{id}', [LoteController::class, 'show'])->name('admin.movimientos.lotes.show');
-        
+
         Route::get('/movimientos/lotes/{id}/edit', [LoteController::class, 'edit'])->name('admin.movimientos.lotes.edit');
-        
+
         Route::put('/movimientos/lotes/{id}', [LoteController::class, 'update'])->name('admin.movimientos.lotes.update');
-        
+
         Route::delete('/movimientos/lotes/{id}', [LoteController::class, 'destroy'])->name('admin.movimientos.lotes.destroy');
-        
+
         Route::post('/movimientos/lotes/mermar-vencidos', [LoteController::class, 'mermarVencidos'])->name('admin.movimientos.lotes.mermar');
 
         /* Sucursal por lotes */
         Route::get('/movimientos/sucursales_lotes', [InventarioSucursalLoteController::class, 'index'])->name('admin.movimientos.sucursales_lotes');
-        
+
         Route::get('/movimientos/sucursales_lotes/show/{id}', [InventarioSucursalLoteController::class, 'show'])->name('admin.movimientos.sucursales_lotes.show');
 
         /* Registro diario */
@@ -182,17 +184,17 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         /* Recetas */
 
         Route::get('/maestros/recetas', [RecetaController::class, 'index'])->name('admin.maestros.recetas.index');
-        
+
         Route::get('/maestros/recetas/create', [RecetaController::class, 'create'])->name('admin.maestros.recetas.create');
-        
+
         Route::post('/maestros/recetas/store', [RecetaController::class, 'store'])->name('admin.maestros.recetas.store');
-        
+
         Route::get('/maestros/recetas/{receta}/edit', [RecetaController::class, 'edit'])->name('admin.maestros.recetas.edit');
-        
+
         Route::put('/maestros/recetas/{receta}', [RecetaController::class, 'update'])->name('admin.maestros.recetas.update');
-        
+
         Route::delete('/maestros/recetas/{receta}', [RecetaController::class, 'destroy'])->name('admin.maestros.recetas.destroy');
-        
+
         Route::put('/maestros/recetas/{receta}/activar', [RecetaController::class, 'activar'])->name('admin.maestros.recetas.activar');
 
         /* Receta Ingredientes */
@@ -200,37 +202,37 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::get('/maestros/receta_ingredientes', [RecetaIngredienteController::class, 'index'])->name('admin.maestros.receta_ingredientes.index');
 
         Route::get('/maestros/receta_ingredientes/create', [RecetaIngredienteController::class, 'create'])->name('admin.maestros.receta_ingredientes.create');
-        
+
         Route::post('/maestros/receta_ingredientes/store', [RecetaIngredienteController::class, 'store'])->name('admin.maestros.receta_ingredientes.store');
-        
+
         Route::get('/maestros/receta_ingredientes/{id}/edit', [RecetaIngredienteController::class, 'edit'])->name('admin.maestros.receta_ingredientes.edit');
-        
+
         Route::put('/maestros/receta_ingredientes/receta/{id}', [RecetaIngredienteController::class, 'update'])->name('admin.maestros.receta_ingredientes.update');
-        
+
         Route::delete('/maestros/receta_ingredientes/{id}', [RecetaIngredienteController::class, 'destroy'])->name('admin.maestros.receta_ingredientes.destroy');
-        
+
         Route::put('/maestros/receta_ingredientes/{id}/activar', [RecetaIngredienteController::class, 'activar'])->name('admin.maestros.receta_ingredientes.activar');
 
         /* Historial de Movimientos */
 
         Route::get('/movimientos/historial_movimientos', [MovimientoInventarioController::class, 'index'])->name('admin.movimientos.historial_movimientos.index');
-        
+
         Route::get('/movimientos/historial_movimientos/export-pdf', [MovimientoInventarioController::class, 'generarPdf'])->name('admin.movimientos.historial_movimientos.export_pdf');
 
         /* Registro Diario */
 
         Route::get('/movimientos/registro_diario', [RegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_diario.index');
-        
+
         Route::get('/movimientos/registro_diario/export-pdf', [RegistroDiarioController::class, 'exportPdf'])->name('admin.movimientos.registro_diario.export_pdf');
-        
+
         Route::get('/movimientos/registro_diario/export-excel', [RegistroDiarioController::class, 'exportExcel'])->name('admin.movimientos.registro_diario.export_excel');
 
         /* Registro de Comida */
-        Route::get('/movimientos/registro_comida',[DetalleRegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_comida.index');
+        Route::get('/movimientos/registro_comida', [DetalleRegistroDiarioController::class, 'index'])->name('admin.movimientos.registro_comida.index');
 
         /* PNF */
 
-        Route::get('/maestros/pnf',[PnfController::class, 'index'])->name('admin.maestros.pnf.index');
+        Route::get('/maestros/pnf', [PnfController::class, 'index'])->name('admin.maestros.pnf.index');
 
 
         Route::post('/maestros/pnf/store', [PnfController::class, 'store'])->name('admin.maestros.pnf.store');
@@ -245,13 +247,13 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         /* Persona */
 
-        Route::get('/persona',[PersonaController::class, 'index'])->name('admin.configuracion.persona.index');
-        
-        Route::get('/persona/create',[PersonaController::class, 'create'])->name('admin.configuracion.persona.create');
-        
-        Route::get('/persona/edit/{id}',[PersonaController::class, 'edit'])->name('admin.configuracion.persona.edit');
-        
-        Route::get('/persona/show/{id}',[PersonaController::class, 'show'])->name('admin.configuracion.persona.show');
+        Route::get('/persona', [PersonaController::class, 'index'])->name('admin.configuracion.persona.index');
+
+        Route::get('/persona/create', [PersonaController::class, 'create'])->name('admin.configuracion.persona.create');
+
+        Route::get('/persona/edit/{id}', [PersonaController::class, 'edit'])->name('admin.configuracion.persona.edit');
+
+        Route::get('/persona/show/{id}', [PersonaController::class, 'show'])->name('admin.configuracion.persona.show');
 
         //Rutas para Consultas
         Route::get('consultas/reportes', [ReporteController::class, 'index'])->name('admin.consultas.reportes.index');
@@ -291,9 +293,13 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
             ]);
         })->where('archivo', '.*');
 
+        // Rutas para Envases Primarios
+        Route::get('/salud/maestros/envases_primarios', [EnvasePrimarioController::class, 'index'])->name('admin.salud.maestros.envases_primarios.index');
+
         
+
         /* Configuración - Empleados, Permisos, Roles */
-        
+
         Route::prefix('configuracion')
             ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
             ->group(function () {
@@ -313,13 +319,11 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
                 Route::get('/roles/{id}/edit', [RolesController::class, 'edit'])->name('admin.configuracion.roles.edit');
                 Route::put('/roles/{id}', [RolesController::class, 'update'])->name('admin.configuracion.roles.update');
                 Route::delete('/roles/{id}', [RolesController::class, 'destroy'])->name('admin.configuracion.roles.destroy');
-                
+
                 Route::get('/master-key', [EmpleosController::class, 'masterKeyForm'])->name('admin.configuracion.master_key.form');
                 Route::post('/master-key/verify', [EmpleosController::class, 'verifyMasterKey'])->name('admin.configuracion.master_key.verify');
             });
-
     });
-    
 });
 
 Route::post('/tasa/ignorar-hoy', function (\Illuminate\Http\Request $request) {

@@ -57,7 +57,7 @@ return new class extends Migration
 
             $administradorSaludData = [
                 'descripcion' => 'Rol por defecto Administrador de Salud',
-                'menu_permissions' => json_encode(['persona']),
+                'menu_permissions' => json_encode(['envases_primarios']),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
