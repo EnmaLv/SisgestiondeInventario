@@ -14,6 +14,47 @@ class PersonaSeeder extends Seeder
     public function run(): void
     {
         DB::table('persona')->insert([
+            'nombre_persona' => 'Administrador',
+            'segundo_nombre_persona' => null,
+            'apellido_persona' => 'Administrador',
+            'segundo_apellido_persona' => null,
+            'cedula_persona' => '12345678',
+            'telefono_persona' => 04241234567,
+            'genero_persona' => '',
+            'edad_persona' => \Carbon\Carbon::parse(now()->toDateString())->age,
+            'fecha_nacimiento_persona' => now()->toDateString(),
+            'email_persona' => 'admin@example.com',
+            'semestre_persona' => null,
+            'id_perfil' => 1,
+            'id_sede' => 1,
+        ]);
+
+        DB::table('usuario')->insert([
+            'id_persona' => 1,
+            'id_perfil' => 1,
+            'username' => 'admin@example.com',
+            'password' => bcrypt('12345678'),
+            'master_key' => bcrypt('masterkey123'),
+            'security_questions' => json_encode([
+                [
+                    'question' => '¿Cuál es el nombre de tu primera mascota?',
+                    'answer' => bcrypt('example'),
+                ],
+                [
+                    'question' => '¿Cuál es el nombre de tu madre?',
+                    'answer' => bcrypt('example'),
+                ],
+            ]),
+
+            'extra_permissions' => null,
+        ]);
+
+        DB::table('rol_usuario')->insert([
+            'id_rol' => 1,
+            'id_usuario' => 1,
+        ]);
+
+        DB::table('persona')->insert([
             'nombre_persona' => 'ENMANUEL',
             'segundo_nombre_persona' => 'JESUS',
             'apellido_persona' => 'MEDINA',
@@ -30,7 +71,7 @@ class PersonaSeeder extends Seeder
         ]);
 
         DB::table('persona_pnf')->insert([
-            'id_persona' => 1,
+            'id_persona' => 2,
             'id_pnf' => 1,
             'fecha_inicio' => now()->toDateString(),
             'fecha_fin' => now()->toDateString(),
@@ -53,7 +94,7 @@ class PersonaSeeder extends Seeder
         ]);
 
         DB::table('persona_pnf')->insert([
-            'id_persona' => 2,
+            'id_persona' => 3,
             'id_pnf' => 1,
             'fecha_inicio' => now()->toDateString(),
             'fecha_fin' => now()->toDateString(),
@@ -76,7 +117,7 @@ class PersonaSeeder extends Seeder
         ]);
 
         DB::table('persona_pnf')->insert([
-            'id_persona' => 3,
+            'id_persona' => 4,
             'id_pnf' => 1,
             'fecha_inicio' => now()->toDateString(),
             'fecha_fin' => now()->toDateString(),

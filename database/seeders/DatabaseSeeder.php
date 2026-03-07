@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,7 +24,8 @@ class DatabaseSeeder extends Seeder
             PersonaSeeder::class,
             ProductoSeeder::class,
             RecetaIngredienteSeeder::class,
-            PrecioProductoSeeder::class,]);
+            PrecioProductoSeeder::class,
+        ]);
         \App\Models\Proveedor::factory(1)->create();
     }
 }
