@@ -14,7 +14,10 @@ return new class extends Migration
 
         $defaults = [
             ['nombre' => 'Administrador', 'descripcion' => 'Rol con todos los permisos'],
+            ['nombre' => 'Secretaria', 'descripcion' => 'Rol administrativo'],
             ['nombre' => 'Obrero', 'descripcion' => 'Rol operativo'],
+            ['nombre' => 'Administrador de Salud', 'descripcion' => 'Rol operativo'],
+            ['nombre' => 'Secretaria de Salud', 'descripcion' => 'Rol operativo'],
         ];
 
         foreach ($defaults as $d) {
@@ -26,8 +29,5 @@ return new class extends Migration
         }
     }
 
-    public function down(): void
-    {
-        
-    }
+    public function down(): void {}
 };
