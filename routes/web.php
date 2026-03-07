@@ -110,8 +110,6 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         Route::put('/maestros/productos/{producto}/activar', [ProductoController::class, 'activar'])->name('admin.maestros.productos.activar');
 
-        Route::post('/maestros/productos/actualizar-tasa', [ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
-
         /* Proveedores */
 
         Route::get('/maestros/proveedores', [ProveedorController::class, 'index'])->name('admin.maestros.proveedores.index');
@@ -296,7 +294,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         // Rutas para Envases Primarios
         Route::get('/salud/maestros/envases_primarios', [EnvasePrimarioController::class, 'index'])->name('admin.salud.maestros.envases_primarios.index');
 
-        
+
 
         /* Configuración - Empleados, Permisos, Roles */
 
@@ -330,6 +328,7 @@ Route::post('/tasa/ignorar-hoy', function (\Illuminate\Http\Request $request) {
     session()->put('tasa_ignorada_hasta', now()->toDateString());
     return response()->json(['ok' => true]);
 })->middleware('auth')->name('tasa.ignorar');
+Route::post('/admin/maestros/productos/actualizar-tasa', [ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
 
 
 // Custom auth routes (replacing adminlte auth views)
