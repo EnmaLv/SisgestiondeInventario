@@ -19,12 +19,19 @@ class MedicamentoController extends Controller
      */
     public function index(Request $request)
     {
-        $categorias = CategoriaMedicamento::select('id', 'nombre')->where('estado', 1)->get();
+        $categoria = $request->input('categoria_medicamentos', null);
+
+        $categoria_medicamentos = CategoriaMedicamento::select('id', 'nombre')
+            ->where('estado', 1)
+            ->get();
+
         $medicamentos = Medicamento::listar(
             $request->input('buscar'),
-            $request->input('estado', 1)
+            $request->input('estado', 1),
+            $categoria
         );
-        return view('admin.salud.maestros.medicamentos.index', compact('medicamentos', 'categorias'));
+
+        return view('admin.salud.maestros.medicamentos.index', compact('medicamentos', 'categoria_medicamentos'));
     }
 
     /**
@@ -130,32 +137,60 @@ class MedicamentoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Medicamento $medicamento)
+    public function show($id)
     {
-        //
+        $medicamento = Medicamento::obtenerDatos($id);
+        return view('admin.salud.maestros.medicamentos.show', compact('medicamento'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Medicamento $medicamento)
+    public function edit($id)
     {
-        //
+        $medicamento = Medicamento::findOrFail($id);
+        $datos = Medicamento::getDatosFormulario();
+
+        return view('admin.salud.maestros.medicamentos.edit', array_merge($datos, [
+            'medicamento' => $medicamento
+        ]));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Medicamento $medicamento)
+    public function update(MedicamentoRequest $request, $id)
     {
-        //
+        $validated = $request->validated();
+
+        if ($request->hasFile('imagen')) {
+            $path = $request->file('imagen')->store('imagenes/productos', 'public');
+            $validated['imagen'] = $path;
+        }
+
+        Medicamento::actualizar($id, $validated);
+        $this->procesarTasaYPrecios($id);
+
+        return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento actualizado exitosamente.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Medicamento $medicamento)
+    public function destroy($id)
     {
-        //
+
+        Medicamento::inactivar($id);
+
+        return redirect()
+            ->route('admin.salud.maestros.medicamentos.index')
+            ->with('success', 'Medicamento inactivado exitosamente.');
+    }
+
+
+    public function activar($id)
+    {
+        Medicamento::activar($id);
+        return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento activado exitosamente.');
     }
 }
