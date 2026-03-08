@@ -579,6 +579,7 @@ return [
         [
             'text' => 'Categorias',
             'key' => 'categorias_medicamentos',
+            'module' => 'salud',
             'url' => 'admin/salud/maestros/categorias',
             'icon' => 'fas fa-box',
             'active' => ['admin/salud/maestros/categorias*'],
