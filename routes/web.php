@@ -28,6 +28,7 @@ use App\Http\Controllers\MovimientoInventarioController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArchivoController;
+use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\Salud\EnvasePrimarioController;
 use App\Http\Controllers\ModuloController;
 
@@ -292,10 +293,25 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
             ]);
         })->where('archivo', '.*');
 
-        // Rutas para Envases Primarios
+        // SALUD
+        // Envases Primarios
         Route::get('/salud/maestros/envases_primarios', [EnvasePrimarioController::class, 'index'])->name('admin.salud.maestros.envases_primarios.index');
+        Route::get('/salud/maestros/envases_primarios/create', [EnvasePrimarioController::class, 'create'])->name('admin.salud.maestros.envases_primarios.create');
+        Route::post('/salud/maestros/envases_primarios/store', [EnvasePrimarioController::class, 'store'])->name('admin.salud.maestros.envases_primarios.store');
+        Route::get('/salud/maestros/envases_primarios/{envase}/edit', [EnvasePrimarioController::class, 'edit'])->name('admin.salud.maestros.envases_primarios.edit');
+        Route::put('/salud/maestros/envases_primarios/{envase}', [EnvasePrimarioController::class, 'update'])->name('admin.salud.maestros.envases_primarios.update');
+        Route::delete('/salud/maestros/envases_primarios/{envase}', [EnvasePrimarioController::class, 'destroy'])->name('admin.salud.maestros.envases_primarios.destroy');
+        Route::put('/salud/maestros/envases_primarios/{envase}/activar', [EnvasePrimarioController::class, 'activar'])->name('admin.salud.maestros.envases_primarios.activar');
 
-
+        //Categorias
+        Route::get('/salud/maestros/categorias', [CategoriaMedicamentoController::class, 'index'])->name('admin.salud.maestros.categorias.index');
+        Route::get('/salud/maestros/categorias/create', [CategoriaMedicamentoController::class, 'create'])->name('admin.salud.maestros.categorias.create');
+        Route::post('/salud/maestros/categorias/store', [CategoriaMedicamentoController::class, 'store'])->name('admin.salud.maestros.categorias.store');
+        Route::get('/salud/maestros/categorias/{categoria}/edit', [CategoriaMedicamentoController::class, 'edit'])->name('admin.salud.maestros.categorias.edit');
+        Route::put('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'update'])->name('admin.salud.maestros.categorias.update');
+        Route::delete('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'destroy'])->name('admin.salud.maestros.categorias.destroy');
+        Route::put('/salud/maestros/categorias/{categoria}/activar', [CategoriaMedicamentoController::class, 'activar'])->name('admin.salud.maestros.categorias.activar');
+ 
 
         /* Configuración - Empleados, Permisos, Roles */
 

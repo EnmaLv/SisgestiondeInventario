@@ -10,15 +10,15 @@
          ">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
-                Envases Primarios
+                Categorias
             </h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
         <div>
-            <a href="{{ url('admin/salud/maestros/envases_primarios/create') }}" class="rd-btn rd-btn-primary">
-                <i class="fas fa-plus"></i> Crear Nuevo Envase Primario
+            <a href="{{ url('admin/salud/maestros/categorias/create') }}" class="rd-btn rd-btn-primary">
+                <i class="fas fa-plus"></i> Crear Nueva Categoria
             </a>
         </div>
 
@@ -30,7 +30,7 @@
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
                 <div>
-                    <h3 class="rd-title-sm">Envases Primarios Registrados</h3>
+                    <h3 class="rd-title-sm">Categorias Registradas</h3>
                 </div>
                 <div class="rd-actions">
                     <div class="d-flex gap-3 align-items-center">
@@ -43,10 +43,10 @@
                             </label>
                         </div>
                     </div>
-                    <form action="{{ route('admin.salud.maestros.envases_primarios.index') }}" method="GET" class="rd-search-inline"
+                    <form action="{{ route('admin.salud.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba el envase primario" />
+                            placeholder="Escriba la categoria" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
@@ -62,13 +62,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($envases as $envase)
+                         @forelse($categorias as $categoria)
                             <tr>
                                 <td class="text-center">
-                                    {{ ($envases->currentPage() - 1) * $envases->perPage() + $loop->iteration }}</td>
-                                <td class="text-center">{{ $envase->nombre }}</td>
+                                    {{ ($categorias->currentPage() - 1) * $categorias->perPage() + $loop->iteration }}</td>
+                                <td class="text-center">{{ $categoria->nombre }}</td>
                                 <td class="text-center">
-                                    @if ($envase->estado)
+                                    @if ($categoria->estado)
                                         <span class="rd-badge rd-badge-success">Activo</span>
                                     @else
                                         <span class="rd-badge rd-badge-danger">Inactivo</span>
@@ -76,11 +76,11 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
-                                        <a href="{{ url('admin/salud/maestros/envases_primarios/' . $envase->id . '/edit') }}"
+                                        <a href="{{ url('admin/salud/maestros/categorias/' . $categoria->id . '/edit') }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
 
-                                        @if ($envase->estado == true)
-                                            <form action="{{ url('admin/salud/maestros/envases_primarios/' . $envase->id) }}"
+                                        @if ($categoria->estado == true)
+                                            <form action="{{ url('admin/salud/maestros/categorias/' . $categoria->id) }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -110,7 +110,7 @@
                                             </script>
                                         @else
                                             <form
-                                                action="{{ url('admin/salud/maestros/envases_primarios/' . $envase->id . '/activar') }}"
+                                                action="{{ url('admin/salud/maestros/categorias/' . $categoria->id . '/activar') }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('PUT')
@@ -145,14 +145,14 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-4">No hay envases primarios registrados</td>
+                                <td colspan="5" class="text-center py-4">No hay categorias registradas</td>
                             </tr>
-                        @endforelse
+                        @endforelse 
                     </tbody>
                 </table>
             </div>
             <div class="mt-3 d-flex justify-content-center">
-                {{ $envases->onEachSide(1)->links('components.pagination') }}
+                {{ $categorias->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>
@@ -163,10 +163,10 @@
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
                 // Activos
-                window.location.href = "{{ route('admin.salud.maestros.envases_primarios.index', array_merge(request()->query(), ['estado' => 1])) }}";
+                window.location.href = "{{ route('admin.salud.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}";
             } else {
                 // Inactivos
-                window.location.href = "{{ route('admin.salud.maestros.envases_primarios.index', array_merge(request()->query(), ['estado' => 0])) }}";
+                window.location.href = "{{ route('admin.salud.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}";
             }
         });
     </script>
