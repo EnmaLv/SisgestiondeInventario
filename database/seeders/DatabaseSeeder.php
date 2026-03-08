@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             RecetaIngredienteSeeder::class,
             PrecioProductoSeeder::class,
             EnvasePrimarioSeeder::class,
+            CategoriaMedicamentoSeeder::class,
         ]);
         \App\Models\Proveedor::factory(1)->create();
     }
