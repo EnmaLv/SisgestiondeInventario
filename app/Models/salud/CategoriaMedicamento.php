@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ConvierteAMayusculasNoEloquent;
 
-
-class EnvasePrimario extends Model
+class CategoriaMedicamento extends Model
 {
     use HasFactory;
     use ConvierteAMayusculasNoEloquent;
-    protected $table = 'envase_primarios';
+
+    protected $table = 'categoria_medicamentos';
 
     protected $fillable = [
         'nombre',
@@ -21,8 +21,8 @@ class EnvasePrimario extends Model
 
     public static function listar($buscar = null, $estado = null)
     {
-        $query = DB::table('envase_primarios')
-            ->select('envase_primarios.*');
+        $query = DB::table('categoria_medicamentos')
+            ->select('categoria_medicamentos.*');
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
@@ -41,7 +41,7 @@ class EnvasePrimario extends Model
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre']);
 
-        return DB::table('envase_primarios')->insertGetId([
+        return DB::table('categoria_medicamentos')->insertGetId([
             'nombre'      => $data['nombre'],
             'estado'      => true,
             'created_at'  => now(),
@@ -51,7 +51,7 @@ class EnvasePrimario extends Model
 
     public static function obtenerDatos($id)
     {
-        return DB::table('envase_primarios')
+        return DB::table('categoria_medicamentos')
             ->where('id', $id)
             ->first();
     }
@@ -62,7 +62,7 @@ class EnvasePrimario extends Model
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre']);
 
-        return DB::table('envase_primarios')
+        return DB::table('categoria_medicamentos')
             ->where('id', $id)
             ->update([
                 'nombre'      => $data['nombre'],
@@ -72,7 +72,7 @@ class EnvasePrimario extends Model
 
     public static function eliminar($id)
     {
-        return DB::table('envase_primarios')
+        return DB::table('categoria_medicamentos')
             ->where('id', $id)
             ->update([
                 'estado' => 0,
@@ -82,7 +82,7 @@ class EnvasePrimario extends Model
 
     public static function activar($id)
     {
-        return DB::table('envase_primarios')
+        return DB::table('categoria_medicamentos')
             ->where('id', $id)
             ->update([
                 'estado' => 1,
