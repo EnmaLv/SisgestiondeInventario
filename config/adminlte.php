@@ -319,12 +319,14 @@ return [
         --------------------------------------------------- */
         [
             'header' => 'Gestión de Comedor',
-            'classes' => 'text-bold'
+            'classes' => 'text-bold',
+            'module' => 'comedor',
         ],
 
         [
             'text' => 'Recetas y Platos',
             'icon' => 'fas fa-utensils',
+            'module' => 'comedor',
             'active' => ['admin/maestros/recetas*', 'admin/maestros/receta_ingredientes*'],
             'submenu' => [
                 [
@@ -344,6 +346,7 @@ return [
 
         [
             'text' => 'Registro de Comidas',
+            'module' => 'comedor',
             'icon' => 'fas fa-clipboard-check',
             'active' => ['admin/movimientos/registro_comida*', 'admin/movimientos/registro_diario*'],
             'submenu' => [
@@ -369,12 +372,14 @@ return [
         --------------------------------------------------- */
         [
             'header' => 'Gestión de Inventario',
-            'classes' => 'text-bold'
+            'classes' => 'text-bold',
+            'module' => 'comedor',
         ],
 
         [
             'text' => 'Catálogo de Productos',
             'icon' => 'fas fa-boxes',
+            'module' => 'comedor',
             'active' => ['admin/maestros/categorias*', 'admin/maestros/productos*'],
             'submenu' => [
                 [
@@ -397,6 +402,7 @@ return [
         [
             'text' => 'Compras y Requisiciones',
             'url' => 'admin/movimientos/compras',
+            'module' => 'administracion',
             'icon' => 'fas fa-shopping-cart',
             'active' => ['admin/movimientos/compras*'],
         ],
@@ -404,6 +410,7 @@ return [
         [
             'text' => 'Control de Stock',
             'icon' => 'fas fa-warehouse',
+            'module' => 'comedor',
             'active' => ['admin/movimientos/inventario*', 'admin/movimientos/lotes*', 'admin/movimientos/sucursales_lotes*'],
             'submenu' => [
                 [
@@ -424,6 +431,7 @@ return [
         [
             'text' => 'Historial de Movimientos',
             'url' => 'admin/movimientos/historial_movimientos',
+            'module' => 'comedor',
             'icon' => 'fas fa-clipboard-list',
             'active' => ['admin/movimientos/historial_movimientos*'],
         ],
@@ -433,12 +441,14 @@ return [
         --------------------------------------------------- */
         [
             'header' => 'Configuración Institucional',
-            'classes' => 'text-bold'
+            'classes' => 'text-bold',
+            'module' => 'administracion',
         ],
 
         [
             'text' => 'Configuración General',
             'icon' => 'fas fa-cog',
+            'module' => 'administracion',
             'active' => ['admin/maestros/sucursales*', 'admin/maestros/proveedores*', 'admin/maestros/pnf*'],
             'submenu' => [
                 [
@@ -488,6 +498,7 @@ return [
                 [
                     'text' => 'Programas de Formación',
                     'key' => 'pnf',
+                    'module' => 'administracion',
                     'url' => 'admin/maestros/pnf',
                     'icon' => 'fas fa-graduation-cap',
                     'active' => ['admin/maestro/pnf*'],
@@ -496,6 +507,7 @@ return [
                 [
                     'text' => 'Estudiantes',
                     'key' => 'persona',
+                    'module' => 'administracion',
                     'url' => 'admin/persona',
                     'icon' => 'fas fa-user-graduate',
                     'active' => ['admin/persona*'],
@@ -513,12 +525,14 @@ return [
         --------------------------------------------------- */
         [
             'header' => 'Administración del Sistema',
-            'classes' => 'text-bold'
+            'classes' => 'text-bold',
+            'module' => 'administracion',
         ],
 
         [
             'text' => 'Gestión de Usuarios',
             'icon' => 'fas fa-users-cog',
+            'module' => 'administracion',
             'active' => ['admin/configuracion/empleados*', 'admin/configuracion/roles*', 'admin/configuracion/permisos*'],
             'submenu' => [
                 [
@@ -542,19 +556,21 @@ return [
                     'icon' => 'fas fa-key',
                     'active' => ['admin/configuracion/permisos*'],
                 ],
-            ]
-        ],
 
-        [
-            'text' => 'Archivos del Sistema',
-            'url' => 'admin/configuracion/archivos',
-            'icon' => 'fas fa-folder-open',
-            'active' => ['admin/configuracion/archivos*'],
+                [
+                    'text' => 'Archivos del Sistema',
+                    'module' => 'administracion',
+                    'url' => 'admin/configuracion/archivos',
+                    'icon' => 'fas fa-folder-open',
+                    'active' => ['admin/configuracion/archivos*'],
+                ],
+            ]
         ],
 
         [
             'text' => 'Envases Primarios',
             'key' => 'envases_primarios',
+            'module' => 'salud',
             'url' => 'admin/salud/maestros/envases_primarios',
             'icon' => 'fas fa-box',
             'active' => ['admin/salud/maestros/envases_primarios*'],
@@ -563,6 +579,7 @@ return [
         [
             'text' => 'Categorias',
             'key' => 'categorias_medicamentos',
+            'module' => 'salud',
             'url' => 'admin/salud/maestros/categorias',
             'icon' => 'fas fa-box',
             'active' => ['admin/salud/maestros/categorias*'],
@@ -593,6 +610,7 @@ return [
 
     'filters' => [
         App\Menu\Filters\PermissionFilter::class,
+        App\AdminLTE\Filters\ModuleFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,

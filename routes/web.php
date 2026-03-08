@@ -31,6 +31,7 @@ use App\Http\Controllers\ArchivoController;
 use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\Salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
+use App\Http\Controllers\ModuloController;
 
 Auth::routes();
 
@@ -355,6 +356,16 @@ Route::post('/tasa/ignorar-hoy', function (\Illuminate\Http\Request $request) {
 })->middleware('auth')->name('tasa.ignorar');
 Route::post('/admin/maestros/productos/actualizar-tasa', [ProductoController::class, 'actualizarTasaDolar'])->name('productos.actualizar.tasa');
 
+Route::prefix('/admin')->group(function () {
+
+    Route::get('modulos/seleccionar', [ModuloController::class, 'seleccionarForm'])
+        ->middleware(['auth'])
+        ->name('admin.modulos.seleccionar');
+
+    Route::post('modulos/cambiar', [ModuloController::class, 'cambiar'])
+        ->middleware(['auth'])
+        ->name('admin.modulos.cambiar');
+});
 
 // Custom auth routes (replacing adminlte auth views)
 // Login
