@@ -25,12 +25,20 @@ class ModuloController extends Controller
 
         $moduloKey = $request->input('modulo');
 
+        // Verificar que el módulo existe y está activo
         $modulo = Modulo::where('key', $moduloKey)->where('activo', true)->first();
         if (! $modulo) {
             return redirect()->back()->with('error', 'Módulo no válido.');
         }
 
+        // Verificar que el usuario tiene acceso a ese módulo
+        $permitidos = session('modulos_permitidos', []);
+        if (! in_array($moduloKey, $permitidos)) {
+            return redirect()->back()->with('error', 'No tienes acceso a ese módulo.');
+        }
+
         session(['modulo_activo' => $modulo->key]);
+
         return redirect()->route('home')->with('success', 'Módulo cambiado a: ' . $modulo->nombre);
     }
 }

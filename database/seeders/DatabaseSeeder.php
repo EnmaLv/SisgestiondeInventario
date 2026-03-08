@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             EnvasePrimarioSeeder::class,
             CategoriaMedicamentoSeeder::class,
             ModulosSeeder::class,
+            RolModuloSeeder::class,
         ]);
         \App\Models\Proveedor::factory(1)->create();
     }

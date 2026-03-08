@@ -588,6 +588,7 @@ return [
         [
             'text' => 'Medicamentos',
             'key' => 'medicamentos',
+            'module' => 'salud',
             'url' => 'admin/salud/maestros/medicamentos',
             'icon' => 'fas fa-pills',
             'active' => ['admin/salud/maestros/medicamentos*'],

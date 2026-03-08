@@ -71,7 +71,7 @@ return new class extends Migration
 
             $secretariaSaludData = [
                 'descripcion' => 'Rol por defecto Secretaria de Salud',
-                'menu_permissions' => json_encode(['registro_comida', 'registro_diario', 'persona']),
+                'menu_permissions' => json_encode(['envases_primarios', 'categorias_medicamentos', 'medicamentos']),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
