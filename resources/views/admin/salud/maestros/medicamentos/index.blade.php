@@ -117,7 +117,7 @@
                                     <strong>{{ $medicamento->nombre }}</strong>
                                 </td>
                                 <td class="text-center" data-label="Categoría">
-                                    {{ $medicamento->categoria->nombre }}
+                                   {{ $medicamento->categoriaMedicamento->nombre ?? 'N/A' }}
                                 </td>
                                 <td class="text-center" data-label="Cantidad">
                                     @if ($medicamento->cantidad_actual == null)

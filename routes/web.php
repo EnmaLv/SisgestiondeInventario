@@ -312,12 +312,12 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::put('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'update'])->name('admin.salud.maestros.categorias.update');
         Route::delete('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'destroy'])->name('admin.salud.maestros.categorias.destroy');
         Route::put('/salud/maestros/categorias/{categoria}/activar', [CategoriaMedicamentoController::class, 'activar'])->name('admin.salud.maestros.categorias.activar');
- 
+
         //Medicamentos
         Route::get('/salud/maestros/medicamentos', [MedicamentoController::class, 'index'])->name('admin.salud.maestros.medicamentos.index');
         Route::get('/salud/maestros/medicamentos/create', [MedicamentoController::class, 'create'])->name('admin.salud.maestros.medicamentos.create');
-        /* Route::post('/salud/maestros/medicamentos/store', [MedicamentoController::class, 'store'])->name('admin.salud.maestros.medicamentos.store');
-        Route::get('/salud/maestros/medicamentos/{medicamento}/edit', [MedicamentoController::class, 'edit'])->name('admin.salud.maestros.medicamentos.edit');
+        Route::post('/salud/maestros/medicamentos/store', [MedicamentoController::class, 'store'])->name('admin.salud.maestros.medicamentos.store');
+        /*Route::get('/salud/maestros/medicamentos/{medicamento}/edit', [MedicamentoController::class, 'edit'])->name('admin.salud.maestros.medicamentos.edit');
         Route::put('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'update'])->name('admin.salud.maestros.medicamentos.update');
         Route::delete('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'destroy'])->name('admin.salud.maestros.medicamentos.destroy');
         Route::put('/salud/maestros/medicamentos/{medicamento}/activar', [MedicamentoController::class, 'activar'])->name('admin.salud.maestros.medicamentos.activar');

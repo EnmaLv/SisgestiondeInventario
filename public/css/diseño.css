@@ -342,3 +342,51 @@ label[for="archivo"] {
     background-color: #fef2f2;
     color: #b91c1c;
 }
+
+.rd-alert{
+    display:flex;
+    gap:15px;
+    padding:18px 20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    align-items:flex-start;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+    border-left:5px solid;
+}
+
+.rd-alert-danger{
+    background:#fff5f5;
+    border-color:#e63946;
+}
+
+.rd-alert-icon{
+    font-size:24px;
+    color:#e63946;
+    margin-top:2px;
+}
+
+.rd-alert-title{
+    font-weight:600;
+    margin-bottom:5px;
+}
+
+.rd-alert-text{
+    margin:0;
+}
+
+.rd-alert-list{
+    padding-left:0;
+    list-style:none;
+    margin:0;
+}
+
+.rd-alert-list li{
+    font-size:14px;
+    margin-bottom:4px;
+    color:#444;
+}
+
+.rd-alert-list i{
+    color:#e63946;
+    margin-right:6px;
+}

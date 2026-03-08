@@ -1,5 +1,7 @@
 @extends('adminlte::page')
-
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+@endsection
 @section('content_header')
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
         <div>
@@ -25,6 +27,7 @@
 @stop
 
 @section('content')
+
     <div class="row">
         <div class="col-md-12 m-auto">
             <div class="rd-card p-4">
@@ -36,7 +39,35 @@
                         </a>
                     </div>
                 </div>
-                <form {{-- action="{{ route('admin.salud.maestros.medicamentos.store') }}" --}} method="POST" enctype="multipart/form-data" class="rd-prevent-double-submit">
+                @if (session('error'))
+                    <div class="rd-alert rd-alert-danger">
+                        <div class="rd-alert-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="rd-alert-content">
+                            <h6 class="rd-alert-title">Ocurrió un error</h6>
+                            <p class="rd-alert-text">{{ session('error') }}</p>
+                        </div>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="rd-alert rd-alert-danger">
+                        <div class="rd-alert-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="rd-alert-content">
+                            <h6 class="rd-alert-title">Se encontraron errores en el formulario</h6>
+                            <ul class="rd-alert-list">
+                                @foreach ($errors->all() as $error)
+                                    <li><i class="fas fa-dot-circle"></i> {{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+                <form action="{{ route('admin.salud.maestros.medicamentos.store') }}" method="POST"
+                    enctype="multipart/form-data" class="rd-prevent-double-submit">
                     @csrf
                     <input type="hidden" name="from" value="{{ request('from') }}">
                     <div class="row">
@@ -47,27 +78,61 @@
                                         <label class="font-weight-bold">Categoría</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                            <select class="form-control rd-filter-input" id="categoria_id"
-                                                name="categoria_id">
+                                            <select class="form-control rd-filter-input" id="categoria_medicamento_id"
+                                                name="categoria_medicamento_id">
                                                 <option value="" selected disabled>Seleccione una categoría</option>
                                                 @foreach ($categorias as $categoria)
                                                     <option value="{{ $categoria->id }}"
-                                                        {{ old('categoria_id', request('categoria_id')) == $categoria->id ? 'selected' : '' }}>
+                                                        {{ old('categoria_medicamento_id', request('categoria_medicamento_id')) == $categoria->id ? 'selected' : '' }}>
                                                         {{ $categoria->nombre }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        @error('categoria_id')
+                                        @error('categoria_medicamento_id')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
                                         @enderror
                                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                                             <small style="color: #64748b; font-size: 0.85rem;">
                                                 ¿No encuentras tu categoria?
-                                                <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" {{-- href="{{ route('admin.maestros.categorias.create', [
+                                                <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
+                                                    {{-- href="{{ route('admin.maestros.categorias.create', [
                                                     'from' => url()->current()
                                                 ]) }}" --}}>
                                                     Créala aquí
+                                                </a>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Envase Primario</label>
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                            <select class="form-control rd-filter-input" id="envase_primario_id"
+                                                name="envase_primario_id">
+                                                <option value="" selected disabled>Seleccione un envase primario
+                                                </option>
+                                                @foreach ($envases as $item)
+                                                    <option value="{{ $item->id }}"
+                                                        {{ old('envase_primario_id', request('envase_primario_id')) == $item->id ? 'selected' : '' }}>
+                                                        {{ $item->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        @error('envase_primario_id')
+                                            <div class="text-danger"><b>{{ $message }}</b></div>
+                                        @enderror
+                                        <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                                            <small style="color: #64748b; font-size: 0.85rem;">
+                                                ¿No encuentras tu envase primario?
+                                                <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
+                                                    {{-- href="{{ route('admin.maestros.categorias.create', [
+                                                    'from' => url()->current()
+                                                ]) }}" --}}>
+                                                    Créalo aquí
                                                 </a>
                                             </small>
                                         </div>
@@ -114,15 +179,9 @@
                                         <label class="font-weight-bold">Precio base (USD)</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text">$</span>
-                                            <input
-                                                type="number"
-                                                name="costo_usd"
-                                                class="form-control rd-filter-input"
-                                                value="{{ old('costo_usd') }}"
-                                                placeholder="0.00"
-                                                min="0"
-                                                step="0.01"
-                                            >
+                                            <input type="number" name="costo_usd" class="form-control rd-filter-input"
+                                                value="{{ old('costo_usd') }}" placeholder="0.00" min="0"
+                                                step="0.01">
                                         </div>
                                         @error('costo_usd')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -134,8 +193,9 @@
                                         <label class="font-weight-bold">Stock Mínimo</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
-                                            <input type="number" class="form-control rd-filter-input" name="stock_minimo"
-                                                value="{{ old('stock_minimo') }}" placeholder="Mínimo" min="0">
+                                            <input type="number" class="form-control rd-filter-input"
+                                                name="stock_minimo" value="{{ old('stock_minimo') }}"
+                                                placeholder="Mínimo" min="0">
                                         </div>
                                         @error('stock_minimo')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -164,7 +224,8 @@
                                             <select class="form-control rd-filter-input" name="unidad_id" id="unidad_id">
                                                 <option value="" selected disabled>Seleccione una unidad</option>
                                                 @foreach ($unidades as $unidad)
-                                                    <option value="{{ $unidad->id }}" data-abreviatura="{{ $unidad->abreviatura }}"
+                                                    <option value="{{ $unidad->id }}"
+                                                        data-abreviatura="{{ $unidad->abreviatura }}"
                                                         {{ old('unidad_id') == $unidad->id ? 'selected' : '' }}>
                                                         {{ $unidad->nombre }}</option>
                                                 @endforeach
@@ -198,7 +259,8 @@
                                 <label class="font-weight-bold">Imagen del producto</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer; width: 90%;">Seleccione
+                                    <label for="imagen" class="p-2"
+                                        style="margin: 0; cursor: pointer; width: 90%;">Seleccione
                                         una foto</label>
                                     <input type="file" name="imagen" id="imagen"
                                         class="form-control rd-filter-input" accept="image/*"
@@ -233,7 +295,7 @@
                     </div>
                     <hr>
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ url('admin/maestros/productos') }}" class="rd-btn rd-btn-default">Cancelar</a>
+                        <a href="{{ url('admin/salud/maestros/medicamentos') }}" class="rd-btn rd-btn-default">Cancelar</a>
                         <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                             <i class="fas fa-save"></i>Guardar
                         </button>
@@ -268,7 +330,7 @@
 
 @section('js')
     <script>
-        document.getElementById('unidad_id').addEventListener('change', function () {
+        document.getElementById('unidad_id').addEventListener('change', function() {
             const selected = this.options[this.selectedIndex];
             const abrev = selected.getAttribute('data-abreviatura');
 
@@ -319,6 +381,5 @@
                 });
             }
         });
-        
     </script>
 @stop
