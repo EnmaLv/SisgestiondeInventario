@@ -567,6 +567,14 @@ return [
             'icon' => 'fas fa-box',
             'active' => ['admin/salud/maestros/categorias*'],
         ],
+        
+        [
+            'text' => 'Medicamentos',
+            'key' => 'medicamentos',
+            'url' => 'admin/salud/maestros/medicamentos',
+            'icon' => 'fas fa-pills',
+            'active' => ['admin/salud/maestros/medicamentos*'],
+        ],
     ],  
 
 
