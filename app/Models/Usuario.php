@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Rol;
+use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
 {
+    use HasApiTokens;
     protected $table = 'usuario';
     protected $primaryKey = 'id_usuario';
     public $timestamps = true;
