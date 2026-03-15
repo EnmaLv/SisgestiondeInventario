@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Services\AuthService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+class AuthApiController extends Controller
+{
+    public function login(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email'    => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $authService = new AuthService();
+        $usuario = $authService->validateCredentials(
+            $request->input('email'),
+            $request->input('password')
+        );
+
+        if (! $usuario) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Credenciales inválidas.',
+            ], 401);
+        }
+
+        $usuario->tokens()->where('name', 'flutter-app')->delete();
+        $token   = $usuario->createToken('flutter-app')->plainTextToken;
+        $persona = $usuario->persona()->first();
+        $roles   = $usuario->roles()->select('rol.id_rol', 'rol.nombre', 'rol.slug')->get();
+        $modulos = $this->getModulosPermitidos($usuario->id_usuario);
+
+        return response()->json([
+            'success' => true,
+            'token'   => $token,
+            'usuario' => [
+                'id'       => $usuario->id_usuario,
+                'username' => $usuario->username,
+                'nombre'   => $persona ? trim("{$persona->nombre_persona} {$persona->apellido_persona}") : $usuario->username,
+                'email'    => $persona->email_persona ?? $usuario->username,
+            ],
+            'roles'   => $roles,
+            'modulos' => $modulos,
+        ]);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['success' => true, 'message' => 'Sesión cerrada correctamente.']);
+    }
+
+    public function me(Request $request): JsonResponse
+    {
+        $usuario = $request->user();
+        $persona = $usuario->persona()->first();
+        $roles   = $usuario->roles()->select('rol.id_rol', 'rol.nombre', 'rol.slug')->get();
+        $modulos = $this->getModulosPermitidos($usuario->id_usuario);
+
+        return response()->json([
+            'success' => true,
+            'usuario' => [
+                'id'       => $usuario->id_usuario,
+                'username' => $usuario->username,
+                'nombre'   => $persona ? trim("{$persona->nombre_persona} {$persona->apellido_persona}") : $usuario->username,
+                'email'    => $persona->email_persona ?? $usuario->username,
+            ],
+            'roles'   => $roles,
+            'modulos' => $modulos,
+        ]);
+    }
+
+    public function modulos(Request $request): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'modulos' => $this->getModulosPermitidos($request->user()->id_usuario),
+        ]);
+    }
+
+    private function getModulosPermitidos(int $userId): array
+    {
+        $t = Schema::hasTable('modulos') ? 'modulos' : 'modulo';
+
+        // Tablas prefijadas en cada columna para evitar ambigüedad
+        $roleIds = DB::table('rol_usuario')
+            ->where('rol_usuario.id_usuario', $userId)
+            ->pluck('rol_usuario.id_rol')
+            ->toArray();
+
+        if (empty($roleIds)) {
+            return [];
+        }
+
+        $esAdmin = DB::table('rol')
+            ->whereIn('rol.id_rol', $roleIds)
+            ->where(function ($q) {
+                $q->where('rol.slug', 'administrador')
+                    ->orWhere('rol.nombre', 'Administrador');
+            })
+            ->exists();
+
+        if ($esAdmin) {
+            return DB::table($t)
+                ->where("$t.activo", 1)
+                ->select("$t.id", "$t.key", "$t.nombre", "$t.descripcion")
+                ->get()->toArray();
+        }
+
+        return DB::table('rol_modulo')
+            ->join($t, "$t.id", '=', 'rol_modulo.modulo_id')
+            ->whereIn('rol_modulo.rol_id', $roleIds)
+            ->where("$t.activo", 1)
+            ->distinct()
+            ->select("$t.id", "$t.key", "$t.nombre", "$t.descripcion")
+            ->get()->toArray();
+    }
+}
