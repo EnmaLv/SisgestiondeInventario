@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('bus_marcas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100);
-            $table->tinyInteger('archivo')->nullable();
             $table->integer('estado')->default(1);
             $table->timestamps();
         });

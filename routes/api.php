@@ -2,28 +2,25 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthApiController;
+use App\Http\Controllers\Api\BusMarcaApiController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes - Aplicación Móvil Flutter
-|--------------------------------------------------------------------------
-*/
-
-// Health check
 Route::get('/ping', fn() => response()->json(['ok' => true]));
 
-// ── Autenticación ─────────────────────────────────────────────────────────
 Route::prefix('auth')->group(function () {
     Route::post('/login',  [AuthApiController::class, 'login']);
     Route::post('/logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum');
 });
 
-// ── Rutas protegidas ──────────────────────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
-
-    // Usuario autenticado
-    Route::get('/me', [AuthApiController::class, 'me']);
-
-    // Módulos permitidos del usuario
+    Route::get('/me',      [AuthApiController::class, 'me']);
     Route::get('/modulos', [AuthApiController::class, 'modulos']);
+
+    Route::prefix('/')->group(function () {
+        Route::get('marcas',               [BusMarcaApiController::class, 'index']);
+        Route::post('marcas',               [BusMarcaApiController::class, 'store']);
+        Route::get('marcas/{marca}',       [BusMarcaApiController::class, 'show']);
+        Route::put('marcas/{marca}',       [BusMarcaApiController::class, 'update']);
+        Route::patch('marcas/{marca}/toggle', [BusMarcaApiController::class, 'toggle']);
+        Route::delete('marcas/{marca}',       [BusMarcaApiController::class, 'destroy']);
+    });
 });
