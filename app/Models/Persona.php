@@ -33,11 +33,6 @@ class Persona extends Model
         'id_sede',
         
     ];
-    /**
-     * Formatea un número de teléfono al estilo (999) 999-9999
-     * @param string|null $numero Ej: 0322232332
-     * @return string
-     */
     private static function formatearTelefono($numero)
     {
         // 1. Limpiamos el valor por si trae espacios o caracteres extraños

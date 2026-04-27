@@ -11,24 +11,20 @@ use Illuminate\Auth\AuthenticationException;
 
 class AuthService
 {
-    /**
-     * Register persona and usuario within a transaction.
-     * $personaData: array with persona fields
-     * $userData: ['username','password']
-     */
     public function register(array $personaData, array $userData): Usuario
     {
         return DB::transaction(function () use ($personaData, $userData) {
-            // Ensure required lookup rows exist (estatus, estado_ve, sede, perfil)
             $estatusId = $this->ensureEstatus();
-            $estadoVeId = $this->ensureEstadoVe();
-            $sedeId = $this->ensureSede($estadoVeId);
+            $sedeId = $this->ensureSede(); 
 
-            // Ensure a generic perfil for grouping users exists (Perfil groups persons/departments)
-            $defaultPerfil = $this->ensurePerfil('Usuario', $estatusId);
-            $perfilId = $defaultPerfil->id_perfil;
+            // 1. Verificar si es el primer usuario del sistema
+            $isFirstUser = Usuario::count() === 0;
+            $perfilNombre = $isFirstUser ? 'Administrador' : 'Usuario';
 
-            // attach perfil and sede to persona data if not provided
+            // 2. Asegurar que el perfil correcto exista
+            $perfilObj = $this->ensurePerfil($perfilNombre, $estatusId);
+            $perfilId = $perfilObj->id_perfil;
+
             if (empty($personaData['id_perfil'])) {
                 $personaData['id_perfil'] = $perfilId;
             }
@@ -36,21 +32,46 @@ class AuthService
                 $personaData['id_sede'] = $sedeId;
             }
 
-            // insert persona (table 'persona' uses id_persona primary key)
             $persona = Persona::create($personaData);
 
-            // create usuario
+            // 3. Crear el usuario
             $usuario = Usuario::create([
                 'id_persona' => $persona->id_persona,
-                'id_perfil' => $perfilId,
-                'username' => $userData['username'],
-                'password' => $userData['password'],
+                'id_perfil'  => $perfilId,
+                'username'   => $userData['username'],
+                'password'   => $userData['password'], // Asumiendo que el modelo Usuario tiene un mutador para el Hash
+                // Si es el primer usuario, podrías asignar una master_key por defecto aquí
+                'master_key' => $isFirstUser ? bcrypt('admin123') : null,
             ]);
 
-            // Master key handling will be performed by the caller if needed based on assigned roles
+            // 4. Si es el primer usuario, también debemos asegurar el ROL en la tabla pivote
+            // ya que tu seeder usa 'rol_usuario'
+            $this->assignRol($usuario->id_usuario, $perfilNombre);
 
             return $usuario;
         });
+    }
+
+    private function assignRol(int $usuarioId, string $rolNombre): void
+    {
+        // Buscamos el rol por nombre (en la tabla que use tu sistema, asumo 'roles')
+        $rol = DB::table('rol')->where('nombre', $rolNombre)->first();
+        
+        if (!$rol) {
+            $rolId = DB::table('rol')->insertGetId([
+                'nombre' => $rolNombre,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        } else {
+            $rolId = $rol->id_rol;
+        }
+
+        // Insertamos en la tabla pivote que mencionaste en tu seeder
+        DB::table('rol_usuario')->updateOrInsert(
+            ['id_usuario' => $usuarioId, 'id_rol' => $rolId],
+            ['created_at' => now(), 'updated_at' => now()]
+        );
     }
 
     private function ensureEstatus(): int
@@ -58,26 +79,38 @@ class AuthService
         $row = DB::table('estatus')->orderBy('id_estatus')->first();
         if ($row) return $row->id_estatus;
 
-        // create default estatus
         $id = DB::table('estatus')->insertGetId(['nombre_estatus' => 'Activo', 'created_at' => now(), 'updated_at' => now()]);
         return $id;
     }
 
-    private function ensureEstadoVe(): int
+    private function ensureSucursal(): int
     {
-        $row = DB::table('estados')->orderBy('id')->first();
+        $row = DB::table('sucursals')->orderBy('id')->first();
         if ($row) return $row->id;
 
-        $id = DB::table('estados')->insertGetId(['nombre_estado' => 'Default', 'created_at' => now(), 'updated_at' => now()]);
-        return $id;
+        return DB::table('sucursals')->insertGetId([
+            'nombre' => 'Acarigua',
+            'direccion' => 'Avenida Circunvalacion Sur, Sector Bellas Artes',
+            'telefono' => '0424-5556666',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 
-    private function ensureSede(int $estadoVeId): int
+    private function ensureSede(): int
     {
         $row = DB::table('sede')->orderBy('id_sede')->first();
         if ($row) return $row->id_sede;
 
-        $id = DB::table('sede')->insertGetId(['nombre_sede' => 'Principal', 'id_estado' => $estadoVeId, 'created_at' => now(), 'updated_at' => now()]);
+        $sucursalId = $this->ensureSucursal();
+        $id = DB::table('sede')->insertGetId([
+            'nombre_sede' => 'Principal',
+            'id_sucursal' => $sucursalId,
+            'estatus'     => 1, 
+            'created_at'  => now(),
+            'updated_at'  => now()
+        ]);
+        
         return $id;
     }
 
@@ -86,17 +119,15 @@ class AuthService
         $row = DB::table('perfil')->where('nombre_perfil', $nombre)->first();
         if ($row) return (object)['id_perfil' => $row->id_perfil];
 
-        $id = DB::table('perfil')->insertGetId(['nombre_perfil' => $nombre, 'id_estatus' => $estatusId, 'created_at' => now(), 'updated_at' => now()]);
+        $id = DB::table('perfil')->insertGetId([
+            'nombre_perfil' => $nombre, 
+            'id_estatus' => $estatusId, 
+            'created_at' => now(), 
+            'updated_at' => now()
+        ]);
         return (object)['id_perfil' => $id];
     }
 
-    /**
-     * Login: validate username/password and require master_key for Administrador
-     * returns Usuario on success
-     */
-    /**
-     * Validate credentials only (first step). Returns Usuario if credentials ok.
-     */
     public function validateCredentials(string $username, string $password): ?Usuario
     {
         $usuario = Usuario::where('username', $username)->first();
@@ -111,16 +142,11 @@ class AuthService
         return $usuario;
     }
 
-    /**
-     * Verify master key for a given usuario (by id)
-     */
     public function verifyMasterKeyForUsuario(Usuario $usuario, string $masterKey): bool
     {
-        // Check if usuario has Administrador role
         try {
             $isAdmin = $usuario->roles()->where('nombre', 'Administrador')->exists();
         } catch (\Throwable $e) {
-            // Fallback to perfil check if roles table not available
             $perfil = $usuario->perfil()->first();
             $isAdmin = $perfil && $perfil->nombre_perfil === 'Administrador';
         }
@@ -129,13 +155,9 @@ class AuthService
             return ConfiguracionSistema::checkMasterKey($masterKey);
         }
 
-        // non-admins don't require master key
         return true;
     }
 
-    /**
-     * Full login verifying credentials and master key if required.
-     */
     public function login(string $username, string $password, ?string $masterKey = null): Usuario
     {
         $usuario = $this->validateCredentials($username, $password);
