@@ -399,3 +399,5 @@ Route::get('password/recover/verify', [PasswordRecoveryController::class, 'showV
 Route::post('password/recover/verify', [PasswordRecoveryController::class, 'verifyAnswers'])->name('password.recover.verify');
 Route::post('password/recover/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.recover.reset_password');
 Route::post('password/recover/reset-masterkey', [PasswordRecoveryController::class, 'resetMasterKey'])->name('password.recover.reset_masterkey');
+
+require __DIR__.'/beca.php';

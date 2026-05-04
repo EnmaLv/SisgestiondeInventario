@@ -18,6 +18,7 @@ return new class extends Migration
             ['nombre' => 'Obrero', 'descripcion' => 'Rol operativo'],
             ['nombre' => 'Administrador de Salud', 'descripcion' => 'Rol operativo'],
             ['nombre' => 'Secretaria de Salud', 'descripcion' => 'Rol operativo'],
+            ['nombre' => 'Administrador de Beca', 'descripcion' => 'Rol operativo'],
         ];
 
         foreach ($defaults as $d) {

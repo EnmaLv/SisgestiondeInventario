@@ -600,6 +600,16 @@ return [
             'icon' => 'fas fa-th-large',
             'active' => ['admin/modulos*'],
         ],
+
+        //modulos de becas
+        [
+            'text' => 'Solicitudes',
+            'key' => 'solicitudes_becas',
+            'module' => 'beca',
+            'url' => 'admin/becas/solicitudes',
+            'icon' => 'fas fa-file-alt',
+            'active' => ['admin/becas/solicitudes*'],
+        ],
     ],
 
 

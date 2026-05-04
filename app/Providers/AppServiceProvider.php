@@ -19,6 +19,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+    //Cargar migraciones que esten en subcarpetasss
+    // Cargamos la carpeta por defecto y las subcarpetas deseadas
+    $mainPath = database_path('migrations');
+    $directories = glob($mainPath . '/*', GLOB_ONLYDIR);
+    $paths = array_merge([$mainPath], $directories);
+
+    $this->loadMigrationsFrom($paths);
+
     }
 }

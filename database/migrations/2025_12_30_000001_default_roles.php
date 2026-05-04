@@ -82,6 +82,19 @@ return new class extends Migration
                 ['nombre' => 'Secretaria de Salud'],
                 $secretariaSaludData
             );
+            $administradorBecas = [
+                'descripcion' => 'Rol por defecto Administrador de Beca',
+                'menu_permissions' => json_encode(['becas','solicitudes_becas']),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            if ($hasSlug) {
+                $administradorBecas['slug'] = 'administrador-de-beca';
+            }
+            DB::table('rol')->updateOrInsert(
+                ['nombre' => 'Administrador de Beca'],
+                $administradorBecas
+            );
         }
     }
 
@@ -93,6 +106,7 @@ return new class extends Migration
             DB::table('rol')->where('nombre', 'Administrador de Salud')->delete();
             DB::table('rol')->where('nombre', 'Secretaria')->delete();
             DB::table('rol')->where('nombre', 'Secretaria de Salud')->delete();
+            DB::table('rol')->where('nombre', 'Administrador de Beca')->delete();
         }
     }
 };
