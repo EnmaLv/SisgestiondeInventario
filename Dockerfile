@@ -27,24 +27,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Configurar directorio de trabajo
 WORKDIR /var/www
 
-# Copiar el proyecto
-COPY . .
+# Exponer el puerto de Laravel (8000) y de Vite (5731)
+EXPOSE 8000 5731
 
-# Instalar dependencias y compilar assets
-RUN composer install --no-interaction --optimize-autoloader
-RUN npm install && npm run build
-
-# Permisos para Windows/WSL
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-
-EXPOSE 8000
-
-# Hacemos un link para las imagenes
-RUN php artisan storage:link
-
-#Generamos la llave del proyecto
-RUN php artisan key:generate
-
-
-# Comando para iniciar el servidor interno de PHP 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Comando para iniciar el servidor interno de PHP
+CMD ["composer", "run", "dev"]

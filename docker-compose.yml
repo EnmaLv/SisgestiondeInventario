@@ -9,10 +9,8 @@ services:
       - "8000:8000"
       - "5731:5731"
     volumes:
-      - .:/app
+      - .:/var/www
     depends_on:
-      - mysql
-    links:
       - mysql
     networks:
       - laravelConnect
