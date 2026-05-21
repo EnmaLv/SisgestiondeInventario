@@ -21,22 +21,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-    //Cargar migraciones que esten en subcarpetasss
-    // Cargamos la carpeta por defecto y las subcarpetas deseadas
+        // 1. Cargar migraciones que estén en subcarpetas de forma segura
         $mainPath = database_path('migrations');
         $directories = glob($mainPath . '/*', GLOB_ONLYDIR);
         $paths = array_merge([$mainPath], $directories);
-        if (!Schema::hasTable('sessions')) {
+        $this->loadMigrationsFrom($paths);
+
+        // 2. Ejecutar la automigración SOLO si la petición viene desde la web
+        // y NO desde la consola de comandos de Docker (composer install)
+        if (!app()->runningInConsole()) {
             try {
-                // Forzamos la migración y los seeders inmediatamente al arrancar la app
-                Artisan::call('migrate', ['--force' => true]);
-                Artisan::call('db:seed', ['--force' => true]);
+                // Verificar la conexión de forma segura sin romper la app
+                if (!Schema::hasTable('sessions')) {
+                    // Forzamos la migración y los seeders inmediatamente al arrancar la app
+                    Artisan::call('migrate', ['--force' => true]);
+                    Artisan::call('db:seed', ['--force' => true]);
+                }
             } catch (\Exception $e) {
-                // Evitamos que muera el build si hay algún problema de red inicial
+                // Evitamos que muera el arranque si la BD tarda en responder
             }
         }
-
-    $this->loadMigrationsFrom($paths);
-
     }
 }
