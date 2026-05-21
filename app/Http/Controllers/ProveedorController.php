@@ -40,7 +40,7 @@ class ProveedorController extends Controller
             return redirect($from . '?proveedor_id=' . $fromidreuse)
                 ->with('success', 'Proveedor creado exitosamente.');
         } else {
-            redirect()->route('admin.maestros.proveedores.index')
+            return redirect()->route('admin.maestros.proveedores.index')
                 ->with('success', 'Proveedor creado exitosamente.');
         }
     }
