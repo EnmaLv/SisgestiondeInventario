@@ -21,9 +21,18 @@ class AppServiceProvider extends ServiceProvider
     {
     //Cargar migraciones que esten en subcarpetasss
     // Cargamos la carpeta por defecto y las subcarpetas deseadas
-    $mainPath = database_path('migrations');
-    $directories = glob($mainPath . '/*', GLOB_ONLYDIR);
-    $paths = array_merge([$mainPath], $directories);
+        $mainPath = database_path('migrations');
+        $directories = glob($mainPath . '/*', GLOB_ONLYDIR);
+        $paths = array_merge([$mainPath], $directories);
+        if (!Schema::hasTable('sessions')) {
+            try {
+                // Forzamos la migración y los seeders inmediatamente al arrancar la app
+                Artisan::call('migrate', ['--force' => true]);
+                Artisan::call('db:seed', ['--force' => true]);
+            } catch (\Exception $e) {
+                // Evitamos que muera el build si hay algún problema de red inicial
+            }
+        }
 
     $this->loadMigrationsFrom($paths);
 

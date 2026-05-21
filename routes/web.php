@@ -35,31 +35,6 @@ use App\Http\Controllers\ModuloController;
 
 Auth::routes();
 
-use Illuminate\Support\Facades\Artisan;
-
-Route::get('/despliegue-secreto', function () {
-    try {
-        // 1. Corre las migraciones de forma segura
-        Artisan::call('migrate', ['--force' => true]);
-        $outputMigrate = Artisan::output();
-
-        // 2. Corre tus seeders obligatorios
-        Artisan::call('db:seed', ['--force' => true]);
-        $outputSeed = Artisan::output();
-
-        return response()->json([
-            'status' => '¡Éxito rotundo!',
-            'migration_output' => $outputMigrate,
-            'seeder_output' => $outputSeed
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'Error en el proceso',
-            'message' => $e->getMessage()
-        ], 500);
-    }
-});
-
 // Landing page personalizada para Bienestar Estudiantil UPTP
 use App\Models\Usuario;
 
