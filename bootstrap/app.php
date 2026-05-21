@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\IgnorarTasaHoy::class);
-
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
             'tasa.actualizada' => CheckTasaActualizada::class,
         ]);
