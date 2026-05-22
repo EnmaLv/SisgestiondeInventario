@@ -868,7 +868,7 @@
                         <div class="thumb" style="background-image:url('{{ asset('img/estudiante.png') }}')"></div>
                         <blockquote>
                             "El apoyo psicológico me ayudó a manejar la ansiedad y mejorar mi rendimiento académico."
-                            <cite>- María P.</cite>
+                            <cite>- José R.</cite>
                         </blockquote>
                     </div>
                 </div>
@@ -877,7 +877,7 @@
                         <div class="thumb" style="background-image:url('{{ asset('img/estudiante2.png') }}')"></div>
                         <blockquote>
                             "Las actividades deportivas me conectaron con compañeros y mejoraron mi salud." 
-                            <cite>- José R.</cite>
+                            <cite>- María P.</cite>
                         </blockquote>
                     </div>
                 </div>
