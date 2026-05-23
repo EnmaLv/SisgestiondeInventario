@@ -32,6 +32,4 @@ Acomodar la base de datos a la nueva
 
 Acomodar todos los modulos del sistema para que sean responsive
 
-Ver porque tarda en cargar y optimizar las imagenes
-
 Ver si hay algun otro error de diseño o funcionalidad para terminar comedor

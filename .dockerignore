@@ -1,9 +1,25 @@
+# Dependencias locales (Se manejan dentro del contenedor)
 node_modules
 vendor
+
+# Control de versiones y entornos obsoletos
 .git
-storage/*.key
-.phpunit.result.cache
+.env
 Homestead.json
 Homestead.yaml
+
+# Caches de pruebas y logs de empaquetadores
+.phpunit.result.cache
 npm-debug.log
 yarn-error.log
+
+# Archivos de seguridad del sistema
+storage/*.key
+
+# ── EXCLUSIONES CRÍTICAS DE LARAVEL / LIVEWIRE ──
+# Esto evita el error "can't stat" y acelera la compilación
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/private/livewire-tmp/*
