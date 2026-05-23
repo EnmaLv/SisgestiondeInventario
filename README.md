@@ -28,10 +28,6 @@ Cambiar de mailtrap a un distribuidor de mails de verdad (Bravo, Render, Mailgun
 
 Acomodar la base de datos a la nueva
 
-Hacer que el administrador ingrese directamente al apartado de modulos del sistema y ver si se puede mejorar el diseño
-
-El boton de volver en el login tiene que redireccionar a la landing no a la pagina anterior donde estuviste
-
 Acomodar todos los modulos del sistema para que sean responsive
 
 Ver porque tarda en cargar y optimizar las imagenes
