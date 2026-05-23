@@ -14,7 +14,7 @@ return new class extends Migration
 
         $defaults = [
             ['nombre' => 'Administrador', 'descripcion' => 'Rol con todos los permisos'],
-            ['nombre' => 'Secretaria', 'descripcion' => 'Rol administrativo'],
+            ['nombre' => 'Secretaria De Bienestar', 'descripcion' => 'Rol administrativo'],
             ['nombre' => 'Obrero', 'descripcion' => 'Rol operativo'],
             ['nombre' => 'Administrador de Salud', 'descripcion' => 'Rol operativo'],
             ['nombre' => 'Secretaria de Salud', 'descripcion' => 'Rol operativo'],

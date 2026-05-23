@@ -27,16 +27,16 @@ return new class extends Migration
             );
 
             $secretariaData = [
-                'descripcion' => 'Rol por defecto Secretaria',
-                'menu_permissions' => json_encode(['registro_comida', 'registro_diario', 'persona']),
+                'descripcion' => 'Rol por defecto Secretaria De Bienestar',
+                'menu_permissions' => json_encode([]),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
             if ($hasSlug) {
-                $secretariaData['slug'] = 'secretaria';
+                $secretariaData['slug'] = 'secretaria-de-bienestar';
             }
             DB::table('rol')->updateOrInsert(
-                ['nombre' => 'Secretaria'],
+                ['nombre' => 'Secretaria De Bienestar'],
                 $secretariaData
             );
 
@@ -84,7 +84,7 @@ return new class extends Migration
             );
             $administradorBecas = [
                 'descripcion' => 'Rol por defecto Administrador de Beca',
-                'menu_permissions' => json_encode(['becas','solicitudes_becas']),
+                'menu_permissions' => json_encode(['becas', 'solicitudes_becas']),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

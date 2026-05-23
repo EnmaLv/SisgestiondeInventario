@@ -9,7 +9,6 @@ return new class extends Migration
 {
     public function up()
     {
-        
         $menu = config('adminlte.menu', []);
         $allKeys = [];
 
@@ -28,15 +27,13 @@ return new class extends Migration
         $allKeys = array_values(array_unique($allKeys));
 
         if (empty($allKeys)) {
-          
             return;
         }
 
-       
-        $rol = DB::table('rol')->where('nombre', 'Administrador')->first();
-        if (!$rol) {
-       
-            $id = DB::table('rol')->insertGetId([
+        // ── ENCOFRAR PERMISOS PARA EL ADMINISTRADOR ──────────────────────────
+        $rolAdmin = DB::table('rol')->where('nombre', 'Administrador')->first();
+        if (!$rolAdmin) {
+            DB::table('rol')->insertGetId([
                 'nombre' => 'Administrador',
                 'descripcion' => 'Rol administrador creado por migración',
                 'menu_permissions' => json_encode($allKeys),
@@ -44,19 +41,45 @@ return new class extends Migration
                 'updated_at' => now(),
             ]);
         } else {
-           
-            DB::table('rol')->where('id_rol', $rol->id_rol)->update([
+            DB::table('rol')->where('id_rol', $rolAdmin->id_rol)->update([
+                'menu_permissions' => json_encode($allKeys),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // ── ENCOFRAR MISMOS PERMISOS PARA LA SECRETARIA ──────────────────────
+        $rolSecretaria = DB::table('rol')->where('nombre', 'Secretaria De Bienestar')->first();
+        if (!$rolSecretaria) {
+            DB::table('rol')->insertGetId([
+                'nombre' => 'Secretaria De Bienestar',
+                'descripcion' => 'Rol secretaria con permisos de administrador',
+                'menu_permissions' => json_encode($allKeys),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            DB::table('rol')->where('id_rol', $rolSecretaria->id_rol)->update([
                 'menu_permissions' => json_encode($allKeys),
                 'updated_at' => now(),
             ]);
         }
     }
 
-public function down()
+    public function down()
     {
-        $rol = DB::table('rol')->where('nombre', 'Administrador')->first();
-        if ($rol) {
-            DB::table('rol')->where('id_rol', $rol->id_rol)->update([
+        // Limpiar Administrador
+        $rolAdmin = DB::table('rol')->where('nombre', 'Administrador')->first();
+        if ($rolAdmin) {
+            DB::table('rol')->where('id_rol', $rolAdmin->id_rol)->update([
+                'menu_permissions' => json_encode([]),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Limpiar Secretaria
+        $rolSecretaria = DB::table('rol')->where('nombre', 'Secretaria De Bienestar')->first();
+        if ($rolSecretaria) {
+            DB::table('rol')->where('id_rol', $rolSecretaria->id_rol)->update([
                 'menu_permissions' => json_encode([]),
                 'updated_at' => now(),
             ]);

@@ -658,3 +658,102 @@ option::checkmark{
 .rd-card .input-group:focus-within textarea.form-control {
     background: transparent;
 }
+
+/* Botón interactivo simulando una tarjeta limpia */
+.rd-module-btn {
+    width: 100%;
+    height: 150px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #334155;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto Hover adaptado a tus variables de color rojo */
+.rd-module-btn:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-primary);
+    background: #ffffff;
+    color: var(--color-primary);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+/* Comportamiento del ícono del módulo */
+.rd-module-btn .btn-icon {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: var(--color-secondary);
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Cambio de color del ícono al pasar el mouse */
+.rd-module-btn:hover .btn-icon {
+    color: var(--color-primary);
+    transform: scale(1.08);
+}
+
+/* Texto principal del botón */
+.rd-module-btn .btn-text {
+    font-size: 1.05rem;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Estado ACTIVO (Si el módulo está guardado actualmente en la sesión) */
+.rd-module-btn.active-card {
+    background-color: var(--color-bg-light-dark-red) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Forzar ícono blanco cuando la tarjeta está activa */
+.rd-module-btn.active-card .btn-icon {
+    color: #ffffff !important;
+}
+
+/* Ajuste de posición para el badge activo dentro del botón */
+.rd-module-btn .active-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.75rem;
+}
+
+/* Pequeña animación de click físico */
+.rd-module-btn:not(:disabled):active {
+    transform: scale(0.97);
+}
+
+/* Texto flotante sutil al hacer hover */
+.rd-module-btn .hover-action-text {
+    position: absolute;
+    bottom: -20px;
+    font-size: 0.75rem;
+    opacity: 0;
+    color: var(--color-primary);
+    transition: bottom 0.2s ease, opacity 0.2s ease;
+}
+
+.rd-module-btn:hover .hover-action-text {
+    bottom: 8px;
+    opacity: 0.8;
+}
+
+.rd-module-btn:hover .btn-text {
+    transform: translateY(-6px);
+    transition: transform 0.2s ease;
+}
+
+.rd-module-btn.active-card:hover .hover-action-text {
+    color: #ffffff !important;
+}

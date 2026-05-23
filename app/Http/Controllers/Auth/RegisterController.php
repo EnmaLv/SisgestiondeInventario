@@ -52,7 +52,6 @@ class RegisterController extends Controller
         // to submit the registration form, so we exclude the 'register' action
         // from the guest middleware and handle auth checks in the method.
         $this->middleware('guest')->except(['showRegistrationForm', 'register']);
-
     }
 
     /**
@@ -62,13 +61,17 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
+        $roles = collect(); // Inicializar colección vacía por defecto
+
         if ($this->adminExists()) {
             if (! auth()->check() || ! $this->isAdmin(auth()->user())) {
                 abort(403, 'Acceso restringido');
             }
+            // Cargamos todos los roles disponibles para que el administrador elija
+            $roles = Rol::all();
         }
 
-        return view('auth.register');
+        return view('auth.register', compact('roles'));
     }
 
     /**
@@ -157,47 +160,40 @@ class RegisterController extends Controller
             'security_questions.*.answer' => ['required', 'string'],
         ];
 
-        // If no Administrador role assignment exists, require master_key (first admin must set it)
+        // Verificar existencias de administradores para reglas dinámicas
         try {
             $adminRol = Rol::where('nombre', 'Administrador')->first();
             $adminCount = $adminRol ? $adminRol->usuarios()->count() : 0;
         } catch (\Throwable $e) {
-            // If Rol table doesn't exist yet or another error, fall back to safe default using perfil check
             $adminCount = Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')->where('perfil.nombre_perfil', 'Administrador')->count();
         }
 
         if ($adminCount === 0) {
             $rules['master_key'] = ['required', 'string', 'min:6'];
+        } else {
+            // Si ya hay un admin registrando, obligamos a que elija un rol válido
+            $rules['id_rol'] = ['required', 'exists:rol,id_rol'];
         }
 
         return Validator::make($data, $rules);
-
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-    * @return \App\Models\Usuario
-     */
     protected function create(array $data)
     {
-        // Use the new AuthService to register persona + usuario, but keep creating legacy User for compatibility
         $authService = new AuthService();
 
-        // Prepare persona data mapping to existing persona table structure if needed
-            $personaData = [
-                'nombre_persona' => $data['first_name'],
-                'segundo_nombre_persona' => null,
-                'apellido_persona' => $data['first_lastname'],
-                'segundo_apellido_persona' => null,
-                'cedula_persona' => $data['cedula'] ?? null,
-                'telefono_persona' => $data['telefono'] ?? null,
-                'genero_persona' => '',
-                'edad_persona' => 0,
-                'fecha_nacimiento_persona' => now(),
-                'email_persona' => $data['email'],
-            ];
+        $personaData = [
+            'nombre_persona' => $data['first_name'],
+            'segundo_nombre_persona' => null,
+            'apellido_persona' => $data['first_lastname'],
+            'segundo_apellido_persona' => null,
+            'cedula_persona' => $data['cedula'] ?? null,
+            'telefono_persona' => $data['telefono'] ?? null,
+            'genero_persona' => '',
+            'edad_persona' => 0,
+            'fecha_nacimiento_persona' => now(),
+            'email_persona' => $data['email'],
+        ];
 
         $userData = [
             'username' => $data['email'],
@@ -205,8 +201,6 @@ class RegisterController extends Controller
             'master_key' => $data['master_key'] ?? null,
         ];
 
-        // register persona + usuario
-        // Normalize phone to format 0000-0000000 if provided (in case client didn't)
         if (!empty($data['telefono'])) {
             $digits = preg_replace('/\D+/', '', $data['telefono']);
             $digits = substr($digits, 0, 11);
@@ -217,45 +211,48 @@ class RegisterController extends Controller
             }
         }
 
+        // Registrar la persona y su usuario base
         $usuario = $authService->register($personaData, $userData);
 
-        // Decide role: if no user has Administrador role yet, assign Administrador to first registrant; otherwise assign Obrero
         try {
-            $adminRol = Rol::firstOrCreate(
-                ['nombre' => 'Administrador'],
-                ['descripcion' => 'Rol por defecto Administrador', 'slug' => 'administrador']
-            );
-            $obreroRol = Rol::firstOrCreate(
-                ['nombre' => 'Obrero'],
-                ['descripcion' => 'Rol por defecto Obrero', 'slug' => 'obrero']
-            );
+            $adminRol = Rol::where('nombre', 'Administrador')->first();
+            $adminCount = $adminRol ? $adminRol->usuarios()->count() : 0;
 
-            $adminCount = $adminRol->usuarios()->count();
-            $assignRol = $adminCount === 0 ? $adminRol : $obreroRol;
-
-            // Attach to pivot table
-            if (! $usuario->roles()->where('rol.id_rol', $assignRol->id_rol)->exists()) {
-                $usuario->roles()->attach($assignRol->id_rol);
+            // Lógica de asignación de rol dinámico
+            if ($adminCount === 0) {
+                // Si es el primer registro del sistema, obligatoriamente es Administrador
+                $assignRol = Rol::firstOrCreate(
+                    ['nombre' => 'Administrador'],
+                    ['descripcion' => 'Rol por defecto Administrador', 'slug' => 'administrador']
+                );
+            } else {
+                // Buscamos el rol que el administrador seleccionó en el formulario
+                $assignRol = Rol::find($data['id_rol']);
             }
 
-            // If assigned as admin and master_key provided, persist system master key
-            if ($assignRol->nombre === 'Administrador' && !empty($data['master_key'])) {
+            // Sincronizar en la tabla intermedia 'rol_usuario'
+            if ($assignRol) {
+                $usuario->roles()->sync([$assignRol->id_rol]);
+            }
+
+            // Guardar Llave Maestra si es el primer Administrador
+            if ($assignRol && $assignRol->nombre === 'Administrador' && !empty($data['master_key'])) {
                 try {
                     ConfiguracionSistema::updateMasterKey($data['master_key']);
                 } catch (\Throwable $ex) {
-                    // ignore if config table not available
                 }
             }
         } catch (\Throwable $e) {
-            // Fallback: legacy single-column role assignment if roles table not available
+            // Fallback heredado por si la tabla relacional falla
             $role = Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')->where('perfil.nombre_perfil', 'Administrador')->count() === 0 ? 'Administrador' : 'Obrero';
             $usuario->role = $role;
         }
+
         if (!empty($data['master_key'])) {
             $usuario->master_key = $data['master_key'];
         }
 
-        // store security questions if provided
+        // Guardar preguntas de seguridad
         if (!empty($data['security_questions']) && is_array($data['security_questions'])) {
             $sq = [];
             foreach ($data['security_questions'] as $qa) {
@@ -275,5 +272,4 @@ class RegisterController extends Controller
 
         return $usuario;
     }
-    
 }

@@ -36,10 +36,23 @@ class HomeController extends Controller
         if ($roleName && strtolower($roleName) === 'obrero') {
             return redirect()->route('admin.movimientos.registro_comida.index');
         }
-        
+
+        if ($roleName && strtolower($roleName) === 'administrador') {
+            if (!session()->has('modulo_activo') || is_null(session('modulo_activo'))) {
+                return redirect('admin/modulos/seleccionar');
+            }
+        }
+
+        if ($roleName && strtolower($roleName) === 'secretaria de bienestar') {
+            if (!session()->has('modulo_activo') || is_null(session('modulo_activo'))) {
+                return redirect('admin/modulos/seleccionar');
+            }
+        }
+
         $rol = $roleName ? Rol::where('nombre', $roleName)->first() : null;
         $menuPermissions = $rol?->menu_permissions ?? [];
         $isAdministrator = $roleName && strtolower($roleName) === 'administrador';
+        $isSecretaria = $roleName && strtolower($roleName) === 'secretaria de bienestar';
         $total_sucursales = Sucursal::count();
         $total_categorias = Categoria::count();
         $total_productos = Producto::count();
@@ -48,7 +61,7 @@ class HomeController extends Controller
         $total_lotes_vencidos = Lote::whereDate('fecha_vencimiento', '<=', $hoy)
             ->where('estado', 1)
             ->count();
-            
+
         $total_lotes_por_vencer = Lote::whereBetween(
             'fecha_vencimiento',
             [$hoy, $limite]
@@ -56,15 +69,15 @@ class HomeController extends Controller
 
         $ultimaTasa = ExchangeRates::latest()->first();
         $productos_stock_minimo = Producto::select(
-                'productos.id',
-                'productos.nombre',
-                'productos.stock_minimo',
-                DB::raw('COALESCE(SUM(inventario_sucursal_lotes.cantidad), 0) as stock_actual')
-            )
+            'productos.id',
+            'productos.nombre',
+            'productos.stock_minimo',
+            DB::raw('COALESCE(SUM(inventario_sucursal_lotes.cantidad), 0) as stock_actual')
+        )
             ->join('lotes', 'lotes.producto_id', '=', 'productos.id')
-            ->join('inventario_sucursal_lotes', function($join) use ($sucursalId) {
+            ->join('inventario_sucursal_lotes', function ($join) use ($sucursalId) {
                 $join->on('inventario_sucursal_lotes.lote_id', '=', 'lotes.id')
-                     ->where('inventario_sucursal_lotes.sucursal_id', '=', $sucursalId);
+                    ->where('inventario_sucursal_lotes.sucursal_id', '=', $sucursalId);
             })
             ->where('productos.estado', 1)
             ->groupBy('productos.id', 'productos.nombre', 'productos.stock_minimo')
@@ -104,7 +117,7 @@ class HomeController extends Controller
         $visibleModules = [];
         foreach ($modules as $key => $url) {
             $menuKey = $findKeyForUrl($menuConfig, $url);
-            $visible = $isAdministrator || ($menuKey && in_array($menuKey, $menuPermissions));
+            $visible = $isAdministrator || $isSecretaria || ($menuKey && in_array($menuKey, $menuPermissions));
             $visibleModules[$key] = $visible;
         }
 

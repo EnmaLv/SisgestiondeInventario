@@ -88,7 +88,9 @@ class ModuleFilter implements FilterInterface
             ->whereIn('id_rol', $roleIds)
             ->where(function ($q) {
                 $q->where('slug', 'administrador')
-                  ->orWhere('nombre', 'Administrador');
+                    ->orWhere('nombre', 'Administrador')
+                    ->orWhere('slug', 'secretaria-de-bienestar')
+                    ->orWhere('nombre', 'Secretaria De Bienestar');
             })
             ->exists();
 

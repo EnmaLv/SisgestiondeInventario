@@ -18,6 +18,14 @@ class DefaultRolesSeeder extends Seeder
             ]
         );
 
+        Rol::updateOrCreate(
+            ['nombre' => 'Secretaria De Bienestar'],
+            [
+                'descripcion' => 'Rol por defecto Secretaria De Bienestar',
+                'menu_permissions' => [],
+            ]
+        );
+
         // Obrero: permisos limitados para registro de comida
         Rol::updateOrCreate(
             ['nombre' => 'Obrero'],
@@ -26,6 +34,7 @@ class DefaultRolesSeeder extends Seeder
                 'menu_permissions' => [
                     'registro_comida',
                     'registro_diario',
+                    'persona',
                 ],
             ]
         );

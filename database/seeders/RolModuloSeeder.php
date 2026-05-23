@@ -14,6 +14,7 @@ class RolModuloSeeder extends Seeder
     public function run(): void
     {
         DB::table('rol_modulo')->insert([
+            ['rol_id' => 3, 'modulo_id' => 2],
             ['rol_id' => 4, 'modulo_id' => 1],
             ['rol_id' => 5, 'modulo_id' => 1],
             ['rol_id' => 6, 'modulo_id' => 4],
