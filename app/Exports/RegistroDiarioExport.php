@@ -17,15 +17,16 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
 
     private $filtro;
 
-    public function __construct(Array $filtro)
+    public function __construct(array $filtro)
     {
         $this->filtro = $filtro;
     }
-    
+
     public function map($registro): array
     {
         return [
             $registro->id,
+            $registro->cedula_persona,
             $registro->nombre_persona,
             $registro->apellido_persona,
             $registro->nombre_pnf,
@@ -44,6 +45,7 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
     {
         return [
             'ID',
+            'Cedula',
             'Nombre',
             'Apellido',
             'PNF',
@@ -52,13 +54,10 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         return Registro_diario::showData($this->filtro, true);
-
     }
-
 }
-
