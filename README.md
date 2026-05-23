@@ -24,6 +24,8 @@ docker compose exec app php artisan migrate --seed (Si se te llena de basura la 
 
 Agregar direccion de la persona en el pdf y excel
 
+Cambiar de mailtrap a un distribuidor de mails de verdad (Bravo, Render, Mailgun, Laravel mail con riesgo de spam)
+
 Acomodar la base de datos a la nueva
 
 Hacer que el administrador ingrese directamente al apartado de modulos del sistema y ver si se puede mejorar el diseño
