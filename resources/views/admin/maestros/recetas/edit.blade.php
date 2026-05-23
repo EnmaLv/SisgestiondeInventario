@@ -19,7 +19,7 @@
 
             <div
                 style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -38,7 +38,8 @@
                         <i class="fas fa-arrow-left"></i> Volver
                     </a>
                 </div>
-                <form action="{{ route('admin.maestros.recetas.update', $receta->id) }}" method="POST" class="rd-prevent-double-submit">
+                <form action="{{ route('admin.maestros.recetas.update', $receta->id) }}" method="POST"
+                    class="rd-prevent-double-submit">
                     @csrf
                     @method('PUT')
                     <div class="form-group mb-3">
@@ -63,7 +64,8 @@
                         <a href="{{ url('admin/maestros/recetas') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>
-                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn rd-submit-btn" style="color:white;">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn rd-submit-btn"
+                            style="color:white;">
                             <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>

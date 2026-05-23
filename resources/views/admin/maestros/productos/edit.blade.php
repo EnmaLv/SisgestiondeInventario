@@ -17,7 +17,7 @@
             </div>
             <div
                 style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -46,8 +46,8 @@
                         </ul>
                     </div>
                 @endif
-                <form action="{{ route('admin.maestros.productos.update', $producto->id) }}" method="POST" class="rd-prevent-double-submit"
-                    enctype="multipart/form-data">
+                <form action="{{ route('admin.maestros.productos.update', $producto->id) }}" method="POST"
+                    class="rd-prevent-double-submit" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row">
@@ -116,16 +116,9 @@
                                         <label class="font-weight-bold">Precio base (USD)</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text">$</span>
-                                            <input
-                                                type="number"
-                                                name="costo_usd"
-                                                class="form-control rd-filter-input"
+                                            <input type="number" name="costo_usd" class="form-control rd-filter-input"
                                                 value="{{ old('costo_usd', $producto->precioProducto->costo_usd ?? '') }}"
-                                                placeholder="0.00"
-                                                min="0"
-                                                step="0.01"
-                                                required
-                                            >
+                                                placeholder="0.00" min="0" step="0.01" required>
                                         </div>
                                         @error('costo_usd')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -189,7 +182,8 @@
                                         <div class="input-group mb-2">
                                             <span class="input-group-text"><i class="fas fa-weight"></i></span>
                                             <input type="number" class="form-control rd-filter-input"
-                                                name="peso_contenido" value="{{ round(old('peso_contenido', $producto->peso_contenido)) }}"
+                                                name="peso_contenido"
+                                                value="{{ round(old('peso_contenido', $producto->peso_contenido)) }}"
                                                 placeholder="Peso contenido" min="0">
                                         </div>
                                         @error('peso_contenido')
@@ -204,7 +198,8 @@
                                 <label class="font-weight-bold">Imagen del producto</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer; width: 90%;">Seleccione una foto</label>
+                                    <label for="imagen" class="p-2"
+                                        style="margin: 0; cursor: pointer; width: 90%;">Seleccione una foto</label>
                                     <input type="file" name="imagen" id="imagen"
                                         class="form-control rd-filter-input" accept="image/*"
                                         onchange="previewImage(event)" style="display: none">
@@ -269,7 +264,7 @@
 
 @section('js')
     <script>
-        document.getElementById('unidad_id').addEventListener('change', function () {
+        document.getElementById('unidad_id').addEventListener('change', function() {
             const selected = this.options[this.selectedIndex];
             const abrev = selected.getAttribute('data-abreviatura');
 
@@ -320,6 +315,5 @@
                 });
             }
         });
-        
     </script>
 @stop

@@ -17,7 +17,7 @@
             </div>
             <div
                 style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>

@@ -37,7 +37,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -58,7 +58,8 @@
                     <p class="rd-blur-text">Selecciona primero la comida del día y la cantidad servida para poder
                         registrar
                         a los estudiantes.</p>
-                    <a href="{{ route('admin.movimientos.registro_comida.index') }}" type="button" class="rd-btn rd-btn-primary rd-blur-btn">Ir a la sección de comida</a>
+                    <a href="{{ route('admin.movimientos.registro_comida.index') }}" type="button"
+                        class="rd-btn rd-btn-primary rd-blur-btn">Ir a la sección de comida</a>
                 </div>
             </div>
         @endif

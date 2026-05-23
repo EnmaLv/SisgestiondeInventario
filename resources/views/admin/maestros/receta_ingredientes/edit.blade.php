@@ -17,8 +17,10 @@
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
             </div>
-            <div style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08); border: 2px solid #fff;">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario" style="width:100%; height:100%; object-fit:cover;">
+            <div
+                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08); border: 2px solid #fff;">
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
+                    style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
     </div>
@@ -41,7 +43,8 @@
                     </div>
                 </div>
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.maestros.receta_ingredientes.update', $receta->id) }}" method="POST" class="rd-prevent-double-submit">
+                    <form action="{{ route('admin.maestros.receta_ingredientes.update', $receta->id) }}" method="POST"
+                        class="rd-prevent-double-submit">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -53,7 +56,8 @@
                                         <input type="text" class="rd-input w-100" value="{{ $receta->nombre }}" disabled>
                                         <input type="hidden" name="recetas_id" value="{{ $receta->id }}">
                                     </div>
-                                    <small class="text-muted mt-2 d-block">Estás editando la composición técnica de esta preparación.</small>
+                                    <small class="text-muted mt-2 d-block">Estás editando la composición técnica de esta
+                                        preparación.</small>
                                 </div>
                             </div>
                             <div class="col-md-8">
@@ -65,7 +69,8 @@
                                             <select class="rd-input w-100" id="producto_select">
                                                 <option value="">Producto...</option>
                                                 @foreach ($productos as $producto)
-                                                    <option value="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}">
+                                                    <option value="{{ $producto->id }}"
+                                                        data-nombre="{{ $producto->nombre }}">
                                                         {{ $producto->nombre }}
                                                     </option>
                                                 @endforeach
@@ -85,37 +90,49 @@
                                             <select class="rd-input w-100" id="unidad_select">
                                                 <option value="">Unidad</option>
                                                 @foreach ($unidades as $unidad)
-                                                    <option value="{{ $unidad->id }}" data-nombre="{{ $unidad->nombre }}">
+                                                    <option value="{{ $unidad->id }}"
+                                                        data-nombre="{{ $unidad->nombre }}">
                                                         {{ $unidad->nombre }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <button type="button" class="rd-btn rd-btn-primary rd-submit-btn shadow-sm d-flex justify-content-center align-items-center" id="agregarProducto" style="height: 45px; width: 45px;">
+                                    <button type="button"
+                                        class="rd-btn rd-btn-primary rd-submit-btn shadow-sm d-flex justify-content-center align-items-center"
+                                        id="agregarProducto" style="height: 45px; width: 45px;">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
                                 <h5 class="rd-title-sm mb-3" style="font-size: 0.95rem;">Ingredientes Actuales</h5>
                                 <div class="border rounded-lg" style="background: #fbfdff;">
-                                    <ul id="listaProductos" class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                                    <ul id="listaProductos" class="list-group list-group-flush"
+                                        style="max-height: 400px; overflow-y: auto;">
                                         @forelse ($receta->recetaIngredientes as $ing)
-                                            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom" id="prod_{{ $ing->producto_id }}">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom"
+                                                id="prod_{{ $ing->producto_id }}">
                                                 <div class="d-flex align-items-center">
-                                                    <div class="rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width:35px; height:35px; background: #f1f5f9;">
+                                                    <div class="rounded-circle mr-3 d-flex align-items-center justify-content-center"
+                                                        style="width:35px; height:35px; background: #f1f5f9;">
                                                         <i class="fas fa-carrot text-muted"></i>
                                                     </div>
                                                     <div>
-                                                        <span class="font-weight-bold" style="color: #1e293b;">{{ $ing->producto->nombre }}</span>
-                                                        <div class="small text-muted">{{ $ing->cantidad_porcion }} {{ $ing->unidad->nombre }}</div>
+                                                        <span class="font-weight-bold"
+                                                            style="color: #1e293b;">{{ $ing->producto->nombre }}</span>
+                                                        <div class="small text-muted">{{ $ing->cantidad_porcion }}
+                                                            {{ $ing->unidad->nombre }}</div>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <input type="hidden" name="producto_id[]" value="{{ $ing->producto_id }}">
-                                                    <input type="hidden" name="cantidad_porcion[]" value="{{ $ing->cantidad_porcion }}">
-                                                    <input type="hidden" name="unidad_id[]" value="{{ $ing->unidad_id }}">
+                                                    <input type="hidden" name="producto_id[]"
+                                                        value="{{ $ing->producto_id }}">
+                                                    <input type="hidden" name="cantidad_porcion[]"
+                                                        value="{{ $ing->cantidad_porcion }}">
+                                                    <input type="hidden" name="unidad_id[]"
+                                                        value="{{ $ing->unidad_id }}">
 
-                                                    <button type="button" class="rd-action rd-action-danger" onclick="this.closest('li').remove();" title="Eliminar">
+                                                    <button type="button" class="rd-action rd-action-danger"
+                                                        onclick="this.closest('li').remove();" title="Eliminar">
                                                         <i class="fas fa-times"></i>
                                                     </button>
                                                 </div>
@@ -128,12 +145,15 @@
                                         @endforelse
                                     </ul>
                                 </div>
-                                @error('producto_id.*') <div class="rd-error">{{ $message }}</div> @enderror
+                                @error('producto_id.*')
+                                    <div class="rd-error">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <hr class="my-4" style="opacity: 0.5;">
                         <div class="d-flex justify-content-end gap-3">
-                            <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default px-4">Cancelar</a>
+                            <a href="{{ url('admin/maestros/receta_ingredientes') }}"
+                                class="rd-btn rd-btn-default px-4">Cancelar</a>
                             <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5 shadow-sm">
                                 <i class="fas fa-check-circle mr-1"></i> Guardar
                             </button>
@@ -146,23 +166,39 @@
 @stop
 
 @section('css')
-<style>
-    /* Estilo para el scroll de la lista */
-    #listaProductos::-webkit-scrollbar { width: 6px; }
-    #listaProductos::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    <style>
+        /* Estilo para el scroll de la lista */
+        #listaProductos::-webkit-scrollbar {
+            width: 6px;
+        }
 
-    /* Efecto hover en los items */
-    .list-group-item:hover { background-color: #f8fafc !important; transition: var(--trans-default); }
+        #listaProductos::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
 
-    /* Quitar bordes de foco azules solicitados */
-    .rd-input:focus, .rd-btn:focus, select:focus {
-        outline: none !important;
-        box-shadow: none !important;
-    }
+        /* Efecto hover en los items */
+        .list-group-item:hover {
+            background-color: #f8fafc !important;
+            transition: var(--trans-default);
+        }
 
-    .gap-3 { gap: 1rem; }
-    .rounded-lg { border-radius: 12px !important; }
-</style>
+        /* Quitar bordes de foco azules solicitados */
+        .rd-input:focus,
+        .rd-btn:focus,
+        select:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .gap-3 {
+            gap: 1rem;
+        }
+
+        .rounded-lg {
+            border-radius: 12px !important;
+        }
+    </style>
 @stop
 
 @section('js')
@@ -177,10 +213,11 @@
             function crearItem(prodId, prodNombre, cantidad, unidadId, unidadNombre) {
                 // Remover mensaje de lista vacía si existe
                 const empty = lista.querySelector('.empty-msg');
-                if(empty) empty.remove();
+                if (empty) empty.remove();
 
                 const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom fade-in';
+                li.className =
+                    'list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom fade-in';
                 li.id = 'prod_' + prodId;
 
                 li.innerHTML = `
@@ -215,11 +252,12 @@
                 const unidadNombre = unidadSelect.options[unidadSelect.selectedIndex]?.text || '';
 
                 if (!prodId) return Swal.fire('Error', 'Seleccione un producto.', 'error');
-                if (!cantidad || Number(cantidad) <= 0) return Swal.fire('Error', 'Ingrese una cantidad válida.', 'error');
+                if (!cantidad || Number(cantidad) <= 0) return Swal.fire('Error',
+                    'Ingrese una cantidad válida.', 'error');
                 if (!unidadId) return Swal.fire('Error', 'Seleccione una unidad.', 'error');
 
                 // Verificar si ya existe para no duplicar en la lista visual
-                if(document.getElementById('prod_' + prodId)){
+                if (document.getElementById('prod_' + prodId)) {
                     return Swal.fire('Aviso', 'Este producto ya está en la lista.', 'info');
                 }
 

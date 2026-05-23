@@ -68,10 +68,10 @@
 
         .decorative-lines {
             height: 8px;
-            background: linear-gradient(to bottom, 
-                #d41002 0%, #d41002 33%, 
-                #333 33%, #333 66%, 
-                #ffc107 66%, #ffc107 100%);
+            background: linear-gradient(to bottom,
+                    #d41002 0%, #d41002 33%,
+                    #333 33%, #333 66%,
+                    #ffc107 66%, #ffc107 100%);
             margin-bottom: 20px;
         }
 
@@ -305,15 +305,15 @@
         <div class="header-content">
             <div class="header-left">
                 @php
-                    $logoPath = public_path('img/ministerioLogo.png');
+                    $logoPath = public_path('img/ministerioLogo.webp');
                     if (file_exists($logoPath)) {
                         $logoData = base64_encode(file_get_contents($logoPath));
-                        $logoSrc = 'data:image/png;base64,' . $logoData;
+                        $logoSrc = 'data:image/webp;base64,' . $logoData;
                     } else {
                         $logoSrc = '';
                     }
                 @endphp
-                @if($logoSrc)
+                @if ($logoSrc)
                     <img src="{{ $logoSrc }}" alt="Logo Ministerio">
                 @endif
             </div>
@@ -324,15 +324,15 @@
             </div>
             <div class="header-right">
                 @php
-                    $logoPath2 = public_path('img/Logo.png');
+                    $logoPath2 = public_path('img/Logo.webp');
                     if (file_exists($logoPath2)) {
                         $logoData2 = base64_encode(file_get_contents($logoPath2));
-                        $logoSrc2 = 'data:image/png;base64,' . $logoData2;
+                        $logoSrc2 = 'data:image/webp;base64,' . $logoData2;
                     } else {
                         $logoSrc2 = '';
                     }
                 @endphp
-                @if($logoSrc2)
+                @if ($logoSrc2)
                     <img src="{{ $logoSrc2 }}" alt="Logo Universidad">
                 @endif
             </div>
@@ -362,7 +362,8 @@
                     </div>
                     <div class="info-row">
                         <div class="info-label">Registro en Sistema:</div>
-                        <div class="info-value">{{ \Carbon\Carbon::parse($compra->created_at)->format('d/m/Y H:i:s') }}</div>
+                        <div class="info-value">{{ \Carbon\Carbon::parse($compra->created_at)->format('d/m/Y H:i:s') }}
+                        </div>
                     </div>
                 </div>
 
@@ -391,10 +392,10 @@
                     </tbody>
                 </table>
 
-                @if($compra->observaciones)
-                <div class="observaciones-section">
-                    <p><strong>Observaciones:</strong> {{ $compra->observaciones }}</p>
-                </div>
+                @if ($compra->observaciones)
+                    <div class="observaciones-section">
+                        <p><strong>Observaciones:</strong> {{ $compra->observaciones }}</p>
+                    </div>
                 @endif
 
                 <div class="total-section">

@@ -460,7 +460,7 @@
 
 <body>
     <div class="logo">
-        <img src="img/Logo.png" alt="Logo UPTP">
+        <img src="img/Logo.webp" alt="Logo UPTP">
     </div>
 
     <div class="wrap">
@@ -485,8 +485,8 @@
                     @if (isset($roles) && $roles->isNotEmpty())
                         <div class="form-row">
                             <div class="form-group">
-                                <select name="id_rol" id="id_rol"
-                                    class="select" @error('id_rol') is-invalid @enderror" required>
+                                <select name="id_rol" id="id_rol" class="select"
+                                    @error('id_rol') is-invalid @enderror" required>
                                     <option value="" disabled selected>Seleccione el rol correspondiente...
                                     </option>
                                     @foreach ($roles as $rol)

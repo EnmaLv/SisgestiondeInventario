@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,7 +39,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: 
+            background-image:
                 radial-gradient(circle, rgba(183, 28, 28, 0.1) 1px, transparent 1px),
                 radial-gradient(circle, rgba(183, 28, 28, 0.1) 1px, transparent 1px);
             background-size: 50px 50px;
@@ -49,8 +50,13 @@
         }
 
         @keyframes moveBackground {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
         }
 
         /* Partículas flotantes */
@@ -98,23 +104,51 @@
         }
 
         @keyframes float1 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-20px, -30px) scale(1.1); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(-20px, -30px) scale(1.1);
+            }
         }
 
         @keyframes float2 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(20px, 30px) scale(0.9); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(20px, 30px) scale(0.9);
+            }
         }
 
         @keyframes float3 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, -20px) scale(1.15); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(30px, -20px) scale(1.15);
+            }
         }
 
         @keyframes float4 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-25px, 25px) scale(0.95); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(-25px, 25px) scale(0.95);
+            }
         }
 
         .error-container {
@@ -130,7 +164,7 @@
             backdrop-filter: blur(20px);
             border-radius: 30px;
             padding: 60px 40px;
-            box-shadow: 
+            box-shadow:
                 0 20px 60px rgba(0, 0, 0, 0.5),
                 0 0 0 1px rgba(183, 28, 28, 0.1),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.8);
@@ -143,6 +177,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -156,9 +191,19 @@
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .logo {
@@ -186,10 +231,10 @@
         }
 
         .logo img {
-			width: 100%;
+            width: 100%;
 
-			display: block;
-		}
+            display: block;
+        }
 
         .logo-text {
             font-size: 48px;
@@ -213,11 +258,27 @@
         }
 
         @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-1px, 1px); }
-            40% { transform: translate(-1px, -1px); }
-            60% { transform: translate(1px, 1px); }
-            80% { transform: translate(1px, -1px); }
+
+            0%,
+            100% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-1px, 1px);
+            }
+
+            40% {
+                transform: translate(-1px, -1px);
+            }
+
+            60% {
+                transform: translate(1px, 1px);
+            }
+
+            80% {
+                transform: translate(1px, -1px);
+            }
         }
 
         .error-title {
@@ -237,8 +298,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Botones */
@@ -299,8 +365,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         .illustration svg {
@@ -383,6 +456,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Partículas decorativas -->
     <div class="particle"></div>
@@ -395,19 +469,22 @@
             <!-- Logo UPTP -->
             <div class="logo-container">
                 <div class="logo">
-                    <span class="logo-text"><img src="{{ asset('img/Logo.png') }}" alt="Logo UPTP"></span>
+                    <span class="logo-text"><img src="{{ asset('img/Logo.webp') }}" alt="Logo UPTP"></span>
                 </div>
             </div>
 
             <!-- Ilustración -->
             <div class="illustration">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="100" cy="100" r="80" fill="#f1f5f9" opacity="0.5"/>
-                    <path d="M70 90 Q75 85 80 90 T90 90" stroke="#b71c1c" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <path d="M110 90 Q115 85 120 90 T130 90" stroke="#b71c1c" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <path d="M70 130 Q100 145 130 130" stroke="#b71c1c" stroke-width="4" fill="none" stroke-linecap="round"/>
-                    <circle cx="75" cy="90" r="3" fill="#b71c1c"/>
-                    <circle cx="125" cy="90" r="3" fill="#b71c1c"/>
+                    <circle cx="100" cy="100" r="80" fill="#f1f5f9" opacity="0.5" />
+                    <path d="M70 90 Q75 85 80 90 T90 90" stroke="#b71c1c" stroke-width="4" fill="none"
+                        stroke-linecap="round" />
+                    <path d="M110 90 Q115 85 120 90 T130 90" stroke="#b71c1c" stroke-width="4" fill="none"
+                        stroke-linecap="round" />
+                    <path d="M70 130 Q100 145 130 130" stroke="#b71c1c" stroke-width="4" fill="none"
+                        stroke-linecap="round" />
+                    <circle cx="75" cy="90" r="3" fill="#b71c1c" />
+                    <circle cx="125" cy="90" r="3" fill="#b71c1c" />
                 </svg>
             </div>
 
@@ -417,7 +494,7 @@
             <!-- Título y mensaje -->
             <h1 class="error-title">¡Oops! Página restringida</h1>
             <p class="error-message">
-                Para la página que buscas no tienes los permisos suficientes para ingresar. 
+                Para la página que buscas no tienes los permisos suficientes para ingresar.
                 No te preocupes, puedes volver al inicio o regresar a la página anterior.
             </p>
 
@@ -447,4 +524,5 @@
         }
     </script>
 </body>
+
 </html>

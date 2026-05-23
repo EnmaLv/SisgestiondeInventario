@@ -31,7 +31,8 @@
                     🏠 Panel de Control
                 </h1>
                 <p class="mt-2 mb-0 text-white" style="font-size: 1.1rem; opacity: 0.95;">
-                    Bienvenido de nuevo, <strong>{{ auth()->user()->persona?->nombre_persona ?? auth()->user()->name }}</strong>
+                    Bienvenido de nuevo,
+                    <strong>{{ auth()->user()->persona?->nombre_persona ?? auth()->user()->name }}</strong>
                 </p>
                 <p class="mb-0 text-white" style="font-size: 0.9rem; opacity: 0.8;">
                     Gestiona tu inventario de manera eficiente
@@ -60,7 +61,7 @@
                     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
                     background: white;
                 ">
-                    <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                    <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                         style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             </div>
@@ -71,120 +72,120 @@
 @section('content')
     <div class="row">
 
-        @if($visibleModules['sucursales'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/sucursales') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/edificio.gif') }}" alt="Sucursales">
+        @if ($visibleModules['sucursales'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/maestros/sucursales') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/edificio.webp') }}" alt="Sucursales">
+                        </div>
+                        <h5>Sedes</h5>
+                        <p>{{ $total_sucursales }} registradas</p>
                     </div>
-                    <h5>Sedes</h5>
-                    <p>{{ $total_sucursales }} registradas</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
         <!-- Categorías -->
-        @if($visibleModules['categorias'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/categorias') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/carpetas.gif') }}" alt="Categorías">
+        @if ($visibleModules['categorias'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/maestros/categorias') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/carpetas.webp') }}" alt="Categorías">
+                        </div>
+                        <h5>Categorías</h5>
+                        <p>{{ $total_categorias }} activas</p>
                     </div>
-                    <h5>Categorías</h5>
-                    <p>{{ $total_categorias }} activas</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
         <!-- Productos -->
-        @if($visibleModules['productos'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/productos') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/paquete.gif') }}" alt="Productos">
+        @if ($visibleModules['productos'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/maestros/productos') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/paquete.webp') }}" alt="Productos">
+                        </div>
+                        <h5>Productos</h5>
+                        <p>{{ $total_productos }} en inventario</p>
                     </div>
-                    <h5>Productos</h5>
-                    <p>{{ $total_productos }} en inventario</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
         <!-- Proveedores -->
-        @if($visibleModules['proveedores'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/proveedores') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/camion.gif') }}" alt="Proveedores">
+        @if ($visibleModules['proveedores'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/maestros/proveedores') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/camion.webp') }}" alt="Proveedores">
+                        </div>
+                        <h5>Proveedores</h5>
+                        <p>{{ $total_proveedores }} disponibles</p>
                     </div>
-                    <h5>Proveedores</h5>
-                    <p>{{ $total_proveedores }} disponibles</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
         <!-- Compras -->
-        @if($visibleModules['compras'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/movimientos/compras') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/lista-de-verificacion.gif') }}" alt="Compras">
+        @if ($visibleModules['compras'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/movimientos/compras') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/lista-de-verificacion.webp') }}" alt="Compras">
+                        </div>
+                        <h5>Compras</h5>
+                        <p>{{ $total_compras }} realizadas</p>
                     </div>
-                    <h5>Compras</h5>
-                    <p>{{ $total_compras }} realizadas</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
         <!-- Compras -->
-        @if($visibleModules['comidas'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/recetas') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/bandeja-de-comida.gif') }}" alt="Compras">
+        @if ($visibleModules['comidas'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/maestros/recetas') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/bandeja-de-comida.webp') }}" alt="Compras">
+                        </div>
+                        <h5>Comidas</h5>
+                        <p>{{ $total_compras }} registradas</p>
                     </div>
-                    <h5>Comidas</h5>
-                    <p>{{ $total_compras }} registradas</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
         <!-- Productos por Vencer -->
-        @if($visibleModules['por_vencer'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/notificaciones.gif') }}" alt="Por vencer">
+        @if ($visibleModules['por_vencer'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/notificaciones.webp') }}" alt="Por vencer">
+                        </div>
+                        <h5>Por Vencer</h5>
+                        <p>{{ $total_lotes_por_vencer }} próximos a vencer</p>
                     </div>
-                    <h5>Por Vencer</h5>
-                    <p>{{ $total_lotes_por_vencer }} próximos a vencer</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
 
 
         <script>
-            document.addEventListener('DOMContentLoaded', async function () {
+            document.addEventListener('DOMContentLoaded', async function() {
                 const tasaPendiente = @json(session()->has('tasa_pendiente'));
 
                 if (tasaPendiente) {
                     return;
                 }
-                
+
                 const hoy = new Date().toISOString().slice(0, 10);
                 const alertas = [];
                 @if ($total_lotes_vencidos > 0)
@@ -208,7 +209,8 @@
                             localStorage.setItem('alerta_lotes_vencidos', hoy);
 
                             if (result.isConfirmed) {
-                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=vencido') }}";
+                                window.location.href =
+                                    "{{ url('/admin/movimientos/lotes?filtro=vencido') }}";
                             }
                         });
                     }
@@ -235,7 +237,8 @@
                             localStorage.setItem('alerta_por_vencer', hoy);
 
                             if (result.isConfirmed) {
-                                window.location.href = "{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}";
+                                window.location.href =
+                                    "{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}";
                             }
                         });
                     }
@@ -272,7 +275,8 @@
                             localStorage.setItem('alerta_stock_minimo', hoy);
 
                             if (result.isConfirmed) {
-                                window.location.href = "{{ url('/admin/maestros/productos?filtro=stock_minimo') }}";
+                                window.location.href =
+                                    "{{ url('/admin/maestros/productos?filtro=stock_minimo') }}";
                             }
                         });
                     }
@@ -282,22 +286,22 @@
                 }
 
             });
-            </script>
+        </script>
 
 
         <!-- Lotes Vencidos -->
-        @if($visibleModules['por_vencer'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/alarma.gif') }}" alt="Lotes vencidos">
+        @if ($visibleModules['por_vencer'] ?? false)
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}" class="module-link">
+                    <div class="module-card-light">
+                        <div class="module-icon">
+                            <img src="{{ url('/img/alarma.webp') }}" alt="Lotes vencidos">
+                        </div>
+                        <h5>Lotes Vencidos</h5>
+                        <p>{{ $total_lotes_vencidos }} requieren atención</p>
                     </div>
-                    <h5>Lotes Vencidos</h5>
-                    <p>{{ $total_lotes_vencidos }} requieren atención</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         @endif
 
     </div>
@@ -391,7 +395,7 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const ctx = document.getElementById('doughnutChartID');
             if (!ctx) return;
@@ -403,9 +407,9 @@
                     datasets: [{
                         data: [100],
                         backgroundColor: [
-                            @if($variacion_dolar === 'subio')
+                            @if ($variacion_dolar === 'subio')
                                 '#dc2626'
-                            @elseif($variacion_dolar === 'bajo')
+                            @elseif ($variacion_dolar === 'bajo')
                                 '#16a34a'
                             @else
                                 '#9ca3af'
@@ -419,14 +423,18 @@
                     maintainAspectRatio: false,
                     cutout: '75%',
                     plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
                     }
                 }
             });
 
         });
-        </script>
+    </script>
 
 
     <script>
@@ -451,7 +459,7 @@
             textWhite: 'hsl(0, 0%, 85%)',
             btnHover: 'hsl(358, 75%, 30%)'
         };
-        
+
 
         // Gráfica de Barras Principal
         const ctxMain = document.getElementById('mainChart');

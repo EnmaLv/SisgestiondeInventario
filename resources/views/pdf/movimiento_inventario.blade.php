@@ -234,15 +234,15 @@
         <div class="header-content">
             <div class="header-left">
                 @php
-                    $logoPath = public_path('img/ministerioLogo.png');
+                    $logoPath = public_path('img/ministerioLogo.webp');
                     if (file_exists($logoPath)) {
                         $logoData = base64_encode(file_get_contents($logoPath));
-                        $logoSrc = 'data:image/png;base64,' . $logoData;
+                        $logoSrc = 'data:image/webp;base64,' . $logoData;
                     } else {
                         $logoSrc = '';
                     }
                 @endphp
-                @if($logoSrc)
+                @if ($logoSrc)
                     <img src="{{ $logoSrc }}" alt="Logo Ministerio">
                 @endif
             </div>
@@ -253,15 +253,15 @@
             </div>
             <div class="header-right">
                 @php
-                    $logoPath2 = public_path('img/Logo.png');
+                    $logoPath2 = public_path('img/Logo.webp');
                     if (file_exists($logoPath2)) {
                         $logoData2 = base64_encode(file_get_contents($logoPath2));
-                        $logoSrc2 = 'data:image/png;base64,' . $logoData2;
+                        $logoSrc2 = 'data:image/webp;base64,' . $logoData2;
                     } else {
                         $logoSrc2 = '';
                     }
                 @endphp
-                @if($logoSrc2)
+                @if ($logoSrc2)
                     <img src="{{ $logoSrc2 }}" alt="Logo Universidad">
                 @endif
             </div>
@@ -306,19 +306,20 @@
         </thead>
         <tbody>
             @foreach ($movimiento as $index => $item)
-            <tr>
-                <td class="center">{{ $index + 1 }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->fecha_movimiento)->format('d/m/Y') }}</td>
-                <td><strong>{{ $item->lote->codigo_lote ?? 'N/A' }}</strong></td>
-                <td><strong>{{ $item->producto->nombre ?? 'N/A' }}</strong></td>
-                <td>
-                    <span class="badge {{ strtoupper($item->tipo_movimiento) == 'ENTRADA' ? 'badge-ingreso' : 'badge-egreso' }}">
-                        {{ $item->tipo_movimiento }}
-                    </span>
-                </td>
-                <td class="right">{{ number_format($item->cantidad_gramos, 2, ',', '.') }}</td>
-                <td>{{ $item->sucursal->nombre ?? 'N/A' }}</td>
-            </tr>
+                <tr>
+                    <td class="center">{{ $index + 1 }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->fecha_movimiento)->format('d/m/Y') }}</td>
+                    <td><strong>{{ $item->lote->codigo_lote ?? 'N/A' }}</strong></td>
+                    <td><strong>{{ $item->producto->nombre ?? 'N/A' }}</strong></td>
+                    <td>
+                        <span
+                            class="badge {{ strtoupper($item->tipo_movimiento) == 'ENTRADA' ? 'badge-ingreso' : 'badge-egreso' }}">
+                            {{ $item->tipo_movimiento }}
+                        </span>
+                    </td>
+                    <td class="right">{{ number_format($item->cantidad_gramos, 2, ',', '.') }}</td>
+                    <td>{{ $item->sucursal->nombre ?? 'N/A' }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>

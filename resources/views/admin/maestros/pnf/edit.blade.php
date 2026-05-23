@@ -33,7 +33,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -42,7 +42,7 @@
 @stop
 
 @section('content')
-    @include('components.alert')    
+    @include('components.alert')
     <div class="rd-card rd-card-form">
         <div class="rd-card-body">
             <div class="rd-card-header mb-3">
@@ -55,7 +55,8 @@
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
             </div>
-            <form action="{{ route('admin.maestros.pnf.update', ['id' => $pnf->id_pnf]) }}" method="POST" class="rd-prevent-double-submit">
+            <form action="{{ route('admin.maestros.pnf.update', ['id' => $pnf->id_pnf]) }}" method="POST"
+                class="rd-prevent-double-submit">
                 @csrf
                 @method('PUT')
 
@@ -64,8 +65,8 @@
                         <label class="rd-label">Nombre del PNF</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
-                            <input type="text" name="nombre" class="form-control rd-filter-input" placeholder="Ingrese el nombre"
-                                value="{{ $pnf->nombre_pnf }}">
+                            <input type="text" name="nombre" class="form-control rd-filter-input"
+                                placeholder="Ingrese el nombre" value="{{ $pnf->nombre_pnf }}">
                         </div>
                         @error('nombre')
                             <span class="rd-error">Este campo es obligatorio.</span>
@@ -89,7 +90,7 @@
                 <div class="mt-4 d-flex gap-2 justify-content-end">
                     <a href="{{ url('admin/maestros/pnf') }}" class="rd-btn rd-btn-default">
                         Cancelar
-                    </a>    
+                    </a>
 
                     <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                         Editar PNF

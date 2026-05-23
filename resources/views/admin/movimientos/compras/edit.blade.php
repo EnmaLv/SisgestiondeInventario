@@ -50,7 +50,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -58,7 +58,7 @@
 @stop
 
 @section('content')
-@include('components.alert')
+    @include('components.alert')
     <div class="row">
         <div class="col-md-12 m-auto">
             <div class="card">
@@ -66,8 +66,8 @@
                     <h3 class="card-title"><b>Paso 1 | Requisicion creada</b></h3>
 
                     <div class="card-tools">
-                        <form action="{{ route('admin.movimientos.compras.cancelar', $compra) }}"
-                            method="POST" style="display:inline;">
+                        <form action="{{ route('admin.movimientos.compras.cancelar', $compra) }}" method="POST"
+                            style="display:inline;">
                             @csrf
                             @if ($compra->estado == 'Pendiente')
                                 <button type="submit" class="rd-btn rd-btn-alter" onclick="confirmDelete(event, this)">
@@ -110,7 +110,8 @@
                                     <label for="nombre" class="rd-label">Proveedor</label>
                                     <div class="rd-input-group">
                                         <span><i class="fas fa-user-tie"></i></span>
-                                        <select class="form-control rd-input" id="proveedor_id" name="proveedor_id" disabled>
+                                        <select class="form-control rd-input" id="proveedor_id" name="proveedor_id"
+                                            disabled>
                                             <option value="">Seleccione un proveedor</option>
                                             @foreach ($proveedores as $proveedor)
                                                 <option value="{{ $proveedor->id }}"
@@ -205,12 +206,14 @@
                     </div>
                     <div class="card-body">
                         <livewire:admin.movimientos.compras.fechas-compra :compra="$compra" />
-                        <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST" class="rd-prevent-double-submit">
+                        <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST"
+                            class="rd-prevent-double-submit">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group" style="text-align: right;">
-                                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"><i class="fas fa-check"></i>
+                                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"><i
+                                                class="fas fa-check"></i>
                                             Finalizar
                                             Requisicion
                                         </button>

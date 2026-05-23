@@ -37,7 +37,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -81,7 +81,9 @@
                 <div class="info-list">
                     <div class="info-item">
                         <span class="info-label">Nombre completo</span>
-                        <p class="info-value">{{ $registro->nombre_persona . ' ' . $registro->segundo_nombre_persona . ' ' . $registro->apellido_persona . ' ' . $registro->segundo_apellido_persona }}</p>
+                        <p class="info-value">
+                            {{ $registro->nombre_persona . ' ' . $registro->segundo_nombre_persona . ' ' . $registro->apellido_persona . ' ' . $registro->segundo_apellido_persona }}
+                        </p>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Cédula</span>
@@ -94,7 +96,8 @@
                     <div class="info-item info-item-inline">
                         <div>
                             <span class="info-label">Fecha de nacimiento</span>
-                            <p class="info-value">{{ \Carbon\Carbon::parse($registro->fecha_nacimiento_persona)->format('d/m/Y') }}</p>
+                            <p class="info-value">
+                                {{ \Carbon\Carbon::parse($registro->fecha_nacimiento_persona)->format('d/m/Y') }}</p>
                         </div>
                         <div>
                             <span class="info-label">Edad</span>
@@ -137,7 +140,8 @@
                 <div class="info-list">
                     <div class="info-item">
                         <span class="info-label">Fecha de registro</span>
-                        <p class="info-value">{{ \Carbon\Carbon::parse($registro->fecha_regis_diario_c)->format('d/m/Y') }}</p>
+                        <p class="info-value">{{ \Carbon\Carbon::parse($registro->fecha_regis_diario_c)->format('d/m/Y') }}
+                        </p>
                         <small class="info-helper">Información tomada del formulario enviado.</small>
                     </div>
                     <div class="info-item">

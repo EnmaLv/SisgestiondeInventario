@@ -32,7 +32,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -60,19 +60,19 @@
                         <label class="rd-label">Nombre de la Sede</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
-                            <input type="text" name="nombre" class="form-control rd-filter-input" placeholder="Ingrese el nombre"
-                                value="{{ old('nombre') }}">
+                            <input type="text" name="nombre" class="form-control rd-filter-input"
+                                placeholder="Ingrese el nombre" value="{{ old('nombre') }}">
                         </div>
                         @error('nombre')
-                           <b> <span class="rd-error">{{ $message }}</span></b>
+                            <b> <span class="rd-error">{{ $message }}</span></b>
                         @enderror
                     </div>
                     <div class="col-md-4">
                         <label class="rd-label">Dirección</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-map-marker-alt"></i></span>
-                            <input type="text" name="direccion" class="form-control rd-filter-input" placeholder="Ingrese la dirección"
-                                value="{{ old('direccion') }}">
+                            <input type="text" name="direccion" class="form-control rd-filter-input"
+                                placeholder="Ingrese la dirección" value="{{ old('direccion') }}">
                         </div>
                         @error('direccion')
                             <b> <span class="rd-error">Este campo es obligatorio.</span></b>

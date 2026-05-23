@@ -36,7 +36,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -47,8 +47,7 @@
 @section('content')
     @include('components.alert')
     @if ($hayLotesVencidosSinMerma)
-        <div class="rd-card rd-card-full mb-4"
-            style="border-left:6px solid #dc2626;">
+        <div class="rd-card rd-card-full mb-4" style="border-left:6px solid #dc2626;">
             <div class="rd-card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
@@ -65,9 +64,7 @@
 
                     <form action="{{ route('admin.movimientos.lotes.mermar') }}" method="POST">
                         @csrf
-                        <button type="submit"
-                            class="btn btn-danger px-4"
-                            onclick="confirmarMerma(event, this)">
+                        <button type="submit" class="btn btn-danger px-4" onclick="confirmarMerma(event, this)">
                             <i class="fas fa-trash-alt mr-1"></i>
                             Mermar productos vencidos
                         </button>
@@ -86,7 +83,7 @@
                 </div>
 
                 <div class="rd-actions">
-                    
+
 
                     <form action="{{ route('admin.movimientos.lotes.index') }}" method="GET" class="rd-search-inline"
                         role="search">
@@ -107,11 +104,12 @@
                         </div>
                         <div class="rd-filter-row" style="display: inline-block;">
                             <label>Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" max="{{ now()->format('Y-m-d') }}"/>
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input"
+                                max="{{ now()->format('Y-m-d') }}" />
                         </div>
                         <div class="rd-filter-row" style="display: inline-block;">
                             <select name="estado" class="rd-filter-input">
-                                <option value="">Seleccione una opcion  </option>
+                                <option value="">Seleccione una opcion </option>
                                 <option value="1" {{ request('estado') === '1' ? 'selected' : '' }}>Activos</option>
                                 <option value="0" {{ request('estado') === '0' ? 'selected' : '' }}>Merma</option>
                             </select>

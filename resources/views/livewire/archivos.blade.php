@@ -20,7 +20,7 @@
 
             <div
                 style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -50,11 +50,10 @@
             <div class="row g-3">
 
                 <div class="col-md-7">
-                    
+
                     <label class="rd-card p-4 text-center" for="archivo">
 
-                        <i class="fas fa-file-upload mb-2"
-                            style="font-size:2.2rem; color:#64748b"></i>
+                        <i class="fas fa-file-upload mb-2" style="font-size:2.2rem; color:#64748b"></i>
 
                         <p class="mb-1 fw-semibold">
                             Selecciónalo manualmente
@@ -64,27 +63,23 @@
                             Formatos permitidos: Excel (.xlsx)
                         </p>
 
-                        <div style="text-align: left;"
-                            x-data="{ isUploading: false, progress: 0 }"
+                        <div style="text-align: left;" x-data="{ isUploading: false, progress: 0 }"
                             x-on:livewire-upload-start="isUploading = true"
                             x-on:livewire-upload-finish="isUploading = false"
                             x-on:livewire-upload-error="isUploading = false"
-                            x-on:livewire-upload-progress="progress = $event.detail.progress"
-                        >
-                            <input type="file"
-                                class="form-control rd-filter-input"
-                                wire:model="archivo"
-                                wire:key="{{ $archivoKey }}"
-                                accept=".xlsx,.xls"
+                            x-on:livewire-upload-progress="progress = $event.detail.progress">
+                            <input type="file" class="form-control rd-filter-input" wire:model="archivo"
+                                wire:key="{{ $archivoKey }}" accept=".xlsx,.xls"
                                 style="padding: 20px; font-size: 1rem; height: auto;" id="archivo" hidden>
-                                
-                                @error('archivo')
+
+                            @error('archivo')
                                 <div class="rd-error">{{ $message }}</div>
-                                @enderror
-                                <div x-show="isUploading" style="text-align: left; margin-top: 12px;">
-                                    <progress max="100" x-bind:value="progress" style="width: 100%; height: 16px;"></progress>
-                                </div>
-                                <span wire:ignore id="nombre-display"></span>
+                            @enderror
+                            <div x-show="isUploading" style="text-align: left; margin-top: 12px;">
+                                <progress max="100" x-bind:value="progress"
+                                    style="width: 100%; height: 16px;"></progress>
+                            </div>
+                            <span wire:ignore id="nombre-display"></span>
                         </div>
                     </label>
                 </div>
@@ -110,11 +105,11 @@
 
                         </div>
                     </div>
-                    
+
                 </div>
 
             </div>
-            
+
 
         </div>
     </div>
@@ -129,10 +124,8 @@
                 </h3>
 
                 <div class="rd-search-inline">
-                    <input type="text"
-                           class="rd-search-input"
-                           placeholder="Buscar archivo..."
-                           wire:model.live="buscar">
+                    <input type="text" class="rd-search-input" placeholder="Buscar archivo..."
+                        wire:model.live="buscar">
                 </div>
             </div>
 
@@ -159,9 +152,7 @@
                             </td>
                             <td>
                                 <a href="{{ url('/admin/configuracion/archivos/ver/' . $archivo->info_estudiantes) }}"
-                                    target="_blank"
-                                    class="rd-action"
-                                    title="Ver archivo">
+                                    target="_blank" class="rd-action" title="Ver archivo">
                                     <i class="fas fa-download"></i>
                                 </a>
                             </td>
@@ -185,4 +176,3 @@
 @push('js')
     <script src="{{ asset('js/localidad.js') }}"></script>
 @endpush
-

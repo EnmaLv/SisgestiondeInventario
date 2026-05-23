@@ -293,15 +293,15 @@
         <div class="header-content">
             <div class="header-left">
                 @php
-                    $logoPath = public_path('img/ministerioLogo.png');
+                    $logoPath = public_path('img/ministerioLogo.webp');
                     if (file_exists($logoPath)) {
                         $logoData = base64_encode(file_get_contents($logoPath));
-                        $logoSrc = 'data:image/png;base64,' . $logoData;
+                        $logoSrc = 'data:image/webp;base64,' . $logoData;
                     } else {
                         $logoSrc = '';
                     }
                 @endphp
-                @if($logoSrc)
+                @if ($logoSrc)
                     <img src="{{ $logoSrc }}" alt="Logo Ministerio">
                 @endif
             </div>
@@ -312,15 +312,15 @@
             </div>
             <div class="header-right">
                 @php
-                    $logoPath2 = public_path('img/Logo.png');
+                    $logoPath2 = public_path('img/Logo.webp');
                     if (file_exists($logoPath2)) {
                         $logoData2 = base64_encode(file_get_contents($logoPath2));
-                        $logoSrc2 = 'data:image/png;base64,' . $logoData2;
+                        $logoSrc2 = 'data:image/webp;base64,' . $logoData2;
                     } else {
                         $logoSrc2 = '';
                     }
                 @endphp
-                @if($logoSrc2)
+                @if ($logoSrc2)
                     <img src="{{ $logoSrc2 }}" alt="Logo Universidad">
                 @endif
             </div>
@@ -392,18 +392,18 @@
             <h3>Resumen por Programa Nacional de Formación (PNF)</h3>
 
             @foreach ($registros_pnf as $registro)
-            <div class="item-pnf">
-                <div class="item-pnf-info">
-                    <div class="item-pnf-nombre">{{ $registro->nombre_pnf }}</div>
-                    <div class="item-pnf-subtitle">Estudiantes registrados en este PNF</div>
-                </div>
+                <div class="item-pnf">
+                    <div class="item-pnf-info">
+                        <div class="item-pnf-nombre">{{ $registro->nombre_pnf }}</div>
+                        <div class="item-pnf-subtitle">Estudiantes registrados en este PNF</div>
+                    </div>
 
-                <div class="item-pnf-cantidad">
-                    {{ $registro->total_registros }}
-                </div>
+                    <div class="item-pnf-cantidad">
+                        {{ $registro->total_registros }}
+                    </div>
 
-                <div class="clearfix"></div>
-            </div>
+                    <div class="clearfix"></div>
+                </div>
             @endforeach
         </div>
     @endif

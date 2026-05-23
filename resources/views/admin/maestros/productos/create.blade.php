@@ -17,7 +17,7 @@
             </div>
             <div
                 style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -36,7 +36,8 @@
                         </a>
                     </div>
                 </div>
-                <form action="{{ route('admin.maestros.productos.store') }}" method="POST" enctype="multipart/form-data" class="rd-prevent-double-submit">
+                <form action="{{ route('admin.maestros.productos.store') }}" method="POST" enctype="multipart/form-data"
+                    class="rd-prevent-double-submit">
                     @csrf
                     <input type="hidden" name="from" value="{{ request('from') }}">
                     <div class="row">
@@ -64,9 +65,10 @@
                                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                                             <small style="color: #64748b; font-size: 0.85rem;">
                                                 ¿No encuentras tu categoria?
-                                                <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.categorias.create', [
-                                                    'from' => url()->current()
-                                                ]) }}">
+                                                <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
+                                                    href="{{ route('admin.maestros.categorias.create', [
+                                                        'from' => url()->current(),
+                                                    ]) }}">
                                                     Créala aquí
                                                 </a>
                                             </small>
@@ -114,15 +116,9 @@
                                         <label class="font-weight-bold">Precio base (USD)</label>
                                         <div class="input-group mb-2">
                                             <span class="input-group-text">$</span>
-                                            <input
-                                                type="number"
-                                                name="costo_usd"
-                                                class="form-control rd-filter-input"
-                                                value="{{ old('costo_usd') }}"
-                                                placeholder="0.00"
-                                                min="0"
-                                                step="0.01"
-                                            >
+                                            <input type="number" name="costo_usd" class="form-control rd-filter-input"
+                                                value="{{ old('costo_usd') }}" placeholder="0.00" min="0"
+                                                step="0.01">
                                         </div>
                                         @error('costo_usd')
                                             <div class="text-danger"><b>{{ $message }}</b></div>
@@ -165,7 +161,8 @@
                                             <select class="form-control rd-filter-input" name="unidad_id" id="unidad_id">
                                                 <option value="" selected disabled>Seleccione una unidad</option>
                                                 @foreach ($unidades as $unidad)
-                                                    <option value="{{ $unidad->id }}" data-abreviatura="{{ $unidad->abreviatura }}"
+                                                    <option value="{{ $unidad->id }}"
+                                                        data-abreviatura="{{ $unidad->abreviatura }}"
                                                         {{ old('unidad_id') == $unidad->id ? 'selected' : '' }}>
                                                         {{ $unidad->nombre }}</option>
                                                 @endforeach
@@ -199,7 +196,8 @@
                                 <label class="font-weight-bold">Imagen del producto</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                    <label for="imagen" class="p-2" style="margin: 0; cursor: pointer; width: 90%;">Seleccione
+                                    <label for="imagen" class="p-2"
+                                        style="margin: 0; cursor: pointer; width: 90%;">Seleccione
                                         una foto</label>
                                     <input type="file" name="imagen" id="imagen"
                                         class="form-control rd-filter-input" accept="image/*"
@@ -269,7 +267,7 @@
 
 @section('js')
     <script>
-        document.getElementById('unidad_id').addEventListener('change', function () {
+        document.getElementById('unidad_id').addEventListener('change', function() {
             const selected = this.options[this.selectedIndex];
             const abrev = selected.getAttribute('data-abreviatura');
 
@@ -320,6 +318,5 @@
                 });
             }
         });
-        
     </script>
 @stop

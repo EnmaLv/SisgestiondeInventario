@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +73,7 @@
             backdrop-filter: blur(20px);
             border-radius: 24px;
             padding: 48px 40px;
-            box-shadow: 
+            box-shadow:
                 0 20px 60px rgba(0, 0, 0, 0.3),
                 0 0 0 1px rgba(255, 255, 255, 0.1);
             animation: fadeInUp 0.6s ease-out;
@@ -83,6 +84,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -109,9 +111,19 @@
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .icon-header svg {
@@ -137,8 +149,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Mensaje de error */
@@ -157,9 +174,19 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            75% {
+                transform: translateX(8px);
+            }
         }
 
         .error-message svg {
@@ -398,9 +425,10 @@
         }
     </style>
 </head>
+
 <body>
     <div class="logo">
-        <img src="{{ asset('img/Logo.png') }}" alt="Logo UPTP">
+        <img src="{{ asset('img/Logo.webp') }}" alt="Logo UPTP">
     </div>
 
     <div class="box">
@@ -408,7 +436,8 @@
         <div class="header">
             <div class="icon-header">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    <path
+                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
                 </svg>
             </div>
 
@@ -428,7 +457,8 @@
         <!-- Error message (visible solo si hay error) -->
         <div class="error-message" style="display: none;">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
             </svg>
             <span>Una o más respuestas son incorrectas. Verifica e intenta nuevamente.</span>
         </div>
@@ -436,7 +466,7 @@
         <form method="POST" action="{{ route('password.recover.verify') }}">
             @csrf
             <div class="questions-container">
-                @foreach($questions as $i => $q)
+                @foreach ($questions as $i => $q)
                     <div class="question-item">
                         <div class="question-number">{{ $i + 1 }}</div>
                         <label class="question-label">{{ $q['question'] }}</label>
@@ -444,14 +474,9 @@
                             <svg class="input-icon" viewBox="0 0 24 24">
                                 <!-- Icono contextual según pregunta -->
                             </svg>
-                            <input 
-                                class="input" 
-                                type="text"
-                                name="answers[{{ $i }}]" 
-                                placeholder="Escribe tu respuesta aquí" 
-                                required
-                                @if($i === 0) autofocus @endif
-                            >
+                            <input class="input" type="text" name="answers[{{ $i }}]"
+                                placeholder="Escribe tu respuesta aquí" required
+                                @if ($i === 0) autofocus @endif>
                         </div>
                     </div>
                 @endforeach
@@ -461,10 +486,11 @@
 
         <a href="{{ route('password.recover.email') }}" class="back-link">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
             </svg>
             Volver atrás
         </a>
     </div>
 </body>
+
 </html>

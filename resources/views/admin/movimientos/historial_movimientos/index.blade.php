@@ -33,7 +33,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -65,7 +65,8 @@
                     </button>
 
                     <div class="rd-export-group">
-                        <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i class="fas fa-file-pdf"></i>
+                        <button class="rd-btn rd-btn-danger" title="Exportar PDF" id="pdfBtn"><i
+                                class="fas fa-file-pdf"></i>
                             PDF</button>
                     </div>
                 </div>
@@ -77,18 +78,23 @@
                         class="rd-filters-form">
                         <div class="rd-filter-row">
                             <label for="fecha_desde">Desde</label>
-                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input" value="{{ request('fecha_desde') }}" />
+                            <input type="date" name="fecha_desde" id="fecha_desde" class="rd-filter-input"
+                                value="{{ request('fecha_desde') }}" />
                         </div>
                         <div class="rd-filter-row">
                             <label for="fecha_hasta">Hasta</label>
-                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input" value="{{ request('fecha_hasta') }}" />
+                            <input type="date" name="fecha_hasta" id="fecha_hasta" class="rd-filter-input"
+                                value="{{ request('fecha_hasta') }}" />
                         </div>
                         <div class="rd-filter-row">
                             <label for="tipo_movimiento">Tipo de Movimiento</label>
-                            <select name="tipo_movimiento" id="tipo_movimiento" class="rd-filter-input" style="width:100px; background-color: white;">
+                            <select name="tipo_movimiento" id="tipo_movimiento" class="rd-filter-input"
+                                style="width:100px; background-color: white;">
                                 <option value="">Todos</option>
-                                <option value="ENTRADA" {{ request('tipo_movimiento') === 'ENTRADA' ? 'selected' : '' }}>Entrada</option>
-                                <option value="SALIDA" {{ request('tipo_movimiento') === 'SALIDA' ? 'selected' : '' }}>Salida</option>
+                                <option value="ENTRADA" {{ request('tipo_movimiento') === 'ENTRADA' ? 'selected' : '' }}>
+                                    Entrada</option>
+                                <option value="SALIDA" {{ request('tipo_movimiento') === 'SALIDA' ? 'selected' : '' }}>
+                                    Salida</option>
                             </select>
                         </div>
                         <div class="rd-filter-row rd-filter-actions">
@@ -180,16 +186,17 @@
 
 @push('js')
     <script>
-        document.addEventListener('DOMContentLoaded', ()=>{
+        document.addEventListener('DOMContentLoaded', () => {
 
             const pdfBtn = document.getElementById('pdfBtn');
             if (pdfBtn) {
-                pdfBtn.addEventListener('click', ()=>{
+                pdfBtn.addEventListener('click', () => {
                     const params = new URLSearchParams(window.location.search);
                     const fechaDesde = params.get('fecha_desde') ?? "";
                     const fechaHasta = params.get('fecha_hasta') ?? "";
                     const tipoMovimiento = params.get('tipo_movimiento') ?? "";
-                    const url = `{{ route('admin.movimientos.historial_movimientos.export_pdf') }}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}&tipo_movimiento=${tipoMovimiento}`;
+                    const url =
+                        `{{ route('admin.movimientos.historial_movimientos.export_pdf') }}?fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}&tipo_movimiento=${tipoMovimiento}`;
                     window.open(url, '_blank');
                 });
             }

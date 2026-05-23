@@ -17,7 +17,7 @@
             </div>
             <div
                 style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -41,8 +41,8 @@
                                 <label class="font-weight-bold">Categoría</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                    <input type="text" class="form-control" value="{{ $medicamento->categoria_medicamento_nombre }}"
-                                        readonly>
+                                    <input type="text" class="form-control"
+                                        value="{{ $medicamento->categoria_medicamento_nombre }}" readonly>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -109,8 +109,8 @@
                                     </label>
                                     <div class="input-group mb-2">
                                         <span class="input-group-text"><i class="fas fa-weight"></i></span>
-                                        <input type="number" class="form-control rd-filter-input"
-                                            name="peso_contenido" value="{{ round(old('peso_contenido', $medicamento->peso_contenido)) }}"
+                                        <input type="number" class="form-control rd-filter-input" name="peso_contenido"
+                                            value="{{ round(old('peso_contenido', $medicamento->peso_contenido)) }}"
                                             placeholder="Peso contenido" min="0" step="0.01" readonly>
                                     </div>
                                 </div>
@@ -118,14 +118,15 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <label class="font-weight-bold" >Imagen del Medicamento</label>
+                        <label class="font-weight-bold">Imagen del Medicamento</label>
                         @if ($medicamento->imagen)
-                            <div class="rd-card p-2" style="border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
+                            <div class="rd-card p-2"
+                                style="border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
                                 <img src="{{ asset('storage/' . $medicamento->imagen) }}" alt="Imagen del medicamento"
                                     style="width:100%; height:auto; border-radius:10px; object-fit:cover;">
                             </div>
                         @else
-                        <h4 style="text-align: center; margin-top: 3rem">Imagen no disponible</h4>
+                            <h4 style="text-align: center; margin-top: 3rem">Imagen no disponible</h4>
                         @endif
                     </div>
                 </div>

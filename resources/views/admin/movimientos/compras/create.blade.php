@@ -37,7 +37,7 @@
                 overflow:hidden;
                 box-shadow:0 4px 12px rgba(15,23,42,0.08);
             ">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario"
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
@@ -61,7 +61,8 @@
                     </a>
                 </div>
 
-                <form action="{{ route('admin.movimientos.compras.store') }}" method="POST" class="rd-prevent-double-submit">
+                <form action="{{ route('admin.movimientos.compras.store') }}" method="POST"
+                    class="rd-prevent-double-submit">
                     @csrf
 
                     <div class="row">
@@ -87,9 +88,10 @@
                             <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                                 <small style="color: #64748b; font-size: 0.85rem;">
                                     ¿No encuentras tu proveedor?
-                                    <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.proveedores.create', [
-                                        'from' => url()->current()
-                                    ]) }}">
+                                    <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
+                                        href="{{ route('admin.maestros.proveedores.create', [
+                                            'from' => url()->current(),
+                                        ]) }}">
                                         Créalo aquí
                                     </a>
                                 </small>

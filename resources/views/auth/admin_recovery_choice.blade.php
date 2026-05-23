@@ -458,7 +458,7 @@
 </head>
 <body>
     <div class="logo">
-        <img src="{{ asset('img/Logo.png') }}" alt="Logo UPTP">
+        <img src="{{ asset('img/Logo.webp') }}" alt="Logo UPTP">
     </div>
 
     <div class="box">

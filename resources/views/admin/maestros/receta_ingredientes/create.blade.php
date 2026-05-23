@@ -17,8 +17,10 @@
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
             </div>
-            <div style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08); border: 2px solid #fff;">
-                <img src="{{ asset('img/usuario-verificado.png') }}" alt="Usuario" style="width:100%; height:100%; object-fit:cover;">
+            <div
+                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08); border: 2px solid #fff;">
+                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
+                    style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
     </div>
@@ -32,7 +34,8 @@
                 <div class="rd-card-body border-bottom bg-light">
                     <div class="d-flex justify-content-between align-items-center">
                         <h3 class="rd-title-sm m-0">
-                            <i class="fas fa-plus-circle mr-2" style="color: var(--color-secondary)"></i>Registrar Ingredientes
+                            <i class="fas fa-plus-circle mr-2" style="color: var(--color-secondary)"></i>Registrar
+                            Ingredientes
                         </h3>
                         <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default">
                             <i class="fas fa-arrow-left"></i> Volver
@@ -40,7 +43,8 @@
                     </div>
                 </div>
                 <div class="rd-card-body p-4">
-                    <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST" class="rd-prevent-double-submit">
+                    <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST"
+                        class="rd-prevent-double-submit">
                         @csrf
                         <div class="row">
                             <div class="col-md-4 border-right pr-md-4">
@@ -50,8 +54,9 @@
                                         <span><i class="fas fa-concierge-bell"></i></span>
                                         <select class="rd-input w-100" name="recetas_id" required>
                                             <option value="">Seleccione una receta...</option>
-                                            @foreach($recetas as $receta)
-                                                <option value="{{ $receta->id }}" {{ old('recetas_id', request('recetas_id')) == $receta->id ? 'selected' : '' }}>
+                                            @foreach ($recetas as $receta)
+                                                <option value="{{ $receta->id }}"
+                                                    {{ old('recetas_id', request('recetas_id')) == $receta->id ? 'selected' : '' }}>
                                                     {{ $receta->nombre }}
                                                 </option>
                                             @endforeach
@@ -60,16 +65,19 @@
                                     <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                                         <small style="color: #64748b; font-size: 0.85rem;">
                                             ¿No encuentras tu receta?
-                                            <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.recetas.create', [
-                                                'from' => url()->current()
-                                            ]) }}">
+                                            <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
+                                                href="{{ route('admin.maestros.recetas.create', [
+                                                    'from' => url()->current(),
+                                                ]) }}">
                                                 Créala aquí
                                             </a>
                                         </small>
                                     </div>
-                                    <div class="mt-4 p-3 rounded" style="background: #f8fafc; border-left: 4px solid var(--color-secondary);">
+                                    <div class="mt-4 p-3 rounded"
+                                        style="background: #f8fafc; border-left: 4px solid var(--color-secondary);">
                                         <p class="small text-muted mb-0">
-                                            <i class="fas fa-info-circle mr-1"></i> Seleccione primero la receta base para luego asignar sus ingredientes y porciones.
+                                            <i class="fas fa-info-circle mr-1"></i> Seleccione primero la receta base para
+                                            luego asignar sus ingredientes y porciones.
                                         </p>
                                     </div>
                                 </div>
@@ -83,7 +91,8 @@
                                             <select class="rd-input w-100" id="producto_select">
                                                 <option value="">Buscar producto...</option>
                                                 @foreach ($productos as $producto)
-                                                    <option value="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}">
+                                                    <option value="{{ $producto->id }}"
+                                                        data-nombre="{{ $producto->nombre }}">
                                                         {{ $producto->nombre }}
                                                     </option>
                                                 @endforeach
@@ -103,32 +112,40 @@
                                             <select class="rd-input w-100" id="unidad_select">
                                                 <option value="">Unidad</option>
                                                 @foreach ($unidades as $unidad)
-                                                    <option value="{{ $unidad->id }}" data-nombre="{{ $unidad->nombre }}">
+                                                    <option value="{{ $unidad->id }}"
+                                                        data-nombre="{{ $unidad->nombre }}">
                                                         {{ $unidad->nombre }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <button type="button" class="rd-btn rd-btn-primary shadow-sm" id="agregarProducto" style="height: 45px; width: 50px; justify-content: center;">
+                                    <button type="button" class="rd-btn rd-btn-primary shadow-sm" id="agregarProducto"
+                                        style="height: 45px; width: 50px; justify-content: center;">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
-                                <h5 class="rd-title-sm mb-3" style="font-size: 0.9rem; color: #64748b;">Lista de Preparación</h5>
-                                <div class="border rounded-lg overflow-hidden" style="background: #fbfdff; border-color: #eef2f6 !important;">
-                                    <ul id="listaProductos" class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
+                                <h5 class="rd-title-sm mb-3" style="font-size: 0.9rem; color: #64748b;">Lista de Preparación
+                                </h5>
+                                <div class="border rounded-lg overflow-hidden"
+                                    style="background: #fbfdff; border-color: #eef2f6 !important;">
+                                    <ul id="listaProductos" class="list-group list-group-flush"
+                                        style="max-height: 350px; overflow-y: auto;">
                                         <li class="list-group-item text-center py-5 text-muted empty-msg">
                                             <i class="fas fa-layer-group fa-3x mb-3 opacity-25"></i>
                                             <p class="mb-0">Agregue ingredientes para comenzar la receta.</p>
                                         </li>
                                     </ul>
                                 </div>
-                                @error('producto_id.*') <div class="rd-error mt-2">{{ $message }}</div> @enderror
+                                @error('producto_id.*')
+                                    <div class="rd-error mt-2">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <hr class="my-4" style="opacity: 0.4;">
                         <div class="d-flex justify-content-end gap-3">
-                            <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="rd-btn rd-btn-default px-4">Cancelar</a>
+                            <a href="{{ url('admin/maestros/receta_ingredientes') }}"
+                                class="rd-btn rd-btn-default px-4">Cancelar</a>
                             <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5">
                                 <i class="fas fa-save mr-1"></i> Guardar
                             </button>
@@ -141,27 +158,55 @@
 @stop
 
 @section('css')
-<style>
-    /* Estilización del Scroll */
-    #listaProductos::-webkit-scrollbar { width: 5px; }
-    #listaProductos::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    <style>
+        /* Estilización del Scroll */
+        #listaProductos::-webkit-scrollbar {
+            width: 5px;
+        }
 
-    /* Efectos de Interacción */
-    .list-group-item { border-color: #f1f5f9 !important; }
-    .list-group-item:hover { background-color: #f8fafc !important; transition: var(--trans-default); }
+        #listaProductos::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
 
-    /* Eliminación de bordes de foco solicitados */
-    .rd-input:focus, .rd-btn:focus, select:focus, .form-control:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        border-color: var(--color-tertiary) !important;
-    }
+        /* Efectos de Interacción */
+        .list-group-item {
+            border-color: #f1f5f9 !important;
+        }
 
-    .gap-2 { gap: 0.5rem; }
-    .gap-3 { gap: 1rem; }
-    .rounded-lg { border-radius: 12px !important; }
-    .badge-soft-secondary { border-radius: 6px; font-weight: 600; font-size: 0.8rem; }
-</style>
+        .list-group-item:hover {
+            background-color: #f8fafc !important;
+            transition: var(--trans-default);
+        }
+
+        /* Eliminación de bordes de foco solicitados */
+        .rd-input:focus,
+        .rd-btn:focus,
+        select:focus,
+        .form-control:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border-color: var(--color-tertiary) !important;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-3 {
+            gap: 1rem;
+        }
+
+        .rounded-lg {
+            border-radius: 12px !important;
+        }
+
+        .badge-soft-secondary {
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+    </style>
 @stop
 
 @section('js')
@@ -175,10 +220,11 @@
 
             function crearItem(prodId, prodNombre, cantidad, unidadId, unidadNombre) {
                 const empty = lista.querySelector('.empty-msg');
-                if(empty) empty.remove();
+                if (empty) empty.remove();
 
                 const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom fade-in';
+                li.className =
+                    'list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom fade-in';
                 li.id = 'prod_' + prodId;
 
                 li.innerHTML = `
@@ -205,7 +251,7 @@
 
                 li.querySelector('.rd-action-danger').addEventListener('click', () => {
                     li.remove();
-                    if(lista.children.length === 0) {
+                    if (lista.children.length === 0) {
                         lista.innerHTML = `<li class="list-group-item text-center py-5 text-muted empty-msg">
                                             <i class="fas fa-layer-group fa-3x mb-3 opacity-25"></i>
                                             <p class="mb-0">Agregue ingredientes para comenzar la receta.</p>
@@ -223,10 +269,11 @@
                 const unidadNombre = unidadSelect.options[unidadSelect.selectedIndex]?.text || '';
 
                 if (!prodId) return Swal.fire('Error', 'Seleccione un producto.', 'error');
-                if (!cantidad || Number(cantidad) <= 0) return Swal.fire('Error', 'Ingrese una cantidad.', 'error');
+                if (!cantidad || Number(cantidad) <= 0) return Swal.fire('Error', 'Ingrese una cantidad.',
+                    'error');
                 if (!unidadId) return Swal.fire('Error', 'Seleccione unidad.', 'error');
 
-                if(document.getElementById('prod_' + prodId)){
+                if (document.getElementById('prod_' + prodId)) {
                     return Swal.fire('Aviso', 'Ya está en la lista.', 'info');
                 }
 

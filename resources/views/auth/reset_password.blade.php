@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +73,7 @@
             backdrop-filter: blur(20px);
             border-radius: 24px;
             padding: 48px 40px;
-            box-shadow: 
+            box-shadow:
                 0 20px 60px rgba(0, 0, 0, 0.3),
                 0 0 0 1px rgba(255, 255, 255, 0.1);
             animation: fadeInUp 0.6s ease-out;
@@ -83,6 +84,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -109,9 +111,19 @@
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .icon-header svg {
@@ -137,8 +149,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         /* Badge de verificación */
@@ -456,9 +473,10 @@
         }
     </style>
 </head>
+
 <body>
     <div class="logo">
-        <img src="{{ asset('img/Logo.png') }}" alt="Logo UPTP">
+        <img src="{{ asset('img/Logo.webp') }}" alt="Logo UPTP">
     </div>
 
     <div class="box">
@@ -466,7 +484,7 @@
         <div class="header">
             <div class="icon-header">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                 </svg>
             </div>
 
@@ -478,7 +496,8 @@
             <div style="text-align: center;">
                 <div class="verified-badge">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                     </svg>
                     Identidad verificada
                 </div>
@@ -499,7 +518,8 @@
                 <div class="option-header">
                     <div class="option-icon">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                            <path
+                                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
                         </svg>
                     </div>
                     <h3 class="option-title">Restablecer Contraseña</h3>
@@ -513,25 +533,15 @@
                     <div class="form-group">
                         <div class="input-wrapper">
                             <svg class="input-icon">...</svg>
-                            <input 
-                                class="input" 
-                                type="password"
-                                name="password" 
-                                placeholder="Nueva contraseña" 
-                                required
-                            >
+                            <input class="input" type="password" name="password" placeholder="Nueva contraseña"
+                                required>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="input-wrapper">
                             <svg class="input-icon">...</svg>
-                            <input 
-                                class="input" 
-                                type="password"
-                                name="password_confirmation" 
-                                placeholder="Confirmar contraseña" 
-                                required
-                            >
+                            <input class="input" type="password" name="password_confirmation"
+                                placeholder="Confirmar contraseña" required>
                         </div>
                     </div>
                     <button class="btn" type="submit">
@@ -543,10 +553,11 @@
 
         <a href="{{ route('login') }}" class="cancel-link">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
             </svg>
             Cancelar proceso
         </a>
     </div>
 </body>
+
 </html>
