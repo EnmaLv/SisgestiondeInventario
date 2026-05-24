@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Registro - UPTP</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -13,10 +14,9 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            position: relative;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f5f5;
+            min-height: 100vh;
         }
 
         .wrap {
@@ -34,11 +34,6 @@
             border-radius: 16px;
             padding: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: translateY(-2px);
         }
 
         .logo img {
@@ -49,20 +44,17 @@
 
         .left {
             flex: 1;
-            min-width: 0;
             padding: 40px 24px;
             background: #fff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow-y: auto;
         }
 
         .right {
             flex: 1;
-            min-width: 0;
-            background: linear-gradient(135deg, #000000 0%, #000000 100%);
+            background: linear-gradient(135deg, #000 0%, #000 100%);
             color: #fff;
             display: flex;
             align-items: center;
@@ -75,10 +67,7 @@
         .right::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             background-image: url("img/unnamed.webp");
             background-repeat: no-repeat;
             background-size: cover;
@@ -139,7 +128,6 @@
 
         .form-group {
             margin-bottom: 16px;
-            position: relative;
         }
 
         .form-row {
@@ -150,7 +138,6 @@
 
         .form-row .form-group {
             flex: 1;
-            min-width: 0;
             margin-bottom: 0;
         }
 
@@ -163,7 +150,6 @@
             font-size: 15px;
             transition: all 0.3s ease;
             background: #fafafa;
-            font-family: inherit;
         }
 
         .input:focus,
@@ -172,10 +158,6 @@
             border-color: #b71c1c;
             background: #fff;
             box-shadow: 0 0 0 4px rgba(183, 28, 28, 0.1);
-        }
-
-        .input::placeholder {
-            color: #999;
         }
 
         .select {
@@ -187,10 +169,6 @@
             padding-right: 40px;
         }
 
-        .select option[disabled] {
-            color: #999;
-        }
-
         .error-message {
             background: #ffebee;
             color: #c62828;
@@ -199,23 +177,6 @@
             margin-bottom: 20px;
             font-size: 14px;
             border-left: 4px solid #c62828;
-            animation: shake 0.4s ease;
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-8px);
-            }
-
-            75% {
-                transform: translateX(8px);
-            }
         }
 
         .section-title {
@@ -225,25 +186,6 @@
             margin: 24px 0 16px;
             text-align: center;
             position: relative;
-        }
-
-        .section-title::before,
-        .section-title::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #b71c1c);
-        }
-
-        .section-title::before {
-            right: calc(100% + 12px);
-        }
-
-        .section-title::after {
-            left: calc(100% + 12px);
-            background: linear-gradient(to left, transparent, #b71c1c);
         }
 
         .btn {
@@ -256,87 +198,31 @@
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
             box-shadow: 0 4px 14px rgba(183, 28, 28, 0.3);
-            letter-spacing: 0.5px;
-            margin-top: 24px;
         }
 
         .boton {
             width: 100%;
-            background: #ffffff;
-            /* Fondo blanco para mantener limpieza */
+            background: #fff;
             color: #1a1a1a;
-            /* Texto oscuro para contraste */
             padding: 14px 24px;
             border: 1px solid rgba(0, 0, 0, 0.06);
             border-radius: 12px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.25s ease;
+            margin-top: 12px;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-            letter-spacing: 0.5px;
-            margin-top: 24px;
-        }
-
-        .boton:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            border-color: rgba(0, 0, 0, 0.12);
-        }
-
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(183, 28, 28, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
         }
 
         .corner-text {
-            position: relative;
-            z-index: 1;
-            max-width: 500px;
-            animation: fadeIn 1s ease-out 0.3s both;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            text-align: center;
         }
 
         .corner-text h1 {
             font-size: 42px;
             font-weight: 800;
             margin-bottom: 16px;
-            line-height: 1.2;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .corner-text p {
-            font-size: 18px;
-            line-height: 1.6;
-            opacity: 0.95;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .corner-text h1 {
-                font-size: 32px;
-            }
-
-            .corner-text p {
-                font-size: 16px;
-            }
         }
 
         @media (max-width: 768px) {
@@ -344,115 +230,18 @@
                 flex-direction: column;
             }
 
-            .logo {
-                top: 16px;
-                left: 16px;
-                padding: 10px;
-            }
-
-            .logo img {
-                width: 40px;
-                height: 40px;
-            }
-
             .left {
                 order: 2;
-                min-height: auto;
-                padding: 32px 20px 40px;
             }
 
             .right {
                 order: 1;
                 min-height: 240px;
-                padding: 80px 24px 32px;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .corner-text {
-                text-align: center;
-                max-width: 100%;
-            }
-
-            .corner-text h1 {
-                font-size: 28px;
-            }
-
-            .corner-text p {
-                font-size: 15px;
-            }
-
-            .card {
-                max-width: 100%;
-            }
-
-            .title {
-                font-size: 28px;
-            }
-
-            .header-icon {
-                width: 70px;
-                height: 70px;
-                margin-bottom: 16px;
-            }
-
-            .header-icon svg {
-                width: 38px;
-                height: 38px;
-            }
-
-            .section-title::before,
-            .section-title::after {
-                width: 40px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .left {
-                padding: 24px 16px 32px;
-            }
-
-            .right {
-                min-height: 200px;
-                padding: 70px 20px 24px;
-            }
-
-            .corner-text h1 {
-                font-size: 24px;
-            }
-
-            .corner-text p {
-                font-size: 14px;
-            }
-
-            .title {
-                font-size: 24px;
             }
 
             .form-row {
                 flex-direction: column;
                 gap: 16px;
-            }
-
-            .input,
-            .select {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
-
-            .btn {
-                padding: 12px 20px;
-                font-size: 15px;
-            }
-
-            .section-title {
-                font-size: 16px;
-                margin: 20px 0 12px;
-            }
-
-            .section-title::before,
-            .section-title::after {
-                display: none;
             }
         }
     </style>
@@ -477,125 +266,123 @@
                 <p class="subtitle">Completa el formulario para registrar al nuevo empleado</p>
 
                 @if ($errors->any())
-                    <div style="color:#b71c1c;margin-bottom:12px">{{ implode(', ', $errors->all()) }}</div>
+                    <div class="error-message">
+                        <strong>Por favor corrige los siguientes errores:</strong>
+                        <ul class="mt-1 ml-4 mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
 
-                <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="{{ route('register') }}" onsubmit="return validateForm(event)">
                     @csrf
+
                     @if (isset($roles) && $roles->isNotEmpty())
-                        <div class="form-row">
-                            <div class="form-group">
-                                <select name="id_rol" id="id_rol" class="select"
-                                    @error('id_rol') is-invalid @enderror" required>
-                                    <option value="" disabled selected>Seleccione el rol correspondiente...
+                        <div class="form-group">
+                            <select name="id_rol" id="id_rol" class="select" required
+                                onchange="toggleMasterKeyField()">
+                                <option value="" disabled selected>Seleccione el rol correspondiente...</option>
+                                @foreach ($roles as $rol)
+                                    <option value="{{ $rol->id_rol }}" data-nombre="{{ strtolower($rol->nombre) }}"
+                                        {{ old('id_rol') == $rol->id_rol ? 'selected' : '' }}>
+                                        {{ $rol->nombre }}
                                     </option>
-                                    @foreach ($roles as $rol)
-                                        <option value="{{ $rol->id_rol }}"
-                                            {{ old('id_rol') == $rol->id_rol ? 'selected' : '' }}>
-                                            {{ $rol->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            @error('id_rol')
-                                <span class="text-danger small d-block mt-1">{{ $message }}</span>
-                            @enderror
+                                @endforeach
+                            </select>
                         </div>
                     @endif
+
                     <div class="form-row">
                         <div class="form-group">
-                            <input class="input" name="first_name" placeholder="Primer nombre" required>
+                            <input class="input" name="first_name" placeholder="Primer nombre" required
+                                value="{{ old('first_name') }}">
                         </div>
                         <div class="form-group">
-                            <input class="input" name="first_lastname" placeholder="Primer apellido" required>
+                            <input class="input" name="first_lastname" placeholder="Primer apellido" required
+                                value="{{ old('first_lastname') }}">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <input class="input" name="cedula" placeholder="Cédula de identidad" required maxlength="8"
                             inputmode="numeric" pattern="\d{1,8}"
-                            oninput="this.value=this.value.replace(/\D/g,'').slice(0,8)">
+                            oninput="this.value=this.value.replace(/\D/g,'').slice(0,8)" value="{{ old('cedula') }}">
                     </div>
 
                     <div class="form-group">
                         <input id="telefono" class="input" name="telefono"
                             placeholder="Número telefónico (0000-0000000)" maxlength="12" inputmode="numeric"
-                            pattern="\d{4}-\d{7}" oninput="formatTelefono(this)">
+                            pattern="\d{4}-\d{7}" oninput="formatTelefono(this)" value="{{ old('telefono') }}">
                     </div>
 
                     <div class="form-group">
-                        <input class="input" type="email" name="email" placeholder="Correo electrónico" required>
+                        <input class="input" type="email" name="email" placeholder="Correo electrónico" required
+                            value="{{ old('email') }}">
                     </div>
 
-                    <div class="form-group">
-                        <input class="input" type="password" name="password" placeholder="Contraseña" required>
-                    </div>
-
-                    <div class="form-group">
-                        <input class="input" type="password" name="password_confirmation"
-                            placeholder="Confirmar contraseña" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input class="input" type="password" name="password" placeholder="Contraseña" required>
+                        </div>
+                        <div class="form-group">
+                            <input class="input" type="password" name="password_confirmation"
+                                placeholder="Confirmar contraseña" required>
+                        </div>
                     </div>
 
                     <h3 class="section-title">Preguntas de seguridad</h3>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <select name="security_questions[0][question]" id="q0_type" class="select" required>
-                                <option value="" disabled selected>Selecciona pregunta 1</option>
-                                <option value="¿Cuál es el nombre de tu primera mascota?">¿Cuál es el nombre de tu
-                                    primera mascota?</option>
-                                <option value="¿Cuál es el nombre de tu madre?">¿Cuál es el nombre de tu madre?</option>
-                                <option value="¿En qué ciudad naciste?">¿En qué ciudad naciste?</option>
-                                <option value="¿Cuál es tu comida favorita?">¿Cuál es tu comida favorita?</option>
-                                <option value="¿Cuál fue tu primer colegio?">¿Cuál fue tu primer colegio?</option>
-                                <option value="¿Cuál es el segundo nombre de tu padre?">¿Cuál es el segundo nombre de tu
-                                    padre?</option>
-                            </select>
+                    @for ($i = 0; $i < 2; $i++)
+                        <div class="form-row">
+                            <div class="form-group">
+                                <select name="security_questions[{{ $i }}][question]"
+                                    id="q{{ $i }}_type" class="select" required>
+                                    <option value="" disabled selected>Selecciona pregunta {{ $i + 1 }}
+                                    </option>
+                                    @php
+                                        $questions = [
+                                            '¿Cuál es el nombre de tu primera mascota?',
+                                            '¿Cuál es el nombre de tu madre?',
+                                            '¿En qué ciudad naciste?',
+                                            '¿Cuál es tu comida favorita?',
+                                            '¿Cuál fue tu primer colegio?',
+                                            '¿Cuál es el segundo nombre de tu padre?',
+                                        ];
+                                    @endphp
+                                    @foreach ($questions as $q)
+                                        <option value="{{ $q }}"
+                                            {{ old("security_questions.$i.question") == $q ? 'selected' : '' }}>
+                                            {{ $q }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input class="input" name="security_questions[{{ $i }}][answer]"
+                                    placeholder="Respuesta {{ $i + 1 }}" required
+                                    value="{{ old('security_questions.' . $i . '.answer') }}">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <input class="input" name="security_questions[0][answer]" placeholder="Respuesta 1"
-                                required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <select name="security_questions[1][question]" id="q1_type" class="select" required>
-                                <option value="" disabled selected>Selecciona pregunta 2</option>
-                                <option value="¿Cuál es el nombre de tu primera mascota?">¿Cuál es el nombre de tu
-                                    primera mascota?</option>
-                                <option value="¿Cuál es el nombre de tu madre?">¿Cuál es el nombre de tu madre?
-                                </option>
-                                <option value="¿En qué ciudad naciste?">¿En qué ciudad naciste?</option>
-                                <option value="¿Cuál es tu comida favorita?">¿Cuál es tu comida favorita?</option>
-                                <option value="¿Cuál fue tu primer colegio?">¿Cuál fue tu primer colegio?</option>
-                                <option value="¿Cuál es el segundo nombre de tu padre?">¿Cuál es el segundo nombre de
-                                    tu padre?</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input class="input" name="security_questions[1][answer]" placeholder="Respuesta 2"
-                                required>
-                        </div>
-                    </div>
+                    @endfor
 
                     @php
                         try {
                             $adminRol = \App\Models\Rol::where('nombre', 'Administrador')->first();
-                            $hasAdmin = $adminRol ? $adminRol->usuarios()->count() > 0 : false;
+                            $systemHasAdmin = $adminRol ? $adminRol->usuarios()->count() > 0 : false;
                         } catch (\Throwable $e) {
-                            $hasAdmin =
+                            $systemHasAdmin =
                                 \App\Models\Usuario::join('perfil', 'usuario.id_perfil', '=', 'perfil.id_perfil')
                                     ->where('perfil.nombre_perfil', 'Administrador')
                                     ->count() > 0;
                         }
                     @endphp
-                    @if (!$hasAdmin)
-                        <div class="form-group" id="master-key-group">
-                            <input class="input" name="master_key"
-                                placeholder="Llave Maestra (requerida para administrador)">
-                        </div>
-                    @endif
+
+                    <div class="form-group" id="master-key-group"
+                        style="{{ $systemHasAdmin ? 'display: none;' : '' }}">
+                        <input class="input" type="password" id="master_key" name="master_key"
+                            placeholder="Llave Maestra (requerida para administrador)">
+                    </div>
 
                     <button class="btn" type="submit">REGISTRARSE</button>
                     <button class="boton" type="button" onclick="window.location='{{ url()->previous() }}'">VOLVER
@@ -606,9 +393,8 @@
 
         <div class="right">
             <div class="corner-text">
-                <h1 style="text-align: center">Únete al Departamento</h1>
-                <p style="text-align: center">Crea tu cuenta y accede a todos los servicios y recursos de la
-                    universidad</p>
+                <h1>Únete al Departamento</h1>
+                <p>Crea tu cuenta y accede a todos los servicios y recursos de la universidad</p>
             </div>
         </div>
     </div>
@@ -623,33 +409,56 @@
             }
         }
 
-        function validateForm(e) {
-            e.preventDefault();
+        // Muestra u oculta la llave maestra dinámicamente si se selecciona el rol Administrador
+        function toggleMasterKeyField() {
+            const selectRol = document.getElementById('id_rol');
+            const masterKeyGroup = document.getElementById('master-key-group');
+            const masterKeyInput = document.getElementById('master_key');
 
+            if (!selectRol) return;
+
+            const selectedOption = selectRol.options[selectRol.selectedIndex];
+            const nombreRol = selectedOption.getAttribute('data-nombre') || '';
+
+            // Si el rol seleccionado es Administrador, mostramos el campo y lo hacemos requerido en el cliente
+            if (nombreRol === 'administrador') {
+                masterKeyGroup.style.display = 'block';
+                masterKeyInput.setAttribute('required', 'required');
+            } else {
+                // Si ya existen admins en el sistema y selecciona otro rol, se oculta
+                @if ($systemHasAdmin)
+                    masterKeyGroup.style.display = 'none';
+                    masterKeyInput.removeAttribute('required');
+                    masterKeyInput.value = '';
+                @endif
+            }
+        }
+
+        function validateForm(e) {
             var q0 = document.getElementById('q0_type');
             var q1 = document.getElementById('q1_type');
 
-            if (!q0.value || !q1.value) {
-                alert('Complete ambas preguntas de seguridad.');
-                return false;
-            }
-
             if (q0.value === q1.value) {
-                alert('Seleccione dos preguntas diferentes.');
+                e.preventDefault();
+                // Reemplazo de alerta nativa por SweetAlert2
+                Swal.fire({
+                    title: 'Preguntas repetidas',
+                    text: 'Por favor, seleccione dos preguntas de seguridad diferentes.',
+                    icon: 'warning',
+                    confirmButtonColor: '#b71c1c',
+                    confirmButtonText: 'Entendido'
+                });
                 return false;
             }
-
-            alert('Formulario validado correctamente');
-            // Aquí iría el envío real del formulario
-            return false;
+            return true;
         }
 
-        // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             var t = document.getElementById('telefono');
-            if (t && t.value) {
-                formatTelefono(t);
-            }
+            if (t && t.value) formatTelefono(t);
+
+            // Ejecutar al cargar la vista por si hay persistencia old() del rol
+            toggleMasterKeyField();
         });
     </script>
 </body>
