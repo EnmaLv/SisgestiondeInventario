@@ -95,36 +95,85 @@
                                 </button>
                             </div>
                             
-                            <div class="permissions-grid p-4" 
-                                 style="border: 1px solid #eef2f6; border-radius: 12px; background: #fbfdff;">
-                                
+                            <div class="permissions-grid">
                                 @php
-                                    function renderMenuItems($items, $parentText = '') {
-                                        foreach ($items as $it) {
-                                            if (isset($it['submenu'])) {
-                                                echo '<div class="permission-group-title mt-2 mb-2">
-                                                        <strong class="text-uppercase small text-muted" style="letter-spacing:0.5px; color:var(--color-secondary) !important;">
-                                                            <i class="fas fa-folder mr-1"></i> '.$it['text'].'
-                                                        </strong>
-                                                      </div>';
-                                                renderMenuItems($it['submenu'], $it['text']);
-                                            } else {
-                                                $val = $it['key'] ?? ($it['url'] ?? ($it['route'] ?? null));
-                                                if (!$val) continue;
-                                                
-                                                // Mantenemos persistencia si falla la validación
-                                                $checked = is_array(old('menu_permissions')) && in_array($val, old('menu_permissions')) ? 'checked' : '';
+                                    // 1. Separamos los elementos de la raíz en submenús y links directos
+                                    $submenus = [];
+                                    $directLinks = [];
+                                    
+                                    foreach ($menu as $item) {
+                                        if (isset($item['submenu']) && is_array($item['submenu'])) {
+                                            $submenus[] = $item;
+                                        } else {
+                                            $directLinks[] = $item;
+                                        }
+                                    }
 
-                                                echo '<div class="custom-control custom-checkbox mb-2 permission-item">
-                                                        <input type="checkbox" name="menu_permissions[]" value="'.e($val).'" '.$checked.' class="custom-control-input perm-check" id="check_'.e($val).'">
-                                                        <label class="custom-control-label font-weight-normal" style="cursor:pointer; font-size:0.9rem;" for="check_'.e($val).'">
-                                                            '.e($it['text']).'
-                                                        </label>
-                                                      </div>';
+                                    // 2. Función interna recursiva para renderizar los niveles internos (> 0)
+                                    if (!function_exists('renderChildrenItems')) {
+                                        function renderChildrenItems($items, $depth = 1) {
+                                            $margin = $depth * 15;
+                                            foreach ($items as $it) {
+                                                if (isset($it['submenu']) && is_array($it['submenu'])) {
+                                                    echo '<div class="permission-group-title mt-2 mb-2" style="margin-left:'.$margin.'px;">
+                                                            <strong class="text-uppercase small text-muted" style="letter-spacing:0.5px; color:var(--color-secondary) !important;">
+                                                                <i class="fas fa-folder-open mr-1" style="color: #64748b;"></i> '.e($it['text']).'
+                                                            </strong>
+                                                          </div>';
+                                                    renderChildrenItems($it['submenu'], $depth + 1);
+                                                } else {
+                                                    $val = $it['key'] ?? ($it['url'] ?? ($it['route'] ?? null));
+                                                    if (!$val) continue;
+                                                    
+                                                    $checked = is_array(old('menu_permissions')) && in_array($val, old('menu_permissions')) ? 'checked' : '';
+
+                                                    echo '<div class="custom-control custom-checkbox mb-2 permission-item" style="margin-left:'.$margin.'px;">
+                                                            <input type="checkbox" name="menu_permissions[]" value="'.e($val).'" '.$checked.' class="custom-control-input perm-check" id="check_'.e($val).'">
+                                                            <label class="custom-control-label font-weight-normal" style="cursor:pointer; font-size:0.9rem; color: #334155;" for="check_'.e($val).'">
+                                                                '.e($it['text']).'
+                                                            </label>
+                                                          </div>';
+                                                }
                                             }
                                         }
                                     }
-                                    renderMenuItems($menu);
+
+                                    // 3. Renderizar las Carpetas Principales (Cada una en su bloque Card)
+                                    foreach ($submenus as $folder) {
+                                        echo '<div class="permission-group-block">';
+                                        echo '<div class="permission-group-title mt-1 mb-2">
+                                                <strong class="text-uppercase small text-muted" style="letter-spacing:0.5px; color:var(--color-secondary) !important;">
+                                                    <i class="fas fa-folder-open mr-1" style="color: #64748b;"></i> '.e($folder['text']).'
+                                                </strong>
+                                              </div>';
+                                        renderChildrenItems($folder['submenu'], 1);
+                                        echo '</div>';
+                                    }
+
+                                    // 4. Renderizar Links Huérfanos Agrupados en una sola tarjeta al final
+                                    if (count($directLinks) > 0) {
+                                        echo '<div class="permission-group-block">';
+                                        echo '<div class="permission-group-title mt-1 mb-3">
+                                                <strong class="text-uppercase small text-muted" style="letter-spacing:0.5px; color:var(--color-secondary) !important;">
+                                                    <i class="fas fa-link mr-1" style="color: #64748b;"></i> Accesos del Sistema
+                                                </strong>
+                                              </div>';
+                                              
+                                        foreach ($directLinks as $link) {
+                                            $val = $link['key'] ?? ($link['url'] ?? ($link['route'] ?? null));
+                                            if (!$val) continue;
+                                            
+                                            $checked = is_array(old('menu_permissions')) && in_array($val, old('menu_permissions')) ? 'checked' : '';
+
+                                            echo '<div class="custom-control custom-checkbox mb-2 permission-item">
+                                                    <input type="checkbox" name="menu_permissions[]" value="'.e($val).'" '.$checked.' class="custom-control-input perm-check" id="check_'.e($val).'">
+                                                    <label class="custom-control-label font-weight-normal mb-0" style="cursor:pointer; font-size:0.9rem; color: #334155;" for="check_'.e($val).'">
+                                                        '.e($link['text']).'
+                                                    </label>
+                                                  </div>';
+                                        }
+                                        echo '</div>';
+                                    }
                                 @endphp
                             </div>
                         </div>
@@ -146,36 +195,53 @@
 @stop
 
 @section('css')
-<style>
-    /* Configuración de Columnas para evitar el scroll */
-    .permissions-grid {
-        column-count: 3; 
-        column-gap: 30px;
-        column-rule: 1px solid #f1f5f9; 
-    }
+    <style>
+        .permissions-grid {
+            column-count: 3;
+            column-gap: 24px;
+            width: 100%;
+        }
 
-    /* Evita que un grupo se rompa entre dos columnas */
-    .permission-group-title, .permission-item {
-        break-inside: avoid;
-        display: block;
-    }
+        .permission-group-block {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block;
+            width: 100%;
+            break-inside: avoid;
+            margin-bottom: 24px;
+        }
 
-    .permission-group-title {
-        border-bottom: 1px solid #f1f5f9;
-        padding-bottom: 4px;
-        margin-top: 15px !important;
-    }
-    
-    /* Pequeño efecto hover para los módulos */
-    .item-modulo {
-        padding: 6px;
-        border-radius: 6px;
-        transition: background 0.2s ease;
-    }
-    .item-modulo:hover {
-        background-color: #f1f5f9;
-    }
-</style>
+        .permission-group-block:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        }
+
+        @media (max-width: 1200px) {
+            .permissions-grid {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .permissions-grid {
+                column-count: 1;
+            }
+        }
+
+        /* Pequeño efecto hover para los módulos superiores */
+        .item-modulo {
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+        .item-modulo:hover {
+            background-color: #f1f5f9;
+        }
+    </style>
 @stop
 
 @section('js')

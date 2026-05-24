@@ -124,17 +124,40 @@
 
 @section('css')
     <style>
-        /* Grid de 3 columnas para evitar scroll */
         .permissions-grid {
             column-count: 3;
-            column-gap: 30px;
-            column-rule: 1px solid #f1f5f9;
+            column-gap: 24px;
+            width: 100%;
         }
 
-        .permission-group-title,
-        .permission-item {
+        .permission-group-block {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block;
+            width: 100%;
             break-inside: avoid;
-            display: block;
+            margin-bottom: 24px;
+        }
+
+        .permission-group-block:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        }
+
+        @media (max-width: 1200px) {
+            .permissions-grid {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .permissions-grid {
+                column-count: 1;
+            }
         }
     </style>
 @stop
