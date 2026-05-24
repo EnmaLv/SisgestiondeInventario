@@ -22,7 +22,7 @@ class PermisosController extends Controller
 
     public function edit($id)
     {
-        $usuario = Usuario::with(['persona','perfil','roles'])->findOrFail($id);
+        $usuario = Usuario::with(['persona', 'perfil', 'roles'])->findOrFail($id);
         $auth = auth()->user();
         if ($auth && $auth->id_usuario == $usuario->id_usuario && $auth->roles->contains('nombre', 'Administrador')) {
             return redirect()->route('admin.configuracion.permisos.index')->withErrors(['permisos' => 'No puedes editar tus propios permisos. Pide a otro Administrador que lo haga.']);
@@ -98,35 +98,96 @@ class PermisosController extends Controller
 
         // Enviamos las nuevas variables a la vista
         return view('admin.configuracion.permisos.edit', compact(
-            'usuario','menu','allow','effective','rolePerms','rolePatterns','keyToPatterns',
-            'modulos', 'roleModules', 'modulosExtra'
+            'usuario',
+            'menu',
+            'allow',
+            'effective',
+            'rolePerms',
+            'rolePatterns',
+            'keyToPatterns',
+            'modulos',
+            'roleModules',
+            'modulosExtra'
         ));
     }
 
     public function update(Request $request, $id)
     {
-        $usuario = Usuario::findOrFail($id);
+        // Traemos el usuario con sus roles cargados
+        $usuario = Usuario::with('roles')->findOrFail($id);
         $auth = auth()->user();
         if ($auth && $auth->id_usuario == $usuario->id_usuario && $auth->roles->contains('nombre', 'Administrador')) {
             return back()->withErrors(['permisos' => 'No puedes modificar tus propios permisos. Pide a otro Administrador que lo haga.']);
         }
-        
+
         $data = $request->validate([
             'allow' => 'nullable|array',
             'deny' => 'nullable|array',
-            'modulos' => 'nullable|array', // <--- Validamos los módulos adicionales
+            'modulos' => 'nullable|array',
         ]);
 
-        // Estructuramos el JSON final
+        // 1. Extraer datos heredados de los Roles para el cálculo real
+        $roleModules = [];
+        $rolePerms = [];
+        foreach ($usuario->roles as $r) {
+            $mods = $r->modulos ? $r->modulos->pluck('id')->toArray() : [];
+            $roleModules = array_merge($roleModules, $mods);
+
+            $perms = $r->menu_permissions ?? [];
+            if (is_array($perms)) $rolePerms = array_merge($rolePerms, $perms);
+        }
+        $roleModules = array_values(array_unique($roleModules));
+        $rolePerms = array_values(array_unique($rolePerms));
+
+        // Módulos adicionales seleccionados en el formulario
+        $modulosExtra = array_map('intval', array_values($data['modulos'] ?? []));
+
+        // Sumatoria total real de módulos activos finales
+        $totalModulosCount = count(array_unique(array_merge($roleModules, $modulosExtra)));
+
+        $allow = array_values($data['allow'] ?? []);
+        $deny = array_values($data['deny'] ?? []);
+        $selectorKey = 'admin/modulos/seleccionar';
+
+        // ✨ VALIDACIÓN PREVENTIVA AUTOMÁTICA (CAPA DE PERMISOS ESPECIALES)
+        if ($totalModulosCount > 1) {
+            // El usuario DEBE tener activo el selector de módulos
+            if (in_array($selectorKey, $rolePerms)) {
+                // Si ya lo heredaba del Rol, quitamos cualquier restricción accidental en deny
+                $deny = array_values(array_diff($deny, [$selectorKey]));
+            } else {
+                // Si el Rol no lo incluía, lo inyectamos forzosamente en los permitidos (allow)
+                if (!in_array($selectorKey, $allow)) {
+                    $allow[] = $selectorKey;
+                }
+            }
+        } else {
+            // El usuario DEBE tener INACTIVO el selector (0 o 1 módulo asignado)
+            if (in_array($selectorKey, $rolePerms)) {
+                // Si venía del Rol, lo metemos a la fuerza en deny para bloquearlo
+                if (!in_array($selectorKey, $deny)) {
+                    $deny[] = $selectorKey;
+                }
+            } else {
+                // Si no venía de ningún lado, nos aseguramos de limpiarlo de allow por si acaso
+                $allow = array_values(array_diff($allow, [$selectorKey]));
+            }
+        }
+
+        // Estructuramos el array final limpio
         $extra = [
-            'allow' => array_values($data['allow'] ?? []),
-            'deny' => array_values($data['deny'] ?? []),
-            'modulos' => array_map('intval', array_values($data['modulos'] ?? [])), // Guardamos los IDs como enteros
+            'allow' => $allow,
+            'deny' => $deny,
+            'modulos' => $modulosExtra,
         ];
 
-        $usuario->extra_permissions = $extra;
+        // Guardamos codificado en JSON
+        $usuario->extra_permissions = json_encode($extra);
         $usuario->save();
 
-        return redirect()->route('admin.configuracion.permisos.edit', $usuario->id_usuario)->with('success','Permisos y Módulos especiales actualizados con éxito.');
+        // Limpiamos caché de sesión
+        session()->forget(['modulos_permitidos', 'modulo_activo', 'es_admin']);
+
+        return redirect()->route('admin.configuracion.permisos.index', $usuario->id_usuario)->with('success', 'Permisos y Módulos especiales actualizados con éxito.');
     }
 }

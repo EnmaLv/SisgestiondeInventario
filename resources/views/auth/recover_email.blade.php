@@ -32,7 +32,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url("{{ asset('img/unnamed.jpg') }}");
+            background-image: url("{{ asset('img/unnamed.webp') }}");
             opacity: 0.5;
             background-size: cover;
             background-position: center;

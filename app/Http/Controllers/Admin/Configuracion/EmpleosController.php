@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use App\Models\Perfil;
 use App\Models\Rol;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class EmpleosController extends Controller
 {
@@ -64,15 +65,13 @@ class EmpleosController extends Controller
     public function destroy($id)
     {
         $usuario = Usuario::with('roles')->findOrFail($id);
-
         $auth = Auth::user();
-        // Prevent an administrator from deleting themselves; only another admin can delete an admin
+
         $adminRol = Rol::where('nombre', 'Administrador')->first();
         if ($auth && $adminRol && $auth->id_usuario == $usuario->id_usuario && $auth->roles->contains('id_rol', $adminRol->id_rol)) {
             return redirect()->route('admin.configuracion.empleados.index')->withErrors(['delete' => 'No puedes eliminarte a ti mismo. Pide a otro Administrador que lo haga.']);
         }
 
-        // Prevent deleting last admin
         if ($adminRol && $usuario->roles->contains('id_rol', $adminRol->id_rol)) {
             $adminCount = $adminRol->usuarios()->count();
             if ($adminCount <= 1) {
@@ -80,7 +79,6 @@ class EmpleosController extends Controller
             }
         }
 
-        // detach roles and delete
         $usuario->roles()->detach();
         $usuario->delete();
 
@@ -89,60 +87,117 @@ class EmpleosController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validate role input (single selection). If form omits role, we won't change roles.
-        $request->validate([
-            'role' => 'nullable|integer|exists:rol,id_rol',
-        ]);
+        $usuario = Usuario::with(['roles', 'persona'])->findOrFail($id);
 
-        $usuario = Usuario::with('roles')->findOrFail($id);
-        $auth = Auth::user();
+        // 1. Reglas base de validación (Se eliminó alpha_num y se cambió a email para el username)
+        $rules = [
+            'username'          => 'required|string|email|max:100|unique:usuario,username,' . $id . ',id_usuario',
+            'role'              => 'nullable|integer|exists:rol,id_rol',
+            'cedula_persona'    => 'required|string|max:20',
+            'telefono_persona'  => 'required|string|max:20',
+            'nombre_persona'    => 'required|string|max:100',
+            'apellido_persona'  => 'required|string|max:100',
+        ];
 
+        // Solo validamos campos de seguridad si el switch fue activado en la vista
+        if ($request->boolean('modificar_seguridad')) {
+            $rules['password']           = 'nullable|string|min:6|confirmed';
+            $rules['master_key']         = 'nullable|string|min:6';
+            $rules['security_questions'] = 'nullable|array';
+        }
+
+        $request->validate($rules);
+
+        // 2. Actualizar datos de la Persona asociada
+        if ($usuario->persona) {
+            $usuario->persona->update([
+                'cedula_persona'   => $request->input('cedula_persona'),
+                'telefono_persona' => $request->input('telefono_persona'),
+                'nombre_persona'   => $request->input('nombre_persona'),
+                'apellido_persona' => $request->input('apellido_persona'),
+            ]);
+        }
+
+        // 3. Actualizar Username (Gmail)
+        $usuario->username = $request->input('username');
+
+        // 4. Procesar el bloque de seguridad únicamente si el switch está encendido
+        if ($request->boolean('modificar_seguridad')) {
+            
+            // Contraseña de login
+            if ($request->filled('password')) {
+                $usuario->password = Hash::make($request->input('password'));
+            }
+
+            // Preguntas de recuperación opcionales
+            if ($request->has('security_questions')) {
+                $currentQuestions = is_string($usuario->security_questions) 
+                    ? json_decode($usuario->security_questions, true) 
+                    : ($usuario->security_questions ?? []);
+
+                $newQuestions = $request->input('security_questions');
+
+                $p1 = $currentQuestions['pregunta_1'] ?? '';
+                $r1 = $currentQuestions['respuesta_1'] ?? '';
+                if ($request->filled('security_questions.respuesta_1')) {
+                    $p1 = $newQuestions['pregunta_1'] ?? $p1;
+                    $r1 = Hash::make($newQuestions['respuesta_1']);
+                }
+
+                $p2 = $currentQuestions['pregunta_2'] ?? '';
+                $r2 = $currentQuestions['respuesta_2'] ?? '';
+                if ($request->filled('security_questions.respuesta_2')) {
+                    $p2 = $newQuestions['pregunta_2'] ?? $p2;
+                    $r2 = Hash::make($newQuestions['respuesta_2']);
+                }
+
+                $usuario->security_questions = [
+                    'pregunta_1'  => $p1,
+                    'respuesta_1' => $r1,
+                    'pregunta_2'  => $p2,
+                    'respuesta_2' => $r2,
+                ];
+            }
+        }
+
+        // 5. Control estricto de Roles y Llaves Maestras
         $role = $request->input('role', null);
-        // If the form submitted the role field, interpret intent: empty => remove roles, null => no change
         $newRoleIds = $request->has('role') ? ($role ? [$role] : []) : null;
 
-        // If the authenticated user is editing themselves and currently an admin, prevent removing the last admin
         $adminRol = Rol::where('nombre', 'Administrador')->first();
         if ($adminRol) {
-            $hasAdminNow = $usuario->roles->contains('id_rol', $adminRol->id_rol);
-            $willHaveAdmin = is_array($newRoleIds) ? in_array($adminRol->id_rol, $newRoleIds) : $hasAdminNow;
+            $hadAdminBefore = $usuario->roles->contains('id_rol', $adminRol->id_rol);
+            $willHaveAdmin = is_array($newRoleIds) ? in_array($adminRol->id_rol, $newRoleIds) : $hadAdminBefore;
             $adminCount = $adminRol->usuarios()->count();
 
-            // Prevent removing Admin role from the last admin (whether editing self or another user)
-            if ($hasAdminNow && ! $willHaveAdmin && $adminCount <= 1) {
-                return back()->withErrors(['roles' => 'No se puede quitar el rol de Administrador: existe sólo un Administrador activo.']);
+            // Evitar remover el rol al único administrador existente
+            if ($hadAdminBefore && !$willHaveAdmin && $adminCount <= 1) {
+                return back()->withErrors(['role' => 'No se puede quitar el rol de Administrador: existe sólo un Administrador activo.']);
+            }
+
+            // Si es administrador o promovido, y se mandó modificar seguridad, procesar Master Key
+            if ($willHaveAdmin && $request->boolean('modificar_seguridad')) {
+                if (!$hadAdminBefore && !$request->filled('master_key')) {
+                    return back()->withErrors(['master_key' => 'La Llave Maestra es requerida para otorgar privilegios de Administrador.']);
+                }
+
+                if ($request->filled('master_key')) {
+                    $usuario->master_key = $request->input('master_key'); 
+                }
             }
         }
 
-        // Sync only if a role was provided in the request; otherwise keep existing roles
+        // Sincronizar roles si aplica
         if (is_array($newRoleIds)) {
-            // detect promotion to Administrador: new includes admin and user didn't have it
-            $adminRol = Rol::where('nombre', 'Administrador')->first();
-            $promotingToAdmin = false;
-            if ($adminRol) {
-                $hadAdminBefore = $usuario->roles->contains('id_rol', $adminRol->id_rol);
-                $willHaveAdmin = in_array($adminRol->id_rol, $newRoleIds);
-                $promotingToAdmin = (!$hadAdminBefore && $willHaveAdmin);
-            }
-
-            if ($promotingToAdmin) {
-                // require a master key value to set for the new admin
-                $request->validate([
-                    'new_admin_master_key' => 'required|string|min:6',
-                ]);
-                $usuario->master_key = $request->input('new_admin_master_key');
-            }
-
             $usuario->roles()->sync($newRoleIds);
-            if ($promotingToAdmin) {
-                $usuario->save();
-            }
         }
 
-        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado actualizado Exitosamente');
+        // Guardar todos los cambios realizados
+        $usuario->save();
+
+        return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado actualizado exitosamente.');
     }
 
-    // Master key form and verify (simple flow for configuration access)
     public function masterKeyForm()
     {
         return view('admin.configuracion.master_key');

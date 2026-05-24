@@ -167,7 +167,25 @@
         (function() {
             const form = document.querySelector('form');
 
-            // Alerta al desmarcar algo que viene del rol
+            const moduloChecks = document.querySelectorAll('.modulo-check');
+            const selectorPermChk = document.querySelector('.perm-chk[value="admin/modulos/seleccionar"]');
+
+            if (moduloChecks.length && selectorPermChk) {
+                function actualizarPermisoSelector() {
+                    const totalModulosChecked = document.querySelectorAll('.modulo-check:checked').length;
+
+                    if (totalModulosChecked > 1) {
+                        selectorPermChk.checked = true;
+                    } else {
+                        selectorPermChk.checked = false;
+                    }
+                }
+
+                moduloChecks.forEach(chk => {
+                    chk.addEventListener('change', actualizarPermisoSelector);
+                });
+            }
+
             document.querySelectorAll('.perm-chk[data-role="1"]').forEach(chk => {
                 chk.addEventListener('click', function(e) {
                     if (!this.checked) {
@@ -192,7 +210,6 @@
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                // Reset names to avoid stale values
                 document.querySelectorAll('.perm-chk').forEach(i => i.removeAttribute('name'));
 
                 const allow = [];
@@ -214,7 +231,6 @@
                     }
                 });
 
-                // If nothing to change, submit (checkboxes with names will be sent)
                 if (allow.length === 0 && deny.length === 0) {
                     form.submit();
                     return;
