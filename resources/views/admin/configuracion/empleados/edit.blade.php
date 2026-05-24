@@ -71,9 +71,9 @@
                                         <i class="fas fa-key mr-1"></i> Llave Maestra de Autorización
                                     </label>
                                     <input type="password" name="new_admin_master_key" id="newAdminKey" class="form-control" 
-                                           placeholder="Escriba la llave para confirmar el nuevo Admin" 
+                                           placeholder="Escriba la llave para el nuevo Administrador..." 
                                            style="border-radius: 8px; border: 1px solid #fbbf24;">
-                                    <small class="text-muted mt-2 d-block">Se requiere validación de seguridad para otorgar permisos de administrador.</small>
+                                    <small class="text-muted mt-2 d-block">Al ingresar la llave maestra se validará su identidad; esta clave permite realizar acciones con privilegios de Administrador.</small>
                                 </div>
                             @else
                                 <div class="rd-input-group" style="background: #f8fafc; border-style: dashed;">
