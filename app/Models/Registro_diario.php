@@ -39,7 +39,7 @@ class Registro_diario extends Model
     {
         return DB::table('registro_diario_c')
             ->join('persona', 'registro_diario_c.id_persona', '=', 'persona.id_persona')
-            ->join('direccion', 'persona.id_persona', '=', 'direccion.id_persona')
+            ->leftJoin('direccion', 'persona.id_persona', '=', 'direccion.id_persona')
             ->leftJoin('localidads', 'direccion.id_localidad', '=', 'localidads.id')
             ->leftJoin('municipios', 'localidads.municipio_id', '=', 'municipios.id')
             ->leftJoin('estados', 'municipios.estado_id', '=', 'estados.id')
