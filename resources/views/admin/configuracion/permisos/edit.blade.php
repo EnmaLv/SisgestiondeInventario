@@ -26,7 +26,52 @@
                     <form action="{{ route('admin.configuracion.permisos.update', $usuario->id_usuario) }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         @method('PUT')
+                        <div class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="rd-label m-0">
+                                    <i class="fas fa-cubes mr-2 text-success"></i> Módulos Especiales para este Usuario
+                                </label>
+                                <span class="badge badge-light border text-muted" style="border-radius: 6px; padding: 5px 10px;">
+                                    <i class="fas fa-info-circle mr-1"></i> Los módulos marcados en verde vienen heredados de su Rol base
+                                </span>
+                            </div>
+                            
+                            <div class="modules-container p-4" style="border: 1px solid #eef2f6; border-radius: 12px; background: #fafbfc;">
+                                <div class="row">
+                                    @forelse($modulos as $modulo)
+                                        @php
+                                            // Verificamos si ya lo tiene por el rol
+                                            $loTienePorRol = in_array($modulo->id, $roleModules);
+                                            // Verificamos si lo tiene asignado como un "Extra" manual
+                                            $loTieneAsignadoExtra = in_array($modulo->id, $modulosExtra);
+                                        @endphp
+                                        <div class="col-md-4 mb-2">
+                                            <div class="item-modulo p-2 rounded {{ $loTienePorRol ? 'bg-success-light border border-success' : '' }}" 
+                                                style="{{ $loTienePorRol ? 'background-color: #f0fdf4; border-radius: 8px;' : '' }}">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" name="modulos[]" value="{{ $modulo->id }}" 
+                                                        class="custom-control-input modulo-check" id="modulo_{{ $modulo->id }}"
+                                                        {{ $loTienePorRol || $loTieneAsignadoExtra ? 'checked' : '' }}
+                                                        {{ $loTienePorRol ? 'disabled data-from-role="1"' : '' }}>
+                                                    <label class="custom-control-label font-weight-normal mb-0" style="cursor:pointer; font-size:0.95rem; color:#1e293b;" for="modulo_{{ $modulo->id }}">
+                                                        <strong>{{ $modulo->nombre }}</strong> 
+                                                        @if($loTienePorRol)
+                                                            <span class="badge badge-success ml-1" style="font-size: 0.75rem;">Heredado del Rol</span>
+                                                        @endif
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="col-12 text-center text-muted py-2">
+                                            <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> No hay módulos activos registrados en la base de datos.
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
 
+                        <hr class="my-4" style="opacity:0.3;">
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <label class="rd-label m-0">

@@ -516,34 +516,6 @@ return [
             ]
         ],
 
-        [
-            'header' => 'Configuración Institucional',
-            'classes' => 'text-bold',
-            'module' => 'comedor',
-        ],
-
-        [
-            'text' => 'Configuración General',
-            'icon' => 'fas fa-cog',
-            'module' => 'comedor',
-            'active' => ['admin/maestros/sucursales*', 'admin/maestros/proveedores*', 'admin/maestros/pnf*'],
-            'submenu' => [
-                [
-                    'text' => 'Estudiantes',
-                    'key' => 'persona',
-                    'module' => 'comedor',
-                    'url' => 'admin/persona',
-                    'icon' => 'fas fa-user-graduate',
-                    'active' => ['admin/persona*'],
-                ],
-
-            ]
-        ],
-
-
-
-
-
         /* ---------------------------------------------------
         | ⚙️ ADMINISTRACIÓN DEL SISTEMA
         --------------------------------------------------- */

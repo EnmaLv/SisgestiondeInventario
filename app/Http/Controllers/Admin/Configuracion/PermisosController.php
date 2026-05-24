@@ -29,18 +29,31 @@ class PermisosController extends Controller
         }
         $menu = config('adminlte.menu', []);
 
+        // 1. Extraer permisos y MÓDULOS adicionales ya guardados
         $extra = is_string($usuario->extra_permissions) ? json_decode($usuario->extra_permissions, true) : ($usuario->extra_permissions ?? []);
         $allow = $extra['allow'] ?? [];
         $deny = $extra['deny'] ?? [];
+        $modulosExtra = $extra['modulos'] ?? []; // <--- Módulos extra guardados
 
+        // 2. Obtener todos los módulos existentes para pintarlos en la vista
+        $modulos = \App\Models\Modulo::all(); // <-- Ajusta el namespace de tu modelo Modulo si es diferente
+
+        // 3. Extraer qué módulos e ítems de menú hereda el usuario de sus Roles asignados
         $rolePerms = [];
+        $roleModules = []; // <--- Módulos heredados del rol
         foreach ($usuario->roles as $r) {
+            // Menús
             $perms = $r->menu_permissions ?? [];
             if (is_array($perms)) $rolePerms = array_merge($rolePerms, $perms);
+
+            // Módulos (Asumiendo que tu modelo Rol tiene la relación 'modulos')
+            $mods = $r->modulos ? $r->modulos->pluck('id')->toArray() : [];
+            $roleModules = array_merge($roleModules, $mods);
         }
         $rolePerms = array_values(array_unique($rolePerms));
+        $roleModules = array_values(array_unique($roleModules));
 
-        // Build mapping of menu keys to concrete patterns (urls/routes/active)
+        // Mapping de menús a patrones de URL/Ruta
         $keyToPatterns = [];
         $collector = function ($items) use (&$collector, &$keyToPatterns) {
             foreach ($items as $it) {
@@ -65,7 +78,6 @@ class PermisosController extends Controller
         };
         $collector($menu);
 
-        // Expand role perms, allow and deny into concrete patterns
         $expand = function ($arr) use ($keyToPatterns) {
             $out = [];
             foreach ($arr as $p) {
@@ -84,7 +96,11 @@ class PermisosController extends Controller
 
         $effective = array_values(array_unique(array_merge(array_values(array_diff($rolePatterns, $denyPatterns)), $allowPatterns)));
 
-        return view('admin.configuracion.permisos.edit', compact('usuario','menu','allow','effective','rolePerms','rolePatterns','keyToPatterns'));
+        // Enviamos las nuevas variables a la vista
+        return view('admin.configuracion.permisos.edit', compact(
+            'usuario','menu','allow','effective','rolePerms','rolePatterns','keyToPatterns',
+            'modulos', 'roleModules', 'modulosExtra'
+        ));
     }
 
     public function update(Request $request, $id)
@@ -94,19 +110,23 @@ class PermisosController extends Controller
         if ($auth && $auth->id_usuario == $usuario->id_usuario && $auth->roles->contains('nombre', 'Administrador')) {
             return back()->withErrors(['permisos' => 'No puedes modificar tus propios permisos. Pide a otro Administrador que lo haga.']);
         }
-            $data = $request->validate([
-                'allow' => 'nullable|array',
-                'deny' => 'nullable|array',
-            ]);
+        
+        $data = $request->validate([
+            'allow' => 'nullable|array',
+            'deny' => 'nullable|array',
+            'modulos' => 'nullable|array', // <--- Validamos los módulos adicionales
+        ]);
 
-            $extra = [
-                'allow' => array_values($data['allow'] ?? []),
-                'deny' => array_values($data['deny'] ?? []),
-            ];
+        // Estructuramos el JSON final
+        $extra = [
+            'allow' => array_values($data['allow'] ?? []),
+            'deny' => array_values($data['deny'] ?? []),
+            'modulos' => array_map('intval', array_values($data['modulos'] ?? [])), // Guardamos los IDs como enteros
+        ];
 
         $usuario->extra_permissions = $extra;
         $usuario->save();
 
-        return redirect()->route('admin.configuracion.permisos.edit', $usuario->id_usuario)->with('success','Permisos actualizados');
+        return redirect()->route('admin.configuracion.permisos.edit', $usuario->id_usuario)->with('success','Permisos y Módulos especiales actualizados con éxito.');
     }
 }
