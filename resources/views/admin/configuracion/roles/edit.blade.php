@@ -27,6 +27,7 @@
                         @csrf
                         @method('PUT')
                         
+                        {{-- 1. Datos Básicos del Rol --}}
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label class="rd-label mb-2">Nombre del Rol</label>
@@ -51,9 +52,57 @@
                             </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                            @php $isAdminRole = (strtolower($rol->nombre ?? '') === 'administrador'); @endphp
+                        @php $isAdminRole = (strtolower($rol->nombre ?? '') === 'administrador'); @endphp
+
+                        {{-- 2. NUEVA SECCIÓN: Asignación de Módulos de la Base de Datos --}}
+                        <div class="form-group mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="rd-label m-0">
+                                    <i class="fas fa-cubes mr-2 text-success"></i> Acceso a Módulos Globales del Sistema
+                                </label>
+                                @if(!$isAdminRole && !($isProtected ?? false))
+                                    <button type="button" id="selectAllModules" class="btn btn-xs btn-outline-secondary" style="border-radius: 6px;">
+                                        Alternar Módulos
+                                    </button>
+                                @endif
+                            </div>
                             
+                            <div class="modules-container p-4 {{ $isAdminRole ? 'bg-light opacity-75' : '' }}" 
+                                 style="border: 1px solid #eef2f6; border-radius: 12px; background: #fafbfc;">
+                                <div class="row">
+                                    @forelse($modulos as $modulo)
+                                        @php
+                                            // Evaluador de estado: marcado si es Admin, si viene de old() por rebote de validación, o si ya existe la relación en la BD
+                                            $moduloChecked = $isAdminRole || 
+                                                             (is_array(old('modulos')) && in_array($modulo->id, old('modulos'))) || 
+                                                             ($rol->modulos->contains('id', $modulo->id));
+                                                             
+                                            $moduloDisabled = ($isAdminRole || ($isProtected ?? false)) ? 'disabled' : '';
+                                        @endphp
+                                        <div class="col-md-4 mb-2">
+                                            <div class="custom-control custom-checkbox item-modulo">
+                                                <input type="checkbox" name="modulos[]" value="{{ $modulo->id }}" 
+                                                       class="custom-control-input modulo-check" id="modulo_{{ $modulo->id }}"
+                                                       {{ $moduloChecked ? 'checked' : '' }} {{ $moduloDisabled }}>
+                                                <label class="custom-control-label font-weight-normal" style="cursor:pointer; font-size:0.95rem; color:#1e293b;" for="modulo_{{ $modulo->id }}">
+                                                    <strong>{{ $modulo->nombre }}</strong> <span class="text-muted small">({{ $modulo->key }})</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="col-12 text-center text-muted py-2">
+                                            <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> No hay módulos activos registrados en la base de datos.
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                            @error('modulos')
+                                <small class="text-danger d-block mt-2">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        {{-- 3. Permisos de Menú y Navegación (AdminLTE) --}}
+                        <div class="form-group mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <label class="rd-label m-0">
                                     <i class="fas fa-list-check mr-2 text-primary"></i> Permisos de Menú y Navegación
@@ -84,7 +133,11 @@
                                                     $val = $it['key'] ?? ($it['url'] ?? ($it['route'] ?? null));
                                                     if (!$val) continue;
                                                     
-                                                    $checked = ($isAdminRole || in_array($val, (array)($rol->menu_permissions ?? []))) ? 'checked' : '';
+                                                    // Soporte para persistencia tras rebotes de validación o lectura directa de BD
+                                                    $checked = $isAdminRole || 
+                                                               (is_array(old('menu_permissions')) && in_array($val, old('menu_permissions'))) || 
+                                                               in_array($val, (array)($rol->menu_permissions ?? [])) ? 'checked' : '';
+                                                               
                                                     $disabled = $isAdminRole ? 'disabled' : '';
                                                     $id = 'check_' . Str::slug($val);
 
@@ -105,7 +158,7 @@
 
                             @if($isAdminRole)
                                 <div class="alert alert-info mt-3 border-0 shadow-sm" style="border-radius: 10px;">
-                                    <i class="fas fa-info-circle mr-2"></i> Los permisos del rol <strong>Administrador</strong> son totales y no pueden editarse.
+                                    <i class="fas fa-info-circle mr-2"></i> Los módulos y permisos del rol <strong>Administrador</strong> son totales por diseño del sistema y no requieren modificarse.
                                 </div>
                             @endif
                         </div>
@@ -123,7 +176,7 @@
                             @else
                                 <div class="alert alert-warning w-100 mb-0 shadow-sm border-0 d-flex align-items-center" style="border-radius: 10px;">
                                     <i class="fas fa-lock mr-3 fa-lg"></i> 
-                                    <div>El rol <strong>{{ $rol->nombre }}</strong> es un rol de sistema protegido.</div>
+                                    <div>El rol <strong>{{ $rol->nombre }}</strong> es un rol de sistema protegido y no puede ser alterado desde la interfaz web.</div>
                                 </div>
                             @endif
                         </div>
@@ -152,21 +205,41 @@
         border-color: var(--color-secondary) !important;
     }
 
-    /* Quitar bordes de foco feos según lo solicitado */
     .rd-input:focus, .perm-check:focus, .form-control:focus {
         outline: none !important;
         box-shadow: none !important;
     }
 
+    /* Estilos estéticos para la grilla de módulos */
+    .item-modulo {
+        padding: 6px;
+        border-radius: 6px;
+        transition: background 0.2s ease;
+    }
+    .item-modulo:hover {
+        background-color: #f1f5f9;
+    }
 </style>
 @stop
 
 @section('js')
 <script>
+    // Manejo de Selección para Permisos de Menú
     const selectBtn = document.getElementById('selectAll');
     if(selectBtn) {
         selectBtn.addEventListener('click', function() {
             const checks = document.querySelectorAll('.perm-check:not(:disabled)');
+            const allChecked = Array.from(checks).every(c => c.checked);
+            checks.forEach(c => c.checked = !allChecked);
+            this.textContent = allChecked ? 'Seleccionar Todos' : 'Desmarcar Todos';
+        });
+    }
+
+    // Manejo de Selección para Módulos Globales
+    const selectModulesBtn = document.getElementById('selectAllModules');
+    if(selectModulesBtn) {
+        selectModulesBtn.addEventListener('click', function() {
+            const checks = document.querySelectorAll('.modulo-check:not(:disabled)');
             const allChecked = Array.from(checks).every(c => c.checked);
             checks.forEach(c => c.checked = !allChecked);
             this.textContent = allChecked ? 'Seleccionar Todos' : 'Desmarcar Todos';

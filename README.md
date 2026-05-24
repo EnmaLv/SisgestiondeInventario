@@ -26,8 +26,6 @@ Agregar direccion de la persona en el pdf y excel
 
 Cambiar de mailtrap a un distribuidor de mails de verdad (Bravo, Render, Mailgun, Laravel mail con riesgo de spam)
 
-Separar en componentes lo que aparece en el home para reutilizarlo para cada modulo
-
 Acomodar la base de datos a la nueva
 
 Acomodar todos los modulos del sistema para que sean responsive

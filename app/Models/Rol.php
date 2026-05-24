@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Usuario;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Rol extends Model
 {
+    use SoftDeletes;
     protected $table = 'rol';
     protected $primaryKey = 'id_rol';
     public $timestamps = true;

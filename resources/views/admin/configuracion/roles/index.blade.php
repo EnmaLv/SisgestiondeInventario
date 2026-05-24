@@ -90,6 +90,31 @@
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
+
+                                        <script>
+                                            document.querySelectorAll('.delete-form button').forEach(button => {
+                                                button.addEventListener('click', function(e) {
+                                                    e.preventDefault();
+                                                    const form = this.closest('.delete-form');
+                                                    
+                                                    // Si usas SweetAlert2:
+                                                    Swal.fire({
+                                                        title: '¿Estás seguro?',
+                                                        text: "Se eliminarán los accesos y módulos asociados a este rol.",
+                                                        icon: 'warning',
+                                                        showCancelButton: true,
+                                                        confirmButtonColor: '#3085d6',
+                                                        cancelButtonColor: '#d33',
+                                                        confirmButtonText: 'Sí, eliminar',
+                                                        cancelButtonText: 'Cancelar'
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            form.submit(); // Aquí es donde se envía realmente
+                                                        }
+                                                    });
+                                                });
+                                            });
+                                        </script>
                                     @else
                                         <span class="badge badge-light border text-muted px-3 py-2 text-center" style="border-radius: 8px;">
                                             <i class="fas fa-lock "></i> Protegido

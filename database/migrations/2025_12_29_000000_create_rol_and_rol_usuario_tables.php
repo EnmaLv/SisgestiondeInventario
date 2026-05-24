@@ -11,12 +11,11 @@ return new class extends Migration
         Schema::create('rol', function (Blueprint $table) {
             $table->id('id_rol');
             $table->string('nombre')->unique();
-            // slug made nullable to reflect final state after migrations
             $table->string('slug')->nullable()->unique();
             $table->text('descripcion')->nullable();
-            // menu_permissions consolidated from alter migration
             $table->json('menu_permissions')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('rol_usuario', function (Blueprint $table) {

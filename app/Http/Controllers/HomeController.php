@@ -11,6 +11,7 @@ use \App\Models\Compra;
 use \App\Models\Lote;
 use \App\Models\ExchangeRates;
 use \App\Models\Rol;
+use App\Models\salud\EnvasePrimario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,24 +28,24 @@ class HomeController extends Controller
         $limite = Carbon::now()->addDays(7);
         $sucursalId = Auth::user()->persona?->sucursal_id ?? 1;
         $user = Auth::user();
+
         $roleName = $user->role ?? null;
         if (empty($roleName) && method_exists($user, 'roles')) {
             $firstRole = $user->roles()->first();
             $roleName = $firstRole?->nombre ?? null;
         }
 
+        if (is_null(session('modulos_permitidos')) || is_null(session('menu_permissions_user'))) {
+            (new \App\AdminLTE\Filters\ModuleFilter)->transform(['key' => 'init_check']);
+        }
+
         if ($roleName && strtolower($roleName) === 'obrero') {
             return redirect()->route('admin.movimientos.registro_comida.index');
         }
+        if (!session()->has('modulo_activo') || is_null(session('modulo_activo'))) {
+            $sessionPermissions = session('menu_permissions_user', []);
 
-        if ($roleName && strtolower($roleName) === 'administrador') {
-            if (!session()->has('modulo_activo') || is_null(session('modulo_activo'))) {
-                return redirect('admin/modulos/seleccionar');
-            }
-        }
-
-        if ($roleName && strtolower($roleName) === 'secretaria de bienestar') {
-            if (!session()->has('modulo_activo') || is_null(session('modulo_activo'))) {
+            if (in_array('admin/modulos/seleccionar', $sessionPermissions)) {
                 return redirect('admin/modulos/seleccionar');
             }
         }
@@ -53,11 +54,14 @@ class HomeController extends Controller
         $menuPermissions = $rol?->menu_permissions ?? [];
         $isAdministrator = $roleName && strtolower($roleName) === 'administrador';
         $isSecretaria = $roleName && strtolower($roleName) === 'secretaria de bienestar';
+
+        $total_envases_primarios = EnvasePrimario::count();
         $total_sucursales = Sucursal::count();
         $total_categorias = Categoria::count();
         $total_productos = Producto::count();
         $total_proveedores = Proveedor::count();
         $total_compras = Compra::count();
+
         $total_lotes_vencidos = Lote::whereDate('fecha_vencimiento', '<=', $hoy)
             ->where('estado', 1)
             ->count();
@@ -68,6 +72,7 @@ class HomeController extends Controller
         )->count();
 
         $ultimaTasa = ExchangeRates::latest()->first();
+
         $productos_stock_minimo = Producto::select(
             'productos.id',
             'productos.nombre',
@@ -104,6 +109,7 @@ class HomeController extends Controller
         };
 
         $modules = [
+            'envases_primarios' => 'admin/salud/maestros/envases_primarios',
             'sucursales' => 'admin/maestros/sucursales',
             'categorias' => 'admin/maestros/categorias',
             'productos' => 'admin/maestros/productos',
@@ -134,7 +140,8 @@ class HomeController extends Controller
             'total_lotes_vencidos',
             'total_lotes_por_vencer',
             'productos_stock_minimo',
-            'total_productos_stock_minimo'
+            'total_productos_stock_minimo',
+            'total_envases_primarios'
         ));
     }
 }
