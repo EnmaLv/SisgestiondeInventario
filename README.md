@@ -39,3 +39,5 @@ Filtros piches:
 4.Programas de formacion
 
 Hacer que la edicion de empleado tenga todos los campos del crear (mejorar todo)
+
+Que la validacion en el registrar mantenga los datos al recargar o no recargar por equivocarte (validadar en tiempo real)
