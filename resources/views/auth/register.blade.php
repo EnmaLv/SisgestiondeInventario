@@ -385,8 +385,10 @@
                     </div>
 
                     <button class="btn" type="submit">REGISTRARSE</button>
-                    <button class="boton" type="button" onclick="window.location='{{ url()->previous() }}'">VOLVER
-                        AL SISTEMA</button>
+                    <button class="boton" type="button"
+                        onclick="window.location='{{ route('admin.configuracion.empleados.index') }}'">
+                        VOLVER AL SISTEMA
+                    </button>
                 </form>
             </div>
         </div>
@@ -409,7 +411,6 @@
             }
         }
 
-        // Muestra u oculta la llave maestra dinámicamente si se selecciona el rol Administrador
         function toggleMasterKeyField() {
             const selectRol = document.getElementById('id_rol');
             const masterKeyGroup = document.getElementById('master-key-group');
@@ -420,12 +421,10 @@
             const selectedOption = selectRol.options[selectRol.selectedIndex];
             const nombreRol = selectedOption.getAttribute('data-nombre') || '';
 
-            // Si el rol seleccionado es Administrador, mostramos el campo y lo hacemos requerido en el cliente
             if (nombreRol === 'administrador') {
                 masterKeyGroup.style.display = 'block';
                 masterKeyInput.setAttribute('required', 'required');
             } else {
-                // Si ya existen admins en el sistema y selecciona otro rol, se oculta
                 @if ($systemHasAdmin)
                     masterKeyGroup.style.display = 'none';
                     masterKeyInput.removeAttribute('required');
@@ -440,7 +439,6 @@
 
             if (q0.value === q1.value) {
                 e.preventDefault();
-                // Reemplazo de alerta nativa por SweetAlert2
                 Swal.fire({
                     title: 'Preguntas repetidas',
                     text: 'Por favor, seleccione dos preguntas de seguridad diferentes.',
@@ -457,7 +455,6 @@
             var t = document.getElementById('telefono');
             if (t && t.value) formatTelefono(t);
 
-            // Ejecutar al cargar la vista por si hay persistencia old() del rol
             toggleMasterKeyField();
         });
     </script>
