@@ -41,3 +41,5 @@ Filtros piches:
 Hacer que la edicion de empleado tenga todos los campos del crear (mejorar todo)
 
 Que la validacion en el registrar mantenga los datos al recargar o no recargar por equivocarte (validadar en tiempo real)
+
+Si registras un administrador desde el registro de empleado que salga la opcion de la masterkey
