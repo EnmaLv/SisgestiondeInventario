@@ -37,5 +37,3 @@ Filtros piches:
 2.Categorias y Producto
 3.Sedes y Anexos, Proveedores
 4.Programas de formacion
-
-Hacer que la edicion de empleado tenga todos los campos del crear (mejorar todo)
