@@ -31,7 +31,12 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
             $registro->apellido_persona,
             $registro->nombre_pnf,
             $registro->fecha_regis_diario_c,
-        ];
+            $registro->nombre_estado ?? 'N/A',
+            $registro->nombre_municipio ?? 'N/A',
+            $registro->nombre_localidad ?? 'N/A',
+            $registro->sector ?? 'N/A',
+            $registro->calle ?? 'N/A',
+        ]; 
     }
 
     //Modifica el inicio de la tabla
@@ -39,7 +44,6 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
     {
         return 'A1';
     }
-
 
     public function headings(): array
     {
@@ -50,6 +54,11 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
             'Apellido',
             'PNF',
             'Fecha Registro',
+            'Estado',
+            'Municipio',
+            'Localidad',
+            'Sector',
+            'Calle',
         ];
     }
 

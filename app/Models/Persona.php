@@ -98,7 +98,7 @@ class Persona extends Model
             ]);
 
 
-            //Asignar el pnf
+            //Asignar el pnf 
             DB::table('persona_pnf')->insert([
                 'id_persona' => $personaId,
                 'id_pnf' => $data['pnfId'],

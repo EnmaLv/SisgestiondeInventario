@@ -171,7 +171,7 @@
                                 class="fas fa-file-pdf"></i>
                             PDF</button>
                     </div>
-                </div>
+                </div> 
             </div>
 
             <div class="collapse" id="filters">

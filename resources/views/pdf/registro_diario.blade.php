@@ -364,6 +364,9 @@
                     <th style="width: 20%;">Nombre</th>
                     <th style="width: 20%;">Apellido</th>
                     <th style="width: 20%;">PNF</th>
+                    <th style="width: 20%;">Municipio</th>
+                    <th style="width: 20%;">Localidad</th>
+                    <th style="width: 20%;">Sector</th>
                     <th style="width: 15%;">Fecha Registro</th>
                 </tr>
             </thead>
@@ -375,6 +378,9 @@
                         <td>{{ $registro->nombre_persona ?? '—' }}</td>
                         <td>{{ $registro->apellido_persona ?? '—' }}</td>
                         <td>{{ $registro->nombre_pnf ?? '—' }}</td>
+                        <td>{{ $registro->nombre_municipio ?? '—' }}</td>
+                        <td>{{ $registro->nombre_localidad ?? '—' }}</td>
+                        <td>{{ $registro->sector ?? '—' }}</td>
                         <td class="center">
                             @if (!empty($registro->fecha_regis_diario_c))
                                 {{ \Carbon\Carbon::parse($registro->fecha_regis_diario_c)->format('d/m/Y') }}

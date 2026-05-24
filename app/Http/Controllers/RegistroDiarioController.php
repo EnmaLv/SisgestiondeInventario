@@ -119,7 +119,7 @@ class RegistroDiarioController extends Controller
 
         $fileName = "registro_diario";
         //Verificamos primero si resivimos algun filtro de la peticion
-        if (!$request->all()) {
+        if (!$request->all()) { 
 
             return Excel::download(new RegistroDiarioExport([]), $fileName . ".xlsx");
         }

@@ -39,6 +39,10 @@ class Registro_diario extends Model
     {
         return DB::table('registro_diario_c')
             ->join('persona', 'registro_diario_c.id_persona', '=', 'persona.id_persona')
+            ->join('direccion', 'persona.id_persona', '=', 'direccion.id_persona')
+            ->leftJoin('localidads', 'direccion.id_localidad', '=', 'localidads.id')
+            ->leftJoin('municipios', 'localidads.municipio_id', '=', 'municipios.id')
+            ->leftJoin('estados', 'municipios.estado_id', '=', 'estados.id')
             ->join('persona_pnf', 'registro_diario_c.id_persona_pnf', '=', 'persona_pnf.id_persona_pnf')
             ->join('pnf', 'persona_pnf.id_pnf', '=', 'pnf.id_pnf');
     }
@@ -78,9 +82,25 @@ class Registro_diario extends Model
             'hora'
         ], 'registro_diario_c');
 
+        $direccionColumn = formatColumn([
+            'sector',
+            'calle'
+        ], 'direccion');
+
+        $localidadColumn = formatColumn([
+            'nombre_localidad'
+        ], 'localidads');
+
+        $municipioColumn = formatColumn([
+            'nombre_municipio'
+        ], 'municipios');
+
+        $estadoColumn = formatColumn([
+            'nombre_estado'
+        ], 'estados');
 
         //Lo unimos en un solo array
-        $colums = [...$personaColumn, ...$pnfColumn, ...$registroColumn];
+        $colums = [...$personaColumn, ...$pnfColumn, ...$registroColumn, ...$direccionColumn, ...$localidadColumn, ...$municipioColumn, ...$estadoColumn];
         $query = self::relacionTable()->select($colums)->where('registro_diario_c.id', $id);
 
         return $query->first();
@@ -89,7 +109,7 @@ class Registro_diario extends Model
     public static function showData(array $filter = [], bool $isPdf = false)
     {
         $query = self::relacionTable()
-            ->select('registro_diario_c.*', 'persona.nombre_persona', 'persona.apellido_persona', 'persona.cedula_persona', 'pnf.nombre_pnf');
+            ->select('registro_diario_c.*', 'persona.nombre_persona', 'persona.apellido_persona', 'persona.cedula_persona', 'pnf.nombre_pnf', 'direccion.sector', 'direccion.calle', 'localidads.nombre_localidad', 'municipios.nombre_municipio', 'estados.nombre_estado');
 
 
         //Por si hay que buscar por el input
