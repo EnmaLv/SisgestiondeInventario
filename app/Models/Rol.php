@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Rol extends Model
 {
@@ -31,5 +32,19 @@ class Rol extends Model
     public function modulos()
     {
         return $this->belongsToMany(\App\Models\Modulo::class, 'rol_modulo', 'rol_id', 'modulo_id');
+    }
+
+    public static function tieneUsuarios($id)
+    {
+        return DB::table('rol_usuario')
+            ->where('id_rol', $id)
+            ->exists();
+    }
+
+    public static function contarUsuarios($id)
+    {
+        return DB::table('rol_usuario')
+            ->where('id_rol', $id)
+            ->count();
     }
 }

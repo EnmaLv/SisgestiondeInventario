@@ -150,14 +150,27 @@ class RolesController extends Controller
     public function destroy($id)
     {
         $rol = Rol::findOrFail($id);
+
         $protected = ['Empleado', 'Obrero', 'Administrador'];
         if (in_array(strtolower($rol->nombre ?? ''), array_map('strtolower', $protected))) {
-            return redirect()->route('admin.configuracion.roles.index')->withErrors(['delete' => 'El rol ' . $rol->nombre . ' está protegido y no puede eliminarse.']);
+            return redirect()
+                ->route('admin.configuracion.roles.index')
+                ->withErrors(['delete' => 'El rol ' . $rol->nombre . ' está protegido y no puede eliminarse.']);
         }
 
-        $rol->usuarios()->detach();
-        $rol->modulos()->detach();
+        if (Rol::tieneUsuarios($id)) {
+            $cantidad = Rol::contarUsuarios($id);
+
+            return redirect()
+                ->route('admin.configuracion.roles.index')
+                ->with('error', "No se puede eliminar el rol porque tiene {$cantidad} usuario(s) asociado(s).")
+                ->with('icono', 'error');
+        }
+
         $rol->delete();
-        return redirect()->route('admin.configuracion.roles.index')->with('success', 'Rol eliminado exitosamente');
+
+        return redirect()
+            ->route('admin.configuracion.roles.index')
+            ->with('success', 'Rol eliminado exitosamente.');
     }
 }
