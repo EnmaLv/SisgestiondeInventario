@@ -29,31 +29,24 @@ class PermisosController extends Controller
         }
         $menu = config('adminlte.menu', []);
 
-        // 1. Extraer permisos y MÓDULOS adicionales ya guardados
         $extra = is_string($usuario->extra_permissions) ? json_decode($usuario->extra_permissions, true) : ($usuario->extra_permissions ?? []);
         $allow = $extra['allow'] ?? [];
         $deny = $extra['deny'] ?? [];
-        $modulosExtra = $extra['modulos'] ?? []; // <--- Módulos extra guardados
+        $modulosExtra = $extra['modulos'] ?? [];
+        $modulos = \App\Models\Modulo::all();
 
-        // 2. Obtener todos los módulos existentes para pintarlos en la vista
-        $modulos = \App\Models\Modulo::all(); // <-- Ajusta el namespace de tu modelo Modulo si es diferente
-
-        // 3. Extraer qué módulos e ítems de menú hereda el usuario de sus Roles asignados
         $rolePerms = [];
-        $roleModules = []; // <--- Módulos heredados del rol
+        $roleModules = [];
         foreach ($usuario->roles as $r) {
-            // Menús
             $perms = $r->menu_permissions ?? [];
             if (is_array($perms)) $rolePerms = array_merge($rolePerms, $perms);
 
-            // Módulos (Asumiendo que tu modelo Rol tiene la relación 'modulos')
             $mods = $r->modulos ? $r->modulos->pluck('id')->toArray() : [];
             $roleModules = array_merge($roleModules, $mods);
         }
         $rolePerms = array_values(array_unique($rolePerms));
         $roleModules = array_values(array_unique($roleModules));
 
-        // Mapping de menús a patrones de URL/Ruta
         $keyToPatterns = [];
         $collector = function ($items) use (&$collector, &$keyToPatterns) {
             foreach ($items as $it) {
@@ -96,7 +89,6 @@ class PermisosController extends Controller
 
         $effective = array_values(array_unique(array_merge(array_values(array_diff($rolePatterns, $denyPatterns)), $allowPatterns)));
 
-        // Enviamos las nuevas variables a la vista
         return view('admin.configuracion.permisos.edit', compact(
             'usuario',
             'menu',
@@ -113,7 +105,6 @@ class PermisosController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Traemos el usuario con sus roles cargados
         $usuario = Usuario::with('roles')->findOrFail($id);
         $auth = auth()->user();
         if ($auth && $auth->id_usuario == $usuario->id_usuario && $auth->roles->contains('nombre', 'Administrador')) {
@@ -126,7 +117,6 @@ class PermisosController extends Controller
             'modulos' => 'nullable|array',
         ]);
 
-        // 1. Extraer datos heredados de los Roles para el cálculo real
         $roleModules = [];
         $rolePerms = [];
         foreach ($usuario->roles as $r) {
@@ -139,55 +129,41 @@ class PermisosController extends Controller
         $roleModules = array_values(array_unique($roleModules));
         $rolePerms = array_values(array_unique($rolePerms));
 
-        // Módulos adicionales seleccionados en el formulario
         $modulosExtra = array_map('intval', array_values($data['modulos'] ?? []));
 
-        // Sumatoria total real de módulos activos finales
         $totalModulosCount = count(array_unique(array_merge($roleModules, $modulosExtra)));
 
         $allow = array_values($data['allow'] ?? []);
         $deny = array_values($data['deny'] ?? []);
         $selectorKey = 'admin/modulos/seleccionar';
 
-        // ✨ VALIDACIÓN PREVENTIVA AUTOMÁTICA (CAPA DE PERMISOS ESPECIALES)
         if ($totalModulosCount > 1) {
-            // El usuario DEBE tener activo el selector de módulos
             if (in_array($selectorKey, $rolePerms)) {
-                // Si ya lo heredaba del Rol, quitamos cualquier restricción accidental en deny
                 $deny = array_values(array_diff($deny, [$selectorKey]));
             } else {
-                // Si el Rol no lo incluía, lo inyectamos forzosamente en los permitidos (allow)
                 if (!in_array($selectorKey, $allow)) {
                     $allow[] = $selectorKey;
                 }
             }
         } else {
-            // El usuario DEBE tener INACTIVO el selector (0 o 1 módulo asignado)
             if (in_array($selectorKey, $rolePerms)) {
-                // Si venía del Rol, lo metemos a la fuerza en deny para bloquearlo
                 if (!in_array($selectorKey, $deny)) {
                     $deny[] = $selectorKey;
                 }
             } else {
-                // Si no venía de ningún lado, nos aseguramos de limpiarlo de allow por si acaso
                 $allow = array_values(array_diff($allow, [$selectorKey]));
             }
         }
 
-        // Estructuramos el array final limpio
         $extra = [
             'allow' => $allow,
             'deny' => $deny,
             'modulos' => $modulosExtra,
         ];
 
-        // Guardamos codificado en JSON
         $usuario->extra_permissions = json_encode($extra);
         $usuario->save();
 
-        // Limpiamos caché de sesión
-        session()->forget(['modulos_permitidos', 'modulo_activo', 'es_admin']);
-
-        return redirect()->route('admin.configuracion.permisos.index', $usuario->id_usuario)->with('success', 'Permisos y Módulos especiales actualizados con éxito.');
+        return redirect()->route('admin.configuracion.permisos.index')->with('success', 'Permisos y Módulos especiales actualizados con éxito.');
     }
 }

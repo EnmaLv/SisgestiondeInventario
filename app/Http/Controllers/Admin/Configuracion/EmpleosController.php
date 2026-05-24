@@ -89,7 +89,6 @@ class EmpleosController extends Controller
     {
         $usuario = Usuario::with(['roles', 'persona'])->findOrFail($id);
 
-        // 1. Reglas base de validación (Se eliminó alpha_num y se cambió a email para el username)
         $rules = [
             'username'          => 'required|string|email|max:100|unique:usuario,username,' . $id . ',id_usuario',
             'role'              => 'nullable|integer|exists:rol,id_rol',
@@ -99,7 +98,6 @@ class EmpleosController extends Controller
             'apellido_persona'  => 'required|string|max:100',
         ];
 
-        // Solo validamos campos de seguridad si el switch fue activado en la vista
         if ($request->boolean('modificar_seguridad')) {
             $rules['password']           = 'nullable|string|min:6|confirmed';
             $rules['master_key']         = 'nullable|string|min:6';
@@ -108,7 +106,6 @@ class EmpleosController extends Controller
 
         $request->validate($rules);
 
-        // 2. Actualizar datos de la Persona asociada
         if ($usuario->persona) {
             $usuario->persona->update([
                 'cedula_persona'   => $request->input('cedula_persona'),
@@ -118,21 +115,17 @@ class EmpleosController extends Controller
             ]);
         }
 
-        // 3. Actualizar Username (Gmail)
         $usuario->username = $request->input('username');
 
-        // 4. Procesar el bloque de seguridad únicamente si el switch está encendido
         if ($request->boolean('modificar_seguridad')) {
-            
-            // Contraseña de login
+
             if ($request->filled('password')) {
                 $usuario->password = Hash::make($request->input('password'));
             }
 
-            // Preguntas de recuperación opcionales
             if ($request->has('security_questions')) {
-                $currentQuestions = is_string($usuario->security_questions) 
-                    ? json_decode($usuario->security_questions, true) 
+                $currentQuestions = is_string($usuario->security_questions)
+                    ? json_decode($usuario->security_questions, true)
                     : ($usuario->security_questions ?? []);
 
                 $newQuestions = $request->input('security_questions');
@@ -160,7 +153,6 @@ class EmpleosController extends Controller
             }
         }
 
-        // 5. Control estricto de Roles y Llaves Maestras
         $role = $request->input('role', null);
         $newRoleIds = $request->has('role') ? ($role ? [$role] : []) : null;
 
@@ -170,29 +162,25 @@ class EmpleosController extends Controller
             $willHaveAdmin = is_array($newRoleIds) ? in_array($adminRol->id_rol, $newRoleIds) : $hadAdminBefore;
             $adminCount = $adminRol->usuarios()->count();
 
-            // Evitar remover el rol al único administrador existente
             if ($hadAdminBefore && !$willHaveAdmin && $adminCount <= 1) {
                 return back()->withErrors(['role' => 'No se puede quitar el rol de Administrador: existe sólo un Administrador activo.']);
             }
 
-            // Si es administrador o promovido, y se mandó modificar seguridad, procesar Master Key
             if ($willHaveAdmin && $request->boolean('modificar_seguridad')) {
                 if (!$hadAdminBefore && !$request->filled('master_key')) {
                     return back()->withErrors(['master_key' => 'La Llave Maestra es requerida para otorgar privilegios de Administrador.']);
                 }
 
                 if ($request->filled('master_key')) {
-                    $usuario->master_key = $request->input('master_key'); 
+                    $usuario->master_key = $request->input('master_key');
                 }
             }
         }
 
-        // Sincronizar roles si aplica
         if (is_array($newRoleIds)) {
             $usuario->roles()->sync($newRoleIds);
         }
 
-        // Guardar todos los cambios realizados
         $usuario->save();
 
         return redirect()->route('admin.configuracion.empleados.index')->with('success', 'Empleado actualizado exitosamente.');
