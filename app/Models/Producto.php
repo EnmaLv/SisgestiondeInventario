@@ -44,7 +44,7 @@ class Producto extends Model
 
     public function precioProducto()
     {
-        return $this->hasOne(PrecioProducto::class);
+        return $this->hasOne(PrecioProducto::class)->latestOfMany();
     }
 
     public function lotes()
@@ -84,14 +84,13 @@ class Producto extends Model
     {
         $query = self::with(['categoria', 'unidad'])
             ->withSum([
-                'inventarioSucursalAcarigua as cantidad_actual' => function ($query) {
-                }
+                'inventarioSucursalAcarigua as cantidad_actual' => function ($query) {}
             ], 'cantidad');
 
         if (!empty($buscar)) {
             $query->where(function ($q) use ($buscar) {
                 $q->where('codigo', 'like', "%{$buscar}%")
-                ->orWhere('nombre', 'like', "%{$buscar}%");
+                    ->orWhere('nombre', 'like', "%{$buscar}%");
             });
         }
 
@@ -123,7 +122,7 @@ class Producto extends Model
             ->where('inventario_sucursal_lotes.sucursal_id', $sucursalId)
             ->sum('inventario_sucursal_lotes.cantidad');
     }
-    
+
     public static function getDatosFormulario()
     {
         return [
@@ -176,7 +175,7 @@ class Producto extends Model
 
             PrecioProducto::create([
                 'producto_id' => $productoId,
-                'costo_usd'  => $data['costo_usd'], 
+                'costo_usd'  => $data['costo_usd'],
                 'margen'      => $data['margen'] ?? 0
             ]);
 
@@ -217,7 +216,7 @@ class Producto extends Model
         $helper = new self();
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
-        
+
         $unidad = DB::table('unidades')
             ->where('id', $data['unidad_id'])
             ->first();
@@ -243,10 +242,17 @@ class Producto extends Model
             unset($update['imagen']);
         }
 
-        $precio = PrecioProducto::firstOrNew(['producto_id' => $id]);
-        $precio->costo_usd = $data['costo_usd'] ?? $precio->costo_usd;
-        $precio->margen    = $data['margen'] ?? $precio->margen;
-        $precio->save();
+        $ultimoPrecio = PrecioProducto::where('producto_id', $id)->latest()->first();
+
+        $margenRequest = $data['margen'] ?? 0;
+
+        if (!$ultimoPrecio || $ultimoPrecio->costo_usd != $data['costo_usd'] || $ultimoPrecio->margen != $margenRequest) {
+            PrecioProducto::create([
+                'producto_id' => $id,
+                'costo_usd'   => $data['costo_usd'],
+                'margen'      => $margenRequest,
+            ]);
+        }
 
         return DB::table('productos')->where('id', $id)->update($update);
     }
