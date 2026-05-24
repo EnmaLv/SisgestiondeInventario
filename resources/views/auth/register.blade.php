@@ -79,7 +79,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url("img/unnamed.jpg");
+            background-image: url("img/unnamed.webp");
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;

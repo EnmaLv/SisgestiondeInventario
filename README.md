@@ -33,7 +33,9 @@ Acomodar todos los modulos del sistema para que sean responsive
 Ver si hay algun otro error de diseño o funcionalidad para terminar comedor
 
 Filtros piches:
-1 en  recetas y Ingredientes 
-2.Categorias y Producto 
-3.Sedes y Anexos,  Proveedores 
+1 en recetas y Ingredientes
+2.Categorias y Producto
+3.Sedes y Anexos, Proveedores
 4.Programas de formacion
+
+Hacer que la edicion de empleado tenga todos los campos del crear (mejorar todo)
