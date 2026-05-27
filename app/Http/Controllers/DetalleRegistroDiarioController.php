@@ -10,7 +10,7 @@ class DetalleRegistroDiarioController extends Controller
     public function index()
     {
         $comidas = Receta::orderBy('id', 'desc')->where('estado', true)->get();
-        $sobrantes = SobranteComedor::paginate(10);
+        $sobrantes = SobranteComedor::paginate(10)->withQueryString();
         return view('admin.movimientos.registro_comida.index', compact('comidas', 'sobrantes'));
     }
 }

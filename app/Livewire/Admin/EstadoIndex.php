@@ -50,6 +50,11 @@ class EstadoIndex extends Component
         $this->resetPage();
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function resetInputFields()
     {
         $this->nombre_estado = '';

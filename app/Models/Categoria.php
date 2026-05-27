@@ -38,7 +38,7 @@ class Categoria extends Model
             $query->where('estado', (int)$estado);
         }
 
-        return $query->orderBy('id', 'desc')->paginate(10);
+        return $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
     }
 
     public static function crearCategoria(array $data)

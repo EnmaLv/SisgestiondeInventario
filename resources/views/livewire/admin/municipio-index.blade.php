@@ -2,6 +2,7 @@
 
     <script>
         document.addEventListener('livewire:init', () => {
+            // Alerta general global
             Livewire.on('swal', data => {
                 Swal.fire({
                     icon: data.icon,
@@ -12,10 +13,30 @@
                     timerProgressBar: true
                 });
             });
+
+            // Escuchador de confirmación para eliminar (sacado del tbody por seguridad)
+            Livewire.on('confirm-delete', data => {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Desea inactivar el municipio?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, inactivar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.dispatch('destroy-municipio', { id: data.id });
+                    }
+                });
+            });
         });
     </script>
+    
     @include('admin.municipio.modales.createModal')
     @include('admin.municipio.modales.editModal')
+    
     <div class="rd-card rd-card-full">
         <div class="rd-card-body">
             <div class="rd-card-header rd-header-space">
@@ -34,13 +55,14 @@
                             </label>
                         </div>
                     </div>
-                    <form wire:submit.prevent="buscar" class="rd-search-inline"
-                        role="search">
-                        <input type="text" name="buscar" value="{{ $search ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba un Municipio" wire:model="search"/>
-                        <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
-                    </form>
-
+                    
+                    <div class="rd-search-inline">
+                        <input type="text" 
+                               class="rd-search-input"
+                               placeholder="Escriba un Municipio" 
+                               wire:model.live.debounce.300ms="search"/>
+                        <button class="rd-icon-btn" type="button" title="Buscar"><i class="fas fa-search"></i></button>
+                    </div>
 
                 </div>
             </div>
@@ -58,10 +80,9 @@
                     </thead>
 
                     <tbody>
-
                         @forelse ($municipios as $index => $datos)
                             <tr>
-                                <td class="text-center">{{ ($municipios->currentPage() - 1) * $municipios->perPage() + $loop->iteration }}</td></td>
+                                <td class="text-center">{{ ($municipios->currentPage() - 1) * $municipios->perPage() + $loop->iteration }}</td>
                                 <td class="text-center">{{ $datos->nombre_municipio }}</td>
                                 <td class="text-center">{{ $datos->estado->nombre_estado }}</td>
                                 <td class="text-center">
@@ -111,28 +132,6 @@
                                 </td>
                             </tr>
                         @endforelse
-                        <script>
-                            document.addEventListener('livewire:init', () => {
-
-                                Livewire.on('confirm-delete', data => {
-                                    Swal.fire({
-                                        title: '¿Estás seguro?',
-                                        text: 'Desea inactivar el municipio?',
-                                        icon: 'warning',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Sí, inactivar',
-                                        cancelButtonText: 'Cancelar',
-                                        confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33',
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            Livewire.dispatch('destroy-municipio', { id: data.id });
-                                        }
-                                    });
-                                });
-
-                            });
-                        </script>
                     </tbody>
                 </table>
             </div>

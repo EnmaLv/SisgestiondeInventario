@@ -111,7 +111,7 @@ class Producto extends Model
             $query->where('categoria_id', $categoria);
         }
 
-        return $query->orderByDesc('cantidad_actual')->paginate($perPage);
+        return $query->orderByDesc('cantidad_actual')->paginate($perPage)->withQueryString();
     }
 
     public function getCantidadEnSucursal($sucursalId)

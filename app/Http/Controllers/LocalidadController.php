@@ -6,6 +6,7 @@ use App\Models\Localidad;
 use App\Models\Municipio;
 use App\Models\Estado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class LocalidadController extends Controller
 {
@@ -60,7 +61,7 @@ class LocalidadController extends Controller
                 'existe' => $existe
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al verificar la localidad',

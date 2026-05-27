@@ -27,7 +27,7 @@ class RecetaController extends Controller
             $query->where('estado', 1);
         }
 
-        $recetas = $query->orderBy('id', 'desc')->paginate(10);
+        $recetas = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
 
         return view('admin.maestros.recetas.index', compact('recetas', 'buscar', 'estado'));
     }

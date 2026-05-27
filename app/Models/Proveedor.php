@@ -52,7 +52,7 @@ class Proveedor extends Model
             $query->where('estado', 1);
         }
 
-        return $query->orderBy('id', 'desc')->paginate(10);
+        return $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
     }
 
     public static function crearProveedor(array $data)

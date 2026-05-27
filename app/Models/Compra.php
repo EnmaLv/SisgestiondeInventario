@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\ConvierteAMayusculasNoEloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Compra extends Model
 {
@@ -57,7 +58,7 @@ class Compra extends Model
         ];
     }
 
-    public static function listarCompras($buscar, $estado, $fechas = null)
+    public static function listarCompras($buscar = null, $estado = null, $fechas = null)
     {
         $query = DB::table('compras')
             ->join('proveedors', 'proveedors.id', '=', 'compras.proveedor_id')
@@ -68,20 +69,23 @@ class Compra extends Model
                 'proveedors.id as proveedor_id'
             );
 
-        $buscar = $query->where(function ($q) use ($buscar) {
-            $q->where('proveedors.empresa', 'like', "%{$buscar}%")
-                ->orWhere('compras.id', 'like', "%{$buscar}%");
-        });
+        if (!empty($buscar)) {
+            $query->where(function ($q) use ($buscar) {
+                $q->where('proveedors.empresa', 'like', "%{$buscar}%")
+                    ->orWhere('proveedors.nombre', 'like', "%{$buscar}%")
+                    ->orWhere('compras.id', 'like', "%{$buscar}%");
+            });
+        }
 
         if ($estado !== null && $estado !== '') {
-            $query->where('compras.estado', (int) $estado);
+            $query->where('compras.estado', $estado);
         }
 
         if ($fechas !== null) {
             $query->whereBetween('compras.fecha', [$fechas['fecha_desde'], $fechas['fecha_hasta']]);
         }
 
-        return $query->orderBy('compras.id', 'desc')->paginate(10);
+        return $query->orderBy('compras.id', 'desc')->paginate(10)->withQueryString();
     }
 
     public static function crearCompra(array $data)
@@ -203,7 +207,7 @@ class Compra extends Model
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Error al eliminar la compra: ' . $e->getMessage());
+            Log::error('Error al eliminar la compra: ' . $e->getMessage());
             return false;
         }
     }

@@ -15,6 +15,29 @@
                 });
             });
         });
+
+        document.addEventListener('livewire:init', () => {
+
+            Livewire.on('confirm-delete', data => {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Desea inactivar el estado?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, inactivar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.dispatch('destroy-estado', {
+                            id: data.id
+                        });
+                    }
+                });
+            });
+
+        });
     </script>
 
 
@@ -25,25 +48,26 @@
                 <div>
                     <h3 class="rd-title-sm">Estados Registrados</h3>
                 </div>
-                    <div class="rd-actions">
-                        <div class="d-flex gap-3 align-items-center">
-                            <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
-                            <div class="toggle-container">
-                                <input wire:model.live="filtroEstado" type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ $filtroEstado ? 'checked' : '' }}>
-                                <label for="estadoToggle" class="toggle-label">
-                                    <span class="toggle-inner"></span>
-                                    <span class="toggle-switch"></span>
-                                </label>
-                            </div>
+                <div class="rd-actions">
+                    <div class="d-flex gap-3 align-items-center">
+                        <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
+                        <div class="toggle-container">
+                            <input wire:model.live="filtroEstado" type="checkbox" id="estadoToggle"
+                                class="toggle-checkbox" {{ $filtroEstado ? 'checked' : '' }}>
+                            <label for="estadoToggle" class="toggle-label">
+                                <span class="toggle-inner"></span>
+                                <span class="toggle-switch"></span>
+                            </label>
                         </div>
-                        <form wire:submit.prevent="buscar" class="rd-search-inline"
-                        role="search">
-                        <input type="text" name="buscar" value="{{ $search ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba un Estado" wire:model="search"/>
-                        <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
-                    </form>
+                    </div>
+                    <div class="rd-search-inline">
+                        <input type="text" class="rd-search-input" placeholder="Escriba un Estado"
+                            wire:model.live.debounce.300ms="search" />
 
-
+                        <button class="rd-icon-btn" type="button" title="Buscar">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -61,7 +85,9 @@
                     <tbody>
                         @forelse ($estados as $index => $datos)
                             <tr>
-                                <td class="text-center">{{ ($estados->currentPage() - 1) * $estados->perPage() + $loop->iteration }}</td></td>
+                                <td class="text-center">
+                                    {{ ($estados->currentPage() - 1) * $estados->perPage() + $loop->iteration }}
+                                </td>
                                 <td class="text-center">{{ $datos->nombre_estado }}</td>
                                 <td class="text-center">
                                     @if ($datos->status)
@@ -79,21 +105,15 @@
                                 <td class="text-center">
                                     <div class="rd-action-group">
                                         {{-- Botón Editar --}}
-                                        <button wire:click="edit({{ $datos->id }})"
-                                            class="rd-action"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEditar"
-                                            title="Editar">
+                                        <button wire:click="edit({{ $datos->id }})" class="rd-action"
+                                            data-bs-toggle="modal" data-bs-target="#modalEditar" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </button>
 
                                         @if ($datos->status)
-                                            <button
-                                                class="rd-action rd-btn-danger"
-                                                wire:click="confirmDestroy({{ $datos->id }})"
-                                                type="button"
-                                                title="Eliminar"
-                                            >
+                                            <button class="rd-action rd-btn-danger"
+                                                wire:click="confirmDestroy({{ $datos->id }})" type="button"
+                                                title="Eliminar">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         @endif
@@ -113,28 +133,6 @@
                                 </td>
                             </tr>
                         @endforelse
-                        <script>
-                            document.addEventListener('livewire:init', () => {
-
-                                Livewire.on('confirm-delete', data => {
-                                    Swal.fire({
-                                        title: '¿Estás seguro?',
-                                        text: 'Desea inactivar el estado?',
-                                        icon: 'warning',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Sí, inactivar',
-                                        cancelButtonText: 'Cancelar',
-                                        confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33',
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            Livewire.dispatch('destroy-estado', { id: data.id });
-                                        }
-                                    });
-                                });
-
-                            });
-                        </script>
                     </tbody>
                 </table>
             </div>

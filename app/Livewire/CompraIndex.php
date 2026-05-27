@@ -11,7 +11,7 @@ class CompraIndex extends Component
     use WithPagination;
 
     public $buscar = '';      
-    public $estado = null;    
+    public $estado = null;
 
     public function updatingBuscar()
     {

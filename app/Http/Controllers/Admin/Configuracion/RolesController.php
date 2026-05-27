@@ -22,7 +22,7 @@ class RolesController extends Controller
         if ($search = $request->get('q')) {
             $query->where('nombre', 'like', "%{$search}%");
         }
-        $roles = $query->orderBy('id_rol', 'desc')->paginate(15);
+        $roles = $query->orderBy('id_rol', 'desc')->paginate(10)->withQueryString();
         return view('admin.configuracion.roles.index', compact('roles'));
     }
 

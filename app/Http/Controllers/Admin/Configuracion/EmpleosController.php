@@ -37,7 +37,7 @@ class EmpleosController extends Controller
             });
         }
 
-        $usuarios = $query->orderBy('id_usuario', 'asc')->paginate(10);
+        $usuarios = $query->orderBy('id_usuario', 'asc')->paginate(10)->withQueryString();
 
         return view('admin.configuracion.empleados.index', compact('usuarios', 'perfiles', 'roles'));
     }

@@ -43,10 +43,11 @@
                             </label>
                         </div>
                     </div>
-                    <form action="{{ route('admin.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
-                        role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba la categoria" />
+                    <form action="{{ route('admin.maestros.categorias.index') }}" method="GET" class="rd-search-inline" role="search">
+    
+                        <input type="hidden" name="estado" value="{{ request('estado', 1) }}">
+
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input" placeholder="Escriba la categoria" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
@@ -167,11 +168,9 @@
     <script>
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
-                // Activos
-                window.location.href = "{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}";
+                window.location.href = "{!! route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) !!}";
             } else {
-                // Inactivos
-                window.location.href = "{{ route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}";
+                window.location.href = "{!! route('admin.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) !!}";
             }
         });
     </script>

@@ -30,7 +30,7 @@ class RecetaIngredienteController extends Controller
             $query->where('estado', 1);
         }
 
-        $recetas = $query->orderBy('id', 'desc')->paginate(10);
+        $recetas = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
 
         return view('admin.maestros.receta_ingredientes.index', compact('recetas', 'buscar', 'estado'));
     }

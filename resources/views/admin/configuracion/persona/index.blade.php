@@ -34,10 +34,8 @@
                     <h3 class="rd-title-sm">Estudiantes Registrados</h3>
                 </div>
                 <div class="rd-actions">
-                    <form action="{{ route('admin.configuracion.persona.index') }}" method="GET" class="rd-search-inline"
-                        role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Buscar nombre o cedula" />
+                    <form action="{{ route('admin.configuracion.persona.index') }}" method="GET" class="rd-search-inline" role="search">
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input" placeholder="Buscar nombre o cedula" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 

@@ -34,19 +34,28 @@ class LocalidadIndex extends Component
         $this->from = request('from');
     }
 
+    // 🔥 Resetea la página automáticamente al escribir en el buscador
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $estados = Estado::where('status', true)->get();
 
         $localidades = Localidad::where('status', $this->filtroEstado)
             ->when($this->search, function ($query) {
-                $query->where('nombre_localidad', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('municipio', function ($q) {
-                        $q->where('nombre_municipio', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('municipio.estado', function ($q) {
-                        $q->where('nombre_estado', 'like', '%' . $this->search . '%');
-                    });
+                // Encapsulamos las búsquedas relacionales para que no rompan el filtro de status superior
+                $query->where(function ($q) {
+                    $q->where('nombre_localidad', 'like', '%' . $this->search . '%')
+                      ->orWhereHas('municipio', function ($subQ) {
+                          $subQ->where('nombre_municipio', 'like', '%' . $this->search . '%');
+                      })
+                      ->orWhereHas('municipio.estado', function ($subQ) {
+                          $subQ->where('nombre_estado', 'like', '%' . $this->search . '%');
+                      });
+                });
             })
             ->orderBy('nombre_localidad', 'asc')
             ->paginate(10);
@@ -108,7 +117,6 @@ class LocalidadIndex extends Component
             return redirect()->to(
                 $this->from . '?localidad_id=' . $localidad->id
             );
-
         }
 
         $this->resetInputFields();
@@ -148,7 +156,6 @@ class LocalidadIndex extends Component
         $localidad->update([
             'nombre_localidad' => $this->nombre_localidad,
             'municipio_id' => $this->municipio_id,
-
         ]);
 
         $this->dispatch(

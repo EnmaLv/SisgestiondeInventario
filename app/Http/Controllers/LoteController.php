@@ -112,7 +112,7 @@ class LoteController extends Controller
             $query->where('fecha_vencimiento', '<=', $fecha_hasta);
         }
 
-        $lotes = $query->orderBy('id', 'desc')->paginate(10);
+        $lotes = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
 
         $lotes->each(function ($lote) {
             $fecha = Carbon::parse($lote->fecha_vencimiento);

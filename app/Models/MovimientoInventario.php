@@ -73,9 +73,9 @@ class MovimientoInventario extends Model
             ->with(['lote.producto', 'lote.proveedor', 'sucursal', 'unidad'])
             ->orderBy('id','desc');
         if (!$isPdf) {
-            $movimiento = $movimiento->paginate(10);
+            $movimiento = $movimiento->paginate(10)->withQueryString();
         }else{
-            $movimiento = $movimiento->get();
+            $movimiento = $movimiento->get()->withQueryString();
         }
         
         return $movimiento;

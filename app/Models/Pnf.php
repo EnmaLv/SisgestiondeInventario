@@ -31,14 +31,15 @@ class Pnf extends Model
     {
         $paginacion = 10;
 
-        if ($request->activo) {
-            return Pnf::where('id_estatus', $request->activo)->paginate($paginacion);
+        $query = self::query();
+        if ($request->filled('buscar')) {
+            $query->where('nombre_pnf', 'LIKE', "%{$request->buscar}%");
         }
 
-        if ($request->buscar) {
-            return Pnf::where('nombre_pnf', 'LIKE', "%$request->buscar%")->paginate($paginacion);
-        }
-        return Pnf::paginate($paginacion);
+        $estatus = $request->input('id_estatus', 1);
+        $query->where('id_estatus', (int)$estatus);
+
+        return $query->orderBy('id_pnf', 'desc')->paginate($paginacion)->withQueryString();
     }
 
     public static function createPnf(Request $request, array $data = [])

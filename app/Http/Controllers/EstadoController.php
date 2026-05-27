@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Estado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
 
 class EstadoController extends Controller
@@ -13,7 +14,7 @@ class EstadoController extends Controller
 
     public function index()
     {
-        $estados = Estado::orderBy('nombre_estado', 'asc')->Paginate(5);
+        $estados = Estado::orderBy('nombre_estado', 'asc')->Paginate(10)->withQueryString();
 
         return view('admin.estado.index', compact('estados'));
     }
@@ -99,7 +100,7 @@ class EstadoController extends Controller
                 'existe' => $existe
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error en verificarExistencia: ' . $e->getMessage());
+            Log::error('Error en verificarExistencia: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al verificar el estado',

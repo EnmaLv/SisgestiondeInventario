@@ -37,9 +37,10 @@
                 <div class="rd-actions">
                     <div class="d-flex gap-3 align-items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
-                        
+
                         <div class="toggle-container">
-                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ request('estado', 1) == 1 ? 'checked' : '' }}>
+                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
+                                {{ request('estado', 1) == 1 ? 'checked' : '' }}>
                             <label for="estadoToggle" class="toggle-label">
                                 <span class="toggle-inner"></span>
                                 <span class="toggle-switch"></span>
@@ -48,7 +49,8 @@
                     </div>
                     <form action="{{ route('admin.maestros.receta_ingredientes.index') }}" method="GET"
                         class="rd-search-inline" role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+                        <input type="hidden" name="estado" value="{{ request('estado', 1) }}">
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
                             placeholder="Escriba la receta" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
@@ -143,10 +145,9 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
-                                        @if($receta->recetaIngredientes->isNotEmpty())
+                                        @if ($receta->recetaIngredientes->isNotEmpty())
                                             <a href="{{ route('admin.maestros.receta_ingredientes.edit', $receta->id) }}"
-                                                class="rd-action"
-                                                title="Editar">
+                                                class="rd-action" title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form
@@ -154,8 +155,7 @@
                                                 method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="rd-action rd-btn-danger"
-                                                    title="Eliminar"
+                                                <button type="submit" class="rd-action rd-btn-danger" title="Eliminar"
                                                     onclick="confirmDelete(event, this)"><i
                                                         class="fas fa-trash"></i></button>
                                             </form>
@@ -201,9 +201,9 @@
     <script>
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
-                window.location.href = "{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->query(), ['estado' => 1])) }}";
+                window.location.href = "{!! route('admin.maestros.receta_ingredientes.index', array_merge(request()->query(), ['estado' => 1])) !!}";
             } else {
-                window.location.href = "{{ route('admin.maestros.receta_ingredientes.index', array_merge(request()->query(), ['estado' => 0])) }}";
+                window.location.href = "{!! route('admin.maestros.receta_ingredientes.index', array_merge(request()->query(), ['estado' => 0])) !!}";
             }
         });
     </script>

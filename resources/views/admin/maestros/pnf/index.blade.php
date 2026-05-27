@@ -39,9 +39,10 @@
                 <div class="rd-actions">
                     <div class="d-flex gap-3 align-items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
-                        
+
                         <div class="toggle-container">
-                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ request('activo', 1) == 1 ? 'checked' : '' }}>
+                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
+                                {{ request('id_estatus', 1) == 1 ? 'checked' : '' }}>
                             <label for="estadoToggle" class="toggle-label">
                                 <span class="toggle-inner"></span>
                                 <span class="toggle-switch"></span>
@@ -50,7 +51,8 @@
                     </div>
                     <form action="{{ route('admin.maestros.pnf.index') }}" method="GET" class="rd-search-inline"
                         role="search">
-                        <input type="text" name="buscar" value="{{ request('buscar') ?? '' }}" class="rd-search-input"
+                        <input type="hidden" name="id_estatus" value="{{ request('id_estatus', 1) }}">
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
                             placeholder="Escriba el PNF" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
@@ -58,7 +60,7 @@
                 </div>
             </div>
             <div id="printArea">
-                <table class="rd-table" >
+                <table class="rd-table">
                     <thead>
                         <tr>
                             <th style="width:60px">#</th>
@@ -83,11 +85,11 @@
                                 <td class="text-center">
                                     <div class="rd-action-group">
 
-                                        <a href="{{ route('admin.maestros.pnf.edit', ['id'=>$pnf->id_pnf]) }}"
+                                        <a href="{{ route('admin.maestros.pnf.edit', ['id' => $pnf->id_pnf]) }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
 
                                         @if ($pnf->id_estatus == 1)
-                                            <form action="{{ route('admin.maestros.pnf.destroy', ['id'=>$pnf->id_pnf]) }}"
+                                            <form action="{{ route('admin.maestros.pnf.destroy', ['id' => $pnf->id_pnf]) }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -117,8 +119,7 @@
                                                 }
                                             </script>
                                         @else
-                                            <form
-                                                action="{{ route('admin.maestros.pnf.activar', $pnf->id_pnf) }}"
+                                            <form action="{{ route('admin.maestros.pnf.activar', $pnf->id_pnf) }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('PUT')
@@ -153,7 +154,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">No hay Sedes</td>
+                                <td colspan="6" class="text-center py-4">No hay PNFs</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -164,7 +165,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalCrearPnf" tabindex="-1" role="dialog" aria-labelledby="modalCrearPnfLabel" aria-hidden="true">
+    <div class="modal fade" id="modalCrearPnf" tabindex="-1" role="dialog" aria-labelledby="modalCrearPnfLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
                 <div class="modal-header" style="border-bottom: 1px solid #e5e7eb;">
@@ -173,7 +175,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                
+
                 <form action="{{ route('admin.maestros.pnf.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="from" value="{{ request('from') }}">
@@ -182,7 +184,7 @@
                             <label class="rd-label">Nombre del PNF</label>
                             <div class="rd-input-group">
                                 <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
-                                <input type="text" name="nombre" class="form-control rd-filter-input" 
+                                <input type="text" name="nombre" class="form-control rd-filter-input"
                                     placeholder="Ingrese el nombre" value="{{ old('nombre') }}" required>
                             </div>
                             @error('nombre')
@@ -190,8 +192,9 @@
                             @enderror
                         </div>
                     </div>
-                    
-                    <div class="modal-footer" style="border-top: 1px solid #e5e7eb; background: #f8fafc; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
+
+                    <div class="modal-footer"
+                        style="border-top: 1px solid #e5e7eb; background: #f8fafc; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
                         <button type="button" class="rd-btn rd-btn-default" data-dismiss="modal">Cancelar</button>
                         <button type="submit" class="rd-btn rd-btn-primary">Guardar PNF</button>
                     </div>
@@ -215,18 +218,15 @@
 
 
     <script>
-        
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
                 // Activos
-                window.location.href = "{{ route('admin.maestros.pnf.index', array_merge(request()->query(), ['activo' => 1])) }}";
+                window.location.href = "{!! route('admin.maestros.pnf.index', array_merge(request()->query(), ['id_estatus' => 1])) !!}";
             } else {
                 // Inactivos
-                window.location.href = "{{ route('admin.maestros.pnf.index', array_merge(request()->query(), ['activo' => 2])) }}";
+                window.location.href = "{!! route('admin.maestros.pnf.index', array_merge(request()->query(), ['id_estatus' => 2])) !!}";
             }
         });
-
     </script>
 
 @endpush
-

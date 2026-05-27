@@ -34,9 +34,10 @@
                 </div>
                 <div class="rd-actions">
                     <div class="d-flex gap-3 align-items-center">
-                        <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>  
+                        <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
                         <div class="toggle-container">
-                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ request('activo', 1) == 1 ? 'checked' : '' }}>
+                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
+                                {{ request('activo', 1) == 1 ? 'checked' : '' }}>
                             <label for="estadoToggle" class="toggle-label">
                                 <span class="toggle-inner"></span>
                                 <span class="toggle-switch"></span>
@@ -45,7 +46,8 @@
                     </div>
                     <form action="{{ route('admin.maestros.sucursales.index') }}" method="GET" class="rd-search-inline"
                         role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+                        <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
                             placeholder="Escriba la Sede/Anexo" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
@@ -178,9 +180,9 @@
     <script>
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
-                window.location.href = "{{ route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 1])) }}";
+                window.location.href = "{!! route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 1])) !!}";
             } else {
-                window.location.href = "{{ route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 0])) }}";
+                window.location.href = "{!! route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 0])) !!}";
             }
         });
     </script>

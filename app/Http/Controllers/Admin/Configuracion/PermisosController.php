@@ -16,7 +16,22 @@ class PermisosController extends Controller
 
     public function index(Request $request)
     {
-        $usuarios = Usuario::with(['persona', 'perfil', 'roles'])->orderBy('id_usuario', 'asc')->paginate(15);
+        $search = $request->input('q');
+
+        $usuarios = Usuario::with(['persona', 'perfil', 'roles'])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                    ->orWhereHas('persona', function ($subQ) use ($search) {
+                        $subQ->where('nombre_persona', 'like', "%{$search}%")
+                            ->orWhere('apellido_persona', 'like', "%{$search}%");
+                    });
+                });
+            })
+            ->orderBy('id_usuario', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('admin.configuracion.permisos.index', compact('usuarios'));
     }
 

@@ -11,6 +11,7 @@ use Livewire\Attributes\On;
 class MunicipioIndex extends Component
 {
     use WithPagination;
+
     public $filtroEstado = true;
     public $nombre_municipio;
     public $municipio_id;
@@ -18,26 +19,36 @@ class MunicipioIndex extends Component
     public $updateMode = false;
     public $search = '';
     public $from;
+
     public function mount()
     {
         $this->from = request('from');
     }
 
-
     protected $rules = [
         'nombre_municipio' => 'required|string|max:255',
         'estado_id' => 'required|integer|exists:estados,id',
     ];
+
+    // 🔥 Resetea la página automáticamente al escribir en el buscador live
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $estados = Estado::where('status', true)
-            ->get();
+        $estados = Estado::where('status', true)->get();
+
         $municipios = Municipio::where('status', $this->filtroEstado)
             ->when($this->search, function ($query) {
-                $query->where('nombre_municipio', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('estado', function ($q) {
-                        $q->where('nombre_estado', 'like', '%' . $this->search . '%');
-                    });
+                // Encapsulamos el buscador en un sub-bloque para que el OR no rompa el filtro de status
+                $query->where(function ($q) {
+                    $q->where('nombre_municipio', 'like', '%' . $this->search . '%')
+                      ->orWhereHas('estado', function ($subQ) {
+                          $subQ->where('nombre_estado', 'like', '%' . $this->search . '%');
+                      });
+                });
             })
             ->orderBy('nombre_municipio', 'asc')
             ->paginate(10);
@@ -90,7 +101,6 @@ class MunicipioIndex extends Component
             return redirect()->to(
                 $this->from . '?municipio_id=' . $municipio->id
             );
-
         }
 
         $this->resetInputFields();

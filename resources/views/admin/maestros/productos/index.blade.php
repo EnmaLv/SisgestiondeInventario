@@ -51,14 +51,17 @@
                             </label>
                         </div>
                     </div>
-                    <form action="{{ route('admin.maestros.productos.index') }}" method="GET" class="rd-search-inline"
-                        role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Buscar producto..." />
+
+                    <form action="{{ route('admin.maestros.productos.index') }}" method="GET" class="rd-search-inline" role="search">
+                        <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
+                        <input type="hidden" name="categoria" value="{{ request('categoria') }}">
+
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input" placeholder="Buscar producto..." />
                         <button class="rd-icon-btn" type="submit" title="Buscar">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
+                    
                     <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
@@ -67,9 +70,12 @@
             </div>
 
             <!-- FILTROS COLAPSABLES -->
-            <div class="collapse" id="filters">
+            <div class="collapse {{ request('categoria') ? 'show' : '' }}" id="filters"> 
                 <div class="rd-filters">
                     <form action="{{ route('admin.maestros.productos.index') }}" method="GET" class="rd-filters-form">
+                        <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
+                        <input type="hidden" name="buscar" value="{{ request('buscar') }}">
+
                         <div class="rd-filter-row">
                             <label>Categoría</label>
                             <select name="categoria" id="categoria" class="rd-filter-input">
@@ -85,10 +91,9 @@
                             <button class="rd-btn rd-btn-primary" type="submit">
                                 <i class="fas fa-check"></i> Aplicar
                             </button>
-                            <button type="button" class="rd-btn rd-btn-default"
-                                onclick="document.getElementById('categoria').value=''; this.form.submit();">
+                            <a href="{{ route('admin.maestros.productos.index', ['activo' => request('activo', 1)]) }}" class="rd-btn rd-btn-default text-decoration-none d-inline-flex align-items-center justify-content-center">
                                 <i class="fas fa-times"></i> Limpiar
-                            </button>
+                            </a>
                         </div>
                     </form>
                 </div>
@@ -219,10 +224,10 @@
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
                 // Activos
-                window.location.href = "{{ route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 1])) }}";
+                window.location.href = "{!! route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 1])) !!}";
             } else {
                 // Inactivos
-                window.location.href = "{{ route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 0])) }}";
+                window.location.href = "{!! route('admin.maestros.productos.index', array_merge(request()->query(), ['activo' => 0])) !!}";
             }
         });
 

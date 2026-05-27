@@ -45,7 +45,9 @@
                     </div>
                     <form action="{{ route('admin.maestros.recetas.index') }}" method="GET" class="rd-search-inline"
                         role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+                        
+                        <input type="hidden" name="estado" value="{{ request('estado', 1) }}">
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
                             placeholder="Escriba la receta" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
@@ -54,9 +56,9 @@
             <script>
                 document.getElementById('estadoToggle').addEventListener('change', function() {
                     if (this.checked) {
-                        window.location.href = "{{ route('admin.maestros.recetas.index', array_merge(request()->query(), ['estado' => 1])) }}";
+                        window.location.href = "{!! route('admin.maestros.recetas.index', array_merge(request()->query(), ['estado' => 1])) !!}";
                     } else {
-                        window.location.href = "{{ route('admin.maestros.recetas.index', array_merge(request()->query(), ['estado' => 0])) }}";
+                        window.location.href = "{!! route('admin.maestros.recetas.index', array_merge(request()->query(), ['estado' => 0])) !!}";
                     }
                 });
             </script>
