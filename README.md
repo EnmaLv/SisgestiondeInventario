@@ -22,7 +22,7 @@ docker compose down (Para apagar los servicios de docker cuando termines de prog
 
 docker compose up -d (Para encender diariamente el servidor)
 
-docker compose exec app php artisan migrate --seed (Si se te llena de basura la bd)
+docker compose exec app php artisan migrate:fresh --seed (Si se te llena de basura la bd)
 
 # COSAS POR HACER EN EL MODULO DE COMEDOR
 
