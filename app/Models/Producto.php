@@ -126,7 +126,7 @@ class Producto extends Model
     public static function getDatosFormulario()
     {
         return [
-            'categorias' => DB::table('categorias')->select('id', 'nombre')->get(),
+            'categorias' => DB::table('categorias')->select('id', 'nombre')->where('activo', 1)->get(),
             'unidades'   => DB::table('unidades')->select('id', 'nombre', 'abreviatura')->get(),
         ];
     }

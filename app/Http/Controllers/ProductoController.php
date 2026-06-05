@@ -19,7 +19,7 @@ class ProductoController extends Controller
         $activo = $request->input('activo', 1);
         $categoria = $request->input('categoria', null);
         $productos = Producto::listarProductos($request->buscar, $activo, $categoria);
-        $categorias = Categoria::select('id', 'nombre')->where('estado', 1)->get();
+        $categorias = Categoria::select('id', 'nombre')->where('activo', 1)->get();
         return view('admin.maestros.productos.index', compact('productos', 'categorias'));
     }
 

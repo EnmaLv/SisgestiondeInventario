@@ -13,7 +13,7 @@ class CategoriaController extends Controller
     {
         $categorias = Categoria::listarCategorias(
             $request->input('buscar'),
-            $request->input('estado', 1)
+            $request->input('activo', 1)
         );
 
         return view('admin.maestros.categorias.index', compact('categorias'));
@@ -45,7 +45,7 @@ class CategoriaController extends Controller
             return redirect($from . '?categoria_id=' . $fromidreuse)
                 ->with('success', 'Categoría creada exitosamente.');
         } else {
-            redirect()->route('admin.maestros.categorias.index')
+            return redirect()->route('admin.maestros.categorias.index')
                 ->with('success', 'Categoría creada exitosamente.');
         }
     }

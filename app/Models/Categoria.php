@@ -17,7 +17,7 @@ class Categoria extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
-        'estado',
+        'activo',
     ];
 
     public function productos()
@@ -25,7 +25,7 @@ class Categoria extends Model
         return $this->hasMany(Producto::class, 'categoria_id');
     }
 
-    public static function listarCategorias($buscar = null, $estado = null)
+    public static function listarCategorias($buscar = null, $activo = null)
     {
         $query = DB::table('categorias')
             ->select('categorias.*');
@@ -34,8 +34,8 @@ class Categoria extends Model
             $query->where('nombre', 'like', "%{$buscar}%");
         }
 
-        if ($estado !== null && $estado !== '') {
-            $query->where('estado', (int)$estado);
+        if ($activo !== null && $activo !== '') {
+            $query->where('activo', (int)$activo);
         }
 
         return $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
@@ -50,7 +50,8 @@ class Categoria extends Model
         return DB::table('categorias')->insertGetId([
             'nombre'      => $data['nombre'],
             'descripcion' => $data['descripcion'],
-            'estado'      => true,
+            'tipo_producto_id' => 1, //ESTO ES MOMENTANEO
+            'activo'      => true,
             'created_at'  => now(),
             'updated_at'  => now(),
         ]);
@@ -84,7 +85,7 @@ class Categoria extends Model
         return DB::table('categorias')
             ->where('id', $id)
             ->update([
-                'estado' => 0,
+                'activo' => 0,
                 'updated_at' => now()
             ]);
     }
@@ -94,7 +95,7 @@ class Categoria extends Model
         return DB::table('categorias')
             ->where('id', $id)
             ->update([
-                'estado' => 1,
+                'activo' => 1,
                 'updated_at' => now()
             ]);
     }
@@ -108,7 +109,7 @@ class Categoria extends Model
         if ($categoria) {
             $categoria->productos = DB::table('productos')
                 ->where('categoria_id', $id)
-                ->where('estado', 1)
+                ->where('activo', 1)
                 ->select('id', 'codigo', 'nombre', 'precio_compra', 'estado')
                 ->get();
 
@@ -135,7 +136,7 @@ class Categoria extends Model
     public static function obtenerCategoriasActivas()
     {
         return DB::table('categorias')
-            ->where('estado', 1)
+            ->where('activo', 1)
             ->select('id', 'nombre')
             ->orderBy('nombre', 'asc')
             ->get();

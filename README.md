@@ -2,9 +2,13 @@
 
 docker compose up -d --build
 
-docker compose exec app composer install
+docker compose down
 
-docker compose exec app npm install
+docker compose run --entrypoint "" app composer install
+
+docker compose run --entrypoint "" app npm install
+
+docker compose up -d
 
 docker compose exec app php artisan key:generate
 
