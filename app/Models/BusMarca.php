@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\BusModelo;
 use Illuminate\Database\Eloquent\Model;
 
 class BusMarca extends Model

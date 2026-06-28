@@ -32,32 +32,32 @@ class BusVehiculo extends Model
         'activo',
         'estado',
     ];
-    
+
     public function modelo()
     {
         return $this->belongsTo(BusModelo::class, 'bus_modelo_id');
     }
-    
+
     public function marca()
     {
         return $this->belongsTo(BusMarca::class, 'bus_marca_id');
     }
-    
+
     public function tipoCombustible()
     {
         return $this->belongsTo(BusTipoCombustible::class, 'bus_tipo_combustible_id');
     }
-    
+
     public function ruta()
     {
         return $this->belongsTo(BusRuta::class, 'bus_ruta_id');
     }
-    
+
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
-    
+
     public function conductor()
     {
         return $this->belongsTo(User::class, 'conductor_id');
