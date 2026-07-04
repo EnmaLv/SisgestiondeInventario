@@ -96,5 +96,5 @@ Nuestra hoja de ruta actual para la optimización del sistema se centra en:
 
 - **EnmaLv** - Lead Developer / DevOps
 - **Angel Linarez** (@DevAngelJS) - Fullstack Developer
-- **Roxanita17** - Fullstack Developer
-- **Toniielperro** - Fullstack Developer
+- **Nohely Sosa** (@Roxanita17) - Fullstack Developer
+- **Michele Piñuela** (@Toniielperro) - Fullstack Developer
