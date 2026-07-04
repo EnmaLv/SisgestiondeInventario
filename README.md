@@ -4,6 +4,8 @@
 [![Docker](https://img.shields.io/badge/Container-Docker-blue?style=flat&logo=docker)](https://www.docker.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[![Demo Live](https://img.shields.io/badge/Demo-Visitar%20Sistema-brightgreen?style=for-the-badge&logo=google-chrome&logoColor=white)](https://sistemauniversitario-oc5a.onrender.com/)
+
 SIGA es una plataforma web centralizada (Intranet) diseñada para digitalizar, unificar y automatizar la operación interna de las dependencias de bienestar estudiantil. El sistema consolida múltiples áreas críticas de la institución en una sola arquitectura modular, eliminando registros manuales y garantizando trazabilidad total.
 
 ---
@@ -16,7 +18,7 @@ El sistema unifica 5 grandes módulos funcionales compartiendo una misma base de
 - **Módulo de Salud (Médico y Psicológico):** Agenda de citas, historiales clínicos digitales, emisión de recetas y dispensación de medicamentos con control de inventario por lote.
 - **Módulo de Deportes:** Control de inscripciones a actividades y torneos, registro de asistencia y sistema de préstamo de utensilios deportivos con alertas y sanciones.
 - **Módulo de Becas:** Recepción y procesamiento de formularios socioeconómicos por periodos académicos, aprobación, renovación y revocación de beneficios.
-- **Módulo de Transporte:** Control de flota, asignación de rutas/paradas y monitoreo de mantenimientos preventivos y correctivos (Preparado para integración con App Móvil).
+- **Módulo de Transporte:** Control de flota, asignación de rutas/paradas y monitoreo de mantenimientos preventivos y correctivos. **Aplicación Móvil:** [![GitHub móvil](https://img.shields.io/badge/Repositorio-App%20Móvil-blue?style=flat-square&logo=github)](https://github.com/EnmaLv/MoviBus).
 
 ### Características Técnicas Destacadas
 
