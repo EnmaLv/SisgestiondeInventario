@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\BusMarcaApiController;
+use App\Http\Controllers\Api\BusModeloApiController;
 
 Route::get('/ping', fn() => response()->json(['ok' => true]));
 
@@ -22,5 +23,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('marcas/{marca}',       [BusMarcaApiController::class, 'update']);
         Route::patch('marcas/{marca}/toggle', [BusMarcaApiController::class, 'toggle']);
         Route::delete('marcas/{marca}',       [BusMarcaApiController::class, 'destroy']);
+
+        Route::get('modelos',               [BusModeloApiController::class, 'index']);
+        Route::post('modelos',               [BusModeloApiController::class, 'store']);
+        Route::get('modelos/{modelo}',      [BusModeloApiController::class, 'show']);
+        Route::put('modelos/{modelo}',      [BusModeloApiController::class, 'update']);
+        Route::patch('modelos/{modelo}/toggle', [BusModeloApiController::class, 'toggle']);
+        Route::delete('modelos/{modelo}',      [BusModeloApiController::class, 'destroy']);
     });
 });
