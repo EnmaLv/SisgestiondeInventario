@@ -149,7 +149,7 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
-                                ¿No encuentras tu PNF?
+                                ¿No encuentras lo que buscas?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
                                 style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.pnf.index', [
                                     'from' => url()->previous()
@@ -176,7 +176,6 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
-                                ¿No encuentras tu sede?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
                             style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.sucursales.create', [
                                     'from' => url()->current()
@@ -240,7 +239,6 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
-                                ¿No encuentras tu Estado?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
                             style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.estado.index', [
                                     'from' => url()->current()
@@ -268,7 +266,6 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
-                                ¿No encuentras tu Municipio?
                                 <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
                             style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.municipio.index', [
                                     'from' => url()->current()
@@ -296,7 +293,6 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                                 <small style="color: #64748b; font-size: 0.85rem;">
-                                    ¿No encuentras tu Localidad?
                                     <a wire:model.lazy="parroquiaId" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
                                 style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.localidad.index', [
                                         'from' => url()->current()

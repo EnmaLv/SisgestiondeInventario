@@ -18,7 +18,7 @@ El sistema unifica 5 grandes módulos funcionales compartiendo una misma base de
 - **Módulo de Deportes:** Control de inscripciones a actividades y torneos, registro de asistencia y sistema de préstamo de utensilios deportivos con alertas y sanciones.
 - **Módulo de Becas:** Recepción y procesamiento de formularios socioeconómicos por periodos académicos, aprobación, renovación y revocación de beneficios.
 - **Módulo de Transporte:** Control de flota, asignación de rutas/paradas y monitoreo de mantenimientos preventivos y correctivos. 
-- **Aplicación de Transporte Móvil:** [![GitHub móvil](https://img.shields.io/badge/Repositorio-App%20Móvil-blue?style=flat-square&logo=github)](https://github.com/EnmaLv/MoviBus).
+- **Aplicación de Transporte Móvil:** [![GitHub móvil](https://img.shields.io/badge/Repositorio-App%20Móvil-blue?style=flat-square&logo=github)](https://github.com/EnmaLv/MoviBus)
 
 ### Características Técnicas Destacadas
 

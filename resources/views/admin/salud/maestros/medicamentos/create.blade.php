@@ -94,7 +94,7 @@
                                         @enderror
                                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                                             <small style="color: #64748b; font-size: 0.85rem;">
-                                                ¿No encuentras tu categoria?
+                                                ¿No encuentras lo que buscas?
                                                 <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
                                                     {{-- href="{{ route('admin.maestros.categorias.create', [
                                                     'from' => url()->current()
@@ -127,7 +127,6 @@
                                         @enderror
                                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                                             <small style="color: #64748b; font-size: 0.85rem;">
-                                                ¿No encuentras tu envase primario?
                                                 <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
                                                     {{-- href="{{ route('admin.maestros.categorias.create', [
                                                     'from' => url()->current()
