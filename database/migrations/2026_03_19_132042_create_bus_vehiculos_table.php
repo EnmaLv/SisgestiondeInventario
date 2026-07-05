@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('placa', 20);
             $table->foreignId('bus_modelo_id')->constrained('bus_modelos')->onDelete('cascade');
-            $table->foreignId('bus_marca_id')->constrained('bus_marcas')->onDelete('cascade');
-            $table->time('anio');
-            $table->string('color');
+            $table->integer('anio');
+            $table->string('color', 50);
             $table->integer('cantidad_pasajeros')->default(0);
             $table->foreignId('bus_tipo_combustible_id')->constrained('bus_tipo_combustibles')->onDelete('cascade');
             $table->integer('cantidad_bocas')->default(1);
@@ -25,7 +24,6 @@ return new class extends Migration
             $table->decimal('consumo_litros_km', 6, 3)->default(0);
             $table->decimal('km_actual', 10, 2)->default(0);
             $table->decimal('km_proximo_mantenimiento', 10, 2)->default(0);
-            $table->foreignId('bus_ruta_id')->constrained('bus_rutas')->onDelete('cascade');
             $table->unsignedBigInteger('conductor_id')->nullable();
             $table->foreign('conductor_id')->references('id_usuario')->on('usuario')->nullOnDelete();
             $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');

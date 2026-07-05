@@ -13,7 +13,11 @@ class ModuloController extends Controller
     public function seleccionarForm()
     {
         $user = Auth::user();
-        $rolId = $user->id_perfil ?? null;
+        
+        // Forzar la regeneración de los permisos del módulo en la sesión
+        session()->forget(['modulos_permitidos', 'menu_permissions_user']);
+        (new \App\AdminLTE\Filters\ModuleFilter)->transform(['key' => 'init_check']);
+
         $modulos = Modulo::where('activo', true)->get();
 
         return view('admin.modulos.seleccionar', compact('modulos'));

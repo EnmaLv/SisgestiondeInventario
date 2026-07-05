@@ -17,7 +17,6 @@ return new class extends Migration
             $table->decimal('lat', 10, 7)->nullable();
             $table->decimal('lng', 11, 7)->nullable();
             $table->string('direccion', 255)->nullable();
-            $table->tinyInteger('archivo')->nullable();
             $table->integer('estado')->default(1);
             $table->timestamps();
         });

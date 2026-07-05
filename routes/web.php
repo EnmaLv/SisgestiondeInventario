@@ -32,6 +32,7 @@ use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\Salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\BusMarcaController;
 
 Auth::routes();
 
@@ -322,6 +323,9 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::get('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'show'])->name('admin.salud.maestros.medicamentos.show');
         Route::delete('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'destroy'])->name('admin.salud.maestros.medicamentos.destroy');
         Route::put('/salud/maestros/medicamentos/{medicamento}/activar', [MedicamentoController::class, 'activar'])->name('admin.salud.maestros.medicamentos.activar');
+
+        // TRANSPORTE
+        require __DIR__.'/transporte.php';
 
         /* Configuración - Empleados, Permisos, Roles */
 

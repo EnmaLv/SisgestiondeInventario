@@ -16,6 +16,13 @@ class CheckMenuPermission
             return $next($request);
         }
 
+        // Bypassear validación para Administrador y Secretaria de Bienestar (super-admins)
+        foreach ($user->roles ?? [] as $r) {
+            if (isset($r->nombre) && in_array(mb_strtolower($r->nombre), ['administrador', 'secretaria de bienestar'])) {
+                return $next($request);
+            }
+        }
+
         $allowedPaths = [
             'admin/configuracion/master-key',
             'admin/configuracion/master-key/verify',

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('bus_marca_id')->constrained('bus_marcas')->onDelete('cascade');
             $table->string('nombre', 100);
-            $table->tinyInteger('archivo')->nullable();
+            $table->string('descripcion', 255)->nullable();
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });

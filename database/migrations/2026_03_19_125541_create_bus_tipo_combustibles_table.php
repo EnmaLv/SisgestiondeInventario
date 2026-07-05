@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bus_tipo_combustibles', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100);
-            $table->tinyInteger('archivo')->nullable();
+            $table->string('descripcion', 255)->nullable();
             $table->integer('estado')->default(1);
             $table->timestamps();
         });

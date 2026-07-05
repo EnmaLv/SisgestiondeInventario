@@ -84,6 +84,10 @@
             {{-- @include('admin.dashboard.modules.becas') --}}
         @break
 
+        @case('transporte')
+            @include('components.transporte-home')
+        @break
+
         @default
             <div class="rd-alert fade-in">
                 <div class="rd-alert-icon">
