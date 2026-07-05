@@ -80,7 +80,7 @@
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                             <select class="form-control rd-filter-input" id="categoria_medicamento_id"
                                                 name="categoria_medicamento_id">
-                                                <option value="" selected disabled>Seleccione una categoría</option>
+                                                <option value="" selected disabled>Seleccione</option>
                                                 @foreach ($categorias as $categoria)
                                                     <option value="{{ $categoria->id }}"
                                                         {{ old('categoria_medicamento_id', request('categoria_medicamento_id')) == $categoria->id ? 'selected' : '' }}>
@@ -112,8 +112,7 @@
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                             <select class="form-control rd-filter-input" id="envase_primario_id"
                                                 name="envase_primario_id">
-                                                <option value="" selected disabled>Seleccione un envase primario
-                                                </option>
+                                                <option value="" selected disabled>Seleccione </option>
                                                 @foreach ($envases as $item)
                                                     <option value="{{ $item->id }}"
                                                         {{ old('envase_primario_id', request('envase_primario_id')) == $item->id ? 'selected' : '' }}>
@@ -164,6 +163,45 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Imagen del producto</label>
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text"><i class="fas fa-image"></i></span> 
+                                        <label for="imagen" class="form-control d-flex align-items-center justify-content-center" style="cursor:pointer; margin-left: -1px; margin-bottom: 0;">
+                                            Seleccione una imagen
+                                        </label>
+                                        
+                                        <input type="file" name="imagen" id="imagen"
+                                            class="form-control rd-filter-input" accept="image/*"
+                                            onchange="previewImage(event)" style="display: none">
+                                    </div>
+                                    <img id="imgPreview"
+                                        style="width: 100%; display:none; border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,0.08);" />
+                                    <em id="fileName" style="margin: 10px"></em>
+
+                                    <script>
+                                        function previewImage(event) {
+                                            const file = event.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onload = function(e) {
+                                                    const img = document.getElementById('imgPreview');
+                                                    img.style.display = 'block';
+                                                    img.src = e.target.result;
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                            const fileName = document.getElementById('fileName');
+                                            fileName.textContent = file.name;
+                                        }
+                                    </script>
+
+                                    @error('imagen')
+                                        <div class="text-danger"><b>{{ $message }}</b></div>
+                                    @enderror
+                                </div>
+                            </div>
                             </div>
                             <div class="form-group mt-3">
                                 <label class="font-weight-bold">Descripción</label>
@@ -253,44 +291,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label class="font-weight-bold">Imagen del producto</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-image"></i></span>
-                                    <label for="imagen" class="p-2"
-                                        style="margin: 0; cursor: pointer; width: 90%;">Seleccione
-                                        una foto</label>
-                                    <input type="file" name="imagen" id="imagen"
-                                        class="form-control rd-filter-input" accept="image/*"
-                                        onchange="previewImage(event)" style="display: none">
-                                </div>
-                                <img id="imgPreview"
-                                    style="width: 100%; display:none; border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,0.08);" />
-                                <em id="fileName" style="margin: 10px"></em>
 
-                                <script>
-                                    function previewImage(event) {
-                                        const file = event.target.files[0];
-                                        if (file) {
-                                            const reader = new FileReader();
-                                            reader.onload = function(e) {
-                                                const img = document.getElementById('imgPreview');
-                                                img.style.display = 'block';
-                                                img.src = e.target.result;
-                                            };
-                                            reader.readAsDataURL(file);
-                                        }
-                                        const fileName = document.getElementById('fileName');
-                                        fileName.textContent = file.name;
-                                    }
-                                </script>
-
-                                @error('imagen')
-                                    <div class="text-danger"><b>{{ $message }}</b></div>
-                                @enderror
-                            </div>
-                        </div>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-end gap-2">

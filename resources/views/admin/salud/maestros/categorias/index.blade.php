@@ -36,7 +36,8 @@
                     <div class="d-flex gap-3 align-items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
                         <div class="toggle-container">
-                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ request('estado', 1) == 1 ? 'checked' : '' }}>
+                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
+                                {{ request('activo', 1) == 1 ? 'checked' : '' }}>
                             <label for="estadoToggle" class="toggle-label">
                                 <span class="toggle-inner"></span>
                                 <span class="toggle-switch"></span>
@@ -45,7 +46,10 @@
                     </div>
                     <form action="{{ route('admin.salud.maestros.categorias.index') }}" method="GET" class="rd-search-inline"
                         role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+
+                        <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
+
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
                             placeholder="Escriba la categoria" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
@@ -55,20 +59,26 @@
                 <table class="rd-table">
                     <thead>
                         <tr>
-                            <th style="width:60px; text-align:center">#</th>
+                            <th style="width:60px">#</th>
                             <th class="text-center">Nombre</th>
+                            <th class="text-center">Descripcion</th>
                             <th style="width:120px" class="text-center">Estado</th>
                             <th style="width:150px" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                         @forelse($categorias as $categoria)
+                        @forelse($categorias as $categoria)
                             <tr>
                                 <td class="text-center">
                                     {{ ($categorias->currentPage() - 1) * $categorias->perPage() + $loop->iteration }}</td>
                                 <td class="text-center">{{ $categoria->nombre }}</td>
+                                @if ($categoria->descripcion)
+                                    <td class="text-center">{{ $categoria->descripcion }}</td>
+                                @else
+                                    <td class="text-center">Ninguna</td>
+                                @endif
                                 <td class="text-center">
-                                    @if ($categoria->estado)
+                                    @if ($categoria->activo)
                                         <span class="rd-badge rd-badge-success">Activo</span>
                                     @else
                                         <span class="rd-badge rd-badge-danger">Inactivo</span>
@@ -78,8 +88,7 @@
                                     <div class="rd-action-group">
                                         <a href="{{ url('admin/salud/maestros/categorias/' . $categoria->id . '/edit') }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
-
-                                        @if ($categoria->estado == true)
+                                        @if ($categoria->activo == true)
                                             <form action="{{ url('admin/salud/maestros/categorias/' . $categoria->id) }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
@@ -145,9 +154,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-4">No hay categorias registradas</td>
+                                <td colspan="5" class="text-center py-4">No hay categorias</td>
                             </tr>
-                        @endforelse 
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -162,11 +171,9 @@
     <script>
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
-                // Activos
-                window.location.href = "{{ route('admin.salud.maestros.categorias.index', array_merge(request()->query(), ['estado' => 1])) }}";
+                window.location.href = "{!! route('admin.salud.maestros.categorias.index', array_merge(request()->query(), ['activo' => 1])) !!}";
             } else {
-                // Inactivos
-                window.location.href = "{{ route('admin.salud.maestros.categorias.index', array_merge(request()->query(), ['estado' => 0])) }}";
+                window.location.href = "{!! route('admin.salud.maestros.categorias.index', array_merge(request()->query(), ['activo' => 0])) !!}";
             }
         });
     </script>

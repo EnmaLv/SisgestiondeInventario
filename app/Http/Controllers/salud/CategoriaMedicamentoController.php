@@ -3,35 +3,30 @@
 namespace App\Http\Controllers\salud;
 
 use App\Models\salud\CategoriaMedicamento;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 
 class CategoriaMedicamentoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
-        $categorias = CategoriaMedicamento::listar(
-            $request->input('buscar'),
-            $request->input('estado', 1)
+        $categorias = Categoria::listarCategorias(
+            $request->input('buscar'), 
+            $request->input('activo', 1)
         );
         return view('admin.salud.maestros.categorias.index', compact('categorias'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
         return view('admin.salud.maestros.categorias.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -39,85 +34,82 @@ class CategoriaMedicamentoController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'unique:categoria_medicamentos,nombre'
+                'unique:categorias,nombre'
             ],
+            'descripcion' => 'nullable|string',
         ], [
             'nombre.unique' => 'Ya existe una categoria con este nombre',
         ]);
-        $fromidreuse = CategoriaMedicamento::crear($validated);
+        $fromidreuse = Categoria::crearCategoria($validated);
 
         $from = $request->input('from');
 
         if ($from) {
-            return redirect($from . '?categoria_medicamento_id=' . $fromidreuse)
-                ->with('success', 'Categoria creada exitosamente.');
+            return redirect($from . '?categoria_id=' . $fromidreuse)
+                ->with('success', 'Categoría creada exitosamente.');
         } else {
             return redirect()->route('admin.salud.maestros.categorias.index')
-                ->with('success', 'Categoria creada exitosamente.');
+                ->with('success', 'Categoría creada exitosamente.');
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(categoriaMedicamento $categoriaMedicamento)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        $categoria = CategoriaMedicamento::obtenerDatos($id);
+        $categoria = Categoria::obtenerCategoria($id);
 
         if (!$categoria) {
             return redirect()
                 ->route('admin.salud.maestros.categorias.index')
-                ->with('mensaje', 'Categoria no encontrada.')
+                ->with('mensaje', 'Categoría no encontrada.')
                 ->with('icono', 'error');
         }
 
         return view('admin.salud.maestros.categorias.edit', compact('categoria'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, categoriaMedicamento $categoria)
+
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'nombre' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('categoria_medicamentos', 'nombre')->ignore($categoria->id),
+                Rule::unique('categorias', 'nombre')->ignore($id),
             ],
+            'descripcion' => 'nullable|string',
         ], [
             'nombre.unique' => 'Ya existe una categoria con este nombre',
         ]);
-        CategoriaMedicamento::actualizar($categoria->id, $validated);
+        Categoria::actualizarCategoria($id, $validated);
 
         return redirect()
-            ->route('admin.salud.maestros.categorias.index')->with('success', 'Categoria actualizada exitosamente.');
+            ->route('admin.salud.maestros.categorias.index')->with('success', 'Categoría actualizada exitosamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy($id)
     {
-        CategoriaMedicamento::eliminar($id);
+        if (Categoria::tieneProductos($id)) {
+            $cantidad = Categoria::contarProductos($id);
+
+            return redirect()
+                ->route('admin.salud.maestros.categorias.index')
+                ->with('error', "No se puede eliminar la categoría porque tiene {$cantidad} producto(s) asociado(s).")
+                ->with('icono', 'error');
+        }
+
+        Categoria::eliminarCategoria($id);
 
         return redirect()
             ->route('admin.salud.maestros.categorias.index')
-            ->with('success', 'Categoria eliminada exitosamente.');
+            ->with('success', 'Categoría eliminada exitosamente.');
     }
 
     public function activar($id)
     {
-        CategoriaMedicamento::activar($id);
+        Categoria::activarCategoria($id);
         return redirect()->route('admin.salud.maestros.categorias.index')->with('success', 'Categoria activada exitosamente.');
     }
 }

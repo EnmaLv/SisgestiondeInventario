@@ -29,7 +29,7 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArchivoController;
 use App\Http\Controllers\salud\CategoriaMedicamentoController;
-use App\Http\Controllers\Salud\EnvasePrimarioController;
+use App\Http\Controllers\salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\BusMarcaController;

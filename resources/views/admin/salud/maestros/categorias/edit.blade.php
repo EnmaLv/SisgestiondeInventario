@@ -43,11 +43,16 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-tag"></i></span>
                             <input type="text" class="form-control rd-filter-input" id="nombre" name="nombre"
-                                value="{{ old('nombre', $categoria->nombre ?? '') }}" placeholder="Nombre de la categoría">
+                                value="{{ old('nombre', $categoria->nombre) }}" placeholder="Nombre de la categoría">
                         </div>
                         @error('nombre')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold">Descripción</label>
+                        <textarea name="descripcion" id="descripcion" rows="4" class="form-control rd-filter-input"
+                            placeholder="Descripción de la categoría" style="resize:none;">{{ old('descripcion', $categoria->descripcion) }}</textarea>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-end" style="gap:12px;">

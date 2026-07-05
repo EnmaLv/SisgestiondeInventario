@@ -13,7 +13,7 @@ class CategoriaController extends Controller
     {
         $categorias = Categoria::listarCategorias(
             $request->input('buscar'),
-            $request->input('activo', 1)
+            $request->input('activo', 1) 
         );
 
         return view('admin.maestros.categorias.index', compact('categorias'));
