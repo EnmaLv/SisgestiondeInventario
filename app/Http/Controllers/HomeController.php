@@ -14,6 +14,13 @@ use \App\Models\Rol;
 use App\Models\salud\EnvasePrimario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+// MÓDULO TRANSPORTE — Abdias
+use \App\Models\BusMarca;
+use \App\Models\BusModelo;
+use \App\Models\BusTipoCombustible;
+use \App\Models\BusVehiculo;
+use \App\Models\BusRuta;
+use \App\Models\BusParada;
 
 class HomeController extends Controller
 {
@@ -55,12 +62,15 @@ class HomeController extends Controller
         $isAdministrator = $roleName && strtolower($roleName) === 'administrador';
         $isSecretaria = $roleName && strtolower($roleName) === 'secretaria de bienestar';
 
+        // ── Conteos generales ──────────────────────────────────────────
         $total_envases_primarios = EnvasePrimario::count();
-        $total_sucursales = Sucursal::count();
-        $total_categorias = Categoria::count();
-        $total_productos = Producto::count();
-        $total_proveedores = Proveedor::count();
-        $total_compras = Compra::count();
+        $total_sucursales        = Sucursal::count();
+        $total_categorias        = Categoria::count();
+        $total_productos         = Producto::count();
+        $total_proveedores       = Proveedor::count();
+        $total_compras           = Compra::count();
+        
+        
 
         $total_lotes_vencidos = Lote::whereDate('fecha_vencimiento', '<=', $hoy)
             ->where('estado', 1)
@@ -93,6 +103,16 @@ class HomeController extends Controller
 
         $total_productos_stock_minimo = $productos_stock_minimo->count();
 
+        // MÓDULO TRANSPORTE — Abdias
+        $total_bus_marcas  = BusMarca::count();
+        $total_bus_modelos = BusModelo::count();
+        $total_bus_tipo_combustibles = BusTipoCombustible::count();
+        $total_bus_vehiculos = BusVehiculo::count();
+        $total_bus_rutas = BusRuta::count();
+        $total_bus_paradas = BusParada::count();
+        
+
+
         $menuConfig = config('adminlte.menu');
 
         $findKeyForUrl = function ($items, $targetUrl) use (&$findKeyForUrl) {
@@ -109,15 +129,24 @@ class HomeController extends Controller
         };
 
         $modules = [
+            // ── Salud ──────────────────────────────────────────────────
             'envases_primarios' => 'admin/salud/maestros/envases_primarios',
-            'sucursales' => 'admin/maestros/sucursales',
-            'categorias' => 'admin/maestros/categorias',
-            'productos' => 'admin/maestros/productos',
-            'proveedores' => 'admin/maestros/proveedores',
-            'compras' => 'admin/movimientos/compras',
-            'comidas' => 'admin/maestros/recetas',
-            'por_vencer' => 'admin/movimientos/lotes',
-            'registro_comida' => 'admin/movimientos/registro_comida',
+            // ── Comedor ────────────────────────────────────────────────
+            'sucursales'        => 'admin/maestros/sucursales',
+            'categorias'        => 'admin/maestros/categorias',
+            'productos'         => 'admin/maestros/productos',
+            'proveedores'       => 'admin/maestros/proveedores',
+            'compras'           => 'admin/movimientos/compras',
+            'comidas'           => 'admin/maestros/recetas',
+            'por_vencer'        => 'admin/movimientos/lotes',
+            'registro_comida'   => 'admin/movimientos/registro_comida',
+            // ── Transporte — Abdias ───────────────────────────
+            'bus_marcas'        => 'admin/transporte/maestros/bus_marcas',
+            'bus_modelos'       => 'admin/transporte/maestros/bus_modelos',
+            'bus_tipo_combustibles' => 'admin/transporte/maestros/bus_tipo_combustibles',
+            'bus_vehiculos'     => 'admin/transporte/maestros/bus_vehiculos',
+            'bus_rutas'         => 'admin/transporte/maestros/bus_rutas',
+            'bus_paradas' => 'admin/transporte/maestros/bus_paradas',
         ];
 
         $visibleModules = [];
@@ -129,8 +158,8 @@ class HomeController extends Controller
 
         return view('home', [
             'variacion_dolar' => $ultimaTasa?->variacion,
-            'tasa_actual' => $ultimaTasa?->tasa,
-            'visibleModules' => $visibleModules,
+            'tasa_actual'     => $ultimaTasa?->tasa,
+            'visibleModules'  => $visibleModules,
         ], compact(
             'total_sucursales',
             'total_categorias',
@@ -141,7 +170,14 @@ class HomeController extends Controller
             'total_lotes_por_vencer',
             'productos_stock_minimo',
             'total_productos_stock_minimo',
-            'total_envases_primarios'
+            'total_envases_primarios',
+            // ── Transporte — Abdias ────────────────────────────
+            'total_bus_marcas',
+            'total_bus_modelos',
+            'total_bus_tipo_combustibles',
+            'total_bus_vehiculos',
+            'total_bus_rutas',
+            'total_bus_paradas',
         ));
     }
 }

@@ -7,59 +7,64 @@ use Illuminate\Http\Request;
 
 class BusMarcaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $marcas = BusMarca::listarMarcas($request->buscar, $request->input('estado', 1));
+        return view('admin.transporte.maestros.bus_marcas.index', compact('marcas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nombre'      => 'required|string|max:100|unique:bus_marcas,nombre',
+            'descripcion' => 'nullable|string|max:255',
+        ]);
+
+        $marca = BusMarca::crearMarca($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Marca registrada correctamente.',
+            'marca'   => [
+                'id'          => $marca->id,
+                'nombre'      => $marca->nombre,
+                'descripcion' => $marca->descripcion,
+                'estado'      => true,
+            ],
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(BusMarca $busMarca)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BusMarca $busMarca)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, BusMarca $busMarca)
     {
-        //
+        $validated = $request->validate([
+            'nombre'      => 'required|string|max:100|unique:bus_marcas,nombre,' . $busMarca->id,
+            'descripcion' => 'nullable|string|max:255',
+        ]);
+
+        BusMarca::actualizarMarca($busMarca, $validated);
+        $busMarca->refresh();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Marca actualizada correctamente.',
+            'marca'   => [
+                'id'          => $busMarca->id,
+                'nombre'      => $busMarca->nombre,
+                'descripcion' => $busMarca->descripcion,
+                'estado'      => $busMarca->estado,
+            ],
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(BusMarca $busMarca)
     {
-        //
+        $busMarca->update(['estado' => 0]);
+        return response()->json(['success' => true, 'message' => 'Marca inactivada correctamente.']);
+    }
+
+    public function activar(BusMarca $busMarca)
+    {
+        $busMarca->update(['estado' => 1]);
+        return response()->json(['success' => true, 'message' => 'Marca activada correctamente.']);
     }
 }

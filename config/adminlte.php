@@ -606,6 +606,64 @@ return [
             'icon' => 'fas fa-file-alt',
             'active' => ['admin/becas/solicitudes*'],
         ],
+
+        /* ---------------------------------------------------
+        | GESTIÓN DE TRANSPORTE
+        --------------------------------------------------- */
+        [
+            'header' => 'Gestión de Transporte',
+            'classes' => 'text-bold',
+            'module' => 'transporte',
+        ],
+        [
+            'text' => 'Marcas',
+            'icon' => 'fas fa-tag',
+            'module' => 'transporte',
+            'key' => 'transporte_marcas',
+            'url' => 'admin/transporte/maestros/bus_marcas',
+            'active' => ['admin/transporte/maestros/bus_marcas*'],
+        ],
+        [
+            'text'   => 'Modelos',
+            'icon'   => 'fas fa-car',
+            'module' => 'transporte',
+            'key'    => 'transporte_modelos',
+            'url'    => 'admin/transporte/maestros/bus_modelos',
+            'active' => ['admin/transporte/maestros/bus_modelos*'],
+        ],
+        [
+            'text'   => 'Tipos de Combustible',
+            'icon'   => 'fas fa-gas-pump',
+            'module' => 'transporte',
+            'key'    => 'transporte_tipo_combustibles',
+            'url'    => 'admin/transporte/maestros/bus_tipo_combustibles',
+            'active' => ['admin/transporte/maestros/bus_tipo_combustibles*'],
+        ],
+        [
+            'text'   => 'Vehículos',
+            'icon'   => 'fas fa-bus',
+            'module' => 'transporte',
+            'key'    => 'transporte_vehiculos',
+            'url'    => 'admin/transporte/maestros/bus_vehiculos',
+            'active' => ['admin/transporte/maestros/bus_vehiculos*'],
+        ],
+
+        [
+            'text'   => 'Rutas',
+            'icon'   => 'fas fa-route',
+            'module' => 'transporte',
+            'key'    => 'transporte_rutas',
+            'url'    => 'admin/transporte/maestros/bus_rutas',
+            'active' => ['admin/transporte/maestros/bus_rutas*'],
+        ],
+        [
+            'text'   => 'Paradas',
+            'icon'   => 'fas fa-map-pin',
+            'module' => 'transporte',
+            'key'    => 'transporte_paradas',
+            'url'    => 'admin/transporte/maestros/bus_paradas',
+            'active' => ['admin/transporte/maestros/bus_paradas*'],
+        ],
     ],
 
 

@@ -7,59 +7,77 @@ use Illuminate\Http\Request;
 
 class BusParadaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private function rules(int $excludeId = null): array
     {
-        //
+        return [
+            'nombre'    => 'required|string|max:100|unique:bus_paradas,nombre,' . $excludeId,
+            'lat'       => 'nullable|numeric|between:-90,90',
+            'lng'       => 'nullable|numeric|between:-180,180',
+            'direccion' => 'nullable|string|max:255',
+        ];
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        $paradas = BusParada::listarParadas($request->buscar, $request->input('estado', 1));
+        return view('admin.transporte.maestros.bus_paradas.index', compact('paradas'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate($this->rules());
+        $parada = BusParada::crearParada($validated);
+        return response()->json([
+            'success' => true,
+            'message' => 'Parada registrada correctamente.',
+            'parada'  => [
+                'id'        => $parada->id,
+                'nombre'    => $parada->nombre,
+                'lat'       => $parada->lat,
+                'lng'       => $parada->lng,
+                'direccion' => $parada->direccion,
+                'estado'    => true,
+            ],
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(BusParada $busParada)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BusParada $busParada)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, BusParada $busParada)
     {
-        //
+        $validated = $request->validate($this->rules($busParada->id));
+        BusParada::actualizarParada($busParada, $validated);
+        $busParada->refresh();
+        return response()->json([
+            'success' => true,
+            'message' => 'Parada actualizada correctamente.',
+            'parada'  => [
+                'id'        => $busParada->id,
+                'nombre'    => $busParada->nombre,
+                'lat'       => $busParada->lat,
+                'lng'       => $busParada->lng,
+                'direccion' => $busParada->direccion,
+                'estado'    => $busParada->estado,
+            ],
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(BusParada $busParada)
     {
-        //
+        $busParada->update(['estado' => 0]);
+        return response()->json(['success' => true, 'message' => 'Parada inactivada correctamente.']);
+    }
+
+    public function activar(BusParada $busParada)
+    {
+        $busParada->update(['estado' => 1]);
+        return response()->json(['success' => true, 'message' => 'Parada activada correctamente.']);
+    }
+
+    public function verificarNombre(Request $request)
+    {
+        $query = BusParada::where('nombre', trim($request->nombre));
+        if ($request->exclude) {
+            $query->where('id', '!=', $request->exclude);
+        }
+        return response()->json(['existe' => $query->exists()]);
     }
 }
