@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('bus_rutas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100);
-            $table->decimal('distancia_km', 10, 2);
-            $table->timestamp('hora_salida_manana')->nullable();
-            $table->timestamp('hora_salida_tarde')->nullable();
-            $table->timestamp('hora_salida_noche')->nullable();
-            $table->tinyInteger('archivo')->nullable();
+            $table->decimal('distancia_km', 8, 2);
+            $table->time('hora_salida_manana')->nullable();
+            $table->time('hora_salida_tarde')->nullable();
+            $table->time('hora_salida_noche')->nullable();
             $table->text('descripcion')->nullable();
             $table->foreignId('sucursal_origen_id')->constrained('sucursals')->onDelete('cascade');
             $table->foreignId('sucursal_destino_id')->constrained('sucursals')->onDelete('cascade');

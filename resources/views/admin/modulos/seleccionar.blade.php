@@ -26,6 +26,7 @@
                         'comedor' => ['icon' => 'fas fa-utensils'],
                         'salud' => ['icon' => 'fas fa-heartbeat'],
                         'beca' => ['icon' => 'fas fa-graduation-cap'],
+                        'transporte' => ['icon' => 'fas fa-bus'],
                     ];
                     $fallback = ['icon' => 'fas fa-cubes'];
                 @endphp
