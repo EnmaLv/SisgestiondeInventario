@@ -1,12 +1,42 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BecaBeneficioController;
+use App\Http\Controllers\BecaController;
 use App\Models\Becas\Beneficio;
+use App\Models\Becas\Beca;
 use App\Http\Resources\BeneficioResource;
+use App\Http\Resources\BecaResource;
 
 Route::prefix('beca')->group(function () {
     // Rutas de beca
     Route::get('beneficios', function () {
         return BeneficioResource::collection(Beneficio::paginate(10));
     });
+
+    Route::get('becas', function () {
+        return BecaResource::collection(Beca::with(['beneficios', 'asignacionesTrabajo.tutor'])->paginate(10));
+    });
 });
+
+Route::middleware(['auth', 'tasa.actualizada'])
+    ->prefix('/admin')
+    ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+    ->group(function () {
+        Route::get('/becas', [BecaController::class, 'index'])->name('admin.becas.index');
+        Route::get('/becas/create', [BecaController::class, 'create'])->name('admin.becas.create');
+        Route::post('/becas/store', [BecaController::class, 'store'])->name('admin.becas.store');
+
+        Route::get('/becas/beneficios', [BecaBeneficioController::class, 'index'])->name('admin.becas.beneficios.index');
+        Route::get('/becas/beneficios/create', [BecaBeneficioController::class, 'create'])->name('admin.becas.beneficios.create');
+        Route::post('/becas/beneficios/store', [BecaBeneficioController::class, 'store'])->name('admin.becas.beneficios.store');
+        Route::get('/becas/beneficios/{beneficio}/edit', [BecaBeneficioController::class, 'edit'])->name('admin.becas.beneficios.edit');
+        Route::put('/becas/beneficios/{beneficio}', [BecaBeneficioController::class, 'update'])->name('admin.becas.beneficios.update');
+        Route::put('/becas/beneficios/{beneficio}/toggle', [BecaBeneficioController::class, 'toggle'])->name('admin.becas.beneficios.toggle');
+
+        Route::get('/becas/{beca}', [BecaController::class, 'show'])->name('admin.becas.show');
+        Route::get('/becas/{beca}/edit', [BecaController::class, 'edit'])->name('admin.becas.edit');
+        Route::put('/becas/{beca}', [BecaController::class, 'update'])->name('admin.becas.update');
+        Route::put('/becas/{beca}/toggle', [BecaController::class, 'toggle'])->name('admin.becas.toggle');
+        Route::get('/becas/{beca}/json', [BecaController::class, 'json'])->name('admin.becas.json');
+    });
