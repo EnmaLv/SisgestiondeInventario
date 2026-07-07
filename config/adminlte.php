@@ -664,6 +664,16 @@ return [
             'url'    => 'admin/transporte/maestros/bus_paradas',
             'active' => ['admin/transporte/maestros/bus_paradas*'],
         ],
+=======
+        [
+            'text' => 'Jornada',
+            'key' => 'jornada_becas',
+            'module' => 'beca',
+            'url' => 'admin/becas/jornada',
+            'icon' => 'fas fa-user-clock',
+            'active' => ['admin/becas/jornada*'],
+        ]
+>>>>>>> efe6edc (Modulos de Jornada de becas)
     ],
 
 
