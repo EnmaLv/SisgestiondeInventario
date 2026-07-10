@@ -21,6 +21,19 @@ class BecaRequest extends FormRequest
             'beneficios.*.id' => ['nullable', 'exists:be_beneficios,id'],
             'beneficios.*.observacion' => ['nullable', 'string'],
             'beneficios.*.activo' => ['nullable'],
+            'requiere_tutor' => ['nullable', 'boolean'],
+            'tutores' => ['nullable', 'array'],
+            'tutores.*.id' => ['nullable', 'exists:be_beca_tutores,id'],
+            'tutores.*.rol_id' => ['nullable', 'exists:rol,id_rol'],
+            'tutores.*.tutor_id' => ['nullable', 'exists:persona,id_persona'],
+            'tutores.*.descripcion' => ['nullable', 'string'],
+            'asignaciones' => ['nullable', 'array'],
+            'asignaciones.*.id' => ['nullable', 'exists:be_beca_trabajo_asignaciones,id'],
+            'asignaciones.*.area' => ['nullable', 'string', 'max:255'],
+            'asignaciones.*.horario' => ['nullable', 'string', 'max:255'],
+            'asignaciones.*.tutor_id' => ['nullable', 'exists:persona,id_persona'],
+            'asignaciones.*.observaciones' => ['nullable', 'string'],
+            'asignaciones.*.activo' => ['nullable', 'boolean'],
         ];
     }
 
@@ -28,6 +41,7 @@ class BecaRequest extends FormRequest
     {
         $this->merge([
             'activo' => $this->boolean('activo'),
+            'requiere_tutor' => $this->boolean('requiere_tutor'),
         ]);
     }
 }

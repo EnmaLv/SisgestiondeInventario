@@ -39,4 +39,9 @@ Route::middleware(['auth', 'tasa.actualizada'])
         Route::put('/becas/{beca}', [BecaController::class, 'update'])->name('admin.becas.update');
         Route::put('/becas/{beca}/toggle', [BecaController::class, 'toggle'])->name('admin.becas.toggle');
         Route::get('/becas/{beca}/json', [BecaController::class, 'json'])->name('admin.becas.json');
+        
+        // Beneficiarios de beca
+        Route::post('/becas/{beca}/beneficiarios', [\App\Http\Controllers\BecaBeneficiarioController::class, 'store'])->name('admin.becas.beneficiarios.store');
+        Route::put('/becas/{beca}/beneficiarios/{beneficiario}', [\App\Http\Controllers\BecaBeneficiarioController::class, 'update'])->name('admin.becas.beneficiarios.update');
+        Route::delete('/becas/{beca}/beneficiarios/{beneficiario}', [\App\Http\Controllers\BecaBeneficiarioController::class, 'destroy'])->name('admin.becas.beneficiarios.destroy');
     });

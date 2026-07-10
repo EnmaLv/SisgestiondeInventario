@@ -24,13 +24,18 @@
         <form action="{{ route('admin.becas.update', $beca) }}" method="POST" class="rd-prevent-double-submit">
             @csrf
             @method('PUT')
-            @include('admin.becas._form')
-            <hr>
-            <div class="d-flex justify-content-end" style="gap:12px;">
-                <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">Cancelar</a>
-                <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
-                    <i class="fas fa-save"></i> Guardar cambios
-                </button>
+
+            <div class="tab-content">
+                <div id="tab-config" class="tab-pane fade show active">
+                    @include('admin.becas._form_fields')
+                    <hr>
+                    <div class="d-flex justify-content-end" style="gap:12px;">
+                        <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">Cancelar</a>
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
+                            <i class="fas fa-save"></i> Guardar cambios
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

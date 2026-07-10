@@ -39,26 +39,54 @@
 
     <div class="rd-card p-4 mb-4">
         <div class="rd-card-header mb-3">
-            <h3 class="rd-title-sm">Beneficios</h3>
+            <h3 class="rd-title-sm">Beneficios asignados</h3>
         </div>
         <table class="rd-table">
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Descripcion</th>
-                    <th>Observacion</th>
+                    <th>Descripción</th>
+                    <th>Observación</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($beca->beneficios as $beneficio)
                     <tr>
                         <td>{{ $beneficio->nombre_beneficio }}</td>
-                        <td>{{ $beneficio->descripcion ?: 'Sin descripcion' }}</td>
-                        <td>{{ $beneficio->pivot->observacion ?: 'Sin observacion' }}</td>
+                        <td>{{ $beneficio->descripcion ?: 'Sin descripción' }}</td>
+                        <td>{{ $beneficio->pivot->observacion ?: 'Sin observación' }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="text-center py-4">Esta beca no tiene beneficios asignados.</td>
+                        <td colspan="3" class="text-center py-4">No hay beneficios asignados a esta beca.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="rd-card p-4 mb-4">
+        <div class="rd-card-header mb-3">
+            <h3 class="rd-title-sm">Tutores de la beca</h3>
+        </div>
+        <table class="rd-table">
+            <thead>
+                <tr>
+                    <th>Rol</th>
+                    <th>Tutor</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($beca->tutores as $tutor)
+                    <tr>
+                        <td>{{ optional($tutor->rol)->nombre ?? 'Sin rol' }}</td>
+                        <td>{{ $tutor->tutor ? trim($tutor->tutor->nombre_persona . ' ' . $tutor->tutor->apellido_persona) : 'Sin tutor asignado' }}</td>
+                        <td>{{ $tutor->descripcion ?: 'Sin descripción' }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3" class="text-center py-4">No hay tutores asignados a esta beca.</td>
                     </tr>
                 @endforelse
             </tbody>

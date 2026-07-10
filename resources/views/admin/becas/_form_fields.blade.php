@@ -93,17 +93,6 @@
     </table>
 </div>
 
-@php
-    $becaTutores = old('tutores', isset($beca) ? $beca->tutores->map(function ($item) {
-        return [
-            'id' => $item->id,
-            'rol_id' => $item->rol_id ?? optional($item->tutor?->usuarios->first()?->roles->first())->id_rol,
-            'tutor_id' => $item->tutor_id,
-            'descripcion' => $item->descripcion ?? '',
-        ];
-    })->toArray() : []);
-@endphp
-
 <div class="rd-card-header mb-3 d-flex justify-content-between align-items-center">
     <h3 class="rd-title-sm">Tutores de la beca</h3>
     <button type="button" id="addTutorBtn" class="rd-btn rd-btn-secondary">
@@ -121,6 +110,17 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $becaTutores = old('tutores', isset($beca) ? $beca->tutores->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'rol_id' => $item->rol_id ?? optional($item->tutor?->usuarios->first()?->roles->first())->id_rol,
+                        'tutor_id' => $item->tutor_id,
+                        'descripcion' => $item->descripcion ?? '',
+                    ];
+                })->toArray() : []);
+            @endphp
+
             @forelse($becaTutores as $index => $tutorRow)
                 <tr data-index="{{ $index }}">
                     <input type="hidden" name="tutores[{{ $index }}][id]" value="{{ $tutorRow['id'] ?? '' }}">
@@ -205,20 +205,20 @@
 
 @push('js')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const tutorTableBody = document.querySelector('#tutorsTable tbody');
             const addTutorBtn = document.getElementById('addTutorBtn');
             const roleSelect = document.getElementById('tutorRoleSelect');
             const personSelect = document.getElementById('tutorPersonSelect');
             const descriptionInput = document.getElementById('tutorDescription');
             const saveTutorModalBtn = document.getElementById('saveTutorModalBtn');
-            const addTutorModalEl = document.getElementById('addTutorModal');
 
             const ROLES = @json($tutorJsRoles);
+
             const PERSONAS = @json($tutorJsPersonas);
 
             function buildPersonaOptions(roleId) {
-                const personas = PERSONAS.filter(function(persona) {
+                const personas = PERSONAS.filter(function (persona) {
                     return persona.role_ids.includes(parseInt(roleId, 10));
                 });
 
@@ -226,13 +226,13 @@
                     return '<option value="">No hay personas disponibles para este rol</option>';
                 }
 
-                return '<option value="">Seleccione persona</option>' + personas.map(function(persona) {
+                return '<option value="">Seleccione persona</option>' + personas.map(function (persona) {
                     return `<option value="${persona.id}">${persona.name}</option>`;
                 }).join('');
             }
 
             function getTutorRowCount() {
-                return Array.from(tutorTableBody.querySelectorAll('tr')).filter(function(row) {
+                return Array.from(tutorTableBody.querySelectorAll('tr')).filter(function (row) {
                     return row.querySelector('input[name^="tutores"]');
                 }).length;
             }
@@ -243,7 +243,7 @@
             }
 
             function attachRemoveHandler(button) {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const row = button.closest('tr');
                     row.remove();
                     if (!getTutorRowCount()) {
@@ -284,7 +284,7 @@
                 descriptionInput.value = '';
             }
 
-            roleSelect.addEventListener('change', function() {
+            roleSelect.addEventListener('change', function () {
                 if (!this.value) {
                     personSelect.innerHTML = '<option value="">Seleccione primero un rol</option>';
                     personSelect.disabled = true;
@@ -295,18 +295,22 @@
                 personSelect.disabled = false;
             });
 
-            addTutorBtn.addEventListener('click', function() {
-                $('#addTutorModal').modal('show');
+            const addTutorModalEl = document.getElementById('addTutorModal');
+            const addTutorModalInstance = new bootstrap.Modal(addTutorModalEl);
+            const modalCloseButtons = addTutorModalEl.querySelectorAll('[data-dismiss="modal"], [data-bs-dismiss="modal"]');
+
+            addTutorBtn.addEventListener('click', function () {
+                addTutorModalInstance.show();
             });
 
-            addTutorModalEl.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    $('#addTutorModal').modal('hide');
+            modalCloseButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    addTutorModalInstance.hide();
                     resetTutorModal();
                 });
             });
 
-            saveTutorModalBtn.addEventListener('click', function() {
+            saveTutorModalBtn.addEventListener('click', function () {
                 const rolId = roleSelect.value;
                 const tutorId = personSelect.value;
                 const descripcion = descriptionInput.value.trim();
@@ -316,11 +320,11 @@
                     return;
                 }
 
-                const rolName = ROLES.find(function(role) {
+                const rolName = ROLES.find(function (role) {
                     return role.id == rolId;
                 })?.name || '';
 
-                const tutorName = PERSONAS.find(function(persona) {
+                const tutorName = PERSONAS.find(function (persona) {
                     return persona.id == tutorId;
                 })?.name || '';
 
@@ -341,22 +345,12 @@
                 tutorTableBody.appendChild(newRow);
                 updateTutorButtonLabel();
                 resetTutorModal();
-                $('#addTutorModal').modal('hide');
+                addTutorModalInstance.hide();
             });
 
-            document.querySelectorAll('.remove-tutor').forEach(attachRemoveHandler);
-            document.querySelectorAll('.beneficio-check').forEach(function(input) {
-                input.addEventListener('change', function() {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Beneficios actualizados',
-                        text: 'Recuerde guardar la beca para confirmar este cambio.',
-                        timer: 2200,
-                        showConfirmButton: false
-                    });
-                });
-            });
+            tutorTableBody.querySelectorAll('.remove-tutor').forEach(attachRemoveHandler);
             updateTutorButtonLabel();
         });
     </script>
 @endpush
+

@@ -50,8 +50,9 @@
                             <th>Codigo</th>
                             <th>Nombre</th>
                             <th>Beneficios</th>
+                            <th>Tutores</th>
                             <th class="text-center">Estado</th>
-                            <th style="width:170px" class="text-center">Acciones</th>
+                            <th style="width:210px" class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +62,7 @@
                                 <td><strong>{{ $beca->codigo }}</strong></td>
                                 <td>{{ $beca->nombre }}</td>
                                 <td>{{ $beca->beneficios->count() }}</td>
+                                <td>{{ $beca->tutores->count() }}</td>
                                 <td class="text-center">
                                     <span class="rd-badge {{ $beca->activo ? 'rd-badge-success' : 'rd-badge-danger' }}">
                                         {{ $beca->activo ? 'Activo' : 'Inactivo' }}
@@ -68,6 +70,9 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
+                                        <a href="{{ route('admin.becas.show', $beca) }}" class="rd-action" title="Ver">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
                                         <a href="{{ route('admin.becas.edit', $beca) }}" class="rd-action" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>

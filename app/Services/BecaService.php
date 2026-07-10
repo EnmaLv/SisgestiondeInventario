@@ -3,15 +3,23 @@
 namespace App\Services;
 
 use App\Models\Becas\Beca;
+use App\Services\BecaTutorService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class BecaService
 {
+    public function __construct(
+        private BecaBeneficioService $beneficioService,
+        private BecaAsignacionService $asignacionService,
+        private BecaTutorService $tutorService,
+    ) {
+    }
+
     public function listar(array $filters)
     {
-        return Beca::with(['beneficios'])
+        return Beca::with(['beneficios', 'tutores'])
             ->buscar($filters['buscar'] ?? null)
             ->activo($filters['activo'] ?? 1)
             ->latest()
@@ -26,9 +34,11 @@ class BecaService
                 'codigo' => $this->generarCodigoUnico(),
             ]);
 
-            $this->sincronizarBeneficios($beca, $data['beneficios'] ?? []);
+            $this->beneficioService->sincronizar($beca, $data['beneficios'] ?? []);
+            $this->tutorService->sincronizar($beca, $data['tutores'] ?? []);
+            $this->asignacionService->sincronizar($beca, $data['asignaciones'] ?? []);
 
-            return $beca->load(['beneficios']);
+            return $beca->load(['beneficios', 'tutores.tutor', 'asignacionesTrabajo.tutor']);
         });
     }
 
@@ -38,12 +48,14 @@ class BecaService
             $beneficiosAntes = $beca->beneficios()->pluck('be_beneficios.id')->sort()->values()->all();
 
             $beca->update($this->datosBeca($data));
-            $this->sincronizarBeneficios($beca, $data['beneficios'] ?? []);
+            $this->beneficioService->sincronizar($beca, $data['beneficios'] ?? []);
+            $this->tutorService->sincronizar($beca, $data['tutores'] ?? []);
+            $this->asignacionService->sincronizar($beca, $data['asignaciones'] ?? []);
 
             $beneficiosDespues = $beca->beneficios()->pluck('be_beneficios.id')->sort()->values()->all();
 
             return [
-                'beca' => $beca->fresh(['beneficios']),
+                'beca' => $beca->fresh(['beneficios', 'asignacionesTrabajo.tutor']),
                 'beneficios_cambiaron' => $beneficiosAntes !== $beneficiosDespues,
             ];
         });
@@ -71,24 +83,7 @@ class BecaService
             'nombre',
             'descripcion',
             'activo',
+            'requiere_tutor',
         ]);
-    }
-
-    private function sincronizarBeneficios(Beca $beca, array $beneficios): void
-    {
-        $sync = [];
-
-        foreach ($beneficios as $beneficio) {
-            if (empty($beneficio['id'])) {
-                continue;
-            }
-
-            $sync[$beneficio['id']] = [
-                'observacion' => $beneficio['observacion'] ?? null,
-                'activo' => isset($beneficio['activo']),
-            ];
-        }
-
-        $beca->beneficios()->sync($sync);
     }
 }

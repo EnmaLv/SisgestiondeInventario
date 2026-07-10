@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Becas\Beca;
 use App\Models\Becas\Beneficio;
 use Illuminate\Support\Str;
 
@@ -39,6 +40,24 @@ class BecaBeneficioService
         $beneficio->update(['status' => !$beneficio->status]);
 
         return $beneficio->fresh();
+    }
+
+    public function sincronizar(Beca $beca, array $beneficios): void
+    {
+        $sync = [];
+
+        foreach ($beneficios as $beneficio) {
+            if (empty($beneficio['id'])) {
+                continue;
+            }
+
+            $sync[$beneficio['id']] = [
+                'observacion' => $beneficio['observacion'] ?? null,
+                'activo' => isset($beneficio['activo']),
+            ];
+        }
+
+        $beca->beneficios()->sync($sync);
     }
 
     private function datosBeneficio(array $data): array
