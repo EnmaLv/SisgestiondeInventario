@@ -10,6 +10,11 @@
     /*Transiciones*/
     --trans-default: all .2s ease;
 }
+
+.custom-switch .custom-control-input:not(:checked) ~ .custom-control-label::before {
+    background-color: transparent !important;
+    border-color: #cbd5e1 !important;
+}
 /* RD INPUT GROUP */
         .rd-input-group {
             display: flex;
