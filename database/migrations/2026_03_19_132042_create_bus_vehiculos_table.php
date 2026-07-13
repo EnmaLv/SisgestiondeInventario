@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('anio');
             $table->string('color', 50);
             $table->integer('cantidad_pasajeros')->default(0);
-            $table->foreignId('bus_tipo_combustible_id')->constrained('bus_tipo_combustibles')->onDelete('cascade');
+            $table->foreignId('tipo_combustible_id')->constrained('tipo_combustibles')->onDelete('cascade');
             $table->integer('cantidad_bocas')->default(1);
             $table->decimal('capacidad_tanque_litros', 8, 2)->default(0);
             $table->decimal('consumo_litros_km', 6, 3)->default(0);

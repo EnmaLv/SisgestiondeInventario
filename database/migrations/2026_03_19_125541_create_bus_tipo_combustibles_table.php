@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bus_tipo_combustibles', function (Blueprint $table) {
+        Schema::create('tipo_combustibles', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100);
             $table->string('descripcion', 255)->nullable();
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus_tipo_combustibles');
+        Schema::dropIfExists('tipo_combustibles');
     }
 };

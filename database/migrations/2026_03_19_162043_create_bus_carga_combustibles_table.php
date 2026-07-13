@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('bus_vehiculo_id')->constrained('bus_vehiculos')->onDelete('cascade');
             $table->foreignId('bus_viaje_id')->constrained('bus_viajes')->onDelete('cascade');
-            $table->foreignId('bus_tipo_combustible_id')->constrained('bus_tipo_combustibles')->onDelete('cascade');
+            $table->foreignId('tipo_combustible_id')->constrained('tipo_combustibles')->onDelete('cascade');
             $table->date('fecha');
             $table->decimal('litros', 8, 2);
             $table->decimal('precio_litros', 10, 2);

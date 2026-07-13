@@ -9,7 +9,7 @@ class BusTipoCombustible extends Model
 {
     use ConvierteAMayusculasNoEloquent;
 
-    protected $table    = 'bus_tipo_combustibles';
+    protected $table    = 'tipo_combustibles';
     protected $fillable = ['nombre', 'descripcion', 'estado'];
 
     protected $casts = [

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\BusMarcaApiController;
 use App\Http\Controllers\Api\BusModeloApiController;
+use App\Http\Controllers\Api\BusTipoCombustibleApiController;
 
 Route::get('/ping', fn() => response()->json(['ok' => true]));
 
@@ -30,5 +31,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('modelos/{modelo}',      [BusModeloApiController::class, 'update']);
         Route::patch('modelos/{modelo}/toggle', [BusModeloApiController::class, 'toggle']);
         Route::delete('modelos/{modelo}',      [BusModeloApiController::class, 'destroy']);
+
+        Route::get('combustibles',                  [BusTipoCombustibleApiController::class, 'index']);
+        Route::post('combustibles',                 [BusTipoCombustibleApiController::class, 'store']);
+        Route::get('combustibles/{combustible}',    [BusTipoCombustibleApiController::class, 'show']);
+        Route::put('combustibles/{combustible}',    [BusTipoCombustibleApiController::class, 'update']);
+        Route::patch('combustibles/{combustible}/toggle', [BusTipoCombustibleApiController::class, 'toggle']);
+        Route::delete('combustibles/{combustible}', [BusTipoCombustibleApiController::class, 'destroy']);
     });
 });

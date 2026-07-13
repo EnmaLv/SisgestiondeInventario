@@ -20,7 +20,7 @@ class BusVehiculoController extends Controller
             'anio'                     => 'required|integer|min:1990|max:' . date('Y'),
             'color'                    => 'required|string|max:50',
             'cantidad_pasajeros'       => 'required|integer|min:1|max:150',
-            'bus_tipo_combustible_id'  => 'required|exists:bus_tipo_combustibles,id',
+            'bus_tipo_combustible_id'  => 'required|exists:tipo_combustibles,id',
             'cantidad_bocas'           => 'required|integer|min:1|max:10',
             'capacidad_tanque_litros'  => 'required|numeric|min:1|max:1000',
             'consumo_litros_km'        => 'required|numeric|min:0.001|max:5',
