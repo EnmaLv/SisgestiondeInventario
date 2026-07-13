@@ -11,7 +11,7 @@ class BusModeloApiController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = BusModelo::with('marca')->orderBy('nombre');
+        $query = BusModelo::with('busMarca')->orderBy('nombre');
 
         if ($request->filled('marca_id')) {
             $query->where('marca_id', $request->integer('marca_id'));
@@ -52,13 +52,13 @@ class BusModeloApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Modelo creado correctamente.',
-            'data'    => $modelo->load('marca'),
+            'data'    => $modelo->load('busMarca'),
         ], 201);
     }
 
     public function show(BusModelo $modelo): JsonResponse
     {
-        return response()->json(['success' => true, 'data' => $modelo->load('marca')]);
+        return response()->json(['success' => true, 'data' => $modelo->load('busMarca')]);
     }
 
     public function update(Request $request, BusModelo $modelo): JsonResponse
@@ -76,7 +76,7 @@ class BusModeloApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Modelo actualizado.',
-            'data'    => $modelo->fresh()->load('marca'),
+            'data'    => $modelo->fresh()->load('busMarca'),
         ]);
     }
 
@@ -87,7 +87,7 @@ class BusModeloApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => $modelo->estado ? 'Modelo activado.' : 'Modelo desactivado.',
-            'data'    => $modelo->fresh()->load('marca'),
+            'data'    => $modelo->fresh()->load('busMarca'),
         ]);
     }
 
