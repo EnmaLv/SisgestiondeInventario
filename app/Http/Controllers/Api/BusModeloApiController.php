@@ -14,7 +14,7 @@ class BusModeloApiController extends Controller
         $query = BusModelo::with('marca')->orderBy('nombre');
 
         if ($request->filled('marca_id')) {
-            $query->where('bus_marca_id', $request->integer('marca_id'));
+            $query->where('marca_id', $request->integer('marca_id'));
         }
 
         if ($request->filled('estado')) {
@@ -27,12 +27,12 @@ class BusModeloApiController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'bus_marca_id' => 'required|integer|exists:bus_marca,id',
-            'nombre'       => 'required|string|max:100',
+            'marca_id' => 'required|integer|exists:marcas,id',
+            'nombre'   => 'required|string|max:100',
         ]);
 
         // Nombre único por marca
-        $existe = BusModelo::where('bus_marca_id', $validated['bus_marca_id'])
+        $existe = BusModelo::where('marca_id', $validated['marca_id'])
             ->where('nombre', ucfirst(trim($validated['nombre'])))
             ->exists();
 
@@ -44,9 +44,9 @@ class BusModeloApiController extends Controller
         }
 
         $modelo = BusModelo::create([
-            'bus_marca_id' => $validated['bus_marca_id'],
-            'nombre'       => ucfirst(trim($validated['nombre'])),
-            'estado'       => 1,
+            'marca_id' => $validated['marca_id'],
+            'nombre'   => ucfirst(trim($validated['nombre'])),
+            'estado'   => 1,
         ]);
 
         return response()->json([
@@ -64,13 +64,13 @@ class BusModeloApiController extends Controller
     public function update(Request $request, BusModelo $modelo): JsonResponse
     {
         $validated = $request->validate([
-            'bus_marca_id' => 'required|integer|exists:bus_marca,id',
-            'nombre'       => 'required|string|max:100',
+            'marca_id' => 'required|integer|exists:marcas,id',
+            'nombre'   => 'required|string|max:100',
         ]);
 
         $modelo->update([
-            'bus_marca_id' => $validated['bus_marca_id'],
-            'nombre'       => ucfirst(trim($validated['nombre'])),
+            'marca_id' => $validated['marca_id'],
+            'nombre'   => ucfirst(trim($validated['nombre'])),
         ]);
 
         return response()->json([

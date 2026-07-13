@@ -28,7 +28,7 @@ class BusMarcaApiController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:100|unique:bus_marcas,nombre',
+            'nombre' => 'required|string|max:100|unique:marcas,nombre',
         ]);
 
         $marca = BusMarca::create([
