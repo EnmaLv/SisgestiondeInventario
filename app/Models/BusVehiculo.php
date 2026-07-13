@@ -9,15 +9,15 @@ class BusVehiculo extends Model
 {
     use ConvierteAMayusculasNoEloquent;
 
-    protected $table = 'bus_vehiculos';
+    protected $table = 'vehiculos';
 
     protected $fillable = [
         'placa',
-        'bus_modelo_id',
+        'modelo_id',
         'anio',
         'color',
         'cantidad_pasajeros',
-        'bus_tipo_combustible_id',
+        'tipo_combustible_id',
         'cantidad_bocas',
         'capacidad_tanque_litros',
         'consumo_litros_km',
@@ -35,12 +35,12 @@ class BusVehiculo extends Model
 
     public function modelo()
     {
-        return $this->belongsTo(BusModelo::class, 'bus_modelo_id');
+        return $this->belongsTo(BusModelo::class, 'modelo_id');
     }
 
     public function tipoCombustible()
     {
-        return $this->belongsTo(BusTipoCombustible::class, 'bus_tipo_combustible_id');
+        return $this->belongsTo(BusTipoCombustible::class, 'tipo_combustible_id');
     }
 
     public function sucursal()

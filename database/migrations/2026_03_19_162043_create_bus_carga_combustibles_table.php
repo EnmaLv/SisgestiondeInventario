@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bus_carga_combustibles', function (Blueprint $table) {
+        Schema::create('carga_combustibles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bus_vehiculo_id')->constrained('bus_vehiculos')->onDelete('cascade');
+            $table->foreignId('vehiculo_id')->constrained('vehiculos')->onDelete('cascade');
             $table->foreignId('bus_viaje_id')->constrained('bus_viajes')->onDelete('cascade');
             $table->foreignId('tipo_combustible_id')->constrained('tipo_combustibles')->onDelete('cascade');
             $table->date('fecha');
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus_carga_combustibles');
+        Schema::dropIfExists('carga_combustibles');
     }
 };

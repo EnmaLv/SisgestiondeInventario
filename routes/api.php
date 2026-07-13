@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\BusMarcaApiController;
 use App\Http\Controllers\Api\BusModeloApiController;
 use App\Http\Controllers\Api\BusTipoCombustibleApiController;
+use App\Http\Controllers\Api\BusVehiculoApiController;
 
 Route::get('/ping', fn() => response()->json(['ok' => true]));
 
@@ -38,5 +39,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('combustibles/{combustible}',    [BusTipoCombustibleApiController::class, 'update']);
         Route::patch('combustibles/{combustible}/toggle', [BusTipoCombustibleApiController::class, 'toggle']);
         Route::delete('combustibles/{combustible}', [BusTipoCombustibleApiController::class, 'destroy']);
+
+        Route::get('vehiculos',               [BusVehiculoApiController::class, 'index']);
+        Route::post('vehiculos',              [BusVehiculoApiController::class, 'store']);
+        Route::get('vehiculos/{vehiculo}',    [BusVehiculoApiController::class, 'show']);
+        Route::put('vehiculos/{vehiculo}',    [BusVehiculoApiController::class, 'update']);
+        Route::patch('vehiculos/{vehiculo}/toggle', [BusVehiculoApiController::class, 'toggle']);
+        Route::delete('vehiculos/{vehiculo}', [BusVehiculoApiController::class, 'destroy']);
     });
 });

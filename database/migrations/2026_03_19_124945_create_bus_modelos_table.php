@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bus_modelos', function (Blueprint $table) {
+        Schema::create('modelos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bus_marca_id')->constrained('bus_marcas')->onDelete('cascade');
+            $table->foreignId('marca_id')->constrained('marcas')->onDelete('cascade');
             $table->string('nombre', 100);
             $table->string('descripcion', 255)->nullable();
             $table->tinyInteger('estado')->default(1);
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus_modelos');
+        Schema::dropIfExists('modelos');
     }
 };

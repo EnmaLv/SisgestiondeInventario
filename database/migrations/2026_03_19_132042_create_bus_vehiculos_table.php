@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bus_vehiculos', function (Blueprint $table) {
+        Schema::create('vehiculos', function (Blueprint $table) {
             $table->id();
             $table->string('placa', 20);
-            $table->foreignId('bus_modelo_id')->constrained('bus_modelos')->onDelete('cascade');
+            $table->foreignId('modelo_id')->constrained('modelos')->onDelete('cascade');
             $table->integer('anio');
             $table->string('color', 50);
             $table->integer('cantidad_pasajeros')->default(0);
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus_vehiculos');
+        Schema::dropIfExists('vehiculos');
     }
 };

@@ -72,9 +72,6 @@ class BusTipoCombustibleApiController extends Controller
 
     public function toggle(BusTipoCombustible $combustible): JsonResponse
     {
-        // Nota: Si en el futuro este modelo tiene relación con 'vehiculos', 
-        // podrías validar aquí que no se inactive si está en uso, tal como hiciste en las marcas.
-
         $combustible->update(['estado' => $combustible->estado ? 0 : 1]);
 
         return response()->json([
@@ -86,7 +83,6 @@ class BusTipoCombustibleApiController extends Controller
 
     public function destroy(BusTipoCombustible $combustible): JsonResponse
     {
-        // Validación preventiva por si agregas la relación más adelante
         if (method_exists($combustible, 'vehiculos') && $combustible->vehiculos()->exists()) {
             return response()->json([
                 'success' => false,

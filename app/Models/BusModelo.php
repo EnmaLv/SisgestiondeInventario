@@ -9,8 +9,8 @@ class BusModelo extends Model
 {
     use ConvierteAMayusculasNoEloquent;
 
-    protected $table    = 'bus_modelos';
-    protected $fillable = ['bus_marca_id', 'nombre', 'descripcion', 'estado'];
+    protected $table    = 'modelos';
+    protected $fillable = ['marca_id', 'nombre', 'descripcion', 'estado'];
 
     protected $casts = [
         'estado' => 'boolean',
@@ -18,7 +18,7 @@ class BusModelo extends Model
 
     public function busMarca()
     {
-        return $this->belongsTo(BusMarca::class, 'bus_marca_id');
+        return $this->belongsTo(BusMarca::class, 'marca_id');
     }
 
     public function getDescripcionAttribute($value): string
@@ -40,18 +40,18 @@ class BusModelo extends Model
     public static function crearModelo(array $datos)
     {
         return self::create([
-            'bus_marca_id' => $datos['bus_marca_id'],
-            'nombre'       => $datos['nombre'],
+            'marca_id' => $datos['marca_id'],
+            'nombre'   => $datos['nombre'],
             'descripcion'  => $datos['descripcion'] ?? null,
-            'estado'       => 1,
+            'estado'   => 1,
         ]);
     }
 
     public static function actualizarModelo(BusModelo $modelo, array $datos)
     {
         $modelo->update([
-            'bus_marca_id' => $datos['bus_marca_id'],
-            'nombre'       => $datos['nombre'],
+            'marca_id' => $datos['marca_id'],
+            'nombre'   => $datos['nombre'],
             'descripcion'  => $datos['descripcion'] ?? null,
         ]);
 

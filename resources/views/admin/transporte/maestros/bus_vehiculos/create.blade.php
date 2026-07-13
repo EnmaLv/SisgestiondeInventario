@@ -54,17 +54,17 @@
                         <label class="font-weight-bold">Modelo</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-car"></i></span>
-                            <select id="selectModelo" name="bus_modelo_id"
-                                class="form-control rd-filter-input @error('bus_modelo_id') is-invalid @enderror">
+                            <select id="selectModelo" name="modelo_id"
+                                class="form-control rd-filter-input @error('modelo_id') is-invalid @enderror">
                                 <option value="">-- Seleccione --</option>
                                 @foreach($modelos as $modelo)
-                                    <option value="{{ $modelo->id }}" {{ old('bus_modelo_id') == $modelo->id ? 'selected' : '' }}>
+                                    <option value="{{ $modelo->id }}" {{ old('modelo_id') == $modelo->id ? 'selected' : '' }}>
                                         {{ $modelo->busMarca->nombre ?? '' }} - {{ $modelo->nombre }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        @error('bus_modelo_id')
+                        @error('modelo_id')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
                         <div class="mt-2">
@@ -118,17 +118,17 @@
                         <label class="font-weight-bold">Tipo de Combustible</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-gas-pump"></i></span>
-                            <select id="selectCombustible" name="bus_tipo_combustible_id"
-                                class="form-control rd-filter-input @error('bus_tipo_combustible_id') is-invalid @enderror">
+                            <select id="selectCombustible" name="tipo_combustible_id"
+                                class="form-control rd-filter-input @error('tipo_combustible_id') is-invalid @enderror">
                                 <option value="">-- Seleccione --</option>
                                 @foreach($tipos as $tipo)
-                                    <option value="{{ $tipo->id }}" {{ old('bus_tipo_combustible_id') == $tipo->id ? 'selected' : '' }}>
+                                    <option value="{{ $tipo->id }}" {{ old('tipo_combustible_id') == $tipo->id ? 'selected' : '' }}>
                                         {{ $tipo->nombre }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        @error('bus_tipo_combustible_id')
+                        @error('tipo_combustible_id')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
                         <div class="mt-2">

@@ -15,12 +15,12 @@ class BusVehiculoController extends Controller
     private function rules(int $excludeId = null): array
     {
         return [
-            'placa'                    => 'required|string|max:20|unique:bus_vehiculos,placa,' . $excludeId,
-            'bus_modelo_id'            => 'required|exists:bus_modelos,id',
+            'placa'                    => 'required|string|max:20|unique:vehiculos,placa,' . $excludeId,
+            'modelo_id'            => 'required|exists:modelos,id',
             'anio'                     => 'required|integer|min:1990|max:' . date('Y'),
             'color'                    => 'required|string|max:50',
             'cantidad_pasajeros'       => 'required|integer|min:1|max:150',
-            'bus_tipo_combustible_id'  => 'required|exists:tipo_combustibles,id',
+            'tipo_combustible_id'  => 'required|exists:tipo_combustibles,id',
             'cantidad_bocas'           => 'required|integer|min:1|max:10',
             'capacidad_tanque_litros'  => 'required|numeric|min:1|max:1000',
             'consumo_litros_km'        => 'required|numeric|min:0.001|max:5',
