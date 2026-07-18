@@ -14,12 +14,8 @@ class BusRuta extends Model
     protected $fillable = [
         'nombre',
         'distancia_km',
-        'hora_salida_manana',
-        'hora_salida_tarde',
-        'hora_salida_noche',
         'descripcion',
-        'sucursal_origen_id',
-        'sucursal_destino_id',
+        'sucursal_id',
         'estado',
     ];
 
@@ -27,14 +23,21 @@ class BusRuta extends Model
         'estado' => 'boolean',
     ];
 
-    public function sucursalOrigen()
+    public function sucursal()
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_origen_id');
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
 
-    public function sucursalDestino()
+    public function horarios()
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_destino_id');
+        return $this->hasMany(RutaHorario::class, 'bus_ruta_id');
+    }
+
+    public function paradas()
+    {
+        return $this->belongsToMany(BusParada::class, 'bus_ruta_paradas')
+            ->withPivot('orden')
+            ->orderBy('bus_ruta_paradas.orden');
     }
 
     public function getDescripcionAttribute($value): string
@@ -45,9 +48,9 @@ class BusRuta extends Model
     public static function listarRutas($buscar = null, $estado = 1)
     {
         return self::query()
-            ->with(['sucursalOrigen', 'sucursalDestino'])
-            ->when($buscar, fn ($q) => $q->where('nombre', 'like', "%{$buscar}%"))
-            ->when($estado !== null && $estado !== '', fn ($q) => $q->where('estado', $estado))
+            ->with(['sucursal', 'horarios'])
+            ->when($buscar, fn($q) => $q->where('nombre', 'like', "%{$buscar}%"))
+            ->when($estado !== null && $estado !== '', fn($q) => $q->where('estado', $estado))
             ->orderBy('nombre')
             ->paginate(10)
             ->withQueryString();
@@ -55,21 +58,23 @@ class BusRuta extends Model
 
     public static function crearRuta(array $datos)
     {
-        return self::create($datos);
+        return self::create([
+            'nombre'       => $datos['nombre'],
+            'distancia_km' => $datos['distancia_km'],
+            'descripcion'  => $datos['descripcion'] ?? null,
+            'sucursal_id'  => $datos['sucursal_id'],
+            'estado'       => 1,
+        ]);
     }
 
     public static function actualizarRuta(BusRuta $ruta, array $datos)
     {
-        $ruta->update($datos);
+        $ruta->update([
+            'nombre'       => $datos['nombre'],
+            'distancia_km' => $datos['distancia_km'],
+            'descripcion'  => $datos['descripcion'] ?? null,
+            'sucursal_id'  => $datos['sucursal_id'],
+        ]);
         return $ruta;
     }
-    public function verificarNombre(Request $request)
-    {
-        $query = BusRuta::where('nombre', trim($request->nombre));
-        if ($request->exclude) {
-            $query->where('id', '!=', $request->exclude);
-        }
-        return response()->json(['existe' => $query->exists()]);
-    }
-    
 }

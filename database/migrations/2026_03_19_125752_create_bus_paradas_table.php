@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('bus_paradas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100);
-            $table->decimal('lat', 10, 7)->nullable();
-            $table->decimal('lng', 11, 7)->nullable();
+            $table->decimal('lat', 10, 7);
+            $table->decimal('lng', 11, 7);
             $table->string('direccion', 255)->nullable();
             $table->integer('estado')->default(1);
             $table->timestamps();

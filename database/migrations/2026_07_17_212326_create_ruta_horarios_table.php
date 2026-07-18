@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bus_rutas', function (Blueprint $table) {
+        Schema::create('ruta_horarios', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->decimal('distancia_km', 8, 2)->default(0.00);
-            $table->text('descripcion')->nullable();
-            $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');
+            $table->foreignId('bus_ruta_id')->constrained('bus_rutas')->onDelete('cascade');
+            $table->time('hora_salida');
+            $table->enum('tipo_viaje', ['entrada', 'salida'])->default('entrada');
             $table->integer('estado')->default(1);
             $table->timestamps();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus_rutas');
+        Schema::dropIfExists('ruta_horarios');
     }
 };
