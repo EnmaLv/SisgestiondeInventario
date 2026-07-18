@@ -92,48 +92,62 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .leaflet-container {
+            font-family: inherit;
+        }
+    </style>
 @stop
 
 @push('js')
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBe4i9pwERQV0ScgC7Gyto8c2NgqaFrUpM&callback=initMap" async
-        defer></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         let map;
         let marker = null;
         const BASE_URL = '/admin/transporte/maestros/bus_paradas';
 
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
+
         function initMap() {
-            const centroDefecto = {
-                lat: 9.5597,
-                lng: -69.2014
-            };
+            const centroDefecto = [9.5597, -69.2014];
 
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: centroDefecto,
-                zoom: 14,
-                mapTypeControl: false,
-                streetViewControl: false
+            map = L.map('map').setView(centroDefecto, 14);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            map.on("click", (event) => {
+                colocarMarcador(event.latlng);
             });
 
-            map.addListener("click", (event) => {
-                colocarMarcador(event.latLng);
-            });
+            const oldLat = "{{ old('lat') }}";
+            const oldLng = "{{ old('lng') }}";
+
+            if (oldLat && oldLng) {
+                const posicionOld = L.latLng(parseFloat(oldLat), parseFloat(oldLng));
+                map.setView(posicionOld, 15);
+                colocarMarcador(posicionOld);
+            }
         }
 
         function colocarMarcador(location) {
             if (marker) {
-                marker.setPosition(location);
+                marker.setLatLng(location);
             } else {
-                marker = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    animation: google.maps.Animation.DROP,
+                marker = L.marker(location, {
                     draggable: true
-                });
+                }).addTo(map);
 
-                marker.addListener('dragend', function(e) {
-                    actualizarInputs(e.latLng);
+                marker.on('dragend', function(e) {
+                    actualizarInputs(marker.getLatLng());
                 });
             }
 
@@ -141,8 +155,8 @@
         }
 
         function actualizarInputs(location) {
-            document.getElementById("latInput").value = location.lat().toFixed(7);
-            document.getElementById("lngInput").value = location.lng().toFixed(7);
+            document.getElementById("latInput").value = location.lat.toFixed(7);
+            document.getElementById("lngInput").value = location.lng.toFixed(7);
         }
 
         let timerNombre = null;
@@ -167,6 +181,10 @@
                         }
                     });
             }, 450);
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initMap();
         });
     </script>
 @endpush

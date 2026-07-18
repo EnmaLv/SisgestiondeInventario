@@ -4,10 +4,9 @@
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem; color:#0f172a; font-weight:700;">Registrar Nueva Ruta</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">Bienvenido
-                <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
-            </p>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem; color:#0f172a; font-weight:700;">Crear Nueva Ruta</h1>
+            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">Registre y trace el recorrido de una nueva ruta de
+                transporte.</p>
         </div>
         <a href="{{ route('admin.transporte.maestros.bus_rutas.index') }}" class="rd-btn rd-btn-default"><i
                 class="fas fa-arrow-left"></i> Volver</a>
@@ -15,12 +14,25 @@
 @stop
 
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger shadow-sm" style="border-radius: 8px;">
+            <b class="d-block mb-1"><i class="fas fa-exclamation-triangle mr-2"></i> Por favor verifique los siguientes
+                errores:</b>
+            <ul class="mb-0 pl-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     @if ($errors->has('error'))
         <div class="alert alert-danger"><b>{{ $errors->first('error') }}</b></div>
     @endif
 
     <form action="{{ route('admin.transporte.maestros.bus_rutas.store') }}" method="POST" class="rd-prevent-double-submit">
         @csrf
+
         <div id="hidden-paradas-inputs"></div>
 
         <div class="row">
@@ -35,7 +47,7 @@
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-route"></i></span>
                             <input type="text" name="nombre" id="inputNombre"
-                                class="form-control rd-filter-input @error('nombre') is-invalid @enderror"
+                                class="form-control rd-input @error('nombre') is-invalid @enderror"
                                 placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre') }}" maxlength="100" required>
                         </div>
                         <div id="errorNombreUnico" class="text-danger mt-1" style="display:none;"></div>
@@ -43,7 +55,7 @@
 
                     <div class="row">
                         <div class="col-6">
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="rd-label">Distancia (km)</label>
                                 <div class="input-group mt-1">
                                     <span class="input-group-text"><i class="fas fa-road"></i></span>
@@ -54,14 +66,17 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="rd-label">Sede</label>
                                 <div class="input-group mt-1">
                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
                                     <select name="sucursal_id" class="form-control rd-input" required>
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($sucursales as $sucursal)
-                                            <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                                            <option value="{{ $sucursal->id }}"
+                                                {{ old('sucursal_id') == $sucursal->id ? 'selected' : '' }}>
+                                                {{ $sucursal->nombre }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -89,8 +104,9 @@
                         <label class="rd-label">Descripción</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
-                            <input name="descripcion" rows="1" class="form-control rd-input"
-                                placeholder="Horario Matutino">{{ old('descripcion') }}</input>
+                            <input name="descripcion" rows="2" class="form-control rd-input"
+                                style="resize:none; height: auto;"
+                                placeholder="Transporte a la zona sur">{{ old('descripcion') }}</input>
                         </div>
                     </div>
                 </div>
@@ -102,8 +118,8 @@
                     <div class="mb-3">
                         <h3 class="rd-title-sm m-0" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Trazado e
                             Itinerario de Paradas</h3>
-                        <small class="text-danger font-weight-bold">Haga clic en los marcadores del mapa para agregar
-                            paradas en orden.</small>
+                        <small class="text-danger font-weight-bold">Haga clic en los marcadores del mapa para agregar o
+                            alterar el orden.</small>
                     </div>
 
                     <div class="row">
@@ -116,7 +132,7 @@
                             <label class="rd-label" style="font-size: 0.85rem;"><i class="fas fa-list-ol mr-1"></i>
                                 Secuencia (Arrastra para reordenar)</label>
                             <div id="lista-secuencia-paradas" class="list-group style-scroll"
-                                style="max-height:400px; overflow-y:auto; border:1px solid #ebeff2; border-radius:8px; padding:6px; min-height: 60px;">
+                                style="max-height:400px; overflow-y:auto; border:1px solid #dce1e6; border-radius:8px; padding:6px; min-height: 60px;">
                             </div>
                         </div>
                     </div>
@@ -128,8 +144,6 @@
                             style="color:white; width:200px;"><i class="fas fa-save mr-2"></i> Guardar Ruta</button>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </form>
@@ -137,6 +151,8 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+    <!-- Estilos de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         .parada-item {
             cursor: grab;
@@ -170,13 +186,17 @@
             font-size: 0.75rem;
             margin-right: 6px;
         }
+
+        .leaflet-container {
+            font-family: inherit;
+        }
     </style>
 @stop
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBe4i9pwERQV0ScgC7Gyto8c2NgqaFrUpM&callback=initMap" async
-        defer></script>
+    <!-- Librería JavaScript de Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         const paradasDisponibles = @json($paradas);
@@ -186,60 +206,60 @@
         let marcadoresMap = {};
 
         function initMap() {
-            map = new google.maps.Map(document.getElementById('mapa-constructor'), {
-                center: {
-                    lat: 9.56,
-                    lng: -69.20
-                },
-                zoom: 13,
-                mapTypeControl: false,
-                streetViewControl: false,
-                gestureHandling: 'greedy'
-            });
+            // Inicializar mapa de Leaflet enfocado en tus coordenadas.
+            map = L.map('mapa-constructor').setView([9.56, -69.20], 13);
 
-            polyline = new google.maps.Polyline({
-                strokeColor: '#B71C1C',
-                strokeOpacity: 0.85,
-                strokeWeight: 5,
-                map: map
-            });
+            // Capa gratuita de OpenStreetMap (No requiere API Key ni tarjeta)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
 
+            // Inicializar la polilínea del recorrido
+            polyline = L.polyline([], {
+                color: '#B71C1C',
+                opacity: 0.85,
+                weight: 5
+            }).addTo(map);
+
+            // Dibujar marcadores circulares nativos
             paradasDisponibles.forEach(parada => {
                 if (!parada.lat || !parada.lng) return;
 
-                let marker = new google.maps.Marker({
-                    position: {
-                        lat: parseFloat(parada.lat),
-                        lng: parseFloat(parada.lng)
-                    },
-                    map: map,
-                    title: parada.nombre,
-                    icon: createMarkerIcon('#64748b')
-                });
+                let marker = L.circleMarker([parseFloat(parada.lat), parseFloat(parada.lng)], {
+                    radius: 7,
+                    fillColor: '#64748b',
+                    color: '#ffffff',
+                    weight: 2,
+                    fillOpacity: 0.9
+                }).addTo(map);
 
-                let infowindow = new google.maps.InfoWindow({
-                    content: `<strong>${parada.nombre}</strong>`
+                marker.bindPopup(`<strong>${parada.nombre}</strong>`, {
+                    closeButton: false
                 });
-
-                marker.addListener('mouseover', () => infowindow.open(map, marker));
-                marker.addListener('mouseout', () => infowindow.close());
+                marker.on('mouseover', function() {
+                    this.openPopup();
+                });
+                marker.on('mouseout', function() {
+                    this.closePopup();
+                });
 
                 marcadoresMap[parada.id] = marker;
-                marker.addListener('click', () => {
+
+                marker.on('click', () => {
                     agregarParadaASecuencia(parada);
                 });
             });
-        }
 
-        function createMarkerIcon(color) {
-            return {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: color,
-                fillOpacity: 0.9,
-                scale: 7,
-                strokeColor: '#ffffff',
-                strokeWeight: 2
-            };
+            // En "Create" solo cargamos paradas previas si la validación del backend falló (Old inputs)
+            const oldParadas = @json(old('paradas'));
+            if (oldParadas && oldParadas.length > 0) {
+                oldParadas.forEach(id => {
+                    let pEncontrada = paradasDisponibles.find(x => x.id == id);
+                    if (pEncontrada) secuenciaRuta.push(pEncontrada);
+                });
+            }
+
+            actualizarInterfazYPolilinea();
         }
 
         function agregarParadaASecuencia(parada) {
@@ -255,15 +275,19 @@
             listaHTML.innerHTML = '';
             inputsHidden.innerHTML = '';
 
+            // Reset color gris base
             paradasDisponibles.forEach(p => {
-                if (marcadoresMap[p.id]) {
-                    marcadoresMap[p.id].setIcon(createMarkerIcon('#64748b'));
-                }
+                if (marcadoresMap[p.id]) marcadoresMap[p.id].setStyle({
+                    fillColor: '#64748b'
+                });
             });
 
+            // Pintar de azul las seleccionadas y armar lista HTML
             secuenciaRuta.forEach((parada, index) => {
                 if (marcadoresMap[parada.id]) {
-                    marcadoresMap[parada.id].setIcon(createMarkerIcon('#3b82f6'));
+                    marcadoresMap[parada.id].setStyle({
+                        fillColor: '#3b82f6'
+                    });
                 }
 
                 listaHTML.innerHTML += `
@@ -280,46 +304,37 @@
             });
 
             if (secuenciaRuta.length < 2) {
-                polyline.setPath([]);
+                polyline.setLatLngs([]);
                 if (inputDistancia) inputDistancia.value = '';
                 return;
             }
 
+            // Integración OSRM (Ruteo real por calles)
             const coordenadasOSRM = secuenciaRuta.map(p => `${p.lng},${p.lat}`).join(';');
             const url =
                 `https://router.project-osrm.org/route/v1/driving/${coordenadasOSRM}?overview=full&geometries=geojson`;
 
             try {
-                if (inputDistancia) inputDistancia.placeholder = "Calculando...";
-
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Respuesta errónea del servidor OSRM');
+                if (!response.ok) throw new Error('Respuesta errónea OSRM');
 
                 const data = await response.json();
-                if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
-                    throw new Error('No se encontró una ruta viable por calles');
+                if (data.code === 'Ok' && data.routes.length > 0) {
+                    const rutaEncontrada = data.routes[0];
+
+                    // Conversión OSRM [Lng, Lat] a Leaflet [Lat, Lng]
+                    const coordenadasLinea = rutaEncontrada.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                    polyline.setLatLngs(coordenadasLinea);
+
+                    const kilometrajeReal = (rutaEncontrada.distance / 1000).toFixed(2);
+                    if (inputDistancia) {
+                        inputDistancia.value = kilometrajeReal;
+                    }
                 }
-
-                const rutaEncontrada = data.routes[0];
-
-                const coordenadasLinea = rutaEncontrada.geometry.coordinates.map(coord => ({
-                    lat: coord[1],
-                    lng: coord[0]
-                }));
-                polyline.setPath(coordenadasLinea);
-
-                const kilometrajeReal = (rutaEncontrada.distance / 1000).toFixed(2);
-                if (inputDistancia) {
-                    inputDistancia.value = kilometrajeReal;
-                }
-
             } catch (error) {
-                console.error('OSRM error en Web:', error);
-                const coordenadasLineaFallback = secuenciaRuta.map(p => ({
-                    lat: parseFloat(p.lat),
-                    lng: parseFloat(p.lng)
-                }));
-                polyline.setPath(coordenadasLineaFallback);
+                console.error('OSRM Fallback en Create:', error);
+                const coordenadasLineaFallback = secuenciaRuta.map(p => [parseFloat(p.lat), parseFloat(p.lng)]);
+                polyline.setLatLngs(coordenadasLineaFallback);
             }
         }
 
@@ -328,24 +343,24 @@
             actualizarInterfazYPolilinea();
         }
 
+        // SortableJS para reordenar la lista arrastrando
         const elLista = document.getElementById('lista-secuencia-paradas');
         Sortable.create(elLista, {
             animation: 150,
             onEnd: function() {
                 let nuevoOrdenIds = Array.from(elLista.querySelectorAll('.parada-item')).map(item => item
                     .getAttribute('data-id'));
-
                 let mapaTemporal = [];
                 nuevoOrdenIds.forEach(id => {
                     let pEncontrada = secuenciaRuta.find(x => x.id == id);
                     if (pEncontrada) mapaTemporal.push(pEncontrada);
                 });
-
                 secuenciaRuta = mapaTemporal;
                 actualizarInterfazYPolilinea();
             }
         });
 
+        // Manejo dinámico de Horarios
         let indiceHorario = 0;
 
         function agregarFilaHorario(hora = '', tipo = 'entrada') {
@@ -364,7 +379,22 @@
             document.getElementById('contenedor-horarios').appendChild(fila);
             indiceHorario++;
         }
+
         document.getElementById('btn-add-horario').addEventListener('click', () => agregarFilaHorario());
-        agregarFilaHorario();
+
+        // Cargar viejos horarios si hubo error de validación, de lo contrario inicializar uno vacío
+        const oldHorarios = @json(old('horarios'));
+        if (oldHorarios && Object.keys(oldHorarios).length > 0) {
+            Object.values(oldHorarios).forEach(h => {
+                agregarFilaHorario(h.hora_salida, h.tipo_viaje);
+            });
+        } else {
+            agregarFilaHorario();
+        }
+
+        // Inicializar el mapa al cargar el documento por completo
+        document.addEventListener("DOMContentLoaded", function() {
+            initMap();
+        });
     </script>
 @endpush

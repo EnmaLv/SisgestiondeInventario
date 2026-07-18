@@ -4,10 +4,8 @@
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem; color:#0f172a; font-weight:700;">Modificar Ruta</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">Editando la ruta:
-                <strong>{{ $busRuta->nombre }}</strong>
-            </p>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem; color:#0f172a; font-weight:700;">Editar Ruta</h1>
+            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">Modifique los datos, horarios o el trazado de la ruta de transporte existente.</p>
         </div>
         <a href="{{ route('admin.transporte.maestros.bus_rutas.index') }}" class="rd-btn rd-btn-default"><i
                 class="fas fa-arrow-left"></i> Volver</a>
@@ -15,7 +13,6 @@
 @stop
 
 @section('content')
-    {{-- Captura y visualización de errores de validación --}}
     @if ($errors->any())
         <div class="alert alert-danger shadow-sm" style="border-radius: 8px;">
             <b class="d-block mb-1"><i class="fas fa-exclamation-triangle mr-2"></i> Por favor verifique los siguientes
@@ -32,8 +29,7 @@
         <div class="alert alert-danger"><b>{{ $errors->first('error') }}</b></div>
     @endif
 
-    <form action="{{ route('admin.transporte.maestros.bus_rutas.update', $busRuta->id) }}" method="POST"
-        class="rd-prevent-double-submit">
+    <form action="{{ route('admin.transporte.maestros.bus_rutas.update', $busRuta->id) }}" method="POST" class="rd-prevent-double-submit">
         @csrf
         @method('PUT')
 
@@ -43,16 +39,16 @@
             <div class="col-lg-5">
                 <div class="rd-card p-4 mb-4"
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
-                    <h3 class="rd-title-sm mb-3" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Datos Base</h3>
+                    <h3 class="rd-title-sm mb-3" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Datos de la Ruta
+                    </h3>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group">
                         <label class="rd-label">Nombre de la Ruta</label>
-                        <div class="rd-input-group">
-                            <span><i class="fas fa-route"></i></span>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-route"></i></span>
                             <input type="text" name="nombre" id="inputNombre"
                                 class="form-control rd-input @error('nombre') is-invalid @enderror"
-                                placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre', $busRuta->nombre) }}"
-                                maxlength="100" required>
+                                placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre', $busRuta->nombre) }}" maxlength="100" required>
                         </div>
                         <div id="errorNombreUnico" class="text-danger mt-1" style="display:none;"></div>
                     </div>
@@ -61,19 +57,19 @@
                         <div class="col-6">
                             <div class="form-group mb-3">
                                 <label class="rd-label">Distancia (km)</label>
-                                <div class="rd-input-group">
-                                    <span><i class="fas fa-road"></i></span>
+                                <div class="input-group mt-1">
+                                    <span class="input-group-text"><i class="fas fa-road"></i></span>
                                     <input type="number" name="distancia_km" id="inputDistancia" step="0.01"
                                         class="form-control rd-input" placeholder="Calculando..."
-                                        value="{{ old('distancia_km', $busRuta->distancia_km) }}" min="0.1" required>
+                                        value="{{ old('distancia_km', $busRuta->distancia_km) }}" min="0.1" required readonly>
                                 </div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group mb-3">
-                                <label class="rd-label">Sucursal Base</label>
-                                <div class="rd-input-group">
-                                    <span><i class="fas fa-building"></i></span>
+                                <label class="rd-label">Sede</label>
+                                <div class="input-group mt-1">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
                                     <select name="sucursal_id" class="form-control rd-input" required>
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($sucursales as $sucursal)
@@ -105,10 +101,12 @@
                 <div class="rd-card p-4 mb-4"
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                     <div class="form-group mb-0">
-                        <label class="rd-label">Descripción / Observaciones</label>
-                        <div class="rd-input-group">
-                            <span><i class="fas fa-sticky-note"></i></span>
-                            <textarea name="descripcion" rows="2" class="form-control rd-input" style="resize:none; height: auto;">{{ old('descripcion', $busRuta->getRawOriginal('descripcion')) }}</textarea>
+                        <label class="rd-label">Descripción</label>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
+                            <input name="descripcion" rows="2" class="form-control rd-input"
+                                style="resize:none; height: auto;"
+                                placeholder="Transporte a la zona sur" value="{{ old('descripcion', $busRuta->descripcion) }}"></input>
                         </div>
                     </div>
                 </div>
@@ -134,18 +132,17 @@
                             <label class="rd-label" style="font-size: 0.85rem;"><i class="fas fa-list-ol mr-1"></i>
                                 Secuencia (Arrastra para reordenar)</label>
                             <div id="lista-secuencia-paradas" class="list-group style-scroll"
-                                style="max-height:400px; overflow-y:auto; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; padding:6px; min-height: 60px;">
+                                style="max-height:400px; overflow-y:auto; border:1px solid #dce1e6; border-radius:8px; padding:6px; min-height: 60px;">
                             </div>
                         </div>
                     </div>
                     @error('paradas')
                         <div class="text-danger mt-2"><b>Debe añadir al menos 2 paradas al trazado en el mapa.</b></div>
                     @enderror
-                </div>
-
-                <div class="d-flex justify-content-end" style="gap:12px;">
-                    <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"
-                        style="color:white; width:200px;"><i class="fas fa-save mr-2"></i> Actualizar Ruta</button>
+                    <div class="d-flex justify-content-end" style="gap:12px;">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"
+                            style="color:white; width:200px;"><i class="fas fa-save mr-2"></i> Actualizar Ruta</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -154,6 +151,7 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         .parada-item {
             cursor: grab;
@@ -187,13 +185,16 @@
             font-size: 0.75rem;
             margin-right: 6px;
         }
+
+        .leaflet-container {
+            font-family: inherit;
+        }
     </style>
 @stop
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBe4i9pwERQV0ScgC7Gyto8c2NgqaFrUpM&callback=initMap" async
-        defer></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         const paradasDisponibles = @json($paradas);
@@ -203,77 +204,62 @@
         let marcadoresMap = {};
 
         function initMap() {
-            map = new google.maps.Map(document.getElementById('mapa-constructor'), {
-                center: {
-                    lat: 9.56,
-                    lng: -69.20
-                },
-                zoom: 13,
-                mapTypeControl: false,
-                streetViewControl: false,
-                gestureHandling: 'greedy'
-            });
+            map = L.map('mapa-constructor').setView([9.56, -69.20], 13);
 
-            polyline = new google.maps.Polyline({
-                strokeColor: '#B71C1C',
-                strokeOpacity: 0.85,
-                strokeWeight: 5,
-                map: map
-            });
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            polyline = L.polyline([], {
+                color: '#B71C1C',
+                opacity: 0.85,
+                weight: 5
+            }).addTo(map);
 
             paradasDisponibles.forEach(parada => {
                 if (!parada.lat || !parada.lng) return;
 
-                let marker = new google.maps.Marker({
-                    position: {
-                        lat: parseFloat(parada.lat),
-                        lng: parseFloat(parada.lng)
-                    },
-                    map: map,
-                    title: parada.nombre,
-                    icon: createMarkerIcon('#64748b')
-                });
+                let marker = L.circleMarker([parseFloat(parada.lat), parseFloat(parada.lng)], {
+                    radius: 7,
+                    fillColor: '#64748b',
+                    color: '#ffffff',
+                    weight: 2,
+                    fillOpacity: 0.9
+                }).addTo(map);
 
-                let infowindow = new google.maps.InfoWindow({
-                    content: `<strong>${parada.nombre}</strong>`
+                marker.bindPopup(`<strong>${parada.nombre}</strong>`, {
+                    closeButton: false
                 });
-
-                marker.addListener('mouseover', () => infowindow.open(map, marker));
-                marker.addListener('mouseout', () => infowindow.close());
+                marker.on('mouseover', function() {
+                    this.openPopup();
+                });
+                marker.on('mouseout', function() {
+                    this.closePopup();
+                });
 
                 marcadoresMap[parada.id] = marker;
-                marker.addListener('click', () => {
+
+                marker.on('click', () => {
                     agregarParadaASecuencia(parada);
                 });
             });
 
             const oldParadas = @json(old('paradas'));
-            const paradasGuardadas = @json($busRuta->paradas);
+            const paradasRutaDb = @json($busRuta->paradas);
 
             if (oldParadas && oldParadas.length > 0) {
                 oldParadas.forEach(id => {
                     let pEncontrada = paradasDisponibles.find(x => x.id == id);
                     if (pEncontrada) secuenciaRuta.push(pEncontrada);
                 });
-            } else if (paradasGuardadas && paradasGuardadas.length > 0) {
-                paradasGuardadas.forEach(p => {
-                    let pEncontrada = paradasDisponibles.find(x => x.id == p.id);
+            } else if (paradasRutaDb && paradasRutaDb.length > 0) {
+                paradasRutaDb.forEach(pDb => {
+                    let pEncontrada = paradasDisponibles.find(x => x.id == pDb.id);
                     if (pEncontrada) secuenciaRuta.push(pEncontrada);
                 });
             }
 
             actualizarInterfazYPolilinea();
-        }
-
-        function createMarkerIcon(color) {
-            return {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: color,
-                fillOpacity: 0.9,
-                scale: 7,
-                strokeColor: '#ffffff',
-                strokeWeight: 2
-            };
         }
 
         function agregarParadaASecuencia(parada) {
@@ -290,12 +276,16 @@
             inputsHidden.innerHTML = '';
 
             paradasDisponibles.forEach(p => {
-                if (marcadoresMap[p.id]) marcadoresMap[p.id].setIcon(createMarkerIcon('#64748b'));
+                if (marcadoresMap[p.id]) marcadoresMap[p.id].setStyle({
+                    fillColor: '#64748b'
+                });
             });
 
             secuenciaRuta.forEach((parada, index) => {
                 if (marcadoresMap[parada.id]) {
-                    marcadoresMap[parada.id].setIcon(createMarkerIcon('#3b82f6'));
+                    marcadoresMap[parada.id].setStyle({
+                        fillColor: '#3b82f6'
+                    });
                 }
 
                 listaHTML.innerHTML += `
@@ -312,7 +302,7 @@
             });
 
             if (secuenciaRuta.length < 2) {
-                polyline.setPath([]);
+                polyline.setLatLngs([]);
                 if (inputDistancia) inputDistancia.value = '';
                 return;
             }
@@ -328,11 +318,9 @@
                 const data = await response.json();
                 if (data.code === 'Ok' && data.routes.length > 0) {
                     const rutaEncontrada = data.routes[0];
-                    const coordenadasLinea = rutaEncontrada.geometry.coordinates.map(coord => ({
-                        lat: coord[1],
-                        lng: coord[0]
-                    }));
-                    polyline.setPath(coordenadasLinea);
+
+                    const coordenadasLinea = rutaEncontrada.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                    polyline.setLatLngs(coordenadasLinea);
 
                     const kilometrajeReal = (rutaEncontrada.distance / 1000).toFixed(2);
                     if (inputDistancia) {
@@ -341,11 +329,8 @@
                 }
             } catch (error) {
                 console.error('OSRM Fallback en Edit:', error);
-                const coordenadasLineaFallback = secuenciaRuta.map(p => ({
-                    lat: parseFloat(p.lat),
-                    lng: parseFloat(p.lng)
-                }));
-                polyline.setPath(coordenadasLineaFallback);
+                const coordenadasLineaFallback = secuenciaRuta.map(p => [parseFloat(p.lat), parseFloat(p.lng)]);
+                polyline.setLatLngs(coordenadasLineaFallback);
             }
         }
 
@@ -392,19 +377,22 @@
         document.getElementById('btn-add-horario').addEventListener('click', () => agregarFilaHorario());
 
         const oldHorarios = @json(old('horarios'));
-        const horariosGuardados = @json($busRuta->horarios);
+        const horariosDb = @json($busRuta->horarios); 
 
         if (oldHorarios && Object.keys(oldHorarios).length > 0) {
             Object.values(oldHorarios).forEach(h => {
                 agregarFilaHorario(h.hora_salida, h.tipo_viaje);
             });
-        } else if (horariosGuardados && horariosGuardados.length > 0) {
-            horariosGuardados.forEach(h => {
-                let horaFormateada = h.hora_salida ? h.hora_salida.substring(0, 5) : '';
-                agregarFilaHorario(horaFormateada, h.tipo_viaje);
+        } else if (horariosDb && horariosDb.length > 0) {
+            horariosDb.forEach(h => {
+                agregarFilaHorario(h.hora_salida, h.tipo_viaje);
             });
         } else {
             agregarFilaHorario();
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initMap();
+        });
     </script>
 @endpush
