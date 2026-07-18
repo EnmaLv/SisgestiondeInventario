@@ -17,7 +17,7 @@
                 <form id="formCrear" action="{{ route('admin.transporte.maestros.bus_paradas.store') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label class="font-weight-bold">Nombre de la Parada</label>
+                        <label class="rd-label">Nombre de la Parada</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
                             <input type="text" name="nombre" id="crearNombre" value="{{ old('nombre') }}"
@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="font-weight-bold">Dirección descriptiva</label>
+                        <label class="rd-label">Dirección descriptiva</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                             <input type="text" name="direccion" value="{{ old('direccion') }}"
@@ -46,7 +46,7 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
-                                <label class="font-weight-bold">Latitud</label>
+                                <label class="rd-label">Latitud</label>
                                 <input type="text" id="latInput" name="lat" value="{{ old('lat') }}"
                                     class="form-control rd-filter-input @error('lat') is-invalid @enderror" readonly
                                     placeholder="Haga clic en el mapa" required>
@@ -57,7 +57,7 @@
                         </div>
                         <div class="col-6">
                             <div class="form-group">
-                                <label class="font-weight-bold">Longitud</label>
+                                <label class="rd-label">Longitud</label>
                                 <input type="text" id="lngInput" name="lng" value="{{ old('lng') }}"
                                     class="form-control rd-filter-input @error('lng') is-invalid @enderror" readonly
                                     placeholder="Haga clic en el mapa" required>
@@ -79,10 +79,12 @@
             </div>
         </div>
 
-        <div class="col-md-7">
+        <div class="col-md-7 mb-3 mb-md-0">
             <div class="rd-card"
-                style="border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb; height: 500px;">
-                <div id="map" style="width: 100%; height: 100%;"></div>
+                style="border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
+                <div id="map"
+                    style="height:440px; border-radius:12px; border:2px solid #cbd5e1; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);">
+                </div>
             </div>
         </div>
     </div>

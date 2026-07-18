@@ -27,14 +27,15 @@
             <div class="col-lg-5">
                 <div class="rd-card p-4 mb-4"
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
-                    <h3 class="rd-title-sm mb-3" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Datos Base</h3>
+                    <h3 class="rd-title-sm mb-3" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Datos de la Ruta
+                    </h3>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group">
                         <label class="rd-label">Nombre de la Ruta</label>
-                        <div class="rd-input-group">
-                            <span><i class="fas fa-route"></i></span>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-route"></i></span>
                             <input type="text" name="nombre" id="inputNombre"
-                                class="form-control rd-input @error('nombre') is-invalid @enderror"
+                                class="form-control rd-filter-input @error('nombre') is-invalid @enderror"
                                 placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre') }}" maxlength="100" required>
                         </div>
                         <div id="errorNombreUnico" class="text-danger mt-1" style="display:none;"></div>
@@ -42,21 +43,21 @@
 
                     <div class="row">
                         <div class="col-6">
-                            <div class="form-group mb-3">
+                            <div class="form-group">
                                 <label class="rd-label">Distancia (km)</label>
-                                <div class="rd-input-group">
-                                    <span><i class="fas fa-road"></i></span>
+                                <div class="input-group mt-1">
+                                    <span class="input-group-text"><i class="fas fa-road"></i></span>
                                     <input type="number" name="distancia_km" id="inputDistancia" step="0.01"
                                         class="form-control rd-input" placeholder="Calculando..."
-                                        value="{{ old('distancia_km') }}" min="0.1" required>
+                                        value="{{ old('distancia_km') }}" min="0.1" required readonly>
                                 </div>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group mb-3">
+                            <div class="form-group">
                                 <label class="rd-label">Sede</label>
-                                <div class="rd-input-group">
-                                    <span><i class="fas fa-building"></i></span>
+                                <div class="input-group mt-1">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
                                     <select name="sucursal_id" class="form-control rd-input" required>
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($sucursales as $sucursal)
@@ -86,8 +87,8 @@
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                     <div class="form-group mb-0">
                         <label class="rd-label">Descripción</label>
-                        <div class="rd-input-group">
-                            <span><i class="fas fa-sticky-note"></i></span>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
                             <input name="descripcion" rows="1" class="form-control rd-input"
                                 placeholder="Horario Matutino">{{ old('descripcion') }}</input>
                         </div>
@@ -115,7 +116,7 @@
                             <label class="rd-label" style="font-size: 0.85rem;"><i class="fas fa-list-ol mr-1"></i>
                                 Secuencia (Arrastra para reordenar)</label>
                             <div id="lista-secuencia-paradas" class="list-group style-scroll"
-                                style="max-height:400px; overflow-y:auto; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; padding:6px; min-height: 60px;">
+                                style="max-height:400px; overflow-y:auto; border:1px solid #ebeff2; border-radius:8px; padding:6px; min-height: 60px;">
                             </div>
                         </div>
                     </div>
