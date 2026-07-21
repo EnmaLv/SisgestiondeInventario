@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BusMarcaApiController;
 use App\Http\Controllers\Api\BusModeloApiController;
 use App\Http\Controllers\Api\BusTipoCombustibleApiController;
 use App\Http\Controllers\Api\BusVehiculoApiController;
+use App\Http\Controllers\Api\BusViajeApiController;
 
 Route::get('/ping', fn() => response()->json(['ok' => true]));
 
@@ -46,5 +47,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('vehiculos/{vehiculo}',    [BusVehiculoApiController::class, 'update']);
         Route::patch('vehiculos/{vehiculo}/toggle', [BusVehiculoApiController::class, 'toggle']);
         Route::delete('vehiculos/{vehiculo}', [BusVehiculoApiController::class, 'destroy']);
+
+        Route::get('viajes/activo',               [BusViajeApiController::class, 'miViajeActivo']);
+        Route::post('viajes/{viaje}/iniciar',     [BusViajeApiController::class, 'iniciar']);
+        Route::post('viajes/{viaje}/finalizar',   [BusViajeApiController::class, 'finalizar']);
+        Route::get('viajes/historial',            [BusViajeApiController::class, 'historial']);
     });
 });

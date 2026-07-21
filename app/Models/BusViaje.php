@@ -30,16 +30,15 @@ class BusViaje extends Model
     ];
 
     protected $casts = [
-        'fecha_inicio' => 'datetime',
-        'hubo_desvio' => 'boolean',
-        'km_inicio' => 'decimal:2',
-        'km_fin' => 'decimal:2',
-        'distancia_km' => 'decimal:2',
+        'fecha_inicio'   => 'datetime',
+        'hubo_desvio'    => 'boolean',
+        'km_inicio'       => 'decimal:2',
+        'km_fin'          => 'decimal:2',
+        'distancia_km'   => 'decimal:2',
         'litros_gastados' => 'decimal:2',
-        'pasajeros' => 'integer',
+        'pasajeros'      => 'integer',
     ];
 
-    // Relaciones
     public function vehiculo()
     {
         return $this->belongsTo(BusVehiculo::class, 'vehiculo_id');
@@ -50,9 +49,19 @@ class BusViaje extends Model
         return $this->belongsTo(BusRuta::class, 'bus_ruta_id');
     }
 
+    public function busRuta()
+    {
+        return $this->belongsTo(BusRuta::class, 'bus_ruta_id');
+    }
+
     public function conductor()
     {
         return $this->belongsTo(Usuario::class, 'conductor_id', 'id_usuario');
+    }
+
+    public function scopeDelConductor($query, $conductorId)
+    {
+        return $query->where('conductor_id', $conductorId);
     }
 
     public static function calcularTurnoActual(): string
