@@ -656,6 +656,7 @@ return [
             'url'    => 'admin/transporte/maestros/bus_rutas',
             'active' => ['admin/transporte/maestros/bus_rutas*'],
         ],
+
         [
             'text'   => 'Paradas',
             'icon'   => 'fas fa-map-pin',
@@ -663,6 +664,15 @@ return [
             'key'    => 'transporte_paradas',
             'url'    => 'admin/transporte/maestros/bus_paradas',
             'active' => ['admin/transporte/maestros/bus_paradas*'],
+        ],
+
+        [
+            'text'   => 'Viajes',
+            'icon'   => 'fas fa-calendar-alt',
+            'module' => 'transporte',
+            'key'    => 'transporte_viajes',
+            'url'    => 'admin/transporte/maestros/bus_viajes',
+            'active' => ['admin/transporte/maestros/bus_viajes*'],
         ],
 
         [

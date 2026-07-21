@@ -16,14 +16,17 @@ class BusVehiculoController extends Controller
     {
         return [
             'placa'                    => 'required|string|max:20|unique:vehiculos,placa,' . $excludeId,
-            'modelo_id'            => 'required|exists:modelos,id',
+            'modelo_id'                => 'required|exists:modelos,id',
             'anio'                     => 'required|integer|min:1990|max:' . date('Y'),
             'color'                    => 'required|string|max:50',
             'cantidad_pasajeros'       => 'required|integer|min:1|max:150',
-            'tipo_combustible_id'  => 'required|exists:tipo_combustibles,id',
-            'cantidad_bocas'           => 'required|integer|min:1|max:10',
+            'peso'                     => 'required|string|max:50',
+            'tipo_combustible_id'      => 'required|exists:tipo_combustibles,id',
+            'cantidad_cilindros'       => 'required|integer|min:1|max:10',
             'capacidad_tanque_litros'  => 'required|numeric|min:1|max:1000',
-            'consumo_litros_km'        => 'required|numeric|min:0.001|max:5',
+            'consumo_urbano'           => 'required|numeric|min:0.001|max:5',
+            'consumo_carretera'        => 'required|numeric|min:0.001|max:5',
+            'consumo_relenti'          => 'required|numeric|min:0.001|max:50',
             'km_actual'                => 'required|numeric|min:0|max:9999999',
             'km_proximo_mantenimiento' => 'required|numeric|min:0|max:9999999',
             'sucursal_id'              => 'required|exists:sucursals,id',
@@ -43,8 +46,10 @@ class BusVehiculoController extends Controller
         $marcas     = BusMarca::where('estado', 1)->orderBy('nombre')->get();
         $tipos      = BusTipoCombustible::where('estado', 1)->orderBy('nombre')->get();
         $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
-        return view('admin.transporte.maestros.bus_vehiculos.create',
-            compact('modelos', 'marcas', 'tipos', 'sucursales'));
+        return view(
+            'admin.transporte.maestros.bus_vehiculos.create',
+            compact('modelos', 'marcas', 'tipos', 'sucursales')
+        );
     }
 
     public function store(Request $request)
@@ -62,8 +67,10 @@ class BusVehiculoController extends Controller
         $marcas     = BusMarca::where('estado', 1)->orderBy('nombre')->get();
         $tipos      = BusTipoCombustible::where('estado', 1)->orderBy('nombre')->get();
         $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
-        return view('admin.transporte.maestros.bus_vehiculos.edit',
-            compact('busVehiculo', 'modelos', 'marcas', 'tipos', 'sucursales'));
+        return view(
+            'admin.transporte.maestros.bus_vehiculos.edit',
+            compact('busVehiculo', 'modelos', 'marcas', 'tipos', 'sucursales')
+        );
     }
 
     public function update(Request $request, BusVehiculo $busVehiculo)
@@ -91,7 +98,6 @@ class BusVehiculoController extends Controller
             ->with('success', 'Vehículo activado correctamente.');
     }
 
-    // ── Verificación de placa duplicada en tiempo real ────────────
     public function verificarPlaca(Request $request)
     {
         $query = BusVehiculo::where('placa', strtoupper(trim($request->placa)));

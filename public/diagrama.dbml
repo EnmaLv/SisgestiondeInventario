@@ -1065,7 +1065,7 @@ Table vehiculos {
   color                    varchar(50)   [not null]
   cantidad_pasajeros       int           [not null, default: 0]
   tipo_combustible_id      bigint        [not null, ref: > tipo_combustibles.id]
-  cantidad_bocas           int           [not null, default: 1]
+  cantidad_cilindros           int           [not null, default: 1]
   capacidad_tanque_litros  decimal(8,2)  [not null, default: 0]
   consumo_litros_km        decimal(6,3)  [not null, default: 0]
   km_actual                decimal(10,2) [not null, default: 0]

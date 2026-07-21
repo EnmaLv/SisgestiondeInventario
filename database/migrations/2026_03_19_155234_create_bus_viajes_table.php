@@ -17,17 +17,17 @@ return new class extends Migration
             $table->foreignId('bus_ruta_id')->constrained('bus_rutas')->onDelete('cascade');
             $table->unsignedBigInteger('conductor_id')->nullable();
             $table->foreign('conductor_id')->references('id_usuario')->on('usuario')->nullOnDelete();
-            $table->enum('turno', ['mañana', 'tarde', 'noche'])->default('mañana')->nullable();
+            $table->string('turno', 100)->nullable();
             $table->string('firebase_id', 100)->nullable();
             $table->dateTime('fecha_inicio')->nullable();
-            $table->dateTime('fecha_fin')->nullable();
             $table->decimal('km_inicio', 10, 2)->default(0);
             $table->decimal('km_fin', 10, 2)->default(0);
             $table->decimal('distancia_km', 8, 2)->default(0);
             $table->decimal('litros_gastados', 8, 2)->default(0);
             $table->integer('pasajeros')->default(0);
-            $table->text('observaciones')->nullable();
-            $table->enum('estado', ['programado', 'en_curso', 'finalizado', 'cancelado'])->default('programado');
+            $table->boolean('hubo_desvio')->default(0);
+            $table->string('motivo_desvio', 100)->nullable();
+            $table->string('estado', 100)->default('programado');
             $table->timestamps();
         });
     }

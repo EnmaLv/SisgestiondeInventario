@@ -23,21 +23,16 @@
 @stop
 
 @section('content')
+    @include('components.alert')
+
     <div class="rd-card p-4">
         <div class="rd-card-header mb-3">
-            <h3 class="rd-title-sm">Editar Vehículo — <span
-                    style="color:var(--color-primary)">{{ $busVehiculo->placa }}</span></h3>
-            <a href="{{ route('admin.transporte.maestros.bus_vehiculos.index') }}" class="rd-btn rd-btn-default">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
+            <h3 class="rd-title-sm">Datos del Vehículo</h3>
         </div>
-
         <form action="{{ route('admin.transporte.maestros.bus_vehiculos.update', $busVehiculo) }}" method="POST"
             class="rd-prevent-double-submit">
             @csrf
             @method('PUT')
-
-            {{-- Fila 1 --}}
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
@@ -54,7 +49,6 @@
                     </div>
                 </div>
 
-                {{-- Modelo con botón + --}}
                 <div class="col-md-3">
                     <div class="form-group">
                         <label class="font-weight-bold">Modelo</label>
@@ -74,9 +68,9 @@
                         @error('modelo_id')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
-                        <div class="mt-2" style="border-top:1px solid #e5e7eb;padding-top:8px;">
+                        <div class="mt-2">
                             <small style="color:#64748b;font-size:0.85rem;">
-                                ¿No encuentras el modelo?
+                                ¿No encuentras?
                                 <button type="button" data-toggle="modal" data-target="#modalAddModelo"
                                     style="background:none;border:none;padding:0;color:#a84348;font-weight:600;font-size:0.85rem;cursor:pointer;">
                                     <i class="fas fa-plus-circle"></i> Añádelo aquí
@@ -94,7 +88,8 @@
                             <input type="number" name="anio"
                                 class="form-control rd-filter-input @error('anio') is-invalid @enderror"
                                 value="{{ old('anio', $busVehiculo->anio) }}" min="1990" max="{{ date('Y') }}"
-                                maxlength="4" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
+                                placeholder="Ej: 2026" maxlength="4"
+                                oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
                         </div>
                         @error('anio')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
@@ -109,7 +104,7 @@
                             <span class="input-group-text"><i class="fas fa-palette"></i></span>
                             <input type="text" name="color"
                                 class="form-control rd-filter-input @error('color') is-invalid @enderror"
-                                value="{{ old('color', $busVehiculo->color) }}" maxlength="50">
+                                value="{{ old('color', $busVehiculo->color) }}" placeholder="Ej: Blanco" maxlength="50">
                         </div>
                         @error('color')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
@@ -118,37 +113,20 @@
                 </div>
             </div>
 
-            {{-- Fila 2 --}}
             <div class="row">
-                {{-- Combustible con botón + --}}
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="font-weight-bold">Tipo de Combustible</label>
+                        <label class="font-weight-bold">Peso del Vehículo</label>
                         <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-gas-pump"></i></span>
-                            <select id="selectCombustible" name="tipo_combustible_id"
-                                class="form-control rd-filter-input @error('tipo_combustible_id') is-invalid @enderror">
-                                <option value="">-- Seleccione --</option>
-                                @foreach ($tipos as $tipo)
-                                    <option value="{{ $tipo->id }}"
-                                        {{ old('tipo_combustible_id', $busVehiculo->tipo_combustible_id) == $tipo->id ? 'selected' : '' }}>
-                                        {{ $tipo->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
+                            <input type="text" name="peso"
+                                class="form-control rd-filter-input @error('peso') is-invalid @enderror"
+                                value="{{ old('peso', $busVehiculo->peso) }}" placeholder="Ej: 3.5 Ton / 3500 kg"
+                                maxlength="50">
                         </div>
-                        @error('tipo_combustible_id')
+                        @error('peso')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
-                        <div class="mt-2" style="border-top:1px solid #e5e7eb;padding-top:8px;">
-                            <small style="color:#64748b;font-size:0.85rem;">
-                                ¿No encuentras el tipo de combustible?
-                                <button type="button" data-toggle="modal" data-target="#modalAddCombustible"
-                                    style="background:none;border:none;padding:0;color:#a84348;font-weight:600;font-size:0.85rem;cursor:pointer;">
-                                    <i class="fas fa-plus-circle"></i> Añádelo aquí
-                                </button>
-                            </small>
-                        </div>
                     </div>
                 </div>
 
@@ -160,7 +138,7 @@
                             <input type="number" name="cantidad_pasajeros"
                                 class="form-control rd-filter-input @error('cantidad_pasajeros') is-invalid @enderror"
                                 value="{{ old('cantidad_pasajeros', $busVehiculo->cantidad_pasajeros) }}" min="1"
-                                max="150" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,3)">
+                                placeholder="Ej: 40" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,3)">
                         </div>
                         @error('cantidad_pasajeros')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
@@ -170,15 +148,15 @@
 
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="font-weight-bold">Cantidad de Bocas</label>
+                        <label class="font-weight-bold">Cantidad de Cilindros</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-plug"></i></span>
-                            <input type="number" name="cantidad_bocas"
-                                class="form-control rd-filter-input @error('cantidad_bocas') is-invalid @enderror"
-                                value="{{ old('cantidad_bocas', $busVehiculo->cantidad_bocas) }}" min="1"
-                                max="10" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)">
+                            <input type="number" name="cantidad_cilindros"
+                                class="form-control rd-filter-input @error('cantidad_cilindros') is-invalid @enderror"
+                                value="{{ old('cantidad_cilindros', $busVehiculo->cantidad_cilindros) }}" min="1"
+                                placeholder="Ej: 1" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)">
                         </div>
-                        @error('cantidad_bocas')
+                        @error('cantidad_cilindros')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
                     </div>
@@ -207,8 +185,38 @@
                 </div>
             </div>
 
-            {{-- Fila 3 --}}
             <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Tipo de Combustible</label>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-gas-pump"></i></span>
+                            <select id="selectCombustible" name="tipo_combustible_id"
+                                class="form-control rd-filter-input @error('tipo_combustible_id') is-invalid @enderror">
+                                <option value="">-- Seleccione --</option>
+                                @foreach ($tipos as $tipo)
+                                    <option value="{{ $tipo->id }}"
+                                        {{ old('tipo_combustible_id', $busVehiculo->tipo_combustible_id) == $tipo->id ? 'selected' : '' }}>
+                                        {{ $tipo->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('tipo_combustible_id')
+                            <div class="text-danger mt-1"><b>{{ $message }}</b></div>
+                        @enderror
+                        <div class="mt-2">
+                            <small style="color:#64748b;font-size:0.85rem;">
+                                ¿No encuentras?
+                                <button type="button" data-toggle="modal" data-target="#modalAddCombustible"
+                                    style="background:none;border:none;padding:0;color:#a84348;font-weight:600;font-size:0.85rem;cursor:pointer;">
+                                    <i class="fas fa-plus-circle"></i> Añádelo aquí
+                                </button>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-3">
                     <div class="form-group">
                         <label class="font-weight-bold">Capacidad Tanque (L)</label>
@@ -217,29 +225,15 @@
                             <input type="number" name="capacidad_tanque_litros" step="0.01"
                                 class="form-control rd-filter-input @error('capacidad_tanque_litros') is-invalid @enderror"
                                 value="{{ old('capacidad_tanque_litros', $busVehiculo->capacidad_tanque_litros) }}"
-                                min="1" max="1000"
-                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,7)">
+                                placeholder="Ej: 120.00" min="0"
+                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
                         </div>
                         @error('capacidad_tanque_litros')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Consumo (L/km)</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
-                            <input type="number" name="consumo_litros_km" step="0.001"
-                                class="form-control rd-filter-input @error('consumo_litros_km') is-invalid @enderror"
-                                value="{{ old('consumo_litros_km', $busVehiculo->consumo_litros_km) }}" min="0.001"
-                                max="5" oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,5)">
-                        </div>
-                        @error('consumo_litros_km')
-                            <div class="text-danger mt-1"><b>{{ $message }}</b></div>
-                        @enderror
-                    </div>
-                </div>
+
                 <div class="col-md-3">
                     <div class="form-group">
                         <label class="font-weight-bold">KM Actual</label>
@@ -247,23 +241,25 @@
                             <span class="input-group-text"><i class="fas fa-road"></i></span>
                             <input type="number" name="km_actual" step="0.01"
                                 class="form-control rd-filter-input @error('km_actual') is-invalid @enderror"
-                                value="{{ old('km_actual', $busVehiculo->km_actual) }}" min="0" max="9999999"
-                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,10)">
+                                value="{{ old('km_actual', $busVehiculo->km_actual) }}" placeholder="Ej: 50000.00"
+                                min="0" oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,9)">
                         </div>
                         @error('km_actual')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
                     </div>
                 </div>
+
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="font-weight-bold">KM Próximo Mantenimiento</label>
+                        <label class="font-weight-bold">KM Próx. Mantenimiento</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-wrench"></i></span>
                             <input type="number" name="km_proximo_mantenimiento" step="0.01"
                                 class="form-control rd-filter-input @error('km_proximo_mantenimiento') is-invalid @enderror"
                                 value="{{ old('km_proximo_mantenimiento', $busVehiculo->km_proximo_mantenimiento) }}"
-                                min="0" max="9999999">
+                                placeholder="Ej: 55000.00" min="0"
+                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,9)">
                         </div>
                         @error('km_proximo_mantenimiento')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
@@ -272,8 +268,57 @@
                 </div>
             </div>
 
-            {{-- Fila 4: Estado --}}
             <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Consumo Urbano (L/km)</label>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-city"></i></span>
+                            <input type="number" name="consumo_urbano" step="0.001"
+                                class="form-control rd-filter-input @error('consumo_urbano') is-invalid @enderror"
+                                value="{{ old('consumo_urbano', $busVehiculo->consumo_urbano) }}" placeholder="Ej: 0.350"
+                                min="0" oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
+                        </div>
+                        @error('consumo_urbano')
+                            <div class="text-danger mt-1"><b>{{ $message }}</b></div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Consumo Carretera (L/km)</label>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-route"></i></span>
+                            <input type="number" name="consumo_carretera" step="0.001"
+                                class="form-control rd-filter-input @error('consumo_carretera') is-invalid @enderror"
+                                value="{{ old('consumo_carretera', $busVehiculo->consumo_carretera) }}"
+                                placeholder="Ej: 0.280" min="0"
+                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
+                        </div>
+                        @error('consumo_carretera')
+                            <div class="text-danger mt-1"><b>{{ $message }}</b></div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Consumo Ralentí (L/h)</label>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                            <input type="number" name="consumo_relenti" step="0.001"
+                                class="form-control rd-filter-input @error('consumo_relenti') is-invalid @enderror"
+                                value="{{ old('consumo_relenti', $busVehiculo->consumo_relenti) }}"
+                                placeholder="Ej: 1.500" min="0"
+                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
+                        </div>
+                        @error('consumo_relenti')
+                            <div class="text-danger mt-1"><b>{{ $message }}</b></div>
+                        @enderror
+                    </div>
+                </div>
+
                 <div class="col-md-3">
                     <div class="form-group">
                         <label class="font-weight-bold">Estado Operativo</label>
@@ -314,7 +359,6 @@
         </form>
     </div>
 
-    {{-- ======= MINI-MODAL: Nuevo Modelo ======= --}}
     <div class="modal fade" id="modalAddModelo" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
@@ -367,7 +411,7 @@
         </div>
     </div>
 
-    {{-- ======= MINI-MODAL: Nuevo Tipo de Combustible ======= --}}
+    <!-- MODAL NUEVO COMBUSTIBLE -->
     <div class="modal fade" id="modalAddCombustible" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
@@ -429,15 +473,138 @@
             });
         }
 
-        // ── Validación en tiempo real ─────────────────────────────────────
+        // Modal de Modelo
+        document.getElementById('btnGuardarModelo').addEventListener('click', function() {
+            const marca = document.getElementById('newModeloMarca').value;
+            const nombre = document.getElementById('newModeloNombre').value.trim();
+            const descripcion = document.getElementById('newModeloDescripcion').value.trim();
+            const errMarca = document.getElementById('errorModeloMarca');
+            const errNombre = document.getElementById('errorModeloNombre');
+            errMarca.style.display = 'none';
+            errNombre.style.display = 'none';
+
+            let valido = true;
+            if (!marca) {
+                errMarca.textContent = 'Seleccione una marca.';
+                errMarca.style.display = 'block';
+                valido = false;
+            }
+            if (!nombre) {
+                errNombre.textContent = 'El nombre es obligatorio.';
+                errNombre.style.display = 'block';
+                valido = false;
+            }
+            if (!valido) return;
+
+            fetch('/admin/transporte/maestros/bus_modelos/store', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bus_marca_id: marca,
+                        nombre,
+                        descripcion
+                    }),
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        const select = document.getElementById('selectModelo');
+                        const option = new Option(
+                            `${res.modelo.marca_nombre} - ${res.modelo.nombre}`,
+                            res.modelo.id, true, true
+                        );
+                        select.appendChild(option);
+                        select.value = res.modelo.id;
+                        document.getElementById('newModeloMarca').value = '';
+                        document.getElementById('newModeloNombre').value = '';
+                        document.getElementById('newModeloDescripcion').value = '';
+                        $('#modalAddModelo').modal('hide');
+                        toastExito(`Modelo "${res.modelo.nombre}" agregado y seleccionado.`);
+                    } else {
+                        if (res.errors?.bus_marca_id) {
+                            errMarca.textContent = res.errors.bus_marca_id[0];
+                            errMarca.style.display = 'block';
+                        }
+                        if (res.errors?.nombre) {
+                            errNombre.textContent = res.errors.nombre[0];
+                            errNombre.style.display = 'block';
+                        }
+                    }
+                })
+                .catch(() => {
+                    errNombre.textContent = 'Error inesperado, intente de nuevo.';
+                    errNombre.style.display = 'block';
+                });
+        });
+
+        // Modal de Combustible
+        document.getElementById('btnGuardarCombustible').addEventListener('click', function() {
+            const nombre = document.getElementById('newCombustibleNombre').value.trim();
+            const descripcion = document.getElementById('newCombustibleDescripcion').value.trim();
+            const errNombre = document.getElementById('errorCombustibleNombre');
+            errNombre.style.display = 'none';
+
+            if (!nombre) {
+                errNombre.textContent = 'El nombre es obligatorio.';
+                errNombre.style.display = 'block';
+                return;
+            }
+
+            fetch('/admin/transporte/maestros/bus_tipo_combustibles/store', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre,
+                        descripcion
+                    }),
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        const select = document.getElementById('selectCombustible');
+                        const option = new Option(res.tipo.nombre, res.tipo.id, true, true);
+                        select.appendChild(option);
+                        select.value = res.tipo.id;
+
+                        document.getElementById('newCombustibleNombre').value = '';
+                        document.getElementById('newCombustibleDescripcion').value = '';
+                        $('#modalAddCombustible').modal('hide');
+                        toastExito(`"${res.tipo.nombre}" agregado y seleccionado.`);
+                    } else if (res.errors?.nombre) {
+                        errNombre.textContent = res.errors.nombre[0];
+                        errNombre.style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    errNombre.textContent = 'Error inesperado, intente de nuevo.';
+                    errNombre.style.display = 'block';
+                });
+        });
+
         const reglasInput = {
+            placa: {
+                max: 20,
+                msg: 'Máximo 20 caracteres.'
+            },
             anio: {
                 min: 1990,
                 max: {{ date('Y') }},
                 msg: 'Año entre 1990 y {{ date('Y') }}.'
             },
             color: {
-                maxLen: 50,
+                max: 50,
+                msg: 'Máximo 50 caracteres.'
+            },
+            peso: {
+                max: 50,
                 msg: 'Máximo 50 caracteres.'
             },
             cantidad_pasajeros: {
@@ -445,20 +612,30 @@
                 max: 150,
                 msg: 'Entre 1 y 150 pasajeros.'
             },
-            cantidad_bocas: {
+            cantidad_cilindros: {
                 min: 1,
                 max: 10,
-                msg: 'Entre 1 y 10 bocas.'
+                msg: 'Entre 1 y 10 Cilindros.'
             },
             capacidad_tanque_litros: {
                 min: 1,
                 max: 1000,
                 msg: 'Entre 1 y 1000 litros.'
             },
-            consumo_litros_km: {
+            consumo_urbano: {
                 min: 0.001,
                 max: 5,
                 msg: 'Entre 0.001 y 5 L/km.'
+            },
+            consumo_carretera: {
+                min: 0.001,
+                max: 5,
+                msg: 'Entre 0.001 y 5 L/km.'
+            },
+            consumo_relenti: {
+                min: 0.001,
+                max: 50,
+                msg: 'Entre 0.001 y 50 L/h.'
             },
             km_actual: {
                 min: 0,
@@ -498,9 +675,8 @@
                     limpiarErrorInline(this);
                     return;
                 }
-
-                if (regla.maxLen) {
-                    val.length > regla.maxLen ?
+                if (regla.max && typeof regla.min === 'undefined') {
+                    val.length > regla.max ?
                         mostrarErrorInline(this, regla.msg) :
                         limpiarErrorInline(this);
                 } else {
@@ -511,10 +687,8 @@
             });
         });
 
-        // ── Verificación placa duplicada (excluye vehículo actual) ────────
         let placaTimer = null;
         const inputPlaca = document.querySelector('[name="placa"]');
-
         if (inputPlaca) {
             inputPlaca.addEventListener('input', function() {
                 const val = this.value.trim();
@@ -531,114 +705,12 @@
                         })
                         .then(r => r.json())
                         .then(res => {
-                            if (res.existe) mostrarErrorInline(inputPlaca,
-                                'Esta placa ya está registrada.');
+                            if (res.existe) {
+                                mostrarErrorInline(inputPlaca, 'Esta placa ya está registrada.');
+                            }
                         });
                 }, 500);
             });
         }
-
-        // ── Mini-modal: Guardar Modelo ────────────────────────────────────
-        document.getElementById('btnGuardarModelo').addEventListener('click', function() {
-            const marca = document.getElementById('newModeloMarca').value;
-            const nombre = document.getElementById('newModeloNombre').value.trim();
-            const descripcion = document.getElementById('newModeloDescripcion').value.trim();
-            const errMarca = document.getElementById('errorModeloMarca');
-            const errNombre = document.getElementById('errorModeloNombre');
-
-            errMarca.style.display = errNombre.style.display = 'none';
-
-            let valido = true;
-            if (!marca) {
-                errMarca.textContent = 'Seleccione una marca.';
-                errMarca.style.display = 'block';
-                valido = false;
-            }
-            if (!nombre) {
-                errNombre.textContent = 'El nombre es obligatorio.';
-                errNombre.style.display = 'block';
-                valido = false;
-            }
-            if (!valido) return;
-
-            fetch('/admin/transporte/maestros/bus_modelos/store', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': CSRF,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        bus_marca_id: marca,
-                        nombre,
-                        descripcion
-                    }),
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.success) {
-                        const select = document.getElementById('selectModelo');
-                        select.appendChild(new Option(`${res.modelo.marca_nombre} - ${res.modelo.nombre}`, res
-                            .modelo.id, true, true));
-                        select.value = res.modelo.id;
-                        document.getElementById('newModeloMarca').value = document.getElementById(
-                                'newModeloNombre').value = document.getElementById('newModeloDescripcion')
-                            .value = '';
-                        $('#modalAddModelo').modal('hide');
-                        toastExito(`Modelo "${res.modelo.nombre}" agregado y seleccionado.`);
-                    } else {
-                        if (res.errors?.bus_marca_id) {
-                            errMarca.textContent = res.errors.bus_marca_id[0];
-                            errMarca.style.display = 'block';
-                        }
-                        if (res.errors?.nombre) {
-                            errNombre.textContent = res.errors.nombre[0];
-                            errNombre.style.display = 'block';
-                        }
-                    }
-                });
-        });
-
-        // ── Mini-modal: Guardar Tipo de Combustible ───────────────────────
-        document.getElementById('btnGuardarCombustible').addEventListener('click', function() {
-            const nombre = document.getElementById('newCombustibleNombre').value.trim();
-            const descripcion = document.getElementById('newCombustibleDescripcion').value.trim();
-            const errNombre = document.getElementById('errorCombustibleNombre');
-
-            errNombre.style.display = 'none';
-            if (!nombre) {
-                errNombre.textContent = 'El nombre es obligatorio.';
-                errNombre.style.display = 'block';
-                return;
-            }
-
-            fetch('/admin/transporte/maestros/bus_tipo_combustibles/store', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': CSRF,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        nombre,
-                        descripcion
-                    }),
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.success) {
-                        const select = document.getElementById('selectCombustible');
-                        select.appendChild(new Option(res.tipo.nombre, res.tipo.id, true, true));
-                        select.value = res.tipo.id;
-                        document.getElementById('newCombustibleNombre').value = document.getElementById(
-                            'newCombustibleDescripcion').value = '';
-                        $('#modalAddCombustible').modal('hide');
-                        toastExito(`"${res.tipo.nombre}" agregado y seleccionado.`);
-                    } else if (res.errors?.nombre) {
-                        errNombre.textContent = res.errors.nombre[0];
-                        errNombre.style.display = 'block';
-                    }
-                });
-        });
     </script>
 @endpush

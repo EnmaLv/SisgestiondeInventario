@@ -18,7 +18,7 @@ class BusVehiculoApiController extends Controller
             'color'                    => 'required|string|max:50',
             'cantidad_pasajeros'       => 'required|integer|min:1|max:150',
             'tipo_combustible_id'      => 'required|exists:tipo_combustibles,id',
-            'cantidad_bocas'           => 'required|integer|min:1|max:10',
+            'cantidad_cilindros'           => 'required|integer|min:1|max:10',
             'capacidad_tanque_litros'  => 'required|numeric|min:1|max:1000',
             'consumo_litros_km'        => 'required|numeric|min:0.001|max:5',
             'km_actual'                => 'required|numeric|min:0|max:9999999',

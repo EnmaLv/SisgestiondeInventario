@@ -17,13 +17,15 @@ class BusVehiculo extends Model
         'anio',
         'color',
         'cantidad_pasajeros',
+        'peso',
         'tipo_combustible_id',
-        'cantidad_bocas',
+        'cantidad_cilindros',
         'capacidad_tanque_litros',
-        'consumo_litros_km',
+        'consumo_urbano',
+        'consumo_carretera',
+        'consumo_relenti',
         'km_actual',
         'km_proximo_mantenimiento',
-        'conductor_id',
         'sucursal_id',
         'activo',
         'estado',
@@ -31,6 +33,12 @@ class BusVehiculo extends Model
 
     protected $casts = [
         'activo' => 'boolean',
+        'consumo_urbano' => 'decimal:3',
+        'consumo_carretera' => 'decimal:3',
+        'consumo_relenti' => 'decimal:3',
+        'capacidad_tanque_litros' => 'decimal:2',
+        'km_actual' => 'decimal:2',
+        'km_proximo_mantenimiento' => 'decimal:2',
     ];
 
     public function modelo()
@@ -57,9 +65,9 @@ class BusVehiculo extends Model
     {
         return self::query()
             ->with(['modelo.busMarca', 'tipoCombustible', 'sucursal'])
-            ->when($buscar, fn ($q) => $q->where('placa', 'like', "%{$buscar}%")
+            ->when($buscar, fn($q) => $q->where('placa', 'like', "%{$buscar}%")
                 ->orWhere('color', 'like', "%{$buscar}%"))
-            ->when($activo !== null && $activo !== '', fn ($q) => $q->where('activo', $activo))
+            ->when($activo !== null && $activo !== '', fn($q) => $q->where('activo', $activo))
             ->orderBy('placa')
             ->paginate(10)
             ->withQueryString();
@@ -78,10 +86,10 @@ class BusVehiculo extends Model
 
     public function getEstadoBadgeAttribute(): string
     {
-        return match($this->estado) {
+        return match ($this->estado) {
             'disponible'   => '<span class="rd-badge rd-badge-success">Disponible</span>',
             'en_ruta'      => '<span class="rd-badge rd-badge-info">En Ruta</span>',
-            'mantenimiento'=> '<span class="rd-badge rd-badge-warning">Mantenimiento</span>',
+            'mantenimiento' => '<span class="rd-badge rd-badge-warning">Mantenimiento</span>',
             'inactivo'     => '<span class="rd-badge rd-badge-danger">Inactivo</span>',
             default        => '<span class="rd-badge">Desconocido</span>',
         };
