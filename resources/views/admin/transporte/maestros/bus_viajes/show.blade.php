@@ -35,11 +35,10 @@
 @section('content')
     @include('components.alert')
 
-    {{-- Métricas Telemáticas Rápidas --}}
     <div class="row mb-3">
         <div class="col-6 col-md-3">
             <div class="rd-card p-3" style="background:#fff; border-radius:12px; border:1px solid #e5e7eb;">
-                <span class="text-muted" style="font-size:0.8rem; font-weight:600;">PASAJEROS A BORDOS</span>
+                <span class="text-muted" style="font-size:0.8rem; font-weight:600;">PASAJEROS A BORDO</span>
                 <div class="d-flex align-items-center justify-content-between mt-1">
                     <h3 class="m-0 font-weight-bold" style="color:#0f172a;" id="metricPasajeros">
                         {{ $busViaje->pasajeros ?? 0 }}
@@ -90,7 +89,6 @@
     </div>
 
     <div class="row">
-        {{-- Mapa de Rastreamento en Vivo (8 Cols) --}}
         <div class="col-lg-8">
             <div class="rd-card mb-4"
                 style="background:#fff; border-radius:14px; border:1px solid #e5e7eb; overflow:hidden;">
@@ -105,14 +103,11 @@
                         GPS...</small>
                 </div>
 
-                {{-- Contenedor del Mapa --}}
                 <div id="mapaGPS" style="height: 520px; width: 100%; z-index:1;"></div>
             </div>
         </div>
 
-        {{-- Información Detallada del Chofer y Paradas (4 Cols) --}}
         <div class="col-lg-4">
-            {{-- Tarjeta Conductor & Autobús --}}
             <div class="rd-card p-4 mb-3" style="background:#fff; border-radius:14px; border:1px solid #e5e7eb;">
                 <h3 style="font-size:1rem; color:#0f172a; font-weight:700;" class="mb-3">
                     <i class="fas fa-user-shield text-primary mr-1"></i> Asignación de Unidad
@@ -152,7 +147,6 @@
                 </div>
             </div>
 
-            {{-- Tarjeta de Ruta y Paradas --}}
             <div class="rd-card p-4" style="background:#fff; border-radius:14px; border:1px solid #e5e7eb;">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 style="font-size:1rem; color:#0f172a; font-weight:700;" class="m-0">
@@ -162,8 +156,6 @@
                         {{ $busViaje->ruta->paradas->count() }} Paradas
                     </span>
                 </div>
-
-                {{-- Timeline de Paradas --}}
                 <div class="paradas-timeline" style="max-height: 280px; overflow-y: auto; padding-left: 5px;">
                     @forelse($busViaje->ruta->paradas as $index => $parada)
                         <div class="d-flex align-items-start mb-3" style="gap:12px; position:relative;">
@@ -195,7 +187,6 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-    {{-- Leaflet CSS --}}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <style>
@@ -220,11 +211,26 @@
                 box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
             }
         }
+
+        /* Estilos para el PIN numerado de paradas en Leaflet */
+        .leaflet-stop-number {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 11px;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
     </style>
 @stop
 
 @push('js')
-    {{-- Leaflet JS --}}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -232,11 +238,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const viajeId = "{{ $busViaje->id }}";
 
-            // Coordenadas iniciales por defecto
             let defaultLat = 9.546987;
             let defaultLng = -69.192543;
 
-            // 1. Inicializar Mapa con Leaflet
             const map = L.map('mapaGPS').setView([defaultLat, defaultLng], 14);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -244,7 +248,7 @@
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // Iconos
+            // Icono personalizado para el autobús
             const busIcon = L.icon({
                 iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png',
                 iconSize: [38, 38],
@@ -252,37 +256,79 @@
                 popupAnchor: [0, -19]
             });
 
-            const stopIcon = L.icon({
-                iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
-            });
-
-            // Marcador del autobús
             let busMarker = L.marker([defaultLat, defaultLng], {
                     icon: busIcon
                 })
                 .addTo(map)
                 .bindPopup(`<b>${"{{ $busViaje->vehiculo->placa ?? 'Unidad' }}"}</b><br>Esperando señal GPS...`);
 
-            // 2. Renderizar Paradas de la Ruta
+            // Cargar paradas enviadas desde el backend
             const paradasData = @json($busViaje->ruta->paradas ?? []);
             const routePoints = [];
 
             if (paradasData.length > 0) {
                 paradasData.forEach((parada, idx) => {
                     if (parada.latitud && parada.longitud) {
-                        const point = [parseFloat(parada.latitud), parseFloat(parada.longitud)];
-                        routePoints.push(point);
+                        const lat = parseFloat(parada.latitud);
+                        const lng = parseFloat(parada.longitud);
+                        routePoints.push([lat, lng]);
 
-                        L.marker(point, {
-                                icon: stopIcon
+                        // Crear marcador con número de parada
+                        const stopNumberIcon = L.divIcon({
+                            className: 'leaflet-stop-number-container',
+                            html: `<div class="leaflet-stop-number">${idx + 1}</div>`,
+                            iconSize: [26, 26],
+                            iconAnchor: [13, 13]
+                        });
+
+                        L.marker([lat, lng], {
+                                icon: stopNumberIcon
                             })
                             .addTo(map)
                             .bindPopup(`<b>Parada ${idx + 1}: ${parada.nombre}</b>`);
                     }
                 });
 
+                // Si hay 2 o más paradas, calculamos la ruta por las calles mediante OSRM
+                if (routePoints.length >= 2) {
+                    // OSRM utiliza la estructura [Lng, Lat]
+                    const osrmCoords = routePoints.map(p => `${p[1]},${p[0]}`).join(';');
+                    const osrmUrl =
+                        `https://router.project-osrm.org/route/v1/driving/${osrmCoords}?overview=full&geometries=geojson`;
+
+                    fetch(osrmUrl)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.routes && data.routes.length > 0) {
+                                const geometry = data.routes[0].geometry;
+                                // Invertimos coordenadas [Lng, Lat] a [Lat, Lng] para Leaflet
+                                const latLngs = geometry.coordinates.map(c => [c[1], c[0]]);
+
+                                const routePolyline = L.polyline(latLngs, {
+                                    color: '#B71C1C', // Color idéntico al de Flutter
+                                    weight: 5,
+                                    opacity: 0.8,
+                                    lineJoin: 'round'
+                                }).addTo(map);
+
+                                map.fitBounds(routePolyline.getBounds(), {
+                                    padding: [40, 40]
+                                });
+                            } else {
+                                fallbackPolyline();
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error al obtener trazado OSRM:", err);
+                            fallbackPolyline();
+                        });
+                } else if (routePoints.length === 1) {
+                    map.setView(routePoints[0], 15);
+                }
+            }
+
+            // Trazado alternativo simple por si falla el servidor OSRM
+            function fallbackPolyline() {
                 if (routePoints.length > 1) {
                     const polyline = L.polyline(routePoints, {
                         color: '#2563eb',
@@ -290,17 +336,16 @@
                         opacity: 0.7,
                         dashArray: '8, 8'
                     }).addTo(map);
+
                     map.fitBounds(polyline.getBounds(), {
                         padding: [40, 40]
                     });
                 }
             }
 
-            // 3. Función para actualizar la UI con los datos recibidos por HTTP
             function actualizarPosicionGPS(lat, lng, velocidad = 0, fechaRegistro = null) {
                 const newLatLng = new L.LatLng(lat, lng);
                 busMarker.setLatLng(newLatLng);
-                map.panTo(newLatLng);
 
                 busMarker.getPopup().setContent(`
                     <div style="text-align:center;">
@@ -316,7 +361,6 @@
                     const ahora = new Date();
                     const segundosDiferencia = Math.floor((ahora - ultimaTransmision) / 1000);
 
-                    // Si la última señal fue hace más de 60 segundos, se considera Offline / Sin Señal
                     if (segundosDiferencia > 60) {
                         statusElement.innerHTML = `
                             <span class="text-danger font-weight-bold">
@@ -326,14 +370,12 @@
                     }
                 }
 
-                // Si la señal es reciente (menos de 60s)
                 statusElement.innerHTML = `
                     <span class="text-success font-weight-bold">
                         <i class="fas fa-check-circle mr-1"></i> Transmitiendo en vivo (${new Date().toLocaleTimeString()})
                     </span>`;
             }
 
-            // 4. Consulta Periódica por HTTP (Polling cada 3 segundos)
             function consultarGPS() {
                 fetch(`/api/viajes/${viajeId}/posicion`, {
                         headers: {
@@ -341,14 +383,12 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
-                    .then(res => {
-                        return res.json();
-                    })
+                    .then(res => res.json())
                     .then(data => {
                         if (data.success && data.latitud && data.longitud) {
-                            actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad, data.fecha_registro);
+                            actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad, data
+                                .fecha_registro);
 
-                            // Actualizar métricas dinámicas
                             if (data.pasajeros !== undefined) {
                                 document.getElementById('metricPasajeros').innerText = data.pasajeros;
                             }
@@ -365,9 +405,8 @@
                     .catch(err => console.error("Error al consultar GPS:", err));
             }
 
-            // Iniciar consulta iterativa cada 3 segundos
             setInterval(consultarGPS, 3000);
-            consultarGPS(); // Primera llamada inmediata
+            consultarGPS();
         });
     </script>
 @endpush
