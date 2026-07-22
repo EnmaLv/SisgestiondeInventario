@@ -321,8 +321,12 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        console.log("Código HTTP recibido:", res.status); // <--- LOG AQUÍ
+                        return res.json();
+                    })
                     .then(data => {
+                        console.log("Respuesta del servidor:", data);
                         if (data.success && data.latitud && data.longitud) {
                             actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad);
 

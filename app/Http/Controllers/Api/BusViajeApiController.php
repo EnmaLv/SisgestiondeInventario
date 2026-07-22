@@ -7,6 +7,7 @@ use App\Models\BusViaje;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use App\Models\BusGpsLog;
 
 class BusViajeApiController extends Controller
@@ -43,7 +44,11 @@ class BusViajeApiController extends Controller
 
     public function obtenerPosicion(BusViaje $viaje): JsonResponse
     {
+        Log::info("Peticion de posicion recibida para el viaje: " . $viaje->id);
+
         $ultimoLog = $viaje->gpsLogs()->latest('id')->first();
+
+        Log::info("Ultimo log encontrado:", ['log' => $ultimoLog]);
 
         return response()->json([
             'success'         => true,
