@@ -52,5 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('viajes/{viaje}/iniciar', [BusViajeApiController::class, 'iniciar']);
         Route::post('viajes/{viaje}/finalizar', [BusViajeApiController::class, 'finalizar']);
         Route::get('viajes/historial', [BusViajeApiController::class, 'historial']);
+        Route::post('viajes/{viaje}/gps',       [BusViajeApiController::class, 'registrarGps']);
+        Route::get('viajes/{viaje}/posicion',   [BusViajeApiController::class, 'obtenerPosicion']);
     });
 });

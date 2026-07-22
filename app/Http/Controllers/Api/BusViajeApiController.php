@@ -7,9 +7,57 @@ use App\Models\BusViaje;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\BusGpsLog;
 
 class BusViajeApiController extends Controller
 {
+
+    public function registrarGps(Request $request, BusViaje $viaje): JsonResponse
+    {
+        if ($viaje->conductor_id !== $request->user()->id_usuario) {
+            return response()->json(['success' => false, 'message' => 'No autorizado.'], 403);
+        }
+
+        $validated = $request->validate([
+            'lat'       => 'required|numeric',
+            'lng'       => 'required|numeric',
+            'velocidad' => 'nullable|numeric',
+            'heading'   => 'nullable|numeric',
+        ]);
+
+        // Guardar el log GPS
+        $viaje->gpsLogs()->create([
+            'lat'           => $validated['lat'],
+            'lng'           => $validated['lng'],
+            'velocidad'     => $validated['velocidad'] ?? 0,
+            'heading'       => $validated['heading'] ?? 0,
+            'registrado_en' => now(),
+            'origen'        => 'app_flutter',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Coordenadas registradas correctamente.',
+        ]);
+    }
+
+    public function obtenerPosicion(BusViaje $viaje): JsonResponse
+    {
+        $ultimoLog = $viaje->gpsLogs()->latest('id')->first();
+
+        return response()->json([
+            'success'         => true,
+            'latitud'         => $ultimoLog ? (float) $ultimoLog->lat : null,
+            'longitud'        => $ultimoLog ? (float) $ultimoLog->lng : null,
+            'velocidad'       => $ultimoLog ? (float) $ultimoLog->velocidad : 0,
+            'pasajeros'       => $viaje->pasajeros,
+            'distancia_km'    => $viaje->distancia_km,
+            'litros_gastados' => $viaje->litros_gastados,
+            'estado'          => $viaje->estado,
+            'actualizado_hace' => $ultimoLog ? $ultimoLog->created_at->diffForHumans() : 'Sin registros',
+        ]);
+    }
+
     public function miViajeActivo(Request $request): JsonResponse
     {
         $usuario = $request->user();

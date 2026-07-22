@@ -39,6 +39,11 @@ class BusViaje extends Model
         'pasajeros'      => 'integer',
     ];
 
+    public function gpsLogs()
+    {
+        return $this->hasMany(BusGpsLog::class, 'bus_viaje_id');
+    }
+
     public function vehiculo()
     {
         return $this->belongsTo(BusVehiculo::class, 'vehiculo_id');

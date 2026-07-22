@@ -228,27 +228,23 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    {{-- Firebase JS SDK (Opcional: Si usas Firebase SDK directamente en cliente) --}}
-    {{-- <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script> --}}
-    {{-- <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script> --}}
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const firebaseId = "{{ $busViaje->firebase_id }}";
+            const viajeId = "{{ $busViaje->id }}";
 
-            // Coordenadas iniciales por defecto (ej. Centro de la ciudad)
-            let defaultLat = 10.4806;
-            let defaultLng = -66.9036;
+            // Coordenadas iniciales por defecto
+            let defaultLat = 9.546987;
+            let defaultLng = -69.192543;
 
             // 1. Inicializar Mapa con Leaflet
-            const map = L.map('mapaGPS').setView([defaultLat, defaultLng], 13);
+            const map = L.map('mapaGPS').setView([defaultLat, defaultLng], 14);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // Icono del Autobús
+            // Iconos
             const busIcon = L.icon({
                 iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png',
                 iconSize: [38, 38],
@@ -256,23 +252,20 @@
                 popupAnchor: [0, -19]
             });
 
-            // Icono de Paradas
             const stopIcon = L.icon({
                 iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
                 iconSize: [24, 24],
                 iconAnchor: [12, 12]
             });
 
-            // Marcador principal de la unidad
+            // Marcador del autobús
             let busMarker = L.marker([defaultLat, defaultLng], {
                     icon: busIcon
                 })
                 .addTo(map)
-                .bindPopup(
-                    `<b>${"{{ $busViaje->vehiculo->unidad ?? 'Unidad' }}"}</b><br>Buscando señal de transmisión...`
-                    );
+                .bindPopup(`<b>${"{{ $busViaje->vehiculo->placa ?? 'Unidad' }}"}</b><br>Esperando señal GPS...`);
 
-            // 2. Renderizar Paradas registradas
+            // 2. Renderizar Paradas de la Ruta
             const paradasData = @json($busViaje->ruta->paradas ?? []);
             const routePoints = [];
 
@@ -290,7 +283,6 @@
                     }
                 });
 
-                // Dibujar la línea de la ruta si existen coordenadas
                 if (routePoints.length > 1) {
                     const polyline = L.polyline(routePoints, {
                         color: '#2563eb',
@@ -304,7 +296,7 @@
                 }
             }
 
-            // 3. Sincronización GPS (Estructura lista para Firebase / Polling AJAX)
+            // 3. Función para actualizar la UI con los datos recibidos por HTTP
             function actualizarPosicionGPS(lat, lng, velocidad = 0) {
                 const newLatLng = new L.LatLng(lat, lng);
                 busMarker.setLatLng(newLatLng);
@@ -312,29 +304,48 @@
 
                 busMarker.getPopup().setContent(`
                     <div style="text-align:center;">
-                        <strong style="color:#2563eb;">${"{{ $busViaje->vehiculo->unidad ?? 'Autobús' }}"}</strong><br>
-                        <span>Velocidad: <b>${velocidad} km/h</b></span>
+                        <strong style="color:#2563eb;">${"{{ $busViaje->vehiculo->placa ?? 'Autobús' }}"}</strong><br>
+                        <span>Velocidad: <b>${parseFloat(velocidad).toFixed(1)} km/h</b></span>
                     </div>
                 `);
 
                 document.getElementById('lastUpdated').innerHTML =
-                    `<i class="fas fa-check-circle text-success mr-1"></i> Señal en vivo (${new Date().toLocaleTimeString()})`;
+                    `<i class="fas fa-check-circle text-success mr-1"></i> Transmitiendo en vivo (${new Date().toLocaleTimeString()})`;
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | EJEMPLO INTEGRACIÓN FIREBASE REALTIME DATABASE
-            |--------------------------------------------------------------------------
-            | const dbRef = firebase.database().ref('viajes/' + firebaseId);
-            | dbRef.on('value', (snapshot) => {
-            |     const data = snapshot.val();
-            |     if (data && data.latitud && data.longitud) {
-            |         actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad || 0);
-            |         if(data.pasajeros !== undefined) document.getElementById('metricPasajeros').innerText = data.pasajeros;
-            |         if(data.distancia !== undefined) document.getElementById('metricDistancia').innerText = data.distancia + ' km';
-            |     }
-            | });
-            */
+            // 4. Consulta Periódica por HTTP (Polling cada 3 segundos)
+            function consultarGPS() {
+                fetch(`/api/viajes/${viajeId}/posicion`, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.latitud && data.longitud) {
+                            actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad);
+
+                            // Actualizar métricas dinámicas
+                            if (data.pasajeros !== undefined) {
+                                document.getElementById('metricPasajeros').innerText = data.pasajeros;
+                            }
+                            if (data.distancia_km !== undefined) {
+                                document.getElementById('metricDistancia').innerHTML =
+                                    `${data.distancia_km} <small style="font-size:0.9rem;">km</small>`;
+                            }
+                            if (data.litros_gastados !== undefined) {
+                                document.getElementById('metricLitros').innerHTML =
+                                    `${data.litros_gastados} <small style="font-size:0.9rem;">L</small>`;
+                            }
+                        }
+                    })
+                    .catch(err => console.error("Error al consultar GPS:", err));
+            }
+
+            // Iniciar consulta iterativa cada 3 segundos
+            setInterval(consultarGPS, 3000);
+            consultarGPS(); // Primera llamada inmediata
         });
     </script>
 @endpush
