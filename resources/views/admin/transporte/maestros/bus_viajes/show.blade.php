@@ -261,25 +261,14 @@
                 popupAnchor: [0, -19]
             });
 
-            let busMarker = L.marker([currentBusLat, currentBusLng], {
-                    icon: busIcon
-                })
+            let busMarker = L.marker([currentBusLat, currentBusLng], { icon: busIcon })
                 .addTo(map)
                 .bindPopup(`<b>${"{{ $busViaje->vehiculo->placa ?? 'Unidad' }}"}</b><br>Esperando señal GPS...`);
 
-            // Historial de recorrido en vivo (ROJO FUERTE / INTENSO)
-            const busTrajectory = [];
-            const trajectoryPolyline = L.polyline([], {
-                color: '#b91c1c', // Rojo intenso
-                weight: 6,
-                opacity: 1.0,
-                lineJoin: 'round'
-            }).addTo(map);
-
-            // Capa para la línea de aproximación (Bus -> Parada 1)
+            // Capa para la línea de aproximación por OSRM (Bus -> Parada 1)
             let approachPolyline = null;
 
-            // Cargar paradas directamente con lat y lng
+            // Cargar paradas
             const paradasData = @json($busViaje->ruta->paradas ?? []);
             const routePoints = [];
 
@@ -299,19 +288,16 @@
                             iconAnchor: [13, 13]
                         });
 
-                        L.marker(point, {
-                                icon: stopNumberIcon
-                            })
+                        L.marker(point, { icon: stopNumberIcon })
                             .addTo(map)
                             .bindPopup(`<b>Parada ${idx + 1}: ${parada.nombre}</b>`);
                     }
                 });
 
-                // Trazar ruta oficial entre paradas (ROJO CLARO)
+                // Trazar ruta oficial entre paradas por calles (OSRM)
                 if (routePoints.length >= 2) {
                     const osrmCoords = routePoints.map(p => `${p[1]},${p[0]}`).join(';');
-                    const osrmUrl =
-                        `https://router.project-osrm.org/route/v1/driving/${osrmCoords}?overview=full&geometries=geojson`;
+                    const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${osrmCoords}?overview=full&geometries=geojson`;
 
                     fetch(osrmUrl)
                         .then(response => response.json())
@@ -321,32 +307,29 @@
                                 const latLngs = geometry.coordinates.map(c => [c[1], c[0]]);
 
                                 const plannedPolyline = L.polyline(latLngs, {
-                                    color: '#ef4444', // Rojo claro / translúcido
+                                    color: '#b91c1c', // Rojo de la ruta
                                     weight: 5,
-                                    opacity: 0.45,
+                                    opacity: 0.8,
                                     lineJoin: 'round'
                                 }).addTo(map);
 
-                                map.fitBounds(plannedPolyline.getBounds(), {
-                                    padding: [50, 50]
-                                });
+                                map.fitBounds(plannedPolyline.getBounds(), { padding: [50, 50] });
                             }
                         })
                         .catch(err => console.error("Error al trazar ruta OSRM:", err));
                 }
 
-                // Trazar aproximación inicial desde el bus a la primera parada
+                // Trazar aproximación inicial por calles desde el bus a la primera parada
                 trazarAproximacionParada(currentBusLat, currentBusLng);
             }
 
-            // Función para calcular ruta desde la ubicación del bus a la primera parada (Mismo ROJO CLARO)
+            // OSRM calcula el camino exacto por la calle desde el bus a Parada 1
             function trazarAproximacionParada(busLat, busLng) {
                 if (routePoints.length === 0) return;
 
-                const primeraParada = routePoints[0]; // [lat, lng]
+                const primeraParada = routePoints[0];
                 const coordsOSRM = `${busLng},${busLat};${primeraParada[1]},${primeraParada[0]}`;
-                const url =
-                    `https://router.project-osrm.org/route/v1/driving/${coordsOSRM}?overview=full&geometries=geojson`;
+                const url = `https://router.project-osrm.org/route/v1/driving/${coordsOSRM}?overview=full&geometries=geojson`;
 
                 fetch(url)
                     .then(res => res.json())
@@ -358,11 +341,10 @@
                                 map.removeLayer(approachPolyline);
                             }
 
-                            // Línea de aproximación con el mismo estilo rojo claro
                             approachPolyline = L.polyline(latLngs, {
-                                color: '#ef4444', // Rojo claro
-                                weight: 5,
-                                opacity: 0.45,
+                                color: '#ef4444', // Rojo de aproximación
+                                weight: 4,
+                                opacity: 0.6,
                                 lineJoin: 'round'
                             }).addTo(map);
                         }
@@ -374,16 +356,12 @@
                 const newLatLng = new L.LatLng(lat, lng);
                 busMarker.setLatLng(newLatLng);
 
-                // Re-calculamos aproximación si la ubicación cambió
+                // Re-calculamos el camino de aproximación OSRM solo si el bus cambia de lugar
                 if (currentBusLat !== lat || currentBusLng !== lng) {
                     currentBusLat = lat;
                     currentBusLng = lng;
                     trazarAproximacionParada(lat, lng);
                 }
-
-                // Dibujar línea de recorrido real sobre el mapa (Rojo fuerte)
-                busTrajectory.push(newLatLng);
-                trajectoryPolyline.setLatLngs(busTrajectory);
 
                 busMarker.getPopup().setContent(`
                     <div style="text-align:center;">
@@ -424,8 +402,7 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.success && data.latitud && data.longitud) {
-                            actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad, data
-                                .fecha_registro);
+                            actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad, data.fecha_registro);
 
                             if (data.pasajeros !== undefined) {
                                 document.getElementById('metricPasajeros').innerText = data.pasajeros;
