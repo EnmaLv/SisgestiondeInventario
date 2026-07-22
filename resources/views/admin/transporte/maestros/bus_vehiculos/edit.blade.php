@@ -119,7 +119,7 @@
                         <label class="font-weight-bold">Peso del Vehículo</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
-                            <input type="text" name="peso"
+                            <input type="text" inputmode="decimal" name="peso"
                                 class="form-control rd-filter-input @error('peso') is-invalid @enderror"
                                 value="{{ old('peso', $busVehiculo->peso) }}" placeholder="Ej: 3.5 Ton / 3500 kg"
                                 maxlength="50">
@@ -222,7 +222,7 @@
                         <label class="font-weight-bold">Capacidad Tanque (L)</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-fill-drip"></i></span>
-                            <input type="number" name="capacidad_tanque_litros" step="0.01"
+                            <input type="text" inputmode="decimal" name="capacidad_tanque_litros" step="0.01"
                                 class="form-control rd-filter-input @error('capacidad_tanque_litros') is-invalid @enderror"
                                 value="{{ old('capacidad_tanque_litros', $busVehiculo->capacidad_tanque_litros) }}"
                                 placeholder="Ej: 120.00" min="0"
@@ -239,7 +239,7 @@
                         <label class="font-weight-bold">KM Actual</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-road"></i></span>
-                            <input type="number" name="km_actual" step="0.01"
+                            <input type="text" inputmode="decimal" name="km_actual" step="0.01"
                                 class="form-control rd-filter-input @error('km_actual') is-invalid @enderror"
                                 value="{{ old('km_actual', $busVehiculo->km_actual) }}" placeholder="Ej: 50000.00"
                                 min="0" oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,9)">
@@ -255,7 +255,7 @@
                         <label class="font-weight-bold">KM Próx. Mantenimiento</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-wrench"></i></span>
-                            <input type="number" name="km_proximo_mantenimiento" step="0.01"
+                            <input type="text" inputmode="decimal" name="km_proximo_mantenimiento" step="0.01"
                                 class="form-control rd-filter-input @error('km_proximo_mantenimiento') is-invalid @enderror"
                                 value="{{ old('km_proximo_mantenimiento', $busVehiculo->km_proximo_mantenimiento) }}"
                                 placeholder="Ej: 55000.00" min="0"
@@ -274,7 +274,7 @@
                         <label class="font-weight-bold">Consumo Urbano (L/km)</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-city"></i></span>
-                            <input type="number" name="consumo_urbano" step="0.001"
+                            <input type="text" inputmode="decimal" name="consumo_urbano" step="0.001"
                                 class="form-control rd-filter-input @error('consumo_urbano') is-invalid @enderror"
                                 value="{{ old('consumo_urbano', $busVehiculo->consumo_urbano) }}" placeholder="Ej: 0.350"
                                 min="0" oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
@@ -290,7 +290,7 @@
                         <label class="font-weight-bold">Consumo Carretera (L/km)</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-route"></i></span>
-                            <input type="number" name="consumo_carretera" step="0.001"
+                            <input type="text" inputmode="decimal" name="consumo_carretera" step="0.001"
                                 class="form-control rd-filter-input @error('consumo_carretera') is-invalid @enderror"
                                 value="{{ old('consumo_carretera', $busVehiculo->consumo_carretera) }}"
                                 placeholder="Ej: 0.280" min="0"
@@ -307,7 +307,7 @@
                         <label class="font-weight-bold">Consumo Ralentí (L/h)</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                            <input type="number" name="consumo_relenti" step="0.001"
+                            <input type="text" inputmode="decimal" name="consumo_relenti" step="0.001"
                                 class="form-control rd-filter-input @error('consumo_relenti') is-invalid @enderror"
                                 value="{{ old('consumo_relenti', $busVehiculo->consumo_relenti) }}"
                                 placeholder="Ej: 1.500" min="0"
