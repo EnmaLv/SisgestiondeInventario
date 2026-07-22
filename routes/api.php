@@ -48,9 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('vehiculos/{vehiculo}/toggle', [BusVehiculoApiController::class, 'toggle']);
         Route::delete('vehiculos/{vehiculo}', [BusVehiculoApiController::class, 'destroy']);
 
-        Route::get('viajes/activo',               [BusViajeApiController::class, 'miViajeActivo']);
-        Route::post('viajes/{viaje}/iniciar',     [BusViajeApiController::class, 'iniciar']);
-        Route::post('viajes/{viaje}/finalizar',   [BusViajeApiController::class, 'finalizar']);
-        Route::get('viajes/historial',            [BusViajeApiController::class, 'historial']);
+        Route::get('mi-viaje-activo', [BusViajeApiController::class, 'miViajeActivo']);
+        Route::post('viajes/{viaje}/iniciar', [BusViajeApiController::class, 'iniciar']);
+        Route::post('viajes/{viaje}/finalizar', [BusViajeApiController::class, 'finalizar']);
+        Route::get('viajes/historial', [BusViajeApiController::class, 'historial']);
     });
 });
