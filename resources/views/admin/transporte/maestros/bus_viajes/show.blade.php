@@ -167,10 +167,14 @@
                                 <div class="font-weight-bold" style="font-size:0.88rem; color:#1e293b;">
                                     {{ $parada->nombre }}
                                 </div>
-                                @if ($parada->latitud && $parada->longitud)
+                                @if ($parada->lat && $parada->lng)
                                     <small class="text-muted" style="font-size:0.75rem;">
-                                        Lat: {{ number_format($parada->latitud, 4) }}, Lng:
-                                        {{ number_format($parada->longitud, 4) }}
+                                        Lat: {{ number_format((float) $parada->lat, 4) }}, Lng:
+                                        {{ number_format((float) $parada->lng, 4) }}
+                                    </small>
+                                @else
+                                    <small class="text-danger font-weight-bold" style="font-size:0.72rem;">
+                                        <i class="fas fa-exclamation-circle mr-1"></i> Sin Coordenadas
                                     </small>
                                 @endif
                             </div>
@@ -212,7 +216,7 @@
             }
         }
 
-        /* Estilos para el PIN numerado de paradas en Leaflet */
+        /* Estilo para los marcadores numerados de las paradas */
         .leaflet-stop-number {
             background-color: #2563eb;
             color: #ffffff;
@@ -238,17 +242,18 @@
         document.addEventListener('DOMContentLoaded', function() {
             const viajeId = "{{ $busViaje->id }}";
 
-            let defaultLat = 9.546987;
-            let defaultLng = -69.192543;
+            // Coordenadas por defecto (Acarigua / Araure)
+            let defaultLat = 9.5468743;
+            let defaultLng = -69.1926348;
 
-            const map = L.map('mapaGPS').setView([defaultLat, defaultLng], 14);
+            const map = L.map('mapaGPS').setView([defaultLat, defaultLng], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // Icono personalizado para el autobús
+            // Icono del autobús
             const busIcon = L.icon({
                 iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png',
                 iconSize: [38, 38],
@@ -262,18 +267,28 @@
                 .addTo(map)
                 .bindPopup(`<b>${"{{ $busViaje->vehiculo->placa ?? 'Unidad' }}"}</b><br>Esperando señal GPS...`);
 
-            // Cargar paradas enviadas desde el backend
+            // Historial de recorrido en vivo (Línea Verde)
+            const busTrajectory = [];
+            const trajectoryPolyline = L.polyline([], {
+                color: '#10b981',
+                weight: 5,
+                opacity: 0.9
+            }).addTo(map);
+
+            // Cargar paradas directamente con lat y lng
             const paradasData = @json($busViaje->ruta->paradas ?? []);
             const routePoints = [];
 
-            if (paradasData.length > 0) {
+            if (Array.isArray(paradasData) && paradasData.length > 0) {
                 paradasData.forEach((parada, idx) => {
-                    if (parada.latitud && parada.longitud) {
-                        const lat = parseFloat(parada.latitud);
-                        const lng = parseFloat(parada.longitud);
-                        routePoints.push([lat, lng]);
+                    const lat = parseFloat(parada.lat);
+                    const lng = parseFloat(parada.lng);
 
-                        // Crear marcador con número de parada
+                    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                        const point = [lat, lng];
+                        routePoints.push(point);
+
+                        // Crear marcador con el número (1, 2, 3...)
                         const stopNumberIcon = L.divIcon({
                             className: 'leaflet-stop-number-container',
                             html: `<div class="leaflet-stop-number">${idx + 1}</div>`,
@@ -281,7 +296,7 @@
                             iconAnchor: [13, 13]
                         });
 
-                        L.marker([lat, lng], {
+                        L.marker(point, {
                                 icon: stopNumberIcon
                             })
                             .addTo(map)
@@ -289,9 +304,8 @@
                     }
                 });
 
-                // Si hay 2 o más paradas, calculamos la ruta por las calles mediante OSRM
+                // Si hay 2 o más paradas, trazamos la ruta por las calles usando OSRM
                 if (routePoints.length >= 2) {
-                    // OSRM utiliza la estructura [Lng, Lat]
                     const osrmCoords = routePoints.map(p => `${p[1]},${p[0]}`).join(';');
                     const osrmUrl =
                         `https://router.project-osrm.org/route/v1/driving/${osrmCoords}?overview=full&geometries=geojson`;
@@ -301,17 +315,16 @@
                         .then(data => {
                             if (data.routes && data.routes.length > 0) {
                                 const geometry = data.routes[0].geometry;
-                                // Invertimos coordenadas [Lng, Lat] a [Lat, Lng] para Leaflet
                                 const latLngs = geometry.coordinates.map(c => [c[1], c[0]]);
 
-                                const routePolyline = L.polyline(latLngs, {
-                                    color: '#B71C1C', // Color idéntico al de Flutter
+                                const plannedPolyline = L.polyline(latLngs, {
+                                    color: '#B71C1C', // Rojo Carmesí
                                     weight: 5,
-                                    opacity: 0.8,
+                                    opacity: 0.85,
                                     lineJoin: 'round'
                                 }).addTo(map);
 
-                                map.fitBounds(routePolyline.getBounds(), {
+                                map.fitBounds(plannedPolyline.getBounds(), {
                                     padding: [40, 40]
                                 });
                             } else {
@@ -319,7 +332,7 @@
                             }
                         })
                         .catch(err => {
-                            console.error("Error al obtener trazado OSRM:", err);
+                            console.error("Error al trazar ruta OSRM:", err);
                             fallbackPolyline();
                         });
                 } else if (routePoints.length === 1) {
@@ -327,7 +340,6 @@
                 }
             }
 
-            // Trazado alternativo simple por si falla el servidor OSRM
             function fallbackPolyline() {
                 if (routePoints.length > 1) {
                     const polyline = L.polyline(routePoints, {
@@ -346,6 +358,9 @@
             function actualizarPosicionGPS(lat, lng, velocidad = 0, fechaRegistro = null) {
                 const newLatLng = new L.LatLng(lat, lng);
                 busMarker.setLatLng(newLatLng);
+
+                busTrajectory.push(newLatLng);
+                trajectoryPolyline.setLatLngs(busTrajectory);
 
                 busMarker.getPopup().setContent(`
                     <div style="text-align:center;">
