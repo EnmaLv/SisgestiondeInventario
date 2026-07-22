@@ -297,7 +297,7 @@
             }
 
             // 3. Función para actualizar la UI con los datos recibidos por HTTP
-            function actualizarPosicionGPS(lat, lng, velocidad = 0) {
+            function actualizarPosicionGPS(lat, lng, velocidad = 0, fechaRegistro = null) {
                 const newLatLng = new L.LatLng(lat, lng);
                 busMarker.setLatLng(newLatLng);
                 map.panTo(newLatLng);
@@ -309,8 +309,28 @@
                     </div>
                 `);
 
-                document.getElementById('lastUpdated').innerHTML =
-                    `<i class="fas fa-check-circle text-success mr-1"></i> Transmitiendo en vivo (${new Date().toLocaleTimeString()})`;
+                const statusElement = document.getElementById('lastUpdated');
+
+                if (fechaRegistro) {
+                    const ultimaTransmision = new Date(fechaRegistro);
+                    const ahora = new Date();
+                    const segundosDiferencia = Math.floor((ahora - ultimaTransmision) / 1000);
+
+                    // Si la última señal fue hace más de 60 segundos, se considera Offline / Sin Señal
+                    if (segundosDiferencia > 60) {
+                        statusElement.innerHTML = `
+                            <span class="text-danger font-weight-bold">
+                                <i class="fas fa-exclamation-triangle mr-1"></i> Sin señal GPS (Última: ${ultimaTransmision.toLocaleTimeString()})
+                            </span>`;
+                        return;
+                    }
+                }
+
+                // Si la señal es reciente (menos de 60s)
+                statusElement.innerHTML = `
+                    <span class="text-success font-weight-bold">
+                        <i class="fas fa-check-circle mr-1"></i> Transmitiendo en vivo (${new Date().toLocaleTimeString()})
+                    </span>`;
             }
 
             // 4. Consulta Periódica por HTTP (Polling cada 3 segundos)
@@ -322,13 +342,11 @@
                         }
                     })
                     .then(res => {
-                        console.log("Código HTTP recibido:", res.status); // <--- LOG AQUÍ
                         return res.json();
                     })
                     .then(data => {
-                        console.log("Respuesta del servidor:", data);
                         if (data.success && data.latitud && data.longitud) {
-                            actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad);
+                            actualizarPosicionGPS(data.latitud, data.longitud, data.velocidad, data.fecha_registro);
 
                             // Actualizar métricas dinámicas
                             if (data.pasajeros !== undefined) {

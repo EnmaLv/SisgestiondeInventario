@@ -26,39 +26,39 @@ class BusViajeApiController extends Controller
             'heading'   => 'nullable|numeric',
         ]);
 
-        // Guardar el log GPS
-        $viaje->gpsLogs()->create([
-            'lat'           => $validated['lat'],
-            'lng'           => $validated['lng'],
-            'velocidad'     => $validated['velocidad'] ?? 0,
-            'heading'       => $validated['heading'] ?? 0,
-            'registrado_en' => now(),
-            'origen'        => 'app_flutter',
-        ]);
+        $ultimoLog = $viaje->gpsLogs()->latest('id')->first();
+
+        if (!$ultimoLog || $ultimoLog->created_at->diffInSeconds(now()) >= 15) {
+            $viaje->gpsLogs()->create([
+                'lat'           => $validated['lat'],
+                'lng'           => $validated['lng'],
+                'velocidad'     => $validated['velocidad'] ?? 0,
+                'heading'       => $validated['heading'] ?? 0,
+                'registrado_en' => now(),
+                'origen'        => 'app_flutter',
+            ]);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Coordenadas registradas correctamente.',
+            'message' => 'Coordenadas procesadas.',
         ]);
     }
 
     public function obtenerPosicion(BusViaje $viaje): JsonResponse
     {
-        Log::info("Peticion de posicion recibida para el viaje: " . $viaje->id);
-
         $ultimoLog = $viaje->gpsLogs()->latest('id')->first();
 
-        Log::info("Ultimo log encontrado:", ['log' => $ultimoLog]);
-
         return response()->json([
-            'success'         => true,
-            'latitud'         => $ultimoLog ? (float) $ultimoLog->lat : null,
-            'longitud'        => $ultimoLog ? (float) $ultimoLog->lng : null,
-            'velocidad'       => $ultimoLog ? (float) $ultimoLog->velocidad : 0,
-            'pasajeros'       => $viaje->pasajeros,
-            'distancia_km'    => $viaje->distancia_km,
-            'litros_gastados' => $viaje->litros_gastados,
-            'estado'          => $viaje->estado,
+            'success'          => true,
+            'latitud'          => $ultimoLog ? (float) $ultimoLog->lat : null,
+            'longitud'         => $ultimoLog ? (float) $ultimoLog->lng : null,
+            'velocidad'        => $ultimoLog ? (float) $ultimoLog->velocidad : 0,
+            'pasajeros'        => $viaje->pasajeros,
+            'distancia_km'     => $viaje->distancia_km,
+            'litros_gastados'  => $viaje->litros_gastados,
+            'estado'           => $viaje->estado,
+            'fecha_registro'   => $ultimoLog ? $ultimoLog->created_at->toISOString() : null,
             'actualizado_hace' => $ultimoLog ? $ultimoLog->created_at->diffForHumans() : 'Sin registros',
         ]);
     }
