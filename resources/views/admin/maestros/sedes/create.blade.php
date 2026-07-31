@@ -10,7 +10,7 @@
          ">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
-                Editar Sede
+                Crear Sede
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -24,7 +24,6 @@
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
             </div>
-
             <div
                 style="
                 width:46px;
@@ -46,24 +45,23 @@
         <div class="rd-card-body">
             <div class="rd-card-header mb-3">
                 <div>
-                    <h3 class="rd-title-sm">Editar Sede</h3>
-                    <small class="text-muted">Modifique los datos necesarios</small>
+                    <h3 class="rd-title-sm">Crear Sede</h3>
+                    <small class="text-muted">Complete la información requerida</small>
                 </div>
-                <a href="{{ url('admin/maestros/sucursales') }}" class="rd-btn rd-btn-default">
+                <a href="{{ route('admin.maestros.sedes.index') }}" class="rd-btn rd-btn-default">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
             </div>
-            <form action="{{ route('admin.maestros.sucursales.update', $sucursal->id) }}" method="POST"
-                class="rd-prevent-double-submit">
+            <form action="{{ route('admin.maestros.sedes.store') }}" method="POST" class="rd-prevent-double-submit">
                 @csrf
-                @method('PUT')
+                <input type="hidden" name="from" value="{{ request('from') }}">
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="rd-label">Nombre de la Sede</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
-                            <input type="text" name="nombre" class="rd-input w-100" value="{{ $sucursal->nombre }}"
-                                placeholder="Ingrese el nombre">
+                            <input type="text" name="nombre" class="form-control rd-filter-input"
+                                placeholder="Ingrese el nombre" value="{{ old('nombre') }}">
                         </div>
                         @error('nombre')
                             <b> <span class="rd-error">{{ $message }}</span></b>
@@ -73,8 +71,8 @@
                         <label class="rd-label">Dirección</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-map-marker-alt"></i></span>
-                            <input type="text" name="direccion" class="rd-input w-100" value="{{ $sucursal->direccion }}"
-                                placeholder="Ingrese la dirección">
+                            <input type="text" name="direccion" class="form-control rd-filter-input"
+                                placeholder="Ingrese la dirección" value="{{ old('direccion') }}">
                         </div>
                         @error('direccion')
                             <b> <span class="rd-error">Este campo es obligatorio.</span></b>
@@ -84,8 +82,8 @@
                         <label class="rd-label">Teléfono</label>
                         <div class="rd-input-group">
                             <span class="rd-input-icon"><i class="fas fa-phone"></i></span>
-                            <input type="text" name="telefono" id="telefono" class="rd-input w-100"
-                                value="{{ $sucursal->telefono }}" placeholder="(123) 456-7890"
+                            <input type="text" name="telefono" id="telefono" class="form-control rd-filter-input"
+                                placeholder="(123) 456-7890" value="{{ old('telefono') }}"
                                 data-inputmask="'mask': '(999) 999-9999'" data-mask>
                         </div>
                         @error('telefono')
@@ -94,7 +92,7 @@
                     </div>
                 </div>
                 <div class="mt-4 d-flex gap-2 justify-content-end">
-                    <a href="{{ url('admin/maestros/sucursales') }}" class="rd-btn rd-btn-default">
+                    <a href="{{ route('admin.maestros.sedes.index') }}" class="rd-btn rd-btn-default">
                         Cancelar
                     </a>
                     <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
@@ -102,13 +100,9 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 @endsection
-
-
-
 
 @section('js')
     <script>

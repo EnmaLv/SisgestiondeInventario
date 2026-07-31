@@ -18,13 +18,13 @@ class BusVehiculoApiController extends Controller
             'color'                    => 'required|string|max:50',
             'cantidad_pasajeros'       => 'required|integer|min:1|max:150',
             'tipo_combustible_id'      => 'required|exists:tipo_combustibles,id',
-            'cantidad_cilindros'           => 'required|integer|min:1|max:10',
+            'cantidad_cilindros'       => 'required|integer|min:1|max:10',
             'capacidad_tanque_litros'  => 'required|numeric|min:1|max:1000',
             'consumo_litros_km'        => 'required|numeric|min:0.001|max:5',
             'km_actual'                => 'required|numeric|min:0|max:9999999',
             'km_proximo_mantenimiento' => 'required|numeric|min:0|max:9999999',
             'conductor_id'             => 'nullable|exists:usuarios,id_usuario',
-            'sucursal_id'              => 'required|exists:sucursals,id',
+            'sede_id'                  => 'required|exists:sede,id',
             'estado'                   => 'required|in:disponible,en_ruta,mantenimiento,inactivo',
         ];
     }
@@ -48,7 +48,7 @@ class BusVehiculoApiController extends Controller
 
         $vehiculo = BusVehiculo::crearVehiculo($validated);
 
-        $vehiculo->load(['modelo.busMarca', 'tipoCombustible', 'sucursal', 'conductor']);
+        $vehiculo->load(['modelo.busMarca', 'tipoCombustible', 'sede', 'conductor']);
 
         return response()->json([
             'success' => true,
@@ -59,7 +59,7 @@ class BusVehiculoApiController extends Controller
 
     public function show(BusVehiculo $vehiculo): JsonResponse
     {
-        $vehiculo->load(['modelo.busMarca', 'tipoCombustible', 'sucursal', 'conductor']);
+        $vehiculo->load(['modelo.busMarca', 'tipoCombustible', 'sede', 'conductor']);
 
         return response()->json([
             'success' => true,
@@ -74,7 +74,7 @@ class BusVehiculoApiController extends Controller
         $validated['placa'] = strtoupper(trim($validated['placa']));
 
         BusVehiculo::actualizarVehiculo($vehiculo, $validated);
-        $vehiculo->load(['modelo.busMarca', 'tipoCombustible', 'sucursal', 'conductor']);
+        $vehiculo->load(['modelo.busMarca', 'tipoCombustible', 'sede', 'conductor']);
 
         return response()->json([
             'success' => true,
@@ -96,7 +96,7 @@ class BusVehiculoApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => $vehiculo->activo ? 'Vehículo activado correctamente.' : 'Vehículo inactivado correctamente.',
-            'data'    => $vehiculo->fresh()->load(['modelo.busMarca', 'tipoCombustible', 'sucursal', 'conductor']),
+            'data'    => $vehiculo->fresh()->load(['modelo.busMarca', 'tipoCombustible', 'sede', 'conductor']),
         ]);
     }
 

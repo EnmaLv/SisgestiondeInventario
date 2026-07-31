@@ -1,13 +1,13 @@
 <div class="row">
-    @if ($visibleModules['sucursales'] ?? false)
+    @if ($visibleModules['sedes'] ?? false)
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/sucursales') }}" class="module-link">
+            <a href="{{ url('/admin/maestros/sedes') }}" class="module-link">
                 <div class="module-card-light">
                     <div class="module-icon">
-                        <img src="{{ url('/img/edificio.webp') }}" alt="Sucursales">
+                        <img src="{{ url('/img/edificio.webp') }}" alt="Sedes">
                     </div>
                     <h5>Sedes</h5>
-                    <p>{{ $total_sucursales }} registradas</p>
+                    <p>{{ $total_sedes }} registradas</p>
                 </div>
             </a>
         </div>

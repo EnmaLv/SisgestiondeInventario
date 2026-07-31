@@ -28,7 +28,8 @@ class AuthService
             if (empty($personaData['id_perfil'])) {
                 $personaData['id_perfil'] = $perfilId;
             }
-            if (empty($personaData['id_sede'])) {
+            if (empty($personaData['sede_id']) && empty($personaData['id_sede'])) {
+                $personaData['sede_id'] = $sedeId;
                 $personaData['id_sede'] = $sedeId;
             }
 
@@ -39,13 +40,11 @@ class AuthService
                 'id_persona' => $persona->id_persona,
                 'id_perfil'  => $perfilId,
                 'username'   => $userData['username'],
-                'password'   => $userData['password'], // Asumiendo que el modelo Usuario tiene un mutador para el Hash
-                // Si es el primer usuario, podrías asignar una master_key por defecto aquí
+                'password'   => $userData['password'],
                 'master_key' => $isFirstUser ? bcrypt('admin123') : null,
             ]);
 
-            // 4. Si es el primer usuario, también debemos asegurar el ROL en la tabla pivote
-            // ya que tu seeder usa 'rol_usuario'
+            // 4. Asignar ROL
             $this->assignRol($usuario->id_usuario, $perfilNombre);
 
             return $usuario;
@@ -54,7 +53,6 @@ class AuthService
 
     private function assignRol(int $usuarioId, string $rolNombre): void
     {
-        // Buscamos el rol por nombre (en la tabla que use tu sistema, asumo 'roles')
         $rol = DB::table('rol')->where('nombre', $rolNombre)->first();
         
         if (!$rol) {
@@ -67,7 +65,6 @@ class AuthService
             $rolId = $rol->id_rol;
         }
 
-        // Insertamos en la tabla pivote que mencionaste en tu seeder
         DB::table('rol_usuario')->updateOrInsert(
             ['id_usuario' => $usuarioId, 'id_rol' => $rolId],
             ['created_at' => now(), 'updated_at' => now()]
@@ -79,39 +76,25 @@ class AuthService
         $row = DB::table('estatus')->orderBy('id_estatus')->first();
         if ($row) return $row->id_estatus;
 
-        $id = DB::table('estatus')->insertGetId(['nombre_estatus' => 'Activo', 'created_at' => now(), 'updated_at' => now()]);
-        return $id;
-    }
-
-    private function ensureSucursal(): int
-    {
-        $row = DB::table('sucursals')->orderBy('id')->first();
-        if ($row) return $row->id;
-
-        return DB::table('sucursals')->insertGetId([
-            'nombre' => 'Acarigua',
-            'direccion' => 'Avenida Circunvalacion Sur, Sector Bellas Artes',
-            'telefono' => '0424-5556666',
-            'created_at' => now(),
-            'updated_at' => now()
+        return DB::table('estatus')->insertGetId([
+            'nombre_estatus' => 'Activo',
+            'created_at'     => now(),
+            'updated_at'     => now()
         ]);
     }
 
     private function ensureSede(): int
     {
-        $row = DB::table('sede')->orderBy('id_sede')->first();
-        if ($row) return $row->id_sede;
+        $row = DB::table('sede')->orderBy('id')->first();
+        if ($row) return $row->id;
 
-        $sucursalId = $this->ensureSucursal();
-        $id = DB::table('sede')->insertGetId([
-            'nombre_sede' => 'Principal',
-            'id_sucursal' => $sucursalId,
-            'estatus'     => 1, 
-            'created_at'  => now(),
-            'updated_at'  => now()
+        return DB::table('sede')->insertGetId([
+            'nombre'    => 'Acarigua',
+            'direccion' => 'Avenida Circunvalacion Sur, Sector Bellas Artes',
+            'telefono'  => '0424-5556666',
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
-        
-        return $id;
     }
 
     private function ensurePerfil(string $nombre, int $estatusId)
@@ -121,9 +104,9 @@ class AuthService
 
         $id = DB::table('perfil')->insertGetId([
             'nombre_perfil' => $nombre, 
-            'id_estatus' => $estatusId, 
-            'created_at' => now(), 
-            'updated_at' => now()
+            'id_estatus'    => $estatusId, 
+            'created_at'    => now(), 
+            'updated_at'    => now()
         ]);
         return (object)['id_perfil' => $id];
     }

@@ -156,7 +156,7 @@
                                 <td>{{ $movimientos->lote->codigo_lote }}</td>
                                 <td>{{ $movimientos->cantidad_gramos }}</td>
                                 <td>{{ $movimientos->unidad->nombre }}</td>
-                                <td>{{ $movimientos->sucursal->nombre }}</td>
+                                <td>{{ $movimientos->sede->nombre }}</td>
                                 <td>{{ $movimientos->fecha }}</td>
                                 @if ($movimientos->observacion)
                                     <td>{{ $movimientos->observacion }}</td>
@@ -179,7 +179,6 @@
     </div>
 @stop
 
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
@@ -187,7 +186,6 @@
 @push('js')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
             const pdfBtn = document.getElementById('pdfBtn');
             if (pdfBtn) {
                 pdfBtn.addEventListener('click', () => {
@@ -200,6 +198,6 @@
                     window.open(url, '_blank');
                 });
             }
-        })
+        });
     </script>
 @endpush

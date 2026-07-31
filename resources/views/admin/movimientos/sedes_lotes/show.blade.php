@@ -13,7 +13,7 @@
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Inventario de la Sede:
-                {{ $sucursales->firstWhere('id', request()->segment(count(request()->segments())))?->nombre ?? '' }}
+                {{ $sedes->firstWhere('id', request()->segment(count(request()->segments())))?->nombre ?? '' }}
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -57,14 +57,12 @@
 
                 <div class="rd-actions">
                     <form
-                        action="{{ route('admin.movimientos.sucursales_lotes.show', request()->segment(count(request()->segments()))) }}"
+                        action="{{ route('admin.movimientos.sedes_lotes.show', request()->segment(count(request()->segments()))) }}"
                         method="GET" class="rd-search-inline" role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
-                            placeholder="Escriba el lote" />
+                            placeholder="Escriba el lote o producto" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
-
-
                 </div>
             </div>
 
@@ -74,7 +72,7 @@
                     <thead>
                         <tr>
                             <th style="width:60px">#</th>
-                            <th>Codigo de Lote</th>
+                            <th>Código de Lote</th>
                             <th>Producto</th>
                             <th>Cantidad (U)</th>
                             <th>Cantidad (g)</th>
@@ -84,22 +82,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($sucursal as $lotesucursal)
+                        @forelse($sede as $loteSede)
                             <tr>
                                 <td class="text-center">
-                                    {{ ($sucursal->currentPage() - 1) * $sucursal->perPage() + $loop->iteration }}
+                                    {{ ($sede->currentPage() - 1) * $sede->perPage() + $loop->iteration }}
                                 </td>
-                                <td>{{ $lotesucursal->lote->codigo_lote }}</td>
-                                <td>{{ $lotesucursal->lote->producto->nombre }}</td>
-                                <td>{{ $lotesucursal->cantidad }}</td>
-                                <td>{{ $lotesucursal->cantidad_gramos }}</td>
-                                <td>{{ $lotesucursal->lote->fecha_entrada }}</td>
-                                <td>{{ $lotesucursal->lote->fecha_vencimiento }}</td>
-                                <td>{{ $lotesucursal->lote->proveedor->nombre }}</td>
+                                <td>{{ $loteSede->lote->codigo_lote }}</td>
+                                <td>{{ $loteSede->lote->producto->nombre }}</td>
+                                <td>{{ $loteSede->cantidad }}</td>
+                                <td>{{ $loteSede->cantidad_gramos }}</td>
+                                <td>{{ $loteSede->lote->fecha_entrada }}</td>
+                                <td>{{ $loteSede->lote->fecha_vencimiento }}</td>
+                                <td>{{ $loteSede->lote->proveedor->nombre }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">No hay registros</td>
+                                <td colspan="8" class="text-center py-4">No hay registros</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -108,12 +106,11 @@
 
             {{-- Paginación del servidor --}}
             <div class="mt-3 d-flex justify-content-center">
-                {{ $sucursal->onEachSide(1)->links('components.pagination') }}
+                {{ $sede->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>
 @stop
-
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">

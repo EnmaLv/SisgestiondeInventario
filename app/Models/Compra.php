@@ -50,7 +50,7 @@ class Compra extends Model
                 ->orderBy('nombre')
                 ->get(),
 
-            'sucursales' => DB::table('sucursals')
+            'sedes' => DB::table('sede')
                 ->select('id', 'nombre')
                 ->where('activo', 1)
                 ->orderBy('nombre')
@@ -125,13 +125,13 @@ class Compra extends Model
             ->get();
     }
 
-    public static function obtenerSucursalDestino($compra_id)
+    public static function obtenerSedeDestino($compra_id)
     {
         return DB::table('movimiento_inventarios')
-            ->join('sucursals', 'sucursals.id', '=', 'movimiento_inventarios.sucursal_id')
+            ->join('sede', 'sede.id', '=', 'movimiento_inventarios.sede_id')
             ->join('detalle_compras', 'detalle_compras.lote_id', '=', 'movimiento_inventarios.lote_id')
             ->where('detalle_compras.compra_id', $compra_id)
-            ->select('sucursals.id', 'sucursals.nombre')
+            ->select('sede.id', 'sede.nombre')
             ->first();
     }
 
@@ -189,7 +189,7 @@ class Compra extends Model
                 ->get();
 
             foreach ($detalles as $detalle) {
-                $usoLote = DB::table('inventario_sucursal_lotes')
+                $usoLote = DB::table('inventario_sede_lotes')
                     ->where('lote_id', $detalle->lote_id)
                     ->exists();
 
@@ -212,7 +212,7 @@ class Compra extends Model
         }
     }
 
-    public static function finalizarCompra($compra, $sucursal_id)
+    public static function finalizarCompra($compra, $sede_id)
     {
         DB::beginTransaction();
         try {
@@ -221,23 +221,23 @@ class Compra extends Model
                 ->get();
 
             foreach ($detalles as $detalle) {
-                $inventario = DB::table('inventario_sucursal_lotes')
+                $inventario = DB::table('inventario_sede_lotes')
                     ->where('lote_id', $detalle->lote_id)
-                    ->where('sucursal_id', $sucursal_id)
+                    ->where('sede_id', $sede_id)
                     ->first();
 
                 if ($inventario) {
-                    DB::table('inventario_sucursal_lotes')
+                    DB::table('inventario_sede_lotes')
                         ->where('id', $inventario->id)
                         ->update([
                             'cantidad'         => $inventario->cantidad + $detalle->cantidad,
                             'cantidad_gramos'  => $inventario->cantidad_gramos + $detalle->cantidad_gramos
                         ]);
                 } else {
-                    DB::table('inventario_sucursal_lotes')->insert([
-                        'lote_id'      => $detalle->lote_id,
-                        'sucursal_id'  => $sucursal_id,
-                        'cantidad'     => $detalle->cantidad,
+                    DB::table('inventario_sede_lotes')->insert([
+                        'lote_id'         => $detalle->lote_id,
+                        'sede_id'         => $sede_id,
+                        'cantidad'        => $detalle->cantidad,
                         'cantidad_gramos' => $detalle->cantidad_gramos
                     ]);
                 }
@@ -245,7 +245,7 @@ class Compra extends Model
                 DB::table('movimiento_inventarios')->insert([
                     'producto_id'     => $detalle->producto_id,
                     'lote_id'         => $detalle->lote_id,
-                    'sucursal_id'     => $sucursal_id,
+                    'sede_id'         => $sede_id,
                     'tipo_movimiento' => 'ENTRADA',
                     'unidad_id'       => $detalle->unidad_id,
                     'cantidad'        => $detalle->cantidad,
@@ -274,17 +274,17 @@ class Compra extends Model
         DB::beginTransaction();
 
         try {
-            $sucursales = DB::table('sucursals')
+            $sedes = DB::table('sede')
                 ->where('activo', 1)
                 ->orderByRaw("id = 1 DESC")
                 ->get();
 
-            if ($sucursales->isEmpty()) {
-                throw new \Exception('No existen sucursales activas.');
+            if ($sedes->isEmpty()) {
+                throw new \Exception('No existen sedes activas.');
             }
 
             $acariguaId = 1;
-            $cantidadSucursales = $sucursales->count();
+            $cantidadSedes = $sedes->count();
 
             $detalles = DB::table('detalle_compras')
                 ->where('compra_id', $compra->id)
@@ -298,23 +298,23 @@ class Compra extends Model
 
                 $stockMaximo = $producto->stock_maximo;
                 $gramosPorUnidad = $detalle->cantidad_gramos / $detalle->cantidad;
-                $cantidadBase = intdiv($detalle->cantidad, $cantidadSucursales);
-                $resto = $detalle->cantidad % $cantidadSucursales;
+                $cantidadBase = intdiv($detalle->cantidad, $cantidadSedes);
+                $resto = $detalle->cantidad % $cantidadSedes;
                 $cantidadRestante = 0;
 
-                foreach ($sucursales as $index => $sucursal) {
+                foreach ($sedes as $index => $sede) {
                     $cantidadEquitativa = $cantidadBase + ($index < $resto ? 1 : 0);
 
                     if ($cantidadEquitativa <= 0) {
                         continue;
                     }
 
-                    if ($sucursal->id != $acariguaId) {
-                        $stockActual = DB::table('inventario_sucursal_lotes')
-                            ->join('lotes', 'lotes.id', '=', 'inventario_sucursal_lotes.lote_id')
+                    if ($sede->id != $acariguaId) {
+                        $stockActual = DB::table('inventario_sede_lotes')
+                            ->join('lotes', 'lotes.id', '=', 'inventario_sede_lotes.lote_id')
                             ->where('lotes.producto_id', $producto->id)
-                            ->where('inventario_sucursal_lotes.sucursal_id', $sucursal->id)
-                            ->sum('inventario_sucursal_lotes.cantidad');
+                            ->where('inventario_sede_lotes.sede_id', $sede->id)
+                            ->sum('inventario_sede_lotes.cantidad');
 
                         $espacioDisponible = max(0, $stockMaximo - $stockActual);
                         $cantidadAsignada = min($cantidadEquitativa, $espacioDisponible);
@@ -326,22 +326,22 @@ class Compra extends Model
 
                     if ($cantidadAsignada > 0) {
                         $gramosAsignados = $cantidadAsignada * $gramosPorUnidad;
-                        $inventario = DB::table('inventario_sucursal_lotes')
+                        $inventario = DB::table('inventario_sede_lotes')
                             ->where('lote_id', $detalle->lote_id)
-                            ->where('sucursal_id', $sucursal->id)
+                            ->where('sede_id', $sede->id)
                             ->first();
 
                         if ($inventario) {
-                            DB::table('inventario_sucursal_lotes')
+                            DB::table('inventario_sede_lotes')
                                 ->where('id', $inventario->id)
                                 ->update([
                                     'cantidad'        => $inventario->cantidad + $cantidadAsignada,
                                     'cantidad_gramos' => $inventario->cantidad_gramos + $gramosAsignados,
                                 ]);
                         } else {
-                            DB::table('inventario_sucursal_lotes')->insert([
+                            DB::table('inventario_sede_lotes')->insert([
                                 'lote_id'         => $detalle->lote_id,
-                                'sucursal_id'     => $sucursal->id,
+                                'sede_id'         => $sede->id,
                                 'cantidad'        => $cantidadAsignada,
                                 'cantidad_gramos' => $gramosAsignados,
                             ]);
@@ -350,7 +350,7 @@ class Compra extends Model
                         DB::table('movimiento_inventarios')->insert([
                             'producto_id'     => $detalle->producto_id,
                             'lote_id'         => $detalle->lote_id,
-                            'sucursal_id'     => $sucursal->id,
+                            'sede_id'         => $sede->id,
                             'tipo_movimiento' => 'ENTRADA',
                             'unidad_id'       => $detalle->unidad_id,
                             'cantidad'        => $cantidadAsignada,
@@ -363,22 +363,22 @@ class Compra extends Model
                 if ($cantidadRestante > 0) {
                     $gramosAsignados = $cantidadRestante * $gramosPorUnidad;
 
-                    $inventario = DB::table('inventario_sucursal_lotes')
+                    $inventario = DB::table('inventario_sede_lotes')
                         ->where('lote_id', $detalle->lote_id)
-                        ->where('sucursal_id', $acariguaId)
+                        ->where('sede_id', $acariguaId)
                         ->first();
 
                     if ($inventario) {
-                        DB::table('inventario_sucursal_lotes')
+                        DB::table('inventario_sede_lotes')
                             ->where('id', $inventario->id)
                             ->update([
                                 'cantidad'        => $inventario->cantidad + $cantidadRestante,
                                 'cantidad_gramos' => $inventario->cantidad_gramos + $gramosAsignados,
                             ]);
                     } else {
-                        DB::table('inventario_sucursal_lotes')->insert([
+                        DB::table('inventario_sede_lotes')->insert([
                             'lote_id'         => $detalle->lote_id,
-                            'sucursal_id'     => $acariguaId,
+                            'sede_id'         => $acariguaId,
                             'cantidad'        => $cantidadRestante,
                             'cantidad_gramos' => $gramosAsignados,
                         ]);
@@ -387,7 +387,7 @@ class Compra extends Model
                     DB::table('movimiento_inventarios')->insert([
                         'producto_id'     => $detalle->producto_id,
                         'lote_id'         => $detalle->lote_id,
-                        'sucursal_id'     => $acariguaId,
+                        'sede_id'         => $acariguaId,
                         'tipo_movimiento' => 'ENTRADA',
                         'unidad_id'       => $detalle->unidad_id,
                         'cantidad'        => $cantidadRestante,

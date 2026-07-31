@@ -26,7 +26,7 @@ class BusVehiculo extends Model
         'consumo_relenti',
         'km_actual',
         'km_proximo_mantenimiento',
-        'sucursal_id',
+        'sede_id',
         'activo',
         'estado',
     ];
@@ -51,9 +51,9 @@ class BusVehiculo extends Model
         return $this->belongsTo(BusTipoCombustible::class, 'tipo_combustible_id');
     }
 
-    public function sucursal()
+    public function sede()
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 
     public function conductor()
@@ -64,7 +64,7 @@ class BusVehiculo extends Model
     public static function listarVehiculos($buscar = null, $activo = 1)
     {
         return self::query()
-            ->with(['modelo.busMarca', 'tipoCombustible', 'sucursal'])
+            ->with(['modelo.busMarca', 'tipoCombustible', 'sede'])
             ->when($buscar, fn($q) => $q->where('placa', 'like', "%{$buscar}%")
                 ->orWhere('color', 'like', "%{$buscar}%"))
             ->when($activo !== null && $activo !== '', fn($q) => $q->where('activo', $activo))

@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Receta;
 use App\Models\DetalleRegistroDiario;
-use App\Models\InventarioSucursalLote;
+use App\Models\InventarioSedeLote;
 use App\Models\MovimientoInventario;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -140,7 +140,7 @@ class RegistroComida extends Component
         DB::beginTransaction();
 
         try {
-            $sucursalId = 1;
+            $sedeId = 1;
 
             foreach ($this->desayunos_agregados as $registro) {
 
@@ -164,7 +164,7 @@ class RegistroComida extends Component
                         throw new Exception("El producto {$ingrediente->producto->nombre} no tiene peso_contenido definido.");
                     }
 
-                    $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
+                    $lotes = InventarioSedeLote::where('sede_id', $sedeId)
                         ->whereHas('lote', function ($q) use ($ingrediente) {
                             $q->where('producto_id', $ingrediente->producto_id)
                                 ->whereDate('fecha_vencimiento', '>=', now()->toDateString())
@@ -197,7 +197,7 @@ class RegistroComida extends Component
                         MovimientoInventario::create([
                             'producto_id'    => $ingrediente->producto_id,
                             'lote_id'        => $lote->id,
-                            'sucursal_id'    => $sucursalId,
+                            'sede_id'        => $sedeId,
                             'tipo_movimiento' => 'SALIDA',
                             'unidad_id'      => $ingrediente->unidad_id,
                             'cantidad'       => floor($tomarGramos / $pesoUnidad),

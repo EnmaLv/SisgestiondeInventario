@@ -165,18 +165,18 @@
                         <label class="font-weight-bold">Sede</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-building"></i></span>
-                            <select name="sucursal_id"
-                                class="form-control rd-filter-input @error('sucursal_id') is-invalid @enderror">
+                            <select name="sede_id"
+                                class="form-control rd-filter-input @error('sede_id') is-invalid @enderror">
                                 <option value="">-- Seleccione --</option>
-                                @foreach ($sucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}"
-                                        {{ old('sucursal_id') == $sucursal->id ? 'selected' : '' }}>
-                                        {{ $sucursal->nombre }}
+                                @foreach ($sedes as $sede)
+                                    <option value="{{ $sede->id }}"
+                                        {{ old('sede_id') == $sede->id ? 'selected' : '' }}>
+                                        {{ $sede->nombre_sede ?? $sede->nombre }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        @error('sucursal_id')
+                        @error('sede_id')
                             <div class="text-danger mt-1"><b>{{ $message }}</b></div>
                         @enderror
                     </div>
@@ -461,6 +461,7 @@
             });
         }
 
+        // --- Registro Dinámico de Modelo via Modal ---
         document.getElementById('btnGuardarModelo').addEventListener('click', function() {
             const marca = document.getElementById('newModeloMarca').value;
             const nombre = document.getElementById('newModeloNombre').value.trim();
@@ -528,6 +529,7 @@
                 });
         });
 
+        // --- Registro Dinámico de Tipo de Combustible via Modal ---
         document.getElementById('btnGuardarCombustible').addEventListener('click', function() {
             const nombre = document.getElementById('newCombustibleNombre').value.trim();
             const descripcion = document.getElementById('newCombustibleDescripcion').value.trim();
@@ -575,6 +577,7 @@
                 });
         });
 
+        // --- Validación en Tiempo Real (Inline) ---
         const reglasInput = {
             placa: {
                 max: 20,
@@ -673,6 +676,7 @@
             });
         });
 
+        // --- Verificación Asíncrona de Placa Única ---
         let placaTimer = null;
         const inputPlaca = document.querySelector('[name="placa"]');
         if (inputPlaca) {

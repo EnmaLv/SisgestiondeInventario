@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventario_sucursal_lotes', function (Blueprint $table) {
+        Schema::create('inventario_sede_lotes', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('sucursal_id')->constrained('sucursals')->onDelete('cascade');
+            $table->foreignId('sede_id')->constrained('sede')->onDelete('cascade');
             $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
-            $table->decimal('cantidad', 14, 2)->notNull();
-            $table->decimal('cantidad_gramos', 14, 2)->notNull();
+            $table->decimal('cantidad', 14, 2);
+            $table->decimal('cantidad_gramos', 14, 2);
 
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventario_sucursal_lotes');
+        Schema::dropIfExists('inventario_sede_lotes');
     }
 };

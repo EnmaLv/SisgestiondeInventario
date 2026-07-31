@@ -308,7 +308,7 @@
             @foreach ($movimiento as $index => $item)
                 <tr>
                     <td class="center">{{ $index + 1 }}</td>
-                    <td>{{ \Carbon\Carbon::parse($item->fecha_movimiento)->format('d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->fecha)->format('d/m/Y') }}</td>
                     <td><strong>{{ $item->lote->codigo_lote ?? 'N/A' }}</strong></td>
                     <td><strong>{{ $item->producto->nombre ?? 'N/A' }}</strong></td>
                     <td>
@@ -318,14 +318,14 @@
                         </span>
                     </td>
                     <td class="right">{{ number_format($item->cantidad_gramos, 2, ',', '.') }}</td>
-                    <td>{{ $item->sucursal->nombre ?? 'N/A' }}</td>
+                    <td>{{ $item->sede->nombre ?? 'N/A' }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
     <div class="footer">
-        <p><strong>Comedor Universitario - UPTP Juan Jesus Montilla</strong></p>
+        <p><strong>Comedor Universitario - UPTP Juan Jesús Montilla</strong></p>
         <p>Sistema de Bienestar Estudiantil | Documento generado automáticamente</p>
     </div>
 

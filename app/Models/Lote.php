@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lote extends Model
 {
-
     protected $table = 'lotes';
 
     protected $fillable = [
@@ -31,9 +30,9 @@ class Lote extends Model
         return $this->belongsTo(Proveedor::class);
     }
 
-    public function inventarioSucursalLotes()
+    public function inventarioSedeLotes()
     {
-        return $this->hasMany(InventarioSucursalLote::class);
+        return $this->hasMany(InventarioSedeLote::class);
     }
 
     public function movimientos()

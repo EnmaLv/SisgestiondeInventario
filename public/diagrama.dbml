@@ -127,10 +127,6 @@ Table exchange_rates {
   updated_at     timestamp
 }
 
-// ------------------------------------------------------------
-// MÓDULO: GEOGRÁFICO
-// ------------------------------------------------------------
-
 Table estados {
   id            bigint       [pk, increment]
   nombre_estado varchar(255) [not null]
@@ -157,11 +153,7 @@ Table localidads {
   updated_at       timestamp
 }
 
-// ------------------------------------------------------------
-// MÓDULO: INSTITUCIÓN
-// ------------------------------------------------------------
-
-Table sucursals {
+Table sede {
   id         bigint       [pk, increment]
   nombre     varchar(100) [not null]
   direccion  varchar(255) [not null]
@@ -171,15 +163,6 @@ Table sucursals {
   updated_at timestamp
 }
 
-Table sede {
-  id_sede     bigint       [pk, increment]
-  nombre_sede varchar(255) [not null]
-  estatus     int          [not null, default: 1]
-  id_sucursal bigint       [not null, ref: > sucursals.id]
-  created_at  timestamp
-  updated_at  timestamp
-}
-
 Table pnf {
   id_pnf     bigint       [pk, increment]
   nombre_pnf varchar(255) [not null]
@@ -187,10 +170,6 @@ Table pnf {
   created_at timestamp
   updated_at timestamp
 }
-
-// ============================================================
-// MÓDULO: AUTH / SEGURIDAD
-// ============================================================
 
 Table estatus {
   id_estatus     bigint       [pk, increment]
@@ -207,10 +186,6 @@ Table perfil {
   updated_at    timestamp
 }
 
-// ------------------------------------------------------------
-// DEPARTAMENTOS
-// ------------------------------------------------------------
-
 Table departamento {
   id          bigint       [pk, increment]
   nombre      varchar(150) [not null]
@@ -219,10 +194,6 @@ Table departamento {
   created_at  timestamp
   updated_at  timestamp
 }
-
-// ------------------------------------------------------------
-// MÓDULOS
-// ------------------------------------------------------------
 
 Table modulos {
   id               bigint       [pk, increment]
@@ -239,10 +210,6 @@ Table modulos {
   Note: 'Cada módulo pertenece a un departamento. Ej: comedor → Bienestar Estudiantil'
 }
 
-// ------------------------------------------------------------
-// ROLES
-// ------------------------------------------------------------
-
 Table rol {
   id              bigint       [pk, increment]
   nombre          varchar(255) [not null]
@@ -257,10 +224,6 @@ Table rol {
     (nombre, departamento_id) [unique, name: 'uq_rol_nombre_departamento']
   }
 }
-
-// ------------------------------------------------------------
-// PERMISOS
-// ------------------------------------------------------------
 
 Table permiso {
   id          bigint       [pk, increment]
@@ -284,10 +247,6 @@ Table permiso {
     { key: "solicitud_beca", modulo: becas      }
   '''
 }
-
-// ------------------------------------------------------------
-// TABLAS PIVOT DE SEGURIDAD
-// ------------------------------------------------------------
 
 Table rol_permiso {
   id         bigint [pk, increment]
@@ -355,10 +314,6 @@ Table usuario_permiso {
     4. ninguno                      → deniega
   '''
 }
-
-// ------------------------------------------------------------
-// MÓDULO: PERSONA / ESTUDIANTE
-// ------------------------------------------------------------
 
 Table persona {
   id_persona               bigint       [pk, increment]
@@ -503,7 +458,7 @@ Table categorias {
   Note: 'Categoría por módulo. Ej: Granos (comedor), Analgésicos (salud), Balones (deporte)'
 }
 
-Table presentacion_medicamento {
+Table envase_primario {
   id         bigint       [pk, increment]
   nombre     varchar(255) [not null, note: 'Ej: Caja, Frasco, Blíster, Ampolla, Tableta']
   estado     int          [not null, default: 1]
@@ -540,7 +495,7 @@ Table productos {
   unidad_id      bigint        [not null, ref: > unidades.id]
   stock_minimo   decimal(14,2) [not null, default: 0]
   stock_maximo   decimal(14,2) [not null, default: 0]
-  presentacion_id        bigint  [ref: > presentacion_medicamento.id]
+  presentacion_id        bigint  [ref: > envase_primario.id]
   requiere_receta_medica tinyint [default: 0,
                           note: '1 = sistema bloquea dispensación sin receta vinculada']
   codigo_inventario_dep  varchar(50) [unique,
@@ -585,9 +540,9 @@ Table lotes {
   updated_at        timestamp
 }
 
-Table inventario_sucursal_lotes {
+Table inventario_sede_lotes {
   id              bigint        [pk, increment]
-  sucursal_id     bigint        [not null, ref: > sucursals.id]
+  sede_id     bigint        [not null, ref: > sede.id]
   lote_id         bigint        [not null, ref: > lotes.id]
   cantidad        decimal(14,2) [not null]
   cantidad_convertida decimal(14,2) [not null]
@@ -595,22 +550,22 @@ Table inventario_sucursal_lotes {
   updated_at      timestamp
 
   indexes {
-    (sucursal_id, lote_id) [unique, name: 'uq_inv_sucursal_lote']
+    (sede_id, lote_id) [unique, name: 'uq_inv_sede_lote']
   }
 
-  Note: 'Detalle de cuánto de cada lote hay en cada sucursal. Necesaria para multisede y trazabilidad de vencimientos por sede'
+  Note: 'Detalle de cuánto de cada lote hay en cada sede. Necesaria para multisede y trazabilidad de vencimientos por sede'
 }
 
 Table inventario_total {
   id             bigint        [pk, increment]
   producto_id    bigint        [not null, ref: > productos.id]
-  sucursal_id    bigint        [not null, ref: > sucursals.id]
+  sede_id    bigint        [not null, ref: > sede.id]
   cantidad_total decimal(14,2) [not null, default: 0,
-                  note: 'Total de stock del producto en esa sucursal, sin importar de qué lote viene']
+                  note: 'Total de stock del producto en esa sede, sin importar de qué lote viene']
   updated_at     timestamp     [not null, default: `current_timestamp()`]
 
   indexes {
-    (producto_id, sucursal_id) [unique, name: 'uq_inv_total_producto_sucursal']
+    (producto_id, sede_id) [unique, name: 'uq_inv_total_producto_sede']
   }
 
   Note: 'Vista agregada mantenida por la app o trigger. Para responder "¿cuánta harina hay en sede A?" sin sumar lotes en runtime'
@@ -620,7 +575,7 @@ Table movimiento_inventarios {
   id                bigint        [pk, increment]
   producto_id       bigint        [not null, ref: > productos.id]
   lote_id           bigint        [not null, ref: > lotes.id]
-  sucursal_id       bigint        [not null, ref: > sucursals.id]
+  sede_id       bigint        [not null, ref: > sede.id]
   tipo_movimiento   varchar(30)   [not null,
                      note: 'enum: entrada | salida | ajuste | prestamo | devolucion | distribucion']
   modulo_origen     varchar(20)   [not null,
@@ -628,9 +583,9 @@ Table movimiento_inventarios {
   cantidad          decimal(14,2) [not null]
   cantidad_convertida   decimal(14,2) [not null]
   cantidad_anterior decimal(14,2) [not null,
-                     note: 'Stock total en esa sucursal ANTES del movimiento']
+                     note: 'Stock total en esa sede ANTES del movimiento']
   cantidad_final    decimal(14,2) [not null,
-                     note: 'Stock total en esa sucursal DESPUÉS del movimiento']
+                     note: 'Stock total en esa sede DESPUÉS del movimiento']
   unidad_id         bigint        [not null, ref: > unidades.id]
   referencia_id     bigint        [note: 'ID del registro origen del movimiento']
   referencia_type   varchar(50)   [note: 'Tabla origen (polimórfico). Ej: dispensacion, deporte_prestamo']
@@ -644,7 +599,7 @@ Table movimiento_inventarios {
 Table compras {
   id           bigint        [pk, increment]
   proveedor_id bigint        [not null, ref: > proveedors.id]
-  sucursal_id  bigint        [not null, ref: > sucursals.id]
+  sede_id  bigint        [not null, ref: > sede.id]
   creado_por   bigint        [not null, ref: > usuario.id_usuario]
   modulo       varchar(20)   [not null, note: 'enum: comedor | salud | deporte']
   fecha        timestamp     [not null, default: `current_timestamp()`]
@@ -749,7 +704,7 @@ Table sobrantes_comedor {
 Table consultorio {
   id          bigint       [pk, increment]
   nombre      varchar(150) [not null]
-  sucursal_id bigint       [not null, ref: > sucursals.id]
+  sede_id bigint       [not null, ref: > sede.id]
   descripcion text
   activo      tinyint      [not null, default: 1]
   created_at  timestamp
@@ -776,12 +731,21 @@ Table cita {
   created_at     timestamp
 }
 
+Table enfermedades {
+  id             bigint      [pk, increment]
+  codigo         varchar(50)   [not null, unique]
+  nombre         varchar(100)   [not null]
+  esPsicologica  tinyint [not null]
+  activo         bool [not null, default: 1]
+}
+
 Table consulta {
   id             bigint   [pk, increment]
   cita_id        bigint   [ref: > cita.id]
   id_persona     bigint   [not null, ref: > persona.id_persona]
   medico_id      bigint   [not null, ref: > persona.id_persona]
   consultorio_id bigint   [not null, ref: > consultorio.id]
+  enfermedad_id  bigint   [not null, ref: > enfermedades.id]
   fecha          datetime [not null]
   motivo         text
   observaciones  text
@@ -825,7 +789,7 @@ Table dispensacion {
   lote_id                  bigint        [ref: > lotes.id]
   cantidad                 decimal(14,2) [not null]
   unidad_id                bigint        [not null, ref: > unidades.id]
-  sucursal_id              bigint        [not null, ref: > sucursals.id]
+  sede_id              bigint        [not null, ref: > sede.id]
   usuario_id               bigint        [not null, ref: > usuario.id_usuario]
   fecha                    datetime      [not null]
   observaciones            text
@@ -835,14 +799,15 @@ Table dispensacion {
 }
 
 Table psicologia_seguimiento {
-  id         bigint   [pk, increment]
-  id_persona bigint   [not null, ref: > persona.id_persona]
-  cita_id    bigint   [ref: > cita.id]
-  notas      text
-  fecha      datetime [not null]
-  realizado  tinyint  [not null, default: 0]
-  creado_por bigint   [not null, ref: > usuario.id_usuario]
-  created_at timestamp
+  id            bigint   [pk, increment]
+  id_persona    bigint   [not null, ref: > persona.id_persona]
+  cita_id       bigint   [ref: > cita.id]
+  enfermedad_id bigint   [not null, ref: > enfermedades.id]
+  notas         text
+  fecha         datetime [not null]
+  realizado     tinyint  [not null, default: 0]
+  creado_por    bigint   [not null, ref: > usuario.id_usuario]
+  created_at    timestamp
 }
 
 // ============================================================
@@ -1023,7 +988,7 @@ Table tipo_combustibles {
 Table bus_paradas {
   id        bigint        [pk, increment]
   nombre    varchar(100)  [not null]
-  lat       decimal(10,7)
+  lat       decimal(11,7)
   lng       decimal(11,7)
   direccion varchar(255)
   estado    int           [not null, default: 1]
@@ -1035,12 +1000,8 @@ Table bus_rutas {
   id                  bigint        [pk, increment]
   nombre              varchar(100)  [not null]
   distancia_km        decimal(10,2) [not null]
-  hora_salida_manana  timestamp
-  hora_salida_tarde   timestamp
-  hora_salida_noche   timestamp
   descripcion         text
-  sucursal_origen_id  bigint        [not null, ref: > sucursals.id]
-  sucursal_destino_id bigint        [not null, ref: > sucursals.id]
+  sede_id         bigint        [not null, ref: > sede.id]
   estado              int           [not null, default: 1]
   created_at          timestamp
   updated_at          timestamp
@@ -1056,23 +1017,31 @@ Table bus_ruta_paradas {
   updated_at    timestamp
 }
 
+Table ruta_horarios {
+  id          bigint [pk, increment]
+  bus_ruta_id   bigint [not null, ref: > bus_rutas.id]
+  hora_salida time [not null]
+  tipo_viaje  enum [not null]
+  estado      int [not null, default: 1]
+  created_at    timestamp
+  updated_at    timestamp
+}
+
 Table vehiculos {
   id                       bigint        [pk, increment]
   placa                    varchar(20)   [not null]
   modelo_id                bigint        [not null, ref: > modelos.id]
-  marca_id                 bigint        [not null, ref: > marcas.id]
   anio                     year          [not null]
   color                    varchar(50)   [not null]
   cantidad_pasajeros       int           [not null, default: 0]
+  peso                     varchar(50)   [not null]
   tipo_combustible_id      bigint        [not null, ref: > tipo_combustibles.id]
   cantidad_cilindros           int           [not null, default: 1]
   capacidad_tanque_litros  decimal(8,2)  [not null, default: 0]
   consumo_litros_km        decimal(6,3)  [not null, default: 0]
   km_actual                decimal(10,2) [not null, default: 0]
   km_proximo_mantenimiento decimal(10,2) [not null, default: 0]
-  bus_ruta_id              bigint        [not null, ref: > bus_rutas.id]
-  conductor_id             bigint        [ref: > usuario.id_usuario]
-  sucursal_id              bigint        [not null, ref: > sucursals.id]
+  sede_id              bigint        [not null, ref: > sede.id]
   activo                   tinyint       [not null, default: 1]
   estado                   varchar(20)   [not null, default: 'disponible',
                             note: 'enum: disponible | en_ruta | mantenimiento | inactivo']
@@ -1085,29 +1054,38 @@ Table bus_viajes {
   vehiculo_id     bigint        [not null, ref: > vehiculos.id]
   bus_ruta_id     bigint        [not null, ref: > bus_rutas.id]
   conductor_id    bigint        [ref: > usuario.id_usuario]
-  turno           varchar(10)   [default: 'mañana',
-                   note: 'enum: mañana | tarde | noche']
+  turno           varchar(10)   
   firebase_id     varchar(100)
   fecha_inicio    datetime
-  fecha_fin       datetime
   km_inicio       decimal(10,2) [not null, default: 0]
   km_fin          decimal(10,2) [not null, default: 0]
   distancia_km    decimal(8,2)  [not null, default: 0]
   litros_gastados decimal(8,2)  [not null, default: 0]
   pasajeros       int           [not null, default: 0]
-  observaciones   text
+  hubo_desvio     tinyint [default: 0]
+  motivo_desvio   varchar(255) [null]
   estado          varchar(15)   [not null, default: 'programado',
                    note: 'enum: programado | en_curso | finalizado | cancelado']
   created_at      timestamp
   updated_at      timestamp
 }
 
+Table viaje_pasajeros {
+  id            bigint [pk, increment]
+  bus_viaje_id  bigint [not null, ref: > bus_viajes.id]
+  persona_id    bigint [not null, ref: > persona.id_persona] // Apunta a tu tabla de estudiantes
+  bus_parada_id bigint [null, ref: > bus_paradas.id]     // Parada exacta donde se escaneó
+  escaneado_at  datetime [not null]
+  created_at    timestamp
+}
+
 Table bus_gps_logs {
   id            bigint        [pk, increment]
   bus_viaje_id  bigint        [not null, ref: > bus_viajes.id]
-  lat           decimal(10,7) [not null]
-  lng           decimal(10,7) [not null]
+  lat           decimal(11,7) [not null]
+  lng           decimal(11,7) [not null]
   velocidad     decimal(6,2)
+  tipo_via      varchar(15) [note: 'urbano | carretera | ralenti']
   heading       decimal(6,2)
   registrado_en time          [not null]
   origen        varchar(50)   [not null]
@@ -1118,14 +1096,12 @@ Table bus_gps_logs {
 Table carga_combustibles {
   id                  bigint        [pk, increment]
   vehiculo_id         bigint        [not null, ref: > vehiculos.id]
-  bus_viaje_id        bigint        [not null, ref: > bus_viajes.id]
   tipo_combustible_id bigint        [not null, ref: > tipo_combustibles.id]
   fecha               date          [not null]
   litros              decimal(8,2)  [not null]
   precio_litros       decimal(10,2) [not null]
   total               decimal(12,2) [not null]
   km_al_cargar        decimal(10,2) [not null]
-  boca_numero         int           [not null]
   observaciones       text
   created_at          timestamp
   updated_at          timestamp

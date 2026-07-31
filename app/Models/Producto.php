@@ -52,16 +52,16 @@ class Producto extends Model
         return $this->hasMany(Lote::class);
     }
 
-    public function inventarioSucursalAcarigua()
+    public function inventarioSedeAcarigua()
     {
         return $this->hasManyThrough(
-            InventarioSucursalLote::class,
+            InventarioSedeLote::class,
             Lote::class,
             'producto_id',
             'lote_id',
             'id',
             'id'
-        )->where('inventario_sucursal_lotes.sucursal_id', 1);
+        )->where('inventario_sede_lotes.sede_id', 1);
     }
 
     public function movimientos()
@@ -74,7 +74,6 @@ class Producto extends Model
         return $this->hasMany(DetalleCompra::class);
     }
 
-
     public function recetaIngredientes()
     {
         return $this->hasMany(RecetaIngrediente::class);
@@ -84,7 +83,7 @@ class Producto extends Model
     {
         $query = self::with(['categoria', 'unidad'])
             ->withSum([
-                'inventarioSucursalAcarigua as cantidad_actual' => function ($query) {}
+                'inventarioSedeAcarigua as cantidad_actual' => function ($query) {}
             ], 'cantidad');
 
         if (!empty($buscar)) {
@@ -114,13 +113,13 @@ class Producto extends Model
         return $query->orderByDesc('cantidad_actual')->paginate($perPage)->withQueryString();
     }
 
-    public function getCantidadEnSucursal($sucursalId)
+    public function getCantidadEnSede($sedeId)
     {
-        return DB::table('inventario_sucursal_lotes')
-            ->join('lotes', 'lotes.id', '=', 'inventario_sucursal_lotes.lote_id')
+        return DB::table('inventario_sede_lotes')
+            ->join('lotes', 'lotes.id', '=', 'inventario_sede_lotes.lote_id')
             ->where('lotes.producto_id', $this->id)
-            ->where('inventario_sucursal_lotes.sucursal_id', $sucursalId)
-            ->sum('inventario_sucursal_lotes.cantidad');
+            ->where('inventario_sede_lotes.sede_id', $sedeId)
+            ->sum('inventario_sede_lotes.cantidad');
     }
 
     public static function getDatosFormulario()
@@ -155,7 +154,6 @@ class Producto extends Model
                 ->first();
 
             $pesoBase = $data['peso_contenido'] * ($unidad->factor_a_base ?? 1);
-
 
             $productoId = DB::table('productos')->insertGetId([
                 'categoria_id'  => $data['categoria_id'],
@@ -257,7 +255,6 @@ class Producto extends Model
         return DB::table('productos')->where('id', $id)->update($update);
     }
 
-
     public static function eliminarProducto($id)
     {
         return DB::table('productos')
@@ -300,20 +297,20 @@ class Producto extends Model
 
     public static function tieneInventarioEnAcarigua($productoId)
     {
-        return DB::table('inventario_sucursal_lotes as isl')
+        return DB::table('inventario_sede_lotes as isl')
             ->join('lotes as l', 'l.id', '=', 'isl.lote_id')
             ->where('l.producto_id', $productoId)
-            ->where('isl.sucursal_id', 1)
+            ->where('isl.sede_id', 1)
             ->where('isl.cantidad', '>', 0)
             ->exists();
     }
 
     public static function cantidadEnAcarigua($productoId)
     {
-        return DB::table('inventario_sucursal_lotes as isl')
+        return DB::table('inventario_sede_lotes as isl')
             ->join('lotes as l', 'l.id', '=', 'isl.lote_id')
             ->where('l.producto_id', $productoId)
-            ->where('isl.sucursal_id', 1)
+            ->where('isl.sede_id', 1)
             ->sum('isl.cantidad');
     }
 }

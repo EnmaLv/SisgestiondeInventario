@@ -3,24 +3,25 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use \App\Models\Sucursal;
-use \App\Models\Categoria;
-use \App\Models\Producto;
-use \App\Models\Proveedor;
-use \App\Models\Compra;
-use \App\Models\Lote;
-use \App\Models\ExchangeRates;
-use \App\Models\Rol;
+use App\Models\Sede;
+use App\Models\Categoria;
+use App\Models\Producto;
+use App\Models\Proveedor;
+use App\Models\Compra;
+use App\Models\Lote;
+use App\Models\ExchangeRates;
+use App\Models\Rol;
 use App\Models\salud\EnvasePrimario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
 // MÓDULO TRANSPORTE — Abdias
-use \App\Models\BusMarca;
-use \App\Models\BusModelo;
-use \App\Models\BusTipoCombustible;
-use \App\Models\BusVehiculo;
-use \App\Models\BusRuta;
-use \App\Models\BusParada;
+use App\Models\BusMarca;
+use App\Models\BusModelo;
+use App\Models\BusTipoCombustible;
+use App\Models\BusVehiculo;
+use App\Models\BusRuta;
+use App\Models\BusParada;
 
 class HomeController extends Controller
 {
@@ -33,7 +34,7 @@ class HomeController extends Controller
     {
         $hoy = Carbon::now();
         $limite = Carbon::now()->addDays(7);
-        $sucursalId = Auth::user()->persona?->sucursal_id ?? 1;
+        $sedeId = Auth::user()->persona?->sede_id ?? 1;
         $user = Auth::user();
 
         $roleName = $user->role ?? null;
@@ -64,13 +65,11 @@ class HomeController extends Controller
 
         // ── Conteos generales ──────────────────────────────────────────
         $total_envases_primarios = EnvasePrimario::count();
-        $total_sucursales        = Sucursal::count();
+        $total_sedes             = Sede::count();
         $total_categorias        = Categoria::count();
         $total_productos         = Producto::count();
         $total_proveedores       = Proveedor::count();
         $total_compras           = Compra::count();
-        
-        
 
         $total_lotes_vencidos = Lote::whereDate('fecha_vencimiento', '<=', $hoy)
             ->where('estado', 1)
@@ -87,31 +86,29 @@ class HomeController extends Controller
             'productos.id',
             'productos.nombre',
             'productos.stock_minimo',
-            DB::raw('COALESCE(SUM(inventario_sucursal_lotes.cantidad), 0) as stock_actual')
+            DB::raw('COALESCE(SUM(inventario_sede_lotes.cantidad), 0) as stock_actual')
         )
             ->join('lotes', 'lotes.producto_id', '=', 'productos.id')
-            ->join('inventario_sucursal_lotes', function ($join) use ($sucursalId) {
-                $join->on('inventario_sucursal_lotes.lote_id', '=', 'lotes.id')
-                    ->where('inventario_sucursal_lotes.sucursal_id', '=', $sucursalId);
+            ->join('inventario_sede_lotes', function ($join) use ($sedeId) {
+                $join->on('inventario_sede_lotes.lote_id', '=', 'lotes.id')
+                    ->where('inventario_sede_lotes.sede_id', '=', $sedeId);
             })
             ->where('productos.estado', 1)
             ->groupBy('productos.id', 'productos.nombre', 'productos.stock_minimo')
-            ->havingRaw('SUM(inventario_sucursal_lotes.cantidad) <= productos.stock_minimo')
-            ->havingRaw('SUM(inventario_sucursal_lotes.cantidad) > 0')
+            ->havingRaw('SUM(inventario_sede_lotes.cantidad) <= productos.stock_minimo')
+            ->havingRaw('SUM(inventario_sede_lotes.cantidad) > 0')
             ->orderBy('stock_actual', 'asc')
             ->get();
 
         $total_productos_stock_minimo = $productos_stock_minimo->count();
 
         // MÓDULO TRANSPORTE — Abdias
-        $total_bus_marcas  = BusMarca::count();
-        $total_bus_modelos = BusModelo::count();
+        $total_bus_marcas            = BusMarca::count();
+        $total_bus_modelos           = BusModelo::count();
         $total_bus_tipo_combustibles = BusTipoCombustible::count();
-        $total_bus_vehiculos = BusVehiculo::count();
-        $total_bus_rutas = BusRuta::count();
-        $total_bus_paradas = BusParada::count();
-        
-
+        $total_bus_vehiculos         = BusVehiculo::count();
+        $total_bus_rutas             = BusRuta::count();
+        $total_bus_paradas           = BusParada::count();
 
         $menuConfig = config('adminlte.menu');
 
@@ -132,7 +129,7 @@ class HomeController extends Controller
             // ── Salud ──────────────────────────────────────────────────
             'envases_primarios' => 'admin/salud/maestros/envases_primarios',
             // ── Comedor ────────────────────────────────────────────────
-            'sucursales'        => 'admin/maestros/sucursales',
+            'sedes'             => 'admin/maestros/sedes',
             'categorias'        => 'admin/maestros/categorias',
             'productos'         => 'admin/maestros/productos',
             'proveedores'       => 'admin/maestros/proveedores',
@@ -141,12 +138,12 @@ class HomeController extends Controller
             'por_vencer'        => 'admin/movimientos/lotes',
             'registro_comida'   => 'admin/movimientos/registro_comida',
             // ── Transporte — Abdias ───────────────────────────
-            'bus_marcas'        => 'admin/transporte/maestros/bus_marcas',
-            'bus_modelos'       => 'admin/transporte/maestros/bus_modelos',
+            'bus_marcas'            => 'admin/transporte/maestros/bus_marcas',
+            'bus_modelos'           => 'admin/transporte/maestros/bus_modelos',
             'bus_tipo_combustibles' => 'admin/transporte/maestros/bus_tipo_combustibles',
-            'bus_vehiculos'     => 'admin/transporte/maestros/bus_vehiculos',
-            'bus_rutas'         => 'admin/transporte/maestros/bus_rutas',
-            'bus_paradas' => 'admin/transporte/maestros/bus_paradas',
+            'bus_vehiculos'         => 'admin/transporte/maestros/bus_vehiculos',
+            'bus_rutas'             => 'admin/transporte/maestros/bus_rutas',
+            'bus_paradas'           => 'admin/transporte/maestros/bus_paradas',
         ];
 
         $visibleModules = [];
@@ -161,7 +158,7 @@ class HomeController extends Controller
             'tasa_actual'     => $ultimaTasa?->tasa,
             'visibleModules'  => $visibleModules,
         ], compact(
-            'total_sucursales',
+            'total_sedes',
             'total_categorias',
             'total_productos',
             'total_proveedores',
@@ -177,7 +174,7 @@ class HomeController extends Controller
             'total_bus_tipo_combustibles',
             'total_bus_vehiculos',
             'total_bus_rutas',
-            'total_bus_paradas',
+            'total_bus_paradas'
         ));
     }
 }

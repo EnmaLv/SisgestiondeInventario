@@ -411,7 +411,7 @@ return [
             'text' => 'Control de Stock',
             'icon' => 'fas fa-warehouse',
             'module' => 'comedor',
-            'active' => ['admin/movimientos/inventario*', 'admin/movimientos/lotes*', 'admin/movimientos/sucursales_lotes*'],
+            'active' => ['admin/movimientos/inventario*', 'admin/movimientos/lotes*', 'admin/movimientos/sedes_lotes*'],
             'submenu' => [
                 [
                     'text' => 'Lotes',
@@ -421,9 +421,9 @@ return [
                 ],
                 [
                     'text' => 'Existencias por Sede',
-                    'url' => 'admin/movimientos/sucursales_lotes',
+                    'url' => 'admin/movimientos/sedes_lotes',
                     'icon' => 'fas fa-store-alt',
-                    'active' => ['admin/movimientos/sucursales_lotes*'],
+                    'active' => ['admin/movimientos/sedes_lotes*'],
                 ],
             ]
         ],
@@ -449,13 +449,13 @@ return [
             'text' => 'Configuración General',
             'icon' => 'fas fa-cog',
             'module' => 'administracion',
-            'active' => ['admin/maestros/sucursales*', 'admin/maestros/proveedores*', 'admin/maestros/pnf*'],
+            'active' => ['admin/maestros/sedes*', 'admin/maestros/proveedores*', 'admin/maestros/pnf*'],
             'submenu' => [
                 [
                     'text' => 'Sedes y Anexos',
-                    'url' => 'admin/maestros/sucursales',
+                    'url' => 'admin/maestros/sedes',
                     'icon' => 'fas fa-store',
-                    'active' => ['admin/maestros/sucursales*'],
+                    'active' => ['admin/maestros/sedes*'],
                 ],
                 [
                     'text' => 'Proveedores',

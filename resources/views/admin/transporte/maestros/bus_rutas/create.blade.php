@@ -70,12 +70,12 @@
                                 <label class="rd-label">Sede</label>
                                 <div class="input-group mt-1">
                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                    <select name="sucursal_id" class="form-control rd-input" required>
+                                    <select name="sede_id" class="form-control rd-input" required>
                                         <option value="">-- Seleccione --</option>
-                                        @foreach ($sucursales as $sucursal)
-                                            <option value="{{ $sucursal->id }}"
-                                                {{ old('sucursal_id') == $sucursal->id ? 'selected' : '' }}>
-                                                {{ $sucursal->nombre }}
+                                        @foreach ($sedes as $sede)
+                                            <option value="{{ $sede->id }}"
+                                                {{ old('sede_id') == $sede->id ? 'selected' : '' }}>
+                                                {{ $sede->nombre_sede ?? $sede->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -104,9 +104,8 @@
                         <label class="rd-label">Descripción</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
-                            <input name="descripcion" rows="2" class="form-control rd-input"
-                                style="resize:none; height: auto;"
-                                placeholder="Transporte a la zona sur">{{ old('descripcion') }}</input>
+                            <input name="descripcion" class="form-control rd-input" style="resize:none; height: auto;"
+                                placeholder="Transporte a la zona sur" value="{{ old('descripcion') }}">
                         </div>
                     </div>
                 </div>
@@ -206,10 +205,10 @@
         let marcadoresMap = {};
 
         function initMap() {
-            // Inicializar mapa de Leaflet enfocado en tus coordenadas.
+            // Inicializar mapa de Leaflet
             map = L.map('mapa-constructor').setView([9.56, -69.20], 13);
 
-            // Capa gratuita de OpenStreetMap (No requiere API Key ni tarjeta)
+            // Capa gratuita de OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
@@ -250,7 +249,7 @@
                 });
             });
 
-            // En "Create" solo cargamos paradas previas si la validación del backend falló (Old inputs)
+            // Cargar paradas previas en caso de fallos de validación (old inputs)
             const oldParadas = @json(old('paradas'));
             if (oldParadas && oldParadas.length > 0) {
                 oldParadas.forEach(id => {
@@ -322,7 +321,6 @@
                 if (data.code === 'Ok' && data.routes.length > 0) {
                     const rutaEncontrada = data.routes[0];
 
-                    // Conversión OSRM [Lng, Lat] a Leaflet [Lat, Lng]
                     const coordenadasLinea = rutaEncontrada.geometry.coordinates.map(coord => [coord[1], coord[0]]);
                     polyline.setLatLngs(coordenadasLinea);
 
@@ -382,7 +380,7 @@
 
         document.getElementById('btn-add-horario').addEventListener('click', () => agregarFilaHorario());
 
-        // Cargar viejos horarios si hubo error de validación, de lo contrario inicializar uno vacío
+        // Cargar viejos horarios si hubo error de validación
         const oldHorarios = @json(old('horarios'));
         if (oldHorarios && Object.keys(oldHorarios).length > 0) {
             Object.values(oldHorarios).forEach(h => {
@@ -392,7 +390,6 @@
             agregarFilaHorario();
         }
 
-        // Inicializar el mapa al cargar el documento por completo
         document.addEventListener("DOMContentLoaded", function() {
             initMap();
         });

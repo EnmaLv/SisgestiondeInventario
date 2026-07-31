@@ -6,7 +6,7 @@ use App\Models\BusVehiculo;
 use App\Models\BusModelo;
 use App\Models\BusMarca;
 use App\Models\BusTipoCombustible;
-use App\Models\Sucursal;
+use App\Models\Sede;
 use Illuminate\Http\Request;
 
 class BusVehiculoController extends Controller
@@ -29,7 +29,7 @@ class BusVehiculoController extends Controller
             'consumo_relenti'          => 'required|numeric|min:0.001|max:50',
             'km_actual'                => 'required|numeric|min:0|max:9999999',
             'km_proximo_mantenimiento' => 'required|numeric|min:0|max:9999999',
-            'sucursal_id'              => 'required|exists:sucursals,id',
+            'sede_id'                  => 'required|exists:sede,id',
             'estado'                   => 'required|in:disponible,en_ruta,mantenimiento,inactivo',
         ];
     }
@@ -45,10 +45,10 @@ class BusVehiculoController extends Controller
         $modelos    = BusModelo::where('estado', 1)->orderBy('nombre')->get();
         $marcas     = BusMarca::where('estado', 1)->orderBy('nombre')->get();
         $tipos      = BusTipoCombustible::where('estado', 1)->orderBy('nombre')->get();
-        $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
+        $sedes = Sede::where('activo', 1)->orderBy('nombre')->get();
         return view(
             'admin.transporte.maestros.bus_vehiculos.create',
-            compact('modelos', 'marcas', 'tipos', 'sucursales')
+            compact('modelos', 'marcas', 'tipos', 'sedes')
         );
     }
 
@@ -66,10 +66,10 @@ class BusVehiculoController extends Controller
         $modelos    = BusModelo::where('estado', 1)->orderBy('nombre')->get();
         $marcas     = BusMarca::where('estado', 1)->orderBy('nombre')->get();
         $tipos      = BusTipoCombustible::where('estado', 1)->orderBy('nombre')->get();
-        $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
+        $sedes      = Sede::where('activo', 1)->orderBy('nombre')->get();
         return view(
             'admin.transporte.maestros.bus_vehiculos.edit',
-            compact('busVehiculo', 'modelos', 'marcas', 'tipos', 'sucursales')
+            compact('busVehiculo', 'modelos', 'marcas', 'tipos', 'sedes')
         );
     }
 

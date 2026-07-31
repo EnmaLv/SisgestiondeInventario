@@ -53,7 +53,7 @@ class ItemsCompra extends Component
         'fechaVencimiento' => 'nullable|date|after:today',
     ];
 
-    public function updatedproductoId($value)
+    public function updatedProductoId($value)
     {
         $producto = Producto::with('categoria')->find($value);
         if ($producto) {

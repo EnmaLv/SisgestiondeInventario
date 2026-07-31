@@ -2,20 +2,19 @@
 
 namespace App\Models;
 
-use App\Observers\SucursalObserver;
+use App\Observers\SedeObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Traits\ConvierteAMayusculasNoEloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-#[ObservedBy(SucursalObserver::class)]
-class Sucursal extends Model
+class Sede extends Model
 {
     use ConvierteAMayusculasNoEloquent;
     use HasFactory;
 
-    protected $table = 'sucursals';
+    protected $table = 'sede';
 
     protected $fillable = [
         'nombre',
@@ -28,20 +27,20 @@ class Sucursal extends Model
         'activo' => 'boolean'
     ];
 
-    public function inventarioSucursalLotes()
+    public function inventarioSedeLotes()
     {
-        return $this->hasMany(InventarioSucursalLote::class);
+        return $this->hasMany(InventarioSedeLote::class, 'sede_id');
     }
 
     public function movimientos()
     {
-        return $this->hasMany(MovimientoInventario::class);
+        return $this->hasMany(MovimientoInventario::class, 'sede_id');
     }
 
-    public static function listarSucursales($buscar = null, $activo = null)
+    public static function listarSedes($buscar = null, $activo = null)
     {
-        $query = DB::table('sucursals')
-            ->select('sucursals.*');
+        $query = DB::table('sede')
+            ->select('sede.*');
 
         if ($buscar) {
             $query->where(function ($q) use ($buscar) {
@@ -59,12 +58,12 @@ class Sucursal extends Model
         return $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
     }
 
-    public static function crearSucursal(array $data)
+    public static function crearSede(array $data)
     {
         $helper = new self();
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'direccion']);
-        $sucursal =Sucursal::create([
+        $sede = Sede::create([
             'nombre'     => $data['nombre'],
             'direccion'  => $data['direccion'],
             'telefono'   => $data['telefono'],
@@ -73,19 +72,19 @@ class Sucursal extends Model
             'updated_at' => now()
         ]);
 
-        return $sucursal->id;
+        return $sede->id;
     }
 
-    public static function obtenerSucursal($id)
+    public static function obtenerSede($id)
     {
-        return DB::table('sucursals')
+        return DB::table('sede')
             ->where('id', $id)
             ->first();
     }
 
-    public static function actualizarSucursal($id, array $data)
+    public static function actualizarSede($id, array $data)
     {
-        return DB::table('sucursals')
+        return DB::table('sede')
             ->where('id', $id)
             ->update([
                 'nombre'     => $data['nombre'],
@@ -96,53 +95,37 @@ class Sucursal extends Model
             ]);
     }
 
-    public static function eliminarSucursal($id)
+    public static function eliminarSede($id)
     {
-        $sucursal = DB::table('sucursals')
+        return DB::table('sede')
             ->where('id', $id)
             ->update([
                 'activo' => 0,
                 'updated_at' => now()
             ]);
-        //Aplicamos el estado a la sede
-        DB::table('sede')
-            ->where('id_sucursal', $id)
-            ->update([
-                'estatus' => 0,
-                'updated_at' => now()
-            ]);
-        return $sucursal;
     }
 
-    public static function activarSucursal($id)
+    public static function activarSede($id)
     {
-        $sucursal = DB::table('sucursals')
+        return DB::table('sede')
             ->where('id', $id)
             ->update([
                 'activo' => 1,
                 'updated_at' => now()
             ]);
-        //Activamos tambien la sede
-        DB::table('sede')
-            ->where('id_sucursal', $id)
-            ->update([
-                'estatus' => 1,
-                'updated_at' => now()
-            ]);
-        return $sucursal;
     }
 
-    public static function obtenerSucursalConInventario($id)
+    public static function obtenerSedeConInventario($id)
     {
-        $sucursal = DB::table('sucursals')
+        $sede = DB::table('sede')
             ->where('id', $id)
             ->first();
 
-        if ($sucursal) {
-            $sucursal->inventario = DB::table('inventario_sucursal_lotes as isl')
+        if ($sede) {
+            $sede->inventario = DB::table('inventario_sede_lotes as isl')
                 ->join('lotes', 'lotes.id', '=', 'isl.lote_id')
                 ->join('productos', 'productos.id', '=', 'lotes.producto_id')
-                ->where('isl.sucursal_id', $id)
+                ->where('isl.sede_id', $id)
                 ->where('isl.cantidad', '>', 0)
                 ->select(
                     'productos.nombre as producto_nombre',
@@ -153,17 +136,17 @@ class Sucursal extends Model
                 )
                 ->get();
 
-            $sucursal->total_productos = $sucursal->inventario->count();
-            $sucursal->cantidad_total = $sucursal->inventario->sum('cantidad');
+            $sede->total_productos = $sede->inventario->count();
+            $sede->cantidad_total = $sede->inventario->sum('cantidad');
         }
 
-        return $sucursal;
+        return $sede;
     }
 
     public static function tieneInventario($id)
     {
-        return DB::table('inventario_sucursal_lotes')
-            ->where('sucursal_id', $id)
+        return DB::table('inventario_sede_lotes')
+            ->where('sede_id', $id)
             ->where('cantidad', '>', 0)
             ->exists();
     }
@@ -171,13 +154,13 @@ class Sucursal extends Model
     public static function tieneMovimientos($id)
     {
         return DB::table('movimiento_inventarios')
-            ->where('sucursal_id', $id)
+            ->where('sede_id', $id)
             ->exists();
     }
 
-    public static function obtenerSucursalesActivas()
+    public static function obtenerSedesActivas()
     {
-        return DB::table('sucursals')
+        return DB::table('sede')
             ->where('activo', 1)
             ->select('id', 'nombre', 'direccion', 'telefono')
             ->orderBy('nombre', 'asc')
@@ -187,20 +170,20 @@ class Sucursal extends Model
     public static function obtenerEstadisticas($id)
     {
         return [
-            'total_productos' => DB::table('inventario_sucursal_lotes as isl')
+            'total_productos' => DB::table('inventario_sede_lotes as isl')
                 ->join('lotes', 'lotes.id', '=', 'isl.lote_id')
-                ->where('isl.sucursal_id', $id)
+                ->where('isl.sede_id', $id)
                 ->where('isl.cantidad', '>', 0)
                 ->distinct('lotes.producto_id')
                 ->count('lotes.producto_id'),
 
-            'total_lotes' => DB::table('inventario_sucursal_lotes')
-                ->where('sucursal_id', $id)
+            'total_lotes' => DB::table('inventario_sede_lotes')
+                ->where('sede_id', $id)
                 ->where('cantidad', '>', 0)
                 ->count(),
 
             'movimientos_mes' => DB::table('movimiento_inventarios')
-                ->where('sucursal_id', $id)
+                ->where('sede_id', $id)
                 ->whereMonth('fecha', date('m'))
                 ->whereYear('fecha', date('Y'))
                 ->count(),
@@ -209,7 +192,7 @@ class Sucursal extends Model
 
     public static function exportarCSV($buscar = null, $activo = null)
     {
-        $query = DB::table('sucursals')
+        $query = DB::table('sede')
             ->select('id', 'nombre', 'direccion', 'telefono', 'activo');
 
         if ($buscar) {

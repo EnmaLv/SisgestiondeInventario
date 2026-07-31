@@ -4,7 +4,7 @@
             <a href="{{ url('/admin/salud/maestros/envases_primarios') }}" class="module-link">
                 <div class="module-card-light">
                     <div class="module-icon">
-                        <img src="{{ url('/img/edificio.webp') }}" alt="Sucursales">
+                        <img src="{{ url('/img/edificio.webp') }}" alt="Envases">
                     </div>
                     <h5>Envases Primarios</h5>
                     <p>{{ $total_envases_primarios }} registrados</p>

@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sucursal;
+use App\Models\Sede;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class SucursalController extends Controller
+class SedeController extends Controller
 {
     public function index(Request $request)
     {
-        $sucursales = Sucursal::listarSucursales(
+        $sedes = Sede::listarSedes(
             $request->input('buscar'),
             $request->input('activo', 1)
         );
-        return view('admin.maestros.sucursales.index', compact('sucursales'));
+        return view('admin.maestros.sedes.index', compact('sedes'));
     }
 
     public function create()
     {
-        return view('admin.maestros.sucursales.create');
+        return view('admin.maestros.sedes.create');
     }
 
     public function store(Request $request)
@@ -29,7 +29,7 @@ class SucursalController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'unique:sucursals,nombre'
+                'unique:sede,nombre'
             ],
             'direccion' => 'required|string|max:255',
             'telefono'  => 'required|string|max:20',
@@ -37,44 +37,44 @@ class SucursalController extends Controller
             'nombre.unique' => 'Ya existe una sede con este nombre',
         ]);
 
-        $fromidreuse = Sucursal::crearSucursal($validated);
+        $fromidreuse = Sede::crearSede($validated);
 
         $from = $request->input('from');
 
         if ($from) {
-            return redirect($from . '?sucursal_id=' . $fromidreuse)
-                ->with('success', 'Sucursal creada exitosamente.');
+            return redirect($from . '?sede_id=' . $fromidreuse)
+                ->with('success', 'Sede creada exitosamente.');
         } else {
-            return redirect()->route('admin.maestros.sucursales.index')
-                ->with('success', 'Sucursal creada exitosamente.');
+            return redirect()->route('admin.maestros.sedes.index')
+                ->with('success', 'Sede creada exitosamente.');
         }
     }
 
     public function show($id)
     {
-        $sucursal = Sucursal::obtenerSucursalConInventario($id);
+        $sede = Sede::obtenerSedeConInventario($id);
 
-        if (!$sucursal) {
+        if (!$sede) {
             return redirect()
-                ->route('admin.maestros.sucursales.index')
-                ->with('error', 'Sucursal no encontrada.')
+                ->route('admin.maestros.sedes.index')
+                ->with('error', 'Sede no encontrada.')
                 ->with('icono', 'error');
         }
 
-        $estadisticas = Sucursal::obtenerEstadisticas($id);
-        return view('admin.maestros.sucursales.show', compact('sucursal', 'estadisticas'));
+        $estadisticas = Sede::obtenerEstadisticas($id);
+        return view('admin.maestros.sedes.show', compact('sede', 'estadisticas'));
     }
 
     public function edit($id)
     {
-        $sucursal = Sucursal::obtenerSucursal($id);
-        if (!$sucursal) {
+        $sede = Sede::obtenerSede($id);
+        if (!$sede) {
             return redirect()
-                ->route('admin.maestros.sucursales.index')
-                ->with('error', 'Sucursal no encontrada.')
+                ->route('admin.maestros.sedes.index')
+                ->with('error', 'Sede no encontrada.')
                 ->with('icono', 'error');
         }
-        return view('admin.maestros.sucursales.edit', compact('sucursal'));
+        return view('admin.maestros.sedes.edit', compact('sede'));
     }
 
     public function update(Request $request, $id)
@@ -84,7 +84,7 @@ class SucursalController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('sucursals', 'nombre')->ignore($id),
+                Rule::unique('sede', 'nombre')->ignore($id),
             ],
             'direccion' => 'required|string|max:255',
             'telefono'  => 'required|string|max:20',
@@ -92,52 +92,52 @@ class SucursalController extends Controller
             'nombre.unique' => 'Ya existe una sede con este nombre',
         ]);
 
-        Sucursal::actualizarSucursal($id, $validated);
+        Sede::actualizarSede($id, $validated);
 
         return redirect()
-            ->route('admin.maestros.sucursales.index')
-            ->with('success', 'Sucursal actualizada exitosamente.')
+            ->route('admin.maestros.sedes.index')
+            ->with('success', 'Sede actualizada exitosamente.')
             ->with('icono', 'success');
     }
 
     public function destroy($id)
     {
-        if (Sucursal::tieneInventario($id)) {
+        if (Sede::tieneInventario($id)) {
             return redirect()
-                ->route('admin.maestros.sucursales.index')
-                ->with('error', 'No se puede eliminar la sucursal porque tiene inventario asociado.')
+                ->route('admin.maestros.sedes.index')
+                ->with('error', 'No se puede eliminar la sede porque tiene inventario asociado.')
                 ->with('icono', 'error');
         }
 
-        if (Sucursal::tieneMovimientos($id)) {
+        if (Sede::tieneMovimientos($id)) {
             return redirect()
-                ->route('admin.maestros.sucursales.index')
-                ->with('error', 'No se puede eliminar la sucursal porque tiene movimientos de inventario.')
+                ->route('admin.maestros.sedes.index')
+                ->with('error', 'No se puede eliminar la sede porque tiene movimientos de inventario.')
                 ->with('icono', 'error');
         }
 
-        Sucursal::eliminarSucursal($id);
+        Sede::eliminarSede($id);
 
         return redirect()
-            ->route('admin.maestros.sucursales.index')
-            ->with('success', 'Sucursal eliminada exitosamente.')
+            ->route('admin.maestros.sedes.index')
+            ->with('success', 'Sede eliminada exitosamente.')
             ->with('icono', 'success');
     }
 
     public function activar($id)
     {
-        Sucursal::activarSucursal($id);
-        return redirect()->route('admin.maestros.sucursales.index')->with('success', 'Sede activada exitosamente.');
+        Sede::activarSede($id);
+        return redirect()->route('admin.maestros.sedes.index')->with('success', 'Sede activada exitosamente.');
     }
 
     public function exportCsv(Request $request)
     {
-        $rows = Sucursal::exportarCSV(
+        $rows = Sede::exportarCSV(
             $request->input('buscar'),
             $request->input('activo')
         );
 
-        $filename = 'sucursales_' . date('Ymd_His') . '.csv';
+        $filename = 'sedes_' . date('Ymd_His') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"$filename\"",

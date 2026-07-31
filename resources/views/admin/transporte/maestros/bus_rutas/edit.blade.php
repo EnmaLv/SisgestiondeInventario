@@ -5,7 +5,8 @@
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem; color:#0f172a; font-weight:700;">Editar Ruta</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">Modifique los datos, horarios o el trazado de la ruta de transporte existente.</p>
+            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">Modifique los datos, horarios o el trazado de la
+                ruta de transporte existente.</p>
         </div>
         <a href="{{ route('admin.transporte.maestros.bus_rutas.index') }}" class="rd-btn rd-btn-default"><i
                 class="fas fa-arrow-left"></i> Volver</a>
@@ -29,7 +30,8 @@
         <div class="alert alert-danger"><b>{{ $errors->first('error') }}</b></div>
     @endif
 
-    <form action="{{ route('admin.transporte.maestros.bus_rutas.update', $busRuta->id) }}" method="POST" class="rd-prevent-double-submit">
+    <form action="{{ route('admin.transporte.maestros.bus_rutas.update', $busRuta->id) }}" method="POST"
+        class="rd-prevent-double-submit">
         @csrf
         @method('PUT')
 
@@ -48,7 +50,8 @@
                             <span class="input-group-text"><i class="fas fa-route"></i></span>
                             <input type="text" name="nombre" id="inputNombre"
                                 class="form-control rd-input @error('nombre') is-invalid @enderror"
-                                placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre', $busRuta->nombre) }}" maxlength="100" required>
+                                placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre', $busRuta->nombre) }}"
+                                maxlength="100" required>
                         </div>
                         <div id="errorNombreUnico" class="text-danger mt-1" style="display:none;"></div>
                     </div>
@@ -61,7 +64,8 @@
                                     <span class="input-group-text"><i class="fas fa-road"></i></span>
                                     <input type="number" name="distancia_km" id="inputDistancia" step="0.01"
                                         class="form-control rd-input" placeholder="Calculando..."
-                                        value="{{ old('distancia_km', $busRuta->distancia_km) }}" min="0.1" required readonly>
+                                        value="{{ old('distancia_km', $busRuta->distancia_km) }}" min="0.1" required
+                                        readonly>
                                 </div>
                             </div>
                         </div>
@@ -70,12 +74,12 @@
                                 <label class="rd-label">Sede</label>
                                 <div class="input-group mt-1">
                                     <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                    <select name="sucursal_id" class="form-control rd-input" required>
+                                    <select name="sede_id" class="form-control rd-input" required>
                                         <option value="">-- Seleccione --</option>
-                                        @foreach ($sucursales as $sucursal)
-                                            <option value="{{ $sucursal->id }}"
-                                                {{ old('sucursal_id', $busRuta->sucursal_id) == $sucursal->id ? 'selected' : '' }}>
-                                                {{ $sucursal->nombre }}
+                                        @foreach ($sedes as $sede)
+                                            <option value="{{ $sede->id }}"
+                                                {{ old('sede_id', $busRuta->sede_id) == $sede->id ? 'selected' : '' }}>
+                                                {{ $sede->nombre_sede ?? $sede->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -104,9 +108,9 @@
                         <label class="rd-label">Descripción</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
-                            <input name="descripcion" rows="2" class="form-control rd-input"
-                                style="resize:none; height: auto;"
-                                placeholder="Transporte a la zona sur" value="{{ old('descripcion', $busRuta->descripcion) }}"></input>
+                            <input name="descripcion" class="form-control rd-input" style="resize:none; height: auto;"
+                                placeholder="Transporte a la zona sur"
+                                value="{{ old('descripcion', $busRuta->descripcion) }}">
                         </div>
                     </div>
                 </div>
@@ -377,7 +381,7 @@
         document.getElementById('btn-add-horario').addEventListener('click', () => agregarFilaHorario());
 
         const oldHorarios = @json(old('horarios'));
-        const horariosDb = @json($busRuta->horarios); 
+        const horariosDb = @json($busRuta->horarios);
 
         if (oldHorarios && Object.keys(oldHorarios).length > 0) {
             Object.values(oldHorarios).forEach(h => {

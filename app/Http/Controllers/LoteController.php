@@ -8,6 +8,7 @@ use App\Models\Producto;
 use App\Models\Proveedor;
 use App\Models\DetalleCompra;
 use App\Models\MovimientoInventario;
+use App\Models\Sede;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +17,7 @@ class LoteController extends Controller
     private function procesarLotesVencidos()
     {
         DB::transaction(function () {
-            $lotesVencidos = Lote::with(['producto', 'inventarioSucursalLotes'])
+            $lotesVencidos = Lote::with(['producto', 'inventarioSedeLotes'])
                 ->whereDate('fecha_vencimiento', '<=', now())
                 ->where('estado', 1)
                 ->get();
@@ -24,7 +25,7 @@ class LoteController extends Controller
             foreach ($lotesVencidos as $lote) {
                 $unidadId = $lote->producto->unidad_id;
 
-                foreach ($lote->inventarioSucursalLotes as $inv) {
+                foreach ($lote->inventarioSedeLotes as $inv) {
                     if ($inv->cantidad_gramos <= 0) {
                         continue;
                     }
@@ -32,7 +33,7 @@ class LoteController extends Controller
                     MovimientoInventario::create([
                         'producto_id'     => $lote->producto_id,
                         'lote_id'         => $lote->id,
-                        'sucursal_id'     => $inv->sucursal_id,
+                        'sede_id'         => $inv->sede_id,
                         'tipo_movimiento' => 'MERMA',
                         'unidad_id'       => $unidadId,
                         'cantidad'        => 0,
@@ -42,7 +43,7 @@ class LoteController extends Controller
                     ]);
 
                     $inv->update([
-                        'cantidad' => 0,
+                        'cantidad'        => 0,
                         'cantidad_gramos' => 0
                     ]);
                 }
@@ -59,31 +60,30 @@ class LoteController extends Controller
     public function mermarVencidos()
     {
         $this->procesarLotesVencidos();
-        return redirect()->route('admin.movimientos.lotes.index')->with('success', 'Productos vencidos mermados Exitosamente.');
+        return redirect()->route('admin.movimientos.lotes.index')->with('success', 'Productos vencidos mermados exitosamente.');
     }
 
     public function index(Request $request)
     {
-        $buscar = $request->input('buscar');
-        $estado = $request->input('estado');
+        $buscar      = $request->input('buscar');
+        $estado      = $request->input('estado');
         $fecha_desde = $request->input('fecha_desde');
         $fecha_hasta = $request->input('fecha_hasta');
-        $filtro = $request->input('filtro');
+        $filtro      = $request->input('filtro');
 
-
-        $sucursalId = 1;
+        $sedeId = 1;
 
         $query = Lote::with(['producto', 'proveedor'])
             ->addSelect([
                 'lotes.*',
-                'cantidad_sucursal' => DB::table('inventario_sucursal_lotes')
+                'cantidad_sede' => DB::table('inventario_sede_lotes')
                     ->selectRaw('COALESCE(SUM(cantidad), 0)')
-                    ->whereColumn('inventario_sucursal_lotes.lote_id', 'lotes.id')
-                    ->where('inventario_sucursal_lotes.sucursal_id', $sucursalId),
-                'cantidad_gramos_sucursal' => DB::table('inventario_sucursal_lotes')
+                    ->whereColumn('inventario_sede_lotes.lote_id', 'lotes.id')
+                    ->where('inventario_sede_lotes.sede_id', $sedeId),
+                'cantidad_gramos_sede' => DB::table('inventario_sede_lotes')
                     ->selectRaw('COALESCE(SUM(cantidad_gramos), 0)')
-                    ->whereColumn('inventario_sucursal_lotes.lote_id', 'lotes.id')
-                    ->where('inventario_sucursal_lotes.sucursal_id', $sucursalId)
+                    ->whereColumn('inventario_sede_lotes.lote_id', 'lotes.id')
+                    ->where('inventario_sede_lotes.sede_id', $sedeId)
             ]);
 
         if ($filtro === 'vencido') {
@@ -116,7 +116,7 @@ class LoteController extends Controller
 
         $lotes->each(function ($lote) {
             $fecha = Carbon::parse($lote->fecha_vencimiento);
-            $lote->is_expired = $fecha->isPast();
+            $lote->is_expired      = $fecha->isPast();
             $lote->days_to_expire = now()->diffInDays($fecha, false);
         });
 
@@ -124,8 +124,8 @@ class LoteController extends Controller
             ->where('estado', 1)
             ->exists();
 
-        $sucursalNombre = DB::table('sucursals')->where('id', $sucursalId)->value('nombre');
+        $sedeNombre = Sede::where('id', $sedeId)->value('nombre');
 
-        return view('admin.movimientos.lotes.index', compact('lotes', 'hayLotesVencidosSinMerma', 'sucursalNombre'));
+        return view('admin.movimientos.lotes.index', compact('lotes', 'hayLotesVencidosSinMerma', 'sedeNombre'));
     }
 }

@@ -1,6 +1,13 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import "tailwindcss";
 @import "flatpickr/dist/flatpickr.min.css";
 @import "gerenal.css";
+
+
 
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

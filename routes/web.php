@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\AdminMasterKeyController;
 use App\Http\Controllers\Auth\PasswordRecoveryController;
 use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\SedeController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\Admin\Configuracion\EmpleosController;
 use App\Http\Controllers\Admin\Configuracion\PermisosController;
@@ -21,7 +21,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\LoteController;
-use App\Http\Controllers\InventarioSucursalLoteController;
+use App\Http\Controllers\InventarioSedeLoteController;
 use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\RecetaIngredienteController;
 use App\Http\Controllers\MovimientoInventarioController;
@@ -78,24 +78,15 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::put('/maestros/categorias/{categoria}/activar', [CategoriaController::class, 'activar'])->name('admin.maestros.productos.activar');
 
         /* Sedes */
-
-        //Index 
-        Route::get('/maestros/sucursales', [SucursalController::class, 'index'])->name('admin.maestros.sucursales.index');
-
-        Route::get('/maestros/sucursales/create', [SucursalController::class, 'create'])->name('admin.maestros.sucursales.create');
-
-        Route::post('/maestros/sucursales/store', [SucursalController::class, 'store'])->name('admin.maestros.sucursales.store');
-
-        Route::get('/maestros/sucursales/{sucursal}', [SucursalController::class, 'show'])->name('admin.maestros.sucursales.show');
-
-        Route::get('/maestros/sucursales/{sucursal}/edit', [SucursalController::class, 'edit'])->name('admin.maestros.sucursales.edit');
-
-        Route::put('/maestros/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('admin.maestros.sucursales.update');
-
-        Route::delete('/maestros/sucursales/{id}', [SucursalController::class, 'destroy'])->name('admin.maestros.sucursales.destroy');
-
-        Route::put('/maestros/sucursales/{sucursal}/activar', [SucursalController::class, 'activar'])->name('admin.maestros.sucursales.activar');
-
+        Route::get('/maestros/sedes', [SedeController::class, 'index'])->name('admin.maestros.sedes.index');
+        Route::get('/maestros/sedes/create', [SedeController::class, 'create'])->name('admin.maestros.sedes.create');
+        Route::post('/maestros/sedes/store', [SedeController::class, 'store'])->name('admin.maestros.sedes.store');
+        Route::get('/maestros/sedes/{sede}', [SedeController::class, 'show'])->name('admin.maestros.sedes.show');
+        Route::get('/maestros/sedes/{sede}/edit', [SedeController::class, 'edit'])->name('admin.maestros.sedes.edit');
+        Route::put('/maestros/sedes/{sede}', [SedeController::class, 'update'])->name('admin.maestros.sedes.update');
+        Route::delete('/maestros/sedes/{id}', [SedeController::class, 'destroy'])->name('admin.maestros.sedes.destroy');
+        Route::put('/maestros/sedes/{sede}/activar', [SedeController::class, 'activar'])->name('admin.maestros.sedes.activar');
+        
         /* Productos */
 
         Route::get('/maestros/productos', [ProductoController::class, 'index'])->name('admin.maestros.productos.index');
@@ -172,10 +163,10 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         Route::post('/movimientos/lotes/mermar-vencidos', [LoteController::class, 'mermarVencidos'])->name('admin.movimientos.lotes.mermar');
 
-        /* Sucursal por lotes */
-        Route::get('/movimientos/sucursales_lotes', [InventarioSucursalLoteController::class, 'index'])->name('admin.movimientos.sucursales_lotes');
+        /* Sedes por lotes */
+        Route::get('/movimientos/sedes_lotes', [InventarioSedeLoteController::class, 'index'])->name('admin.movimientos.sedes_lotes');
 
-        Route::get('/movimientos/sucursales_lotes/show/{id}', [InventarioSucursalLoteController::class, 'show'])->name('admin.movimientos.sucursales_lotes.show');
+        Route::get('/movimientos/sedes_lotes/show/{id}', [InventarioSedeLoteController::class, 'show'])->name('admin.movimientos.sedes_lotes.show');
 
         /* Registro diario */
 
@@ -325,7 +316,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::put('/salud/maestros/medicamentos/{medicamento}/activar', [MedicamentoController::class, 'activar'])->name('admin.salud.maestros.medicamentos.activar');
 
         // TRANSPORTE
-        require __DIR__.'/transporte.php';
+        require __DIR__ . '/transporte.php';
 
         /* Configuración - Empleados, Permisos, Roles */
 
@@ -404,4 +395,4 @@ Route::post('password/recover/verify', [PasswordRecoveryController::class, 'veri
 Route::post('password/recover/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.recover.reset_password');
 Route::post('password/recover/reset-masterkey', [PasswordRecoveryController::class, 'resetMasterKey'])->name('password.recover.reset_masterkey');
 
-require __DIR__.'/beca.php';
+require __DIR__ . '/beca.php';

@@ -11,7 +11,7 @@ use App\Models\Registro_diario;
 use App\Models\DetalleRegistroDiario;
 use App\Models\Receta;
 use App\Models\Lote;
-use App\Models\InventarioSucursalLote;
+use App\Models\InventarioSedeLote;
 use App\Models\SobranteComedor;
 use App\Models\MovimientoInventario;
 use Illuminate\Support\Facades\DB;
@@ -206,7 +206,6 @@ class RegisterNoti extends Component
                 $DatosHistorial['observacion'] = 'Registro exitoso';
 
                 $this->dispatch('cedula-validada', datos: $DatosHistorial);
-
             } catch (Exception $e) {
 
                 DB::rollBack();
@@ -222,7 +221,6 @@ class RegisterNoti extends Component
 
                 $this->dispatch('cedula-validada', datos: $DatosHistorial);
             }
-
         } else {
 
             $this->notification = [
@@ -291,5 +289,4 @@ class RegisterNoti extends Component
             'receta_diario' => $receta_diario,
         ]);
     }
-
 }

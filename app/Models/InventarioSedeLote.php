@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InventarioSucursalLote extends Model
+class InventarioSedeLote extends Model
 {
-    protected $table = 'inventario_sucursal_lotes';
+    protected $table = 'inventario_sede_lotes';
 
     protected $fillable = [
-        'sucursal_id',
+        'sede_id',
         'lote_id',
         'cantidad',
         'cantidad_gramos',
     ];
 
-    public function sucursal()
+    public function sede()
     {
-        return $this->belongsTo(Sucursal::class);
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 
     public function lote()

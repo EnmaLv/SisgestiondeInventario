@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BusRuta;
-use App\Models\Sucursal;
+use App\Models\Sede;
 use App\Models\BusParada;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,15 +13,15 @@ class BusRutaController extends Controller
     private function rules(int $excludeId = null): array
     {
         return [
-            'nombre'               => 'required|string|max:100|unique:bus_rutas,nombre,' . $excludeId,
-            'distancia_km'         => 'required|numeric|min:0.1|max:9999',
-            'descripcion'          => 'nullable|string|max:1000',
-            'sucursal_id'          => 'required|exists:sucursals,id',
-            'horarios'             => 'required|array|min:1',
-            'horarios.*.hora_salida'=> 'required|date_format:H:i',
-            'horarios.*.tipo_viaje' => 'required|in:entrada,salida',
-            'paradas'              => 'required|array|min:2',
-            'paradas.*'            => 'exists:bus_paradas,id'
+            'nombre'                => 'required|string|max:100|unique:bus_rutas,nombre,' . $excludeId,
+            'distancia_km'          => 'required|numeric|min:0.1|max:9999',
+            'descripcion'           => 'nullable|string|max:1000',
+            'sede_id'               => 'required|exists:sede,id',
+            'horarios'              => 'required|array|min:1',
+            'horarios.*.hora_salida' => 'required|date_format:H:i',
+            'horarios.*.tipo_viaje'  => 'required|in:entrada,salida',
+            'paradas'               => 'required|array|min:2',
+            'paradas.*'             => 'exists:bus_paradas,id'
         ];
     }
 
@@ -33,9 +33,9 @@ class BusRutaController extends Controller
 
     public function create()
     {
-        $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
+        $sedes = Sede::orderBy('nombre')->get();
         $paradas = BusParada::orderBy('nombre')->get(['id', 'nombre', 'lat', 'lng']);
-        return view('admin.transporte.maestros.bus_rutas.create', compact('sucursales', 'paradas'));
+        return view('admin.transporte.maestros.bus_rutas.create', compact('sedes', 'paradas'));
     }
 
     public function store(Request $request)
@@ -73,9 +73,9 @@ class BusRutaController extends Controller
     public function edit(BusRuta $busRuta)
     {
         $busRuta->load(['horarios' => fn($q) => $q->orderBy('hora_salida'), 'paradas']);
-        $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
+        $sedes = Sede::orderBy('nombre')->get();
         $paradas = BusParada::orderBy('nombre')->get(['id', 'nombre', 'lat', 'lng']);
-        return view('admin.transporte.maestros.bus_rutas.edit', compact('busRuta', 'sucursales', 'paradas'));
+        return view('admin.transporte.maestros.bus_rutas.edit', compact('busRuta', 'sedes', 'paradas'));
     }
 
     public function update(Request $request, BusRuta $busRuta)

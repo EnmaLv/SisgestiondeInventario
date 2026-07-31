@@ -96,7 +96,7 @@
         <meta name="msapplication-TileImage" content="{{ asset('favicon/ms-icon-144x144.png') }}">
     @endif
 
-    @vite(['resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
 
@@ -105,7 +105,7 @@
 
     {{-- Body Content --}}
     @yield('body')
-    
+
     {{-- Base Scripts (depends on Laravel asset bundling tool) --}}
     @if (config('adminlte.enabled_laravel_mix', false))
         <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>

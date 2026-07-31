@@ -11,7 +11,7 @@ class MovimientoInventario extends Model
     protected $fillable = [
         'producto_id',
         'lote_id',
-        'sucursal_id',
+        'sede_id',
         'tipo_movimiento',
         'unidad_id',
         'cantidad',
@@ -35,49 +35,51 @@ class MovimientoInventario extends Model
         return $this->belongsTo(Lote::class);
     }
 
-    public function sucursal()
+    public function sede()
     {
-        return $this->belongsTo(Sucursal::class);
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 
-    public static function getData(Array $filtro, bool $isPdf)
+    public static function getData(array $filtro, bool $isPdf)
     {
         $query = self::query();
-        if ($filtro['buscar']) {
+
+        if (!empty($filtro['buscar'])) {
             $query->where(function($q) use ($filtro) {
-
-                // Código de lote
-                $q->where('tipo_movimiento', 'like', "%{$filtro['buscar']}%")->orWhereHas('lote.producto', function($p) use ($filtro){
-                    $p->where('nombre', 'like', "%{$filtro['buscar']}%");
-                });
-
-                $q->orWhereHas('lote', function($p) use ($filtro){
-                    $p->where('codigo_lote', 'like', "%{$filtro['buscar']}%");
-                });
-
+                $q->where('tipo_movimiento', 'like', "%{$filtro['buscar']}%")
+                  ->orWhereHas('lote.producto', function($p) use ($filtro){
+                      $p->where('nombre', 'like', "%{$filtro['buscar']}%");
+                  })
+                  ->orWhereHas('lote', function($p) use ($filtro){
+                      $p->where('codigo_lote', 'like', "%{$filtro['buscar']}%");
+                  });
             });
         }
+
         if ($filtro['activo'] !== null && $filtro['activo'] !== '') {
             $query->where('estado', (int)$filtro['activo']);
         }
+
         if ($filtro['tipo_movimiento'] !== null && $filtro['tipo_movimiento'] !== '') {
             $query->where('tipo_movimiento', 'LIKE', '%' . $filtro['tipo_movimiento'] . '%');
         }
+
         if ($filtro['fecha_desde'] !== null && $filtro['fecha_desde'] !== '') {
             $query->whereDate('fecha', '>=', $filtro['fecha_desde']);
         }
+
         if ($filtro['fecha_hasta'] !== null && $filtro['fecha_hasta'] !== '') {
             $query->whereDate('fecha', '<=', $filtro['fecha_hasta']);
         }
+
         $movimiento = $query
-            ->with(['lote.producto', 'lote.proveedor', 'sucursal', 'unidad'])
-            ->orderBy('id','desc');
+            ->with(['lote.producto', 'lote.proveedor', 'sede', 'unidad'])
+            ->orderBy('id', 'desc');
+
         if (!$isPdf) {
-            $movimiento = $movimiento->paginate(10)->withQueryString();
-        }else{
-            $movimiento = $movimiento->get()->withQueryString();
+            return $movimiento->paginate(10)->withQueryString();
         }
-        
-        return $movimiento;
+
+        return $movimiento->get();
     }
 }

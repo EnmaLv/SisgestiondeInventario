@@ -15,7 +15,7 @@ class BusRuta extends Model
         'nombre',
         'distancia_km',
         'descripcion',
-        'sucursal_id',
+        'sede_id',
         'estado',
     ];
 
@@ -23,9 +23,9 @@ class BusRuta extends Model
         'estado' => 'boolean',
     ];
 
-    public function sucursal()
+    public function sede()
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 
     public function horarios()
@@ -48,7 +48,7 @@ class BusRuta extends Model
     public static function listarRutas($buscar = null, $estado = 1)
     {
         return self::query()
-            ->with(['sucursal', 'horarios'])
+            ->with(['sede', 'horarios'])
             ->when($buscar, fn($q) => $q->where('nombre', 'like', "%{$buscar}%"))
             ->when($estado !== null && $estado !== '', fn($q) => $q->where('estado', $estado))
             ->orderBy('nombre')
@@ -62,7 +62,7 @@ class BusRuta extends Model
             'nombre'       => $datos['nombre'],
             'distancia_km' => $datos['distancia_km'],
             'descripcion'  => $datos['descripcion'] ?? null,
-            'sucursal_id'  => $datos['sucursal_id'],
+            'sede_id'      => $datos['sede_id'],
             'estado'       => 1,
         ]);
     }
@@ -73,7 +73,7 @@ class BusRuta extends Model
             'nombre'       => $datos['nombre'],
             'distancia_km' => $datos['distancia_km'],
             'descripcion'  => $datos['descripcion'] ?? null,
-            'sucursal_id'  => $datos['sucursal_id'],
+            'sede_id'      => $datos['sede_id'],
         ]);
         return $ruta;
     }

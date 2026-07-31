@@ -17,7 +17,7 @@
             </p>
         </div>
         <div>
-            <a href="{{ url('admin/maestros/sucursales/create') }}" class="rd-btn rd-btn-primary">
+            <a href="{{ route('admin.maestros.sedes.create') }}" class="rd-btn rd-btn-primary">
                 <i class="fas fa-plus"></i> Crear Nueva Sede
             </a>
         </div>
@@ -44,7 +44,7 @@
                             </label>
                         </div>
                     </div>
-                    <form action="{{ route('admin.maestros.sucursales.index') }}" method="GET" class="rd-search-inline"
+                    <form action="{{ route('admin.maestros.sedes.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
                         <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
@@ -66,15 +66,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($sucursales as $sucursal)
+                        @forelse($sedes as $sede)
                             <tr>
                                 <td class="text-center">
-                                    {{ ($sucursales->currentPage() - 1) * $sucursales->perPage() + $loop->iteration }}</td>
-                                <td>{{ $sucursal->nombre }}</td>
-                                <td>{{ $sucursal->direccion }}</td>
-                                <td>{{ $sucursal->telefono }}</td>
+                                    {{ ($sedes->currentPage() - 1) * $sedes->perPage() + $loop->iteration }}</td>
+                                <td>{{ $sede->nombre }}</td>
+                                <td>{{ $sede->direccion }}</td>
+                                <td>{{ $sede->telefono }}</td>
                                 <td class="text-center">
-                                    @if ($sucursal->activo)
+                                    @if ($sede->activo)
                                         <span class="rd-badge rd-badge-success">Activo</span>
                                     @else
                                         <span class="rd-badge rd-badge-danger">Inactivo</span>
@@ -82,10 +82,10 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
-                                        <a href="{{ url('admin/maestros/sucursales/' . $sucursal->id . '/edit') }}"
+                                        <a href="{{ route('admin.maestros.sedes.edit', $sede->id) }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
-                                        @if ($sucursal->activo == true)
-                                            <form action="{{ url('admin/maestros/sucursales/' . $sucursal->id) }}"
+                                        @if ($sede->activo)
+                                            <form action="{{ route('admin.maestros.sedes.destroy', $sede->id) }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -94,55 +94,17 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                            <script>
-                                                function confirmDelete(event, button) {
-                                                    event.preventDefault();
-                                                    Swal.fire({
-                                                        title: '¿Estás seguro?',
-                                                        text: "Desea inactivar la sede?",
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#3085d6',
-                                                        cancelButtonColor: '#d33',
-                                                        confirmButtonText: 'Sí, inactivar',
-                                                        cancelButtonText: 'Cancelar'
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            button.closest('form').submit();
-                                                        }
-                                                    });
-                                                }
-                                            </script>
                                         @else
                                             <form
-                                                action="{{ url('admin/maestros/sucursales/' . $sucursal->id . '/activar') }}"
+                                                action="{{ url('admin/maestros/sedes/' . $sede->id . '/activar') }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit" class="rd-action rd-action-success btn-delete"
-                                                    onclick="confirmDelete(event, this)">
+                                                    onclick="confirmActivate(event, this)">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
-                                            <script>
-                                                function confirmDelete(event, button) {
-                                                    event.preventDefault();
-                                                    Swal.fire({
-                                                        title: '¿Estás seguro?',
-                                                        text: "Desea activar la sede?",
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#3085d6',
-                                                        cancelButtonColor: '#d33',
-                                                        confirmButtonText: 'Sí, activar',
-                                                        cancelButtonText: 'Cancelar'
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            button.closest('form').submit();
-                                                        }
-                                                    });
-                                                }
-                                            </script>
                                         @endif
                                     </div>
                                 </td>
@@ -156,7 +118,7 @@
                 </table>
             </div>
             <div class="mt-3 d-flex justify-content-center">
-                {{ $sucursales->onEachSide(1)->links('components.pagination') }}
+                {{ $sedes->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>
@@ -174,15 +136,48 @@
         </script>
     @endif
 
-@endpush
-
-@push('js')
     <script>
+        function confirmDelete(event, button) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Desea inactivar la sede?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, inactivar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.closest('form').submit();
+                }
+            });
+        }
+
+        function confirmActivate(event, button) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Desea activar la sede?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, activar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.closest('form').submit();
+                }
+            });
+        }
+
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
-                window.location.href = "{!! route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 1])) !!}";
+                window.location.href = "{!! route('admin.maestros.sedes.index', array_merge(request()->query(), ['activo' => 1])) !!}";
             } else {
-                window.location.href = "{!! route('admin.maestros.sucursales.index', array_merge(request()->query(), ['activo' => 0])) !!}";
+                window.location.href = "{!! route('admin.maestros.sedes.index', array_merge(request()->query(), ['activo' => 0])) !!}";
             }
         });
     </script>

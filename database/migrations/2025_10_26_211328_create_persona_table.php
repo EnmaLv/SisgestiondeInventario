@@ -19,14 +19,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('sede', function (Blueprint $table) {
-            $table->id('id_sede');
-            $table->string('nombre_sede');
-            $table->integer('estatus')->default(1);
-            $table->foreignId('id_sucursal')->constrained('sucursals')->onDelete('cascade');
-            $table->timestamps();
-        });
-
         Schema::create('persona', function (Blueprint $table) {
             $table->id('id_persona');
             $table->string('nombre_persona');
@@ -42,7 +34,7 @@ return new class extends Migration
             $table->string('semestre_persona')->nullable();
             $table->boolean('estado')->default(true);
             $table->foreignId('id_perfil')->references('id_perfil')->on('perfil')->onDelete('cascade');
-            $table->foreignId('id_sede')->references('id_sede')->on('sede')->onDelete('cascade');
+            $table->foreignId('id_sede')->constrained('sede')->cascadeOnDelete();
             $table->timestamps();
         });
 
