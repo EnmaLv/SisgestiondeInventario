@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('perfil', function (Blueprint $table) {
             $table->id('id_perfil');
             $table->string('nombre_perfil');
-            $table->foreignId('id_estatus')->references('id_estatus')->on('estatus')->onDelete('cascade');
+            $table->boolean('estado')->default(true);
             $table->timestamps();
         });
 
@@ -35,16 +35,6 @@ return new class extends Migration
             $table->boolean('estado')->default(true);
             $table->foreignId('id_perfil')->references('id_perfil')->on('perfil')->onDelete('cascade');
             $table->foreignId('id_sede')->constrained('sede')->cascadeOnDelete();
-            $table->timestamps();
-        });
-
-        Schema::create('direccion', function (Blueprint $table) {
-            $table->id('id_direccion');
-            $table->string('sector');
-            $table->string('calle');
-            $table->foreignId('id_persona')->references('id_persona')->on('persona')->onDelete('cascade');
-            $table->foreignId('id_localidad')->constrained('localidads')->cascadeOnDelete();
-
             $table->timestamps();
         });
     }

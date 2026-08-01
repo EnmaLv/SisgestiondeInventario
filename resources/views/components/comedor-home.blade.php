@@ -1,194 +1,179 @@
-<div class="row">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-6">
+    {{-- Sedes --}}
     @if ($visibleModules['sedes'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/sedes') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/edificio.webp') }}" alt="Sedes">
-                    </div>
-                    <h5>Sedes</h5>
-                    <p>{{ $total_sedes }} registradas</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/maestros/sedes') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-building"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Sedes</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_sedes }} registradas</p>
+            </div>
+        </a>
     @endif
 
-    <!-- Categorías -->
+    {{-- Categorías --}}
     @if ($visibleModules['categorias'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/categorias') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/carpetas.webp') }}" alt="Categorías">
-                    </div>
-                    <h5>Categorías</h5>
-                    <p>{{ $total_categorias }} activas</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/maestros/categorias') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-tags"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Categorías</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_categorias }} activas</p>
+            </div>
+        </a>
     @endif
 
-    <!-- Productos -->
+    {{-- Productos --}}
     @if ($visibleModules['productos'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/productos') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/paquete.webp') }}" alt="Productos">
-                    </div>
-                    <h5>Productos</h5>
-                    <p>{{ $total_productos }} en inventario</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/maestros/productos') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Productos</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_productos }} en inventario</p>
+            </div>
+        </a>
     @endif
 
-    <!-- Proveedores -->
+    {{-- Proveedores --}}
     @if ($visibleModules['proveedores'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/proveedores') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/camion.webp') }}" alt="Proveedores">
-                    </div>
-                    <h5>Proveedores</h5>
-                    <p>{{ $total_proveedores }} disponibles</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/maestros/proveedores') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-truck"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Proveedores</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_proveedores }} disponibles</p>
+            </div>
+        </a>
     @endif
 
-    <!-- Compras -->
+    {{-- Compras --}}
     @if ($visibleModules['compras'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/movimientos/compras') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/lista-de-verificacion.webp') }}" alt="Compras">
-                    </div>
-                    <h5>Compras</h5>
-                    <p>{{ $total_compras }} realizadas</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/movimientos/compras') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-cart-shopping"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Compras</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_compras }} realizadas</p>
+            </div>
+        </a>
     @endif
 
-    <!-- Compras -->
+    {{-- Comidas / Recetas --}}
     @if ($visibleModules['comidas'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/maestros/recetas') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/bandeja-de-comida.webp') }}" alt="Compras">
-                    </div>
-                    <h5>Comidas</h5>
-                    <p>{{ $total_compras }} registradas</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/maestros/recetas') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Comidas</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_compras }} registradas</p>
+            </div>
+        </a>
     @endif
 
-    <!-- Productos por Vencer -->
+    {{-- Por Vencer --}}
     @if ($visibleModules['por_vencer'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/notificaciones.webp') }}" alt="Por vencer">
-                    </div>
-                    <h5>Por Vencer</h5>
-                    <p>{{ $total_lotes_por_vencer }} próximos a vencer</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/movimientos/lotes?filtro=por_vencer') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-950/60 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Por Vencer</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_lotes_por_vencer }} próximos a vencer</p>
+            </div>
+        </a>
     @endif
 
-    <!-- Lotes Vencidos -->
+    {{-- Lotes Vencidos --}}
     @if ($visibleModules['por_vencer'] ?? false)
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}" class="module-link">
-                <div class="module-card-light">
-                    <div class="module-icon">
-                        <img src="{{ url('/img/alarma.webp') }}" alt="Lotes vencidos">
-                    </div>
-                    <h5>Lotes Vencidos</h5>
-                    <p>{{ $total_lotes_vencidos }} requieren atención</p>
-                </div>
-            </a>
-        </div>
+        <a href="{{ url('/admin/movimientos/lotes?filtro=vencido') }}"
+           style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-950/60 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">Lotes Vencidos</h5>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 m-0">{{ $total_lotes_vencidos }} requieren atención</p>
+            </div>
+        </a>
     @endif
 </div>
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="stats-summary"
-            style="
-            background: var(--color-bg-card);
-    border-radius: 16px;
-    padding: 1.5rem;
-    border: 1px solid var(--color-border-soft);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-        ">
-            <h5 style="color: var(--color-text-main); font-weight: 700;">
-                📊 Resumen General
-            </h5>
-            <div class="row">
-                <div class="col-md-3 col-6 mb-3 mb-md-0">
-                    <div class="text-center">
-                        <div style="font-size: 2rem; font-weight: 800; color: var(--color-primary);">
-                            {{ $total_productos }}
-                        </div>
-                        <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Total Productos
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3 mb-md-0">
-                    <div class="text-center">
-                        <div style="font-size: 2rem; font-weight: 800; color: var(--color-tertiary);">
-                            {{ $total_compras }}
-                        </div>
-                        <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Compras Realizadas
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="text-center">
-                        <div style="font-size: 2rem; font-weight: 800; color: var(--color-secondary);">
-                            {{ $total_proveedores }}
-                        </div>
-                        <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Proveedores
-                            Activos</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="text-center">
-                        <div
-                            style="font-size: 2rem; font-weight: 800; color: {{ $total_lotes_vencidos > 0 ? '#ff6b6b' : 'var(--color-tertiary)' }};">
-                            {{ $total_lotes_vencidos }}
-                        </div>
-                        <div style="color: var(--color-text-main); font-size: 0.9rem; opacity: 0.8;">Lotes Vencidos
-                        </div>
-                    </div>
-                </div>
+
+{{-- RESUMEN GENERAL --}}
+<div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+     class="rounded-2xl p-6 border shadow-sm mb-6">
+    <h5 class="font-bold text-base mb-6 flex items-center gap-2" style="color: var(--text-main);">
+        📊 Resumen General
+    </h5>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5">
+            <div class="text-3xl font-black text-red-600 dark:text-red-500">
+                {{ $total_productos }}
+            </div>
+            <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1">
+                Total Productos
+            </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5">
+            <div class="text-3xl font-black text-red-600 dark:text-red-500">
+                {{ $total_compras }}
+            </div>
+            <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1">
+                Compras Realizadas
+            </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5">
+            <div class="text-3xl font-black text-red-600 dark:text-red-500">
+                {{ $total_proveedores }}
+            </div>
+            <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1">
+                Proveedores Activos
+            </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5">
+            <div class="text-3xl font-black {{ $total_lotes_vencidos > 0 ? 'text-red-600 dark:text-red-500' : 'text-gray-700 dark:text-gray-300' }}">
+                {{ $total_lotes_vencidos }}
+            </div>
+            <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1">
+                Lotes Vencidos
             </div>
         </div>
     </div>
 </div>
-<div class="row ">
-    <!-- Gráfica de Barras -->
-    <div class="col-lg-12 mb-4">
-        <div
-            style="
-            background: var(--color-bg-card);
-    border-radius: 16px;
-    padding: 1.5rem;
-    border: 1px solid var(--color-border-soft);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-        ">
-            <h5 style="color: var(--color-text-main); font-weight: 700;">
-                📈 Estadísticas del Sistema
-            </h5>
-            <canvas id="mainChart" height="100"></canvas>
-        </div>
+
+{{-- GRÁFICA DE ESTADÍSTICAS --}}
+<div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+     class="rounded-2xl p-6 border shadow-sm mb-6">
+    <h5 class="font-bold text-base mb-6 flex items-center gap-2" style="color: var(--text-main);">
+        📈 Estadísticas del Sistema
+    </h5>
+    <div class="w-full relative" style="height: 300px;">
+        <canvas id="mainChart"></canvas>
     </div>
 </div>
 
@@ -203,20 +188,6 @@
             '#7f1d1d'
         ];
 
-
-        // Configuración de colores del tema
-        const themeColors = {
-            primary: 'hsl(358, 80%, 45%)',
-            secondary: 'hsl(357, 43%, 46%)',
-            tertiary: 'hsl(357, 87%, 47%)',
-            bgLightDarkRed: 'hsl(357, 28%, 30%)',
-            bgDark: 'hsl(356, 15%, 18%)',
-            textWhite: 'hsl(0, 0%, 85%)',
-            btnHover: 'hsl(358, 75%, 30%)'
-        };
-
-
-        // Gráfica de Barras Principal
         const ctxMain = document.getElementById('mainChart');
 
         if (ctxMain) {
@@ -258,25 +229,24 @@
                                 label: ctx => `${ctx.parsed.y} registros`
                             }
                         }
-
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                color: '#374151',
+                                color: '#6b7280',
                                 font: {
                                     size: 11
                                 }
                             },
                             grid: {
-                                color: '#e5e7eb',
+                                color: 'rgba(156, 163, 175, 0.15)',
                                 drawBorder: false
                             }
                         },
                         x: {
                             ticks: {
-                                color: '#374151',
+                                color: '#6b7280',
                                 font: {
                                     size: 11
                                 }
@@ -286,7 +256,6 @@
                             }
                         }
                     }
-
                 }
             });
         }

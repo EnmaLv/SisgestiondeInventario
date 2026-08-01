@@ -1,11 +1,9 @@
 <x-app-layout>
-    {{-- Slot para el encabezado de la página --}}
     <x-slot name="header">
         @include('components.alert')
 
         <div
             class="dashboard-header bg-gradient-to-r from-[var(--color-primary,#c52222)] to-[var(--color-tertiary,#800000)] rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
-            {{-- Detalle decorativo de fondo --}}
             <div class="absolute -top-1/2 -right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none">
             </div>
 
@@ -46,7 +44,6 @@
         </div>
     </x-slot>
 
-    {{-- Contenido principal de la vista ($slot) --}}
     <div>
         @switch(session('modulo_activo'))
             @case('comedor')

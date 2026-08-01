@@ -1,31 +1,54 @@
 @php
     $comedorKeys = ['recetas', 'receta_ingredientes', 'registro_comida', 'registro_diario'];
+    $inventarioKeys = ['productos_categorias', 'productos', 'lotes', 'sedes_lotes', 'historial_movimientos'];
 @endphp
 
+{{-- ==========================================
+    SECCIÓN 1: GESTIÓN DE COMEDOR
+========================================== --}}
 @canMenu($comedorKeys)
     {{-- Título de la Sección --}}
-    <div class="pt-2 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
-        <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Gestión de Comedor</span>
+    <div class="pt-3 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
+        <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-white/50">
+            Gestión de Comedor
+        </span>
     </div>
 
-    {{-- Submenú: Recetas --}}
+    {{-- Submenú: Recetas y Platos --}}
     @canMenu(['recetas', 'receta_ingredientes'])
     <div class="flex flex-col">
         <button @click="activeSection = (activeSection === 'recetas' ? '' : 'recetas')"
-            class="w-full flex items-center justify-between h-10 rounded-xl px-3 text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:text-blue-600 transition-all"
-            :class="sidebarOpen ? 'px-3' : 'justify-center px-0'">
-            <div class="flex items-center gap-3">
-                <svg class="h-5 w-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <span class="text-sm font-medium whitespace-nowrap" :class="sidebarOpen ? 'block' : 'hidden'">Recetas y Platos</span>
+            class="w-full flex items-center justify-between h-10 rounded-lg px-3 gap-2 text-white/90 hover:bg-[#623739] hover:text-white transition-all"
+            :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+            title="Recetas y Platos">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i class="fas fa-utensils text-base w-5 text-center flex-shrink-0 text-white"></i>
+                <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                    Recetas y Platos
+                </span>
             </div>
-            <svg class="h-4 w-4 transition-transform" :class="[activeSection === 'recetas' ? 'rotate-180' : '', sidebarOpen ? 'block' : 'hidden']" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            <svg class="h-4 w-4 flex-shrink-0 transition-transform duration-200 text-white" 
+                 :class="[activeSection === 'recetas' ? 'rotate-180' : '', sidebarOpen ? 'block' : 'hidden']" 
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
         </button>
         <div x-show="activeSection === 'recetas' && sidebarOpen" x-collapse class="pl-9 pr-2 py-1 space-y-1">
             @canMenu('recetas')
-                <a href="{{ url('admin/maestros/recetas') }}" class="block py-1.5 px-2 text-xs rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-700">Recetas</a>
+                <a href="{{ url('admin/maestros/recetas') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Recetas">
+                    <i class="fas fa-book-open w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Recetas</span>
+                </a>
             @endcanMenu
             @canMenu('receta_ingredientes')
-                <a href="{{ url('admin/maestros/receta_ingredientes') }}" class="block py-1.5 px-2 text-xs rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-700">Ingredientes</a>
+                <a href="{{ url('admin/maestros/receta_ingredientes') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Ingredientes">
+                    <i class="fas fa-carrot w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Ingredientes</span>
+                </a>
             @endcanMenu
         </div>
     </div>
@@ -35,22 +58,144 @@
     @canMenu(['registro_comida', 'registro_diario'])
     <div class="flex flex-col">
         <button @click="activeSection = (activeSection === 'registro_comida' ? '' : 'registro_comida')"
-            class="w-full flex items-center justify-between h-10 rounded-xl px-3 text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:text-blue-600 transition-all"
-            :class="sidebarOpen ? 'px-3' : 'justify-center px-0'">
-            <div class="flex items-center gap-3">
-                <svg class="h-5 w-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                <span class="text-sm font-medium whitespace-nowrap" :class="sidebarOpen ? 'block' : 'hidden'">Registro de Comidas</span>
+            class="w-full flex items-center justify-between h-10 rounded-lg px-3 gap-2 text-white/90 hover:bg-[#623739] hover:text-white transition-all"
+            :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+            title="Registro de Comidas">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i class="fas fa-clipboard-check text-base w-5 text-center flex-shrink-0 text-white"></i>
+                <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                    Registro de Comidas
+                </span>
             </div>
-            <svg class="h-4 w-4 transition-transform" :class="[activeSection === 'registro_comida' ? 'rotate-180' : '', sidebarOpen ? 'block' : 'hidden']" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            <svg class="h-4 w-4 flex-shrink-0 transition-transform duration-200 text-white" 
+                 :class="[activeSection === 'registro_comida' ? 'rotate-180' : '', sidebarOpen ? 'block' : 'hidden']" 
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
         </button>
         <div x-show="activeSection === 'registro_comida' && sidebarOpen" x-collapse class="pl-9 pr-2 py-1 space-y-1">
             @canMenu('registro_comida')
-                <a href="{{ url('admin/movimientos/registro_comida') }}" class="block py-1.5 px-2 text-xs rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-700">Registrar Comida</a>
+                <a href="{{ url('admin/movimientos/registro_comida') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Registrar Comida">
+                    <i class="fas fa-utensils w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Registrar Comida</span>
+                </a>
             @endcanMenu
             @canMenu('registro_diario')
-                <a href="{{ url('admin/movimientos/registro_diario') }}" class="block py-1.5 px-2 text-xs rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-700">Registro Diario</a>
+                <a href="{{ url('admin/movimientos/registro_diario') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Registro Diario">
+                    <i class="fas fa-concierge-bell w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Registro Diario</span>
+                </a>
             @endcanMenu
         </div>
     </div>
+    @endcanMenu
+@endcanMenu
+
+{{-- ==========================================
+    SECCIÓN 2: GESTIÓN DE INVENTARIO
+========================================== --}}
+@canMenu($inventarioKeys)
+    {{-- Título de la Sección --}}
+    <div class="pt-3 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
+        <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-white/50">
+            Gestión de Inventario
+        </span>
+    </div>
+
+    {{-- Submenú: Catálogo de Productos --}}
+    @canMenu(['productos_categorias', 'productos'])
+    <div class="flex flex-col">
+        <button @click="activeSection = (activeSection === 'catalogo' ? '' : 'catalogo')"
+            class="w-full flex items-center justify-between h-10 rounded-lg px-3 gap-2 text-white/90 hover:bg-[#623739] hover:text-white transition-all"
+            :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+            title="Catálogo de Productos">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i class="fas fa-boxes text-base w-5 text-center flex-shrink-0 text-white"></i>
+                <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                    Catálogo de Productos
+                </span>
+            </div>
+            <svg class="h-4 w-4 flex-shrink-0 transition-transform duration-200 text-white" 
+                 :class="[activeSection === 'catalogo' ? 'rotate-180' : '', sidebarOpen ? 'block' : 'hidden']" 
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+        <div x-show="activeSection === 'catalogo' && sidebarOpen" x-collapse class="pl-9 pr-2 py-1 space-y-1">
+            @canMenu('productos_categorias')
+                <a href="{{ url('admin/maestros/categorias') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Categorías">
+                    <i class="fas fa-tags w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Categorías</span>
+                </a>
+            @endcanMenu
+            @canMenu('productos')
+                <a href="{{ url('admin/maestros/productos') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Productos">
+                    <i class="fas fa-box w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Productos</span>
+                </a>
+            @endcanMenu
+        </div>
+    </div>
+    @endcanMenu
+
+    {{-- Submenú: Control de Stock --}}
+    @canMenu(['lotes', 'sedes_lotes'])
+    <div class="flex flex-col">
+        <button @click="activeSection = (activeSection === 'control_stock' ? '' : 'control_stock')"
+            class="w-full flex items-center justify-between h-10 rounded-lg px-3 gap-2 text-white/90 hover:bg-[#623739] hover:text-white transition-all"
+            :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+            title="Control de Stock">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i class="fas fa-warehouse text-base w-5 text-center flex-shrink-0 text-white"></i>
+                <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                    Control de Stock
+                </span>
+            </div>
+            <svg class="h-4 w-4 flex-shrink-0 transition-transform duration-200 text-white" 
+                 :class="[activeSection === 'control_stock' ? 'rotate-180' : '', sidebarOpen ? 'block' : 'hidden']" 
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+        <div x-show="activeSection === 'control_stock' && sidebarOpen" x-collapse class="pl-9 pr-2 py-1 space-y-1">
+            @canMenu('lotes')
+                <a href="{{ url('admin/movimientos/lotes') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Lotes">
+                    <i class="fas fa-boxes w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Lotes</span>
+                </a>
+            @endcanMenu
+            @canMenu('sedes_lotes')
+                <a href="{{ url('admin/movimientos/sedes_lotes') }}" 
+                   class="flex items-center gap-2 py-1.5 px-2 text-xs rounded-lg text-white/80 hover:text-white hover:bg-[#623739] truncate" 
+                   title="Existencias por Sede">
+                    <i class="fas fa-store-alt w-4 text-center flex-shrink-0"></i>
+                    <span class="truncate">Existencias por Sede</span>
+                </a>
+            @endcanMenu
+        </div>
+    </div>
+    @endcanMenu
+
+    {{-- Enlace Directo: Historial de Movimientos --}}
+    @canMenu('historial_movimientos')
+    <a href="{{ url('admin/movimientos/historial_movimientos') }}"
+       class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
+       :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+       title="Historial de Movimientos">
+        <i class="fas fa-clipboard-list text-base w-5 text-center flex-shrink-0 text-white"></i>
+        <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+            Historial de Movimientos
+        </span>
+    </a>
     @endcanMenu
 @endcanMenu

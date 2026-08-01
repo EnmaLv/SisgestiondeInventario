@@ -104,7 +104,7 @@ class AuthService
 
         $id = DB::table('perfil')->insertGetId([
             'nombre_perfil' => $nombre, 
-            'id_estatus'    => $estatusId, 
+            'estado'        => true, 
             'created_at'    => now(), 
             'updated_at'    => now()
         ]);

@@ -32,7 +32,6 @@ use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
-use App\Http\Controllers\BusMarcaController;
 
 Auth::routes();
 

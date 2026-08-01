@@ -36,6 +36,10 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- SweetAlert2 CDN & Theme Base -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
     @stack('css')
@@ -93,7 +97,7 @@
             color: var(--header-sidebar-text) !important;
         }
 
-        /* Menú Limpio: Sin cajas redondeadas tipo píldora (Tal cual como la segunda imagen) */
+        /* Menú Limpio */
         #main-sidebar nav a,
         #main-sidebar nav button {
             background-color: transparent !important;
@@ -103,13 +107,8 @@
             padding: 0.5rem 0.75rem !important;
         }
 
-        /* Sombra ligera solo al pasar el cursor (Hover) y al estar activo */
         #main-sidebar nav a:hover,
-        #main-sidebar nav button:hover {
-            background-color: #623739 !important;
-            color: #ffffff !important;
-        }
-
+        #main-sidebar nav button:hover,
         #main-sidebar nav a.active,
         #main-sidebar nav button.active,
         #main-sidebar .sidebar-item-active {
@@ -118,13 +117,11 @@
             font-weight: 600 !important;
         }
 
-        /* Íconos blancos sin cajas traseras */
         #main-sidebar nav a svg,
         #main-sidebar nav button svg {
             color: #ffffff !important;
         }
 
-        /* Neutralizar remanentes de clases Tailwind */
         .bg-blue-50,
         .bg-blue-100,
         .bg-blue-600,
@@ -175,7 +172,47 @@
         }
 
         html.sidebar-expanded #main-sidebar {
-            width: 14rem !important;
+            width: 16rem !important;
+        }
+
+        /* ========== ESTILOS PERSONALIZADOS DE SWEETALERT2 ========== */
+        .swal2-toast-custom {
+            background: var(--bg-card) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+            padding: 0.85rem 1.25rem !important;
+        }
+
+        .swal2-toast-custom .swal2-title {
+            color: var(--text-main) !important;
+            font-weight: 700 !important;
+            font-size: 0.95rem !important;
+        }
+
+        .swal2-toast-custom .swal2-html-container {
+            color: var(--text-main) !important;
+            opacity: 0.85;
+            font-size: 0.85rem !important;
+        }
+
+        .swal2-popup-custom {
+            background: var(--bg-card) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 1.5rem !important;
+            padding: 1.5rem !important;
+        }
+
+        .swal2-popup-custom .swal2-title {
+            color: var(--text-main) !important;
+            font-weight: 800 !important;
+        }
+
+        .swal2-popup-custom .swal2-html-container {
+            color: var(--text-main) !important;
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -193,25 +230,6 @@
             class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-40 flex-shrink-0 relative">
             @includeIf('layouts.navigation')
         </header>
-
-        @if (session('success') || session('error') || $errors->any())
-            <div id="toast" class="fixed top-6 right-6 z-50">
-                <div
-                    class="max-w-sm w-full {{ session('success') ? 'bg-green-600' : 'bg-red-600' }} text-white shadow-lg rounded-2xl border border-black/10 px-4 py-3">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <p class="font-semibold">{{ session('success') ? '¡Listo!' : 'Atención' }}</p>
-                            <p class="text-sm mt-1">{!! session('success') ?? (session('error') ?? $errors->first()) !!}</p>
-                        </div>
-                        <button onclick="document.getElementById('toast')?.remove()"
-                            class="text-white opacity-70 hover:opacity-100">✕</button>
-                    </div>
-                </div>
-            </div>
-            <script>
-                setTimeout(() => document.getElementById('toast')?.remove(), 5000);
-            </script>
-        @endif
 
         <div class="flex flex-1 overflow-hidden relative" style="min-height: 0;">
             @includeIf('layouts.sidebar')
@@ -236,68 +254,97 @@
         </div>
     </div>
 
-    <div id="globalAppModal"
-        class="fixed inset-0 z-[200] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 transition-all duration-200">
-        <div
-            class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-[32px] shadow-2xl flex flex-col overflow-hidden border border-slate-100 dark:border-gray-700 p-8 text-center">
-            <div id="globalAppModalIconBox"
-                class="w-16 h-16 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                <svg id="globalAppModalIconSvg" class="w-8 h-8" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <h3 id="globalAppModalTitle"
-                class="text-xl font-black text-slate-800 dark:text-white tracking-tight uppercase mb-2">Aviso</h3>
-            <p id="globalAppModalText" class="text-sm text-slate-500 dark:text-gray-400 font-medium mb-8"></p>
-            <div class="flex gap-3">
-                <button id="globalAppModalCancel"
-                    class="flex-1 py-4 px-6 bg-slate-100 dark:bg-gray-700 hover:bg-slate-200 text-slate-600 dark:text-gray-300 rounded-2xl font-black text-xs uppercase tracking-widest transition-colors">Cancelar</button>
-                <button id="globalAppModalAccept"
-                    class="flex-1 py-4 px-6 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all">Aceptar</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- SCRIPT CONFIGURACIÓN Y DISPARADOR DE SWEETALERT2 -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mixin Toast elegante para notificaciones superiores derechas
+            window.Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-toast-custom'
+                },
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+
+            // Reemplazo y mejora de AppModal usando SweetAlert2
             window.AppModal = {
                 show: function(title, text, options = {}) {
-                    return new Promise((resolve) => {
-                        const m = document.getElementById('globalAppModal');
-                        document.getElementById('globalAppModalTitle').innerText = title || 'Aviso';
-                        document.getElementById('globalAppModalText').innerText = text || '';
-                        const y = document.getElementById('globalAppModalAccept');
-                        const n = document.getElementById('globalAppModalCancel');
-                        n.style.display = (options.type === 'alert') ? 'none' : 'block';
-                        m.classList.remove('hidden');
-                        m.classList.add('flex');
-
-                        const cleanup = (val) => {
-                            m.classList.add('hidden');
-                            m.classList.remove('flex');
-                            resolve(val);
-                        };
-                        y.onclick = () => cleanup(true);
-                        n.onclick = () => cleanup(false);
-                    });
+                    const isDark = document.documentElement.classList.contains('dark');
+                    return Swal.fire({
+                        title: title || 'Aviso',
+                        html: text || '',
+                        icon: options.icon || 'info',
+                        showCancelButton: options.type !== 'alert',
+                        confirmButtonText: options.confirmText || 'Aceptar',
+                        cancelButtonText: options.cancelText || 'Cancelar',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: isDark ? '#374151' : '#e5e7eb',
+                        customClass: {
+                            popup: 'swal2-popup-custom',
+                            cancelButton: 'text-slate-700 dark:text-gray-200 font-bold rounded-xl px-5 py-2.5',
+                            confirmButton: 'text-white font-bold rounded-xl px-5 py-2.5'
+                        },
+                        buttonsStyling: true
+                    }).then((result) => result.isConfirmed);
                 },
                 confirm: function(title, text) {
                     return this.show(title, text, {
-                        type: 'confirm'
+                        type: 'confirm',
+                        icon: 'warning'
                     });
                 },
                 alert: function(title, text) {
                     return this.show(title, text, {
-                        type: 'alert'
+                        type: 'alert',
+                        icon: 'info'
                     });
                 }
             };
+
+            // Disparadores automáticos de sesión de Laravel
+            @if (session('success'))
+                window.Toast.fire({
+                    icon: 'success',
+                    title: '¡Operación Exitosa!',
+                    html: {!! json_encode(session('success')) !!}
+                });
+            @endif
+
+            @if (session('error'))
+                window.Toast.fire({
+                    icon: 'error',
+                    title: 'Atención',
+                    html: {!! json_encode(session('error')) !!}
+                });
+            @endif
+
+            @if (session('info'))
+                window.Toast.fire({
+                    icon: 'info',
+                    title: 'Información',
+                    html: {!! json_encode(session('info')) !!}
+                });
+            @endif
+
+            @if ($errors->any())
+                window.Toast.fire({
+                    icon: 'error',
+                    title: 'Error de Validación',
+                    html: {!! json_encode($errors->first()) !!}
+                });
+            @endif
         });
 
         window.addEventListener('load', () => setTimeout(() => document.body.classList.remove('preload'), 150));
     </script>
+
     @stack('scripts')
 </body>
 

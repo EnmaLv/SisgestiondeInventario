@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
             $table->foreignId('sede_id')->constrained('sede')->onDelete('cascade');
             $table->string('tipo_movimiento', 50);
-            $table->foreignId('modulo_origen_id')->constrained('modulos')->nullable()->onDelete('cascade');
+            $table->foreignId('modulo_origen_id')->nullable()->constrained('modulos')->onDelete('cascade');
             $table->decimal('cantidad', 14, 2);
             $table->decimal('cantidad_convertida', 14, 2);
             $table->decimal('cantidad_anterior', 14, 2)->nullable();

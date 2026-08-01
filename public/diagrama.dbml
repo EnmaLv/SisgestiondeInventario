@@ -181,7 +181,7 @@ Table estatus {
 Table perfil {
   id_perfil     bigint       [pk, increment]
   nombre_perfil varchar(255) [not null]
-  id_estatus    bigint       [not null, ref: > estatus.id_estatus]
+  estado        tinyint       [not null]
   created_at    timestamp
   updated_at    timestamp
 }
