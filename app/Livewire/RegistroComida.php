@@ -157,7 +157,7 @@ class RegistroComida extends Component
 
                 foreach ($receta->recetaIngredientes as $ingrediente) {
 
-                    $totalDescontarGramos = $ingrediente->cantidad_gramos * $cantidadServido;
+                    $totalDescontarGramos = $ingrediente->cantidad_convertida * $cantidadServido;
                     $pesoUnidad = $ingrediente->producto->peso_contenido;
 
                     if ($pesoUnidad <= 0) {
@@ -170,7 +170,7 @@ class RegistroComida extends Component
                                 ->whereDate('fecha_vencimiento', '>=', now()->toDateString())
                                 ->where('estado', 1);
                         })
-                        ->where('cantidad_gramos', '>', 0)
+                        ->where('cantidad_convertida', '>', 0)
                         ->orderBy('lote_id', 'asc')
                         ->get();
 
@@ -181,17 +181,17 @@ class RegistroComida extends Component
 
                         if ($pendiente <= 0) break;
 
-                        $dispGramos = $inv->cantidad_gramos;
+                        $dispGramos = $inv->cantidad_convertida;
                         $tomarGramos = min($pendiente, $dispGramos);
 
-                        $inv->cantidad_gramos -= $tomarGramos;
-                        $inv->cantidad = floor($inv->cantidad_gramos / $pesoUnidad);
+                        $inv->cantidad_convertida -= $tomarGramos;
+                        $inv->cantidad = floor($inv->cantidad_convertida / $pesoUnidad);
 
                         $inv->save();
 
                         $lote = $inv->lote;
                         $lote->cantidad_inicial = floor($lote->cantidad_inicial - ($tomarGramos / $pesoUnidad));
-                        $lote->cantidad_actual = $inv->cantidad_gramos;
+                        $lote->cantidad_actual = $inv->cantidad_convertida;
                         $lote->save();
 
                         MovimientoInventario::create([
@@ -201,7 +201,7 @@ class RegistroComida extends Component
                             'tipo_movimiento' => 'SALIDA',
                             'unidad_id'      => $ingrediente->unidad_id,
                             'cantidad'       => floor($tomarGramos / $pesoUnidad),
-                            'cantidad_gramos' => $tomarGramos,
+                            'cantidad_convertida' => $tomarGramos,
                             'fecha'          => now(),
                             'observaciones'  => "Consumo por receta {$receta->nombre} ({$cantidadServido} raciones)"
                         ]);

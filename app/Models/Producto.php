@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 use App\Models\PrecioProducto;
+use App\Models\salud\EnvasePrimario;
 use App\Traits\ConvierteAMayusculasNoEloquent;
 
 class Producto extends Model
@@ -27,10 +28,15 @@ class Producto extends Model
         'stock_maximo',
         'peso_contenido',
         'unidad_id',
+        'presentacion_id',
         'estado',
         'categoria_id',
         "costo_usd"
     ];
+
+    public function envasePrimario(){
+        return $this->belongsTo(EnvasePrimario::class);
+    }
 
     public function unidad()
     {

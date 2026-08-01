@@ -12,10 +12,14 @@ class MovimientoInventario extends Model
         'producto_id',
         'lote_id',
         'sede_id',
+        'modulo_origen_id',
         'tipo_movimiento',
         'unidad_id',
         'cantidad',
-        'cantidad_gramos',
+        'cantidad_convertida',
+        'cantidad_anterior',
+        'cantidad_final',
+        'referencia_type',
         'fecha',
         'observaciones',
     ];
@@ -45,14 +49,14 @@ class MovimientoInventario extends Model
         $query = self::query();
 
         if (!empty($filtro['buscar'])) {
-            $query->where(function($q) use ($filtro) {
+            $query->where(function ($q) use ($filtro) {
                 $q->where('tipo_movimiento', 'like', "%{$filtro['buscar']}%")
-                  ->orWhereHas('lote.producto', function($p) use ($filtro){
-                      $p->where('nombre', 'like', "%{$filtro['buscar']}%");
-                  })
-                  ->orWhereHas('lote', function($p) use ($filtro){
-                      $p->where('codigo_lote', 'like', "%{$filtro['buscar']}%");
-                  });
+                    ->orWhereHas('lote.producto', function ($p) use ($filtro) {
+                        $p->where('nombre', 'like', "%{$filtro['buscar']}%");
+                    })
+                    ->orWhereHas('lote', function ($p) use ($filtro) {
+                        $p->where('codigo_lote', 'like', "%{$filtro['buscar']}%");
+                    });
             });
         }
 

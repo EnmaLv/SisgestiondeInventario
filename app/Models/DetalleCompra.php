@@ -13,7 +13,7 @@ class DetalleCompra extends Model
         'producto_id',
         'lote_id',
         'cantidad',
-        'cantidad_gramos',
+        'cantidad_convertida',
         'unidad_id',
         'precio_unitario',
         'subtotal',

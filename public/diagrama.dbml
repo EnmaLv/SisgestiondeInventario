@@ -498,9 +498,6 @@ Table productos {
   presentacion_id        bigint  [ref: > envase_primario.id]
   requiere_receta_medica tinyint [default: 0,
                           note: '1 = sistema bloquea dispensación sin receta vinculada']
-  codigo_inventario_dep  varchar(50) [unique,
-                          note: 'Código/sticker físico grabado en la pieza. Ej: DEP-001']
-
   activo     tinyint [not null, default: 1]
   created_at timestamp
   updated_at timestamp

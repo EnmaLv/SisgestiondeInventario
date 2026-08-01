@@ -127,7 +127,7 @@ class ItemsCompra extends Component
                 'producto_id' => $producto->id,
                 'lote_id' => $lote->id,
                 'cantidad' => $this->cantidad,
-                'cantidad_gramos' => $cantidadGramos,
+                'cantidad_convertida' => $cantidadGramos,
                 'precio_unitario' => $this->precioCompra,
                 'subtotal' => $this->cantidad * $this->precioCompra,
                 'unidad_id' => $unidadId,

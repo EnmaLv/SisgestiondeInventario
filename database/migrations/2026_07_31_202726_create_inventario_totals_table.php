@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventario_sede_lotes', function (Blueprint $table) {
+        Schema::create('inventario_totals', function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('protucto_id')->constrained('productos')->onDelete('cascade');
             $table->foreignId('sede_id')->constrained('sede')->onDelete('cascade');
-            $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
-            $table->decimal('cantidad', 14, 2);
-            $table->decimal('cantidad_convertida', 14, 2);
-
+            $table->decimal('cantidad_total', 14, 2)->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventario_sede_lotes');
+        Schema::dropIfExists('inventario_totals');
     }
 };

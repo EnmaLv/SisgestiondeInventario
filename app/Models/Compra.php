@@ -231,14 +231,14 @@ class Compra extends Model
                         ->where('id', $inventario->id)
                         ->update([
                             'cantidad'         => $inventario->cantidad + $detalle->cantidad,
-                            'cantidad_gramos'  => $inventario->cantidad_gramos + $detalle->cantidad_gramos
+                            'cantidad_convertida'  => $inventario->cantidad_convertida + $detalle->cantidad_convertida
                         ]);
                 } else {
                     DB::table('inventario_sede_lotes')->insert([
                         'lote_id'         => $detalle->lote_id,
                         'sede_id'         => $sede_id,
                         'cantidad'        => $detalle->cantidad,
-                        'cantidad_gramos' => $detalle->cantidad_gramos
+                        'cantidad_convertida' => $detalle->cantidad_convertida
                     ]);
                 }
 
@@ -249,7 +249,7 @@ class Compra extends Model
                     'tipo_movimiento' => 'ENTRADA',
                     'unidad_id'       => $detalle->unidad_id,
                     'cantidad'        => $detalle->cantidad,
-                    'cantidad_gramos' => $detalle->cantidad_gramos,
+                    'cantidad_convertida' => $detalle->cantidad_convertida,
                     'fecha'           => now(),
                 ]);
             }
@@ -297,7 +297,7 @@ class Compra extends Model
                 }
 
                 $stockMaximo = $producto->stock_maximo;
-                $gramosPorUnidad = $detalle->cantidad_gramos / $detalle->cantidad;
+                $gramosPorUnidad = $detalle->cantidad_convertida / $detalle->cantidad;
                 $cantidadBase = intdiv($detalle->cantidad, $cantidadSedes);
                 $resto = $detalle->cantidad % $cantidadSedes;
                 $cantidadRestante = 0;
@@ -336,14 +336,14 @@ class Compra extends Model
                                 ->where('id', $inventario->id)
                                 ->update([
                                     'cantidad'        => $inventario->cantidad + $cantidadAsignada,
-                                    'cantidad_gramos' => $inventario->cantidad_gramos + $gramosAsignados,
+                                    'cantidad_convertida' => $inventario->cantidad_convertida + $gramosAsignados,
                                 ]);
                         } else {
                             DB::table('inventario_sede_lotes')->insert([
                                 'lote_id'         => $detalle->lote_id,
                                 'sede_id'         => $sede->id,
                                 'cantidad'        => $cantidadAsignada,
-                                'cantidad_gramos' => $gramosAsignados,
+                                'cantidad_convertida' => $gramosAsignados,
                             ]);
                         }
 
@@ -354,7 +354,7 @@ class Compra extends Model
                             'tipo_movimiento' => 'ENTRADA',
                             'unidad_id'       => $detalle->unidad_id,
                             'cantidad'        => $cantidadAsignada,
-                            'cantidad_gramos' => $gramosAsignados,
+                            'cantidad_convertida' => $gramosAsignados,
                             'fecha'           => now(),
                         ]);
                     }
@@ -373,14 +373,14 @@ class Compra extends Model
                             ->where('id', $inventario->id)
                             ->update([
                                 'cantidad'        => $inventario->cantidad + $cantidadRestante,
-                                'cantidad_gramos' => $inventario->cantidad_gramos + $gramosAsignados,
+                                'cantidad_convertida' => $inventario->cantidad_convertida + $gramosAsignados,
                             ]);
                     } else {
                         DB::table('inventario_sede_lotes')->insert([
                             'lote_id'         => $detalle->lote_id,
                             'sede_id'         => $acariguaId,
                             'cantidad'        => $cantidadRestante,
-                            'cantidad_gramos' => $gramosAsignados,
+                            'cantidad_convertida' => $gramosAsignados,
                         ]);
                     }
 
@@ -391,7 +391,7 @@ class Compra extends Model
                         'tipo_movimiento' => 'ENTRADA',
                         'unidad_id'       => $detalle->unidad_id,
                         'cantidad'        => $cantidadRestante,
-                        'cantidad_gramos' => $gramosAsignados,
+                        'cantidad_convertida' => $gramosAsignados,
                         'fecha'           => now(),
                     ]);
                 }

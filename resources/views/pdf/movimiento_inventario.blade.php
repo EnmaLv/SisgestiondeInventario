@@ -317,7 +317,7 @@
                             {{ $item->tipo_movimiento }}
                         </span>
                     </td>
-                    <td class="right">{{ number_format($item->cantidad_gramos, 2, ',', '.') }}</td>
+                    <td class="right">{{ number_format($item->cantidad_convertida, 2, ',', '.') }}</td>
                     <td>{{ $item->sede->nombre ?? 'N/A' }}</td>
                 </tr>
             @endforeach

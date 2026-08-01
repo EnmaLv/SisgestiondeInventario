@@ -90,7 +90,7 @@
                                 <td>{{ $loteSede->lote->codigo_lote }}</td>
                                 <td>{{ $loteSede->lote->producto->nombre }}</td>
                                 <td>{{ $loteSede->cantidad }}</td>
-                                <td>{{ $loteSede->cantidad_gramos }}</td>
+                                <td>{{ $loteSede->cantidad_convertida }}</td>
                                 <td>{{ $loteSede->lote->fecha_entrada }}</td>
                                 <td>{{ $loteSede->lote->fecha_vencimiento }}</td>
                                 <td>{{ $loteSede->lote->proveedor->nombre }}</td>

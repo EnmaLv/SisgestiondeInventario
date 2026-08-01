@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
             $table->foreignId('lote_id')->constrained('lotes')->onDelete('cascade');
             $table->decimal('cantidad', 14, 2)->notNull();
-            $table->decimal('cantidad_gramos', 14, 2);
+            $table->decimal('cantidad_convertida', 14, 2);
             $table->foreignId('unidad_id')->constrained('unidades')->onDelete('cascade');
             $table->decimal('precio_unitario', 10, 2)->notNull();
             $table->decimal('subtotal', 10, 2)->notNull();

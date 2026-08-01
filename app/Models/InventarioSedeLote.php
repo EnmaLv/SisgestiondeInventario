@@ -12,7 +12,7 @@ class InventarioSedeLote extends Model
         'sede_id',
         'lote_id',
         'cantidad',
-        'cantidad_gramos',
+        'cantidad_convertida',
     ];
 
     public function sede()

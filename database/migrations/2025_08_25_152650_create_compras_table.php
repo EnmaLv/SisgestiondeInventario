@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('proveedor_id')->constrained('proveedors')->onDelete('cascade');
+            $table->foreignId('creado_por')->references("id_usuario")->on("usuario")->nullable()->onDelete('cascade');
+            $table->foreignId('modulo_id')->constrained('modulos')->nullable()->onDelete('cascade');
             $table->timestamp('fecha')->useCurrent();
             $table->decimal('total', 10, 2);
             $table->string('estado', 50);

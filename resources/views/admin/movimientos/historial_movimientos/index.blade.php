@@ -154,7 +154,7 @@
                                 </td>
                                 <td>{{ $movimientos->producto->nombre }}</td>
                                 <td>{{ $movimientos->lote->codigo_lote }}</td>
-                                <td>{{ $movimientos->cantidad_gramos }}</td>
+                                <td>{{ $movimientos->cantidad_convertida }}</td>
                                 <td>{{ $movimientos->unidad->nombre }}</td>
                                 <td>{{ $movimientos->sede->nombre }}</td>
                                 <td>{{ $movimientos->fecha }}</td>
