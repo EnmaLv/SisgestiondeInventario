@@ -19,14 +19,12 @@ return new class extends Migration
             $table->foreignId('id_perfil')->constrained('perfil', 'id_perfil')->onDelete('cascade');
             $table->string('username')->unique();
             $table->string('password');
-            // Authentication and security fields consolidated from later alters
             $table->text('master_key')->nullable();
             $table->json('security_questions')->nullable();
             $table->json('extra_permissions')->nullable();
             $table->timestamps();
         });
 
-        // configuracion_sistema table
         Schema::create('configuracion_sistema', function (Blueprint $table) {
             $table->id();
             $table->string('clave_parametro')->unique();

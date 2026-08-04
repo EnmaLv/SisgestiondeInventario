@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Middleware;
 
@@ -10,9 +10,10 @@ class CheckTasaActualizada
 {
     public function handle($request, Closure $next)
     {
-        // Rutas libres
+        // 🔹 Rutas libres (Agregamos 'tasa.ignorar')
         if (
             $request->routeIs('productos.actualizar.tasa') ||
+            $request->routeIs('tasa.ignorar') ||
             $request->routeIs('logout')
         ) {
             return $next($request);
