@@ -27,6 +27,7 @@ class CategoriaSeeder extends Seeder
             ['nombre' => 'Bebidas', 'descripcion' => null, 'tipo_producto_id' => 1],
             ['nombre' => 'Enlatados', 'descripcion' => null, 'tipo_producto_id' => 1],
             ['nombre' => 'Condimentos', 'descripcion' => null, 'tipo_producto_id' => 1],
+            
         ]);
     }
 }

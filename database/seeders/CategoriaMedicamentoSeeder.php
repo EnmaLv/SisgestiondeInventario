@@ -67,9 +67,11 @@ class CategoriaMedicamentoSeeder extends Seeder
         ];
 
         foreach ($categorias as $categoria) {
-            DB::table('categoria_medicamentos')->insert([
+            DB::table('categorias')->insert([
                 'nombre' => $categoria,
-                'estado' => 1,
+                'descripcion' => null,
+                'tipo_producto_id' => 2,
+                'activo' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

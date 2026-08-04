@@ -26,7 +26,7 @@ class Categoria extends Model
         return $this->hasMany(Producto::class, 'categoria_id');
     }
 
-    public static function listarCategorias($buscar = null, $activo = null)
+    public static function listarCategorias($buscar = null, $activo = null, $tipoProductoId = null)
     {
         $query = DB::table('categorias')
             ->select('categorias.*');
@@ -39,10 +39,14 @@ class Categoria extends Model
             $query->where('activo', (int)$activo);
         }
 
+        if ($tipoProductoId !== null) {
+            $query->where('tipo_producto_id', $tipoProductoId);
+        }
+
         return $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
     }
 
-    public static function crearCategoria(array $data)
+    public static function crearCategoria(array $data, int $tipoProductoId)
     {
         $helper = new self();
 
@@ -51,7 +55,7 @@ class Categoria extends Model
         return DB::table('categorias')->insertGetId([
             'nombre'      => $data['nombre'],
             'descripcion' => $data['descripcion'],
-            'tipo_producto_id' => 1, //ESTO ES MOMENTANEO
+            'tipo_producto_id' => $tipoProductoId,
             'activo'      => true,
             'created_at'  => now(),
             'updated_at'  => now(), 

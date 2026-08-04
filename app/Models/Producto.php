@@ -7,15 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 use App\Models\PrecioProducto;
-use App\Traits\ConvierteAMayusculasNoEloquent;
+use App\Models\salud\EnvasePrimario;
+use App\Traits\ConvierteAMayusculasNoEloquent;  
+
 
 class Producto extends Model
 {
     use ConvierteAMayusculasNoEloquent;
     use HasFactory;
     use WithPagination;
-
-    protected $table = 'productos';
+ 
+    protected $table = 'productos'; 
 
     protected $fillable = [
         'codigo',
@@ -29,7 +31,8 @@ class Producto extends Model
         'unidad_id',
         'estado',
         'categoria_id',
-        "costo_usd"
+        'envase_primario_id',
+        'requiere_receta_medica'
     ];
 
     public function unidad()
@@ -40,6 +43,11 @@ class Producto extends Model
     public function categoria()
     {
         return $this->belongsTo(Categoria::class);
+    }
+
+    public function envasePrimario()
+    {
+        return $this->belongsTo(EnvasePrimario::class);
     }
 
     public function precioProducto()
@@ -128,6 +136,7 @@ class Producto extends Model
         return [
             'categorias' => DB::table('categorias')->select('id', 'nombre')->where('activo', 1)->get(),
             'unidades'   => DB::table('unidades')->select('id', 'nombre', 'abreviatura')->get(),
+            'envases'   => DB::table('envase_primarios')->select('id', 'nombre')->get(),
         ];
     }
 
@@ -168,6 +177,7 @@ class Producto extends Model
                 'stock_maximo'  => $data['stock_maximo'] ?? 0,
                 'peso_contenido' => $pesoBase,
                 'unidad_id'     => $data['unidad_id'] ?? null,
+                'envase_primario_id'=> $data['envase_primario_id'] ?? null,
                 'estado'        => isset($data['estado']) ? (int)$data['estado'] : 1,
                 'created_at'    => now(),
                 'updated_at'    => now(),
