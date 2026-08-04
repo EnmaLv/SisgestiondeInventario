@@ -16,12 +16,12 @@ class PerfilSeeder extends Seeder
         
         DB::table('perfil')->insert([   
             'nombre_perfil' => 'Usuario',
-            'id_estatus' => 1,
+            'estado' => 1,
         ]);
         
         DB::table('perfil')->insert([   
             'nombre_perfil' => 'Estudiante',
-            'id_estatus' => 1,
+            'estado' => 1,
         ]);
     }
 }

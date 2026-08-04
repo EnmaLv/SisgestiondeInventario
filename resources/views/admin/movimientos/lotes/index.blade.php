@@ -83,15 +83,12 @@
                 </div>
 
                 <div class="rd-actions">
-
-
                     <form action="{{ route('admin.movimientos.lotes.index') }}" method="GET" class="rd-search-inline"
                         role="search">
                         <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
                             placeholder="Escriba el lote" />
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
-
                 </div>
             </div>
 
@@ -109,12 +106,11 @@
                         </div>
                         <div class="rd-filter-row" style="display: inline-block;">
                             <select name="estado" class="rd-filter-input">
-                                <option value="">Seleccione una opcion </option>
+                                <option value="">Seleccione una opción</option>
                                 <option value="1" {{ request('estado') === '1' ? 'selected' : '' }}>Activos</option>
                                 <option value="0" {{ request('estado') === '0' ? 'selected' : '' }}>Merma</option>
                             </select>
                         </div>
-
 
                         <div class="rd-filter-row rd-filter-actions" style="display: inline-block; vertical-align: bottom;">
                             <button class="rd-btn rd-btn-primary" type="submit">Aplicar</button>
@@ -131,12 +127,12 @@
                     <thead>
                         <tr>
                             <th style="width:60px">#</th>
-                            <th>Codigo Lote</th>
+                            <th>Código Lote</th>
                             <th>Producto</th>
                             <th>Proveedor</th>
                             <th>Fecha Entrada</th>
                             <th>Fecha Vencimiento</th>
-                            <th>Dias Restantes</th>
+                            <th>Días Restantes</th>
                             <th>Cantidad (U)</th>
                             <th>Cantidad (g)</th>
                             <th>Estado</th>
@@ -156,10 +152,10 @@
                                 <td>
                                     {{ round($lote->days_to_expire) }} días
                                 </td>
-                                <td>{{ round($lote->cantidad_sucursal) }}</td>
-                                <td>{{ round($lote->cantidad_gramos_sucursal) }}g</td>
+                                <td>{{ round($lote->cantidad_sede) }}</td>
+                                <td>{{ round($lote->cantidad_gramos_sede) }}g</td>
                                 <td>
-                                    @if ($lote->cantidad_sucursal && $lote->cantidad_sucursal <= 0)
+                                    @if ($lote->cantidad_sede && $lote->cantidad_sede <= 0)
                                         <span class="rd-badge rd-badge-secondary">Agotado</span>
                                     @elseif ($lote->is_expired)
                                         <span class="rd-badge rd-badge-danger">Vencido</span>
@@ -172,7 +168,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4">No hay Lotes</td>
+                                <td colspan="10" class="text-center py-4">No hay Lotes</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -186,7 +182,6 @@
         </div>
     </div>
 @stop
-
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">

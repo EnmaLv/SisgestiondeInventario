@@ -9,43 +9,51 @@ class BusVehiculo extends Model
 {
     use ConvierteAMayusculasNoEloquent;
 
-    protected $table = 'bus_vehiculos';
+    protected $table = 'vehiculos';
 
     protected $fillable = [
         'placa',
-        'bus_modelo_id',
+        'modelo_id',
         'anio',
         'color',
         'cantidad_pasajeros',
-        'bus_tipo_combustible_id',
-        'cantidad_bocas',
+        'peso',
+        'tipo_combustible_id',
+        'cantidad_cilindros',
         'capacidad_tanque_litros',
-        'consumo_litros_km',
+        'consumo_urbano',
+        'consumo_carretera',
+        'consumo_relenti',
         'km_actual',
         'km_proximo_mantenimiento',
-        'conductor_id',
-        'sucursal_id',
+        'sede_id',
         'activo',
         'estado',
     ];
 
     protected $casts = [
         'activo' => 'boolean',
+        'consumo_urbano' => 'decimal:3',
+        'consumo_carretera' => 'decimal:3',
+        'consumo_relenti' => 'decimal:3',
+        'capacidad_tanque_litros' => 'decimal:2',
+        'km_actual' => 'decimal:2',
+        'km_proximo_mantenimiento' => 'decimal:2',
     ];
 
     public function modelo()
     {
-        return $this->belongsTo(BusModelo::class, 'bus_modelo_id');
+        return $this->belongsTo(BusModelo::class, 'modelo_id');
     }
 
     public function tipoCombustible()
     {
-        return $this->belongsTo(BusTipoCombustible::class, 'bus_tipo_combustible_id');
+        return $this->belongsTo(BusTipoCombustible::class, 'tipo_combustible_id');
     }
 
-    public function sucursal()
+    public function sede()
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 
     public function conductor()
@@ -56,10 +64,10 @@ class BusVehiculo extends Model
     public static function listarVehiculos($buscar = null, $activo = 1)
     {
         return self::query()
-            ->with(['modelo.busMarca', 'tipoCombustible', 'sucursal'])
-            ->when($buscar, fn ($q) => $q->where('placa', 'like', "%{$buscar}%")
+            ->with(['modelo.busMarca', 'tipoCombustible', 'sede'])
+            ->when($buscar, fn($q) => $q->where('placa', 'like', "%{$buscar}%")
                 ->orWhere('color', 'like', "%{$buscar}%"))
-            ->when($activo !== null && $activo !== '', fn ($q) => $q->where('activo', $activo))
+            ->when($activo !== null && $activo !== '', fn($q) => $q->where('activo', $activo))
             ->orderBy('placa')
             ->paginate(10)
             ->withQueryString();
@@ -78,10 +86,10 @@ class BusVehiculo extends Model
 
     public function getEstadoBadgeAttribute(): string
     {
-        return match($this->estado) {
+        return match ($this->estado) {
             'disponible'   => '<span class="rd-badge rd-badge-success">Disponible</span>',
             'en_ruta'      => '<span class="rd-badge rd-badge-info">En Ruta</span>',
-            'mantenimiento'=> '<span class="rd-badge rd-badge-warning">Mantenimiento</span>',
+            'mantenimiento' => '<span class="rd-badge rd-badge-warning">Mantenimiento</span>',
             'inactivo'     => '<span class="rd-badge rd-badge-danger">Inactivo</span>',
             default        => '<span class="rd-badge">Desconocido</span>',
         };

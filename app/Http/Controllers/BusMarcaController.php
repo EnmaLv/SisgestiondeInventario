@@ -16,7 +16,7 @@ class BusMarcaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:100|unique:bus_marcas,nombre',
+            'nombre'      => 'required|string|max:100|unique:marcas,nombre',
             'descripcion' => 'nullable|string|max:255',
         ]);
 
@@ -37,7 +37,7 @@ class BusMarcaController extends Controller
     public function update(Request $request, BusMarca $busMarca)
     {
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:100|unique:bus_marcas,nombre,' . $busMarca->id,
+            'nombre'      => 'required|string|max:100|unique:marcas,nombre,' . $busMarca->id,
             'descripcion' => 'nullable|string|max:255',
         ]);
 

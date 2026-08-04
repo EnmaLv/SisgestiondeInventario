@@ -16,7 +16,7 @@ class BusTipoCombustibleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:100|unique:bus_tipo_combustibles,nombre',
+            'nombre'      => 'required|string|max:100|unique:tipo_combustibles,nombre',
             'descripcion' => 'nullable|string|max:255',
         ]);
 
@@ -37,7 +37,7 @@ class BusTipoCombustibleController extends Controller
     public function update(Request $request, BusTipoCombustible $busTipoCombustible)
     {
         $validated = $request->validate([
-            'nombre'      => 'required|string|max:100|unique:bus_tipo_combustibles,nombre,' . $busTipoCombustible->id,
+            'nombre'      => 'required|string|max:100|unique:tipo_combustibles,nombre,' . $busTipoCombustible->id,
             'descripcion' => 'nullable|string|max:255',
         ]);
 

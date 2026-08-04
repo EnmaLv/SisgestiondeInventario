@@ -17,11 +17,11 @@ class MovimientoInventarioController extends Controller
         $activo = $request->input('estado');
 
         $movimiento = MovimientoInventario::getData([
-            'buscar' => $buscar,
+            'buscar'          => $buscar,
             'tipo_movimiento' => $tipo_movimiento,
-            'fecha_desde' => $fecha_desde,
-            'fecha_hasta' => $fecha_hasta,
-            'activo' => $activo,
+            'fecha_desde'     => $fecha_desde,
+            'fecha_hasta'     => $fecha_hasta,
+            'activo'          => $activo,
         ], false);
 
         return view('admin.movimientos.historial_movimientos.index', compact('movimiento'));
@@ -30,18 +30,19 @@ class MovimientoInventarioController extends Controller
     public function generarPdf(Request $request)
     {
         $filtro = [
-            'buscar' => $request->input('buscar'),
+            'buscar'          => $request->input('buscar'),
             'tipo_movimiento' => $request->input('tipo_movimiento'),
-            'fecha_desde' => $request->input('fecha_desde'),
-            'fecha_hasta' => $request->input('fecha_hasta'),
-            'activo' => $request->input('estado'),
+            'fecha_desde'     => $request->input('fecha_desde'),
+            'fecha_hasta'     => $request->input('fecha_hasta'),
+            'activo'          => $request->input('estado'),
         ];
 
         $movimiento = MovimientoInventario::getData($filtro, true);
         $datos = [
             'movimiento' => $movimiento,
-            'filtro' => $filtro,
+            'filtro'     => $filtro,
         ];
+
         return PdfGeneratorUtil::ShowPdf('pdf.movimiento_inventario', $datos, "MovimientoInventario");
     }
 }

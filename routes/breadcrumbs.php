@@ -30,24 +30,24 @@ Breadcrumbs::for('admin.maestros.categorias.edit', function (Trail $trail, $cate
 });
 
 // Maestros > Sedes
-Breadcrumbs::for('admin.maestros.sucursales.index', function (Trail $trail) {
+Breadcrumbs::for('admin.maestros.sedes.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Sedes', route('admin.maestros.sucursales.index'));
+    $trail->push('Sedes', route('admin.maestros.sedes.index'));
 });
 
-Breadcrumbs::for('admin.maestros.sucursales.create', function (Trail $trail) {
-    $trail->parent('admin.maestros.sucursales.index');
-    $trail->push('Crear', route('admin.maestros.sucursales.create'));
+Breadcrumbs::for('admin.maestros.sedes.create', function (Trail $trail) {
+    $trail->parent('admin.maestros.sedes.index');
+    $trail->push('Crear', route('admin.maestros.sedes.create'));
 });
 
-Breadcrumbs::for('admin.maestros.sucursales.show', function (Trail $trail, $sucursal) {
-    $trail->parent('admin.maestros.sucursales.index');
-    $trail->push('Ver Mas', route('admin.maestros.sucursales.show', $sucursal));
+Breadcrumbs::for('admin.maestros.sedes.show', function (Trail $trail, $sede) {
+    $trail->parent('admin.maestros.sedes.index');
+    $trail->push('Ver Mas', route('admin.maestros.sedes.show', $sede));
 });
 
-Breadcrumbs::for('admin.maestros.sucursales.edit', function (Trail $trail, $sucursal) {
-    $trail->parent('admin.maestros.sucursales.index');
-    $trail->push('Editar', route('admin.maestros.sucursales.edit', $sucursal));
+Breadcrumbs::for('admin.maestros.sedes.edit', function (Trail $trail, $sede) {
+    $trail->parent('admin.maestros.sedes.index');
+    $trail->push('Editar', route('admin.maestros.sedes.edit', $sede));
 });
 
 // Maestros > Productos
@@ -182,15 +182,15 @@ Breadcrumbs::for('admin.movimientos.registro_diario.show', function (Trail $trai
     $trail->push('Ver Registro', route('admin.movimientos.registro_diario.show', $id));
 });
 
-// Movimientos > Sucursales por Lotes
-Breadcrumbs::for('admin.movimientos.sucursales_lotes', function (Trail $trail) {
+// Movimientos > sedes por Lotes
+Breadcrumbs::for('admin.movimientos.sedes_lotes', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Lotes por Sedes', route('admin.movimientos.sucursales_lotes'));
+    $trail->push('Lotes por Sedes', route('admin.movimientos.sedes_lotes'));
 });
 
-Breadcrumbs::for('admin.movimientos.sucursales_lotes.show', function (Trail $trail, $id) {
-    $trail->parent('admin.movimientos.sucursales_lotes');
-    $trail->push('Ver Mas', route('admin.movimientos.sucursales_lotes.show', $id));
+Breadcrumbs::for('admin.movimientos.sedes_lotes.show', function (Trail $trail, $id) {
+    $trail->parent('admin.movimientos.sedes_lotes');
+    $trail->push('Ver Mas', route('admin.movimientos.sedes_lotes.show', $id));
 });
 
 // Movimientos > Historial de Movimientos

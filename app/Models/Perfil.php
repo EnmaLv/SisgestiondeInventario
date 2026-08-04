@@ -10,5 +10,5 @@ class Perfil extends Model
     protected $primaryKey = 'id_perfil';
     public $timestamps = true;
 
-    protected $fillable = ['nombre_perfil','id_estatus'];
+    protected $fillable = ['nombre_perfil','estado'];
 }

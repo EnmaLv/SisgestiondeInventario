@@ -28,45 +28,82 @@ class Archivos extends Component
         $this->archivoKey = rand();
     }
 
+    private function getColumnMapping(array $headerRow): array
+    {
+        $map = [];
+
+        foreach ($headerRow as $colLetter => $title) {
+            if (!$title) continue;
+
+            $slug = strtolower(trim((string)$title));
+            $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
+            $slug = preg_replace('/[^a-z0-9]/', '_', $slug);
+            $slug = preg_replace('/_+/', '_', trim($slug, '_'));
+
+            if (preg_match('/cedula|c_i|dni|identificacion/', $slug)) {
+                $map['cedula'] = $colLetter;
+            } elseif (preg_match('/segundo_nombre|nombre_2|nombre2/', $slug)) {
+                $map['segundo_nombre'] = $colLetter;
+            } elseif (preg_match('/nombre/', $slug) && !isset($map['nombre'])) {
+                $map['nombre'] = $colLetter;
+            } elseif (preg_match('/segundo_apellido|apellido_2|apellido2/', $slug)) {
+                $map['segundo_apellido'] = $colLetter;
+            } elseif (preg_match('/apellido/', $slug) && !isset($map['apellido'])) {
+                $map['apellido'] = $colLetter;
+            } elseif (preg_match('/telefono|celular|movil|tlf/', $slug)) {
+                $map['telefono'] = $colLetter;
+            } elseif (preg_match('/genero|sexo/', $slug)) {
+                $map['genero'] = $colLetter;
+            } elseif (preg_match('/nacimiento|fecha_nac|fec_nac|a_nacimiento/', $slug)) {
+                $map['fecha_nacimiento'] = $colLetter;
+            } elseif (preg_match('/email|correo/', $slug)) {
+                $map['email'] = $colLetter;
+            } elseif (preg_match('/semestre|trayecto|nivel/', $slug)) {
+                $map['semestre'] = $colLetter;
+            } elseif (preg_match('/pnf|carrera|programa|especialidad/', $slug)) {
+                $map['pnf'] = $colLetter;
+            }
+        }
+
+        return $map;
+    }
+
     private function normalizarPnf(string $pnfExcel): int
     {
-        // Normalizar el texto
+        if (empty($pnfExcel)) return 1;
+
         $pnfExcel = strtoupper(trim($pnfExcel));
         $pnfExcel = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $pnfExcel);
         $pnfExcel = preg_replace('/\s+/', ' ', $pnfExcel);
-        
-        // Obtener todos los PNF de la BD
+
         $pnfs = DB::table('pnf')
             ->where('id_estatus', 1)
             ->get(['id_pnf', 'nombre_pnf']);
-        
+
         $mejorCoincidencia = null;
         $mejorSimilitud = 0;
-        
+
         foreach ($pnfs as $pnf) {
             $nombreBD = strtoupper($pnf->nombre_pnf);
             $nombreBD = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $nombreBD);
-            
-            // Calcular similitud
+
             similar_text($pnfExcel, $nombreBD, $porcentaje);
-            
+
             if ($porcentaje > $mejorSimilitud) {
                 $mejorSimilitud = $porcentaje;
                 $mejorCoincidencia = $pnf->id_pnf;
             }
-            
-            // Si la similitud es del 90% o más, retornar inmediatamente
+
             if ($porcentaje >= 90) {
                 return $pnf->id_pnf;
             }
         }
-        
-        // Si la mejor similitud es al menos 70%, usarla
+
         if ($mejorSimilitud >= 70) {
             return $mejorCoincidencia;
         }
-        
-        return 1; // ID por defecto (Generalmente "No Definido" o similar)
+
+        return 1;
     }
 
     private function parseFechaNacimiento($fecha)
@@ -75,30 +112,26 @@ class Archivos extends Component
             return null;
         }
 
-        // Si es un número de serie de Excel (como 34867)
         if (is_numeric($fecha)) {
             try {
                 return Carbon::instance(
                     \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($fecha)
                 )->format('Y-m-d');
             } catch (\Exception $e) {
-                // Si falla, continua al parseo manual
             }
         }
 
-        // Si viene como string, limpiar caracteres extraños (incluyendo Unicode "chino")
         $fechaLimpia = preg_replace('/[^\x20-\x7E]/u', '', (string)$fecha);
-        $fechaLimpia = preg_replace('/[^0-9\/\-]/', '', $fechaLimpia); 
+        $fechaLimpia = preg_replace('/[^0-9\/\-]/', '', $fechaLimpia);
         $fechaLimpia = str_replace(['-', '.', ','], '/', $fechaLimpia);
-        
+
         if (substr_count($fechaLimpia, '/') !== 2) {
             return null;
         }
-        
+
         $partes = explode('/', $fechaLimpia);
         if (count($partes) !== 3) return null;
 
-        // Intentar parsear formatos comunes (D/M/Y)
         try {
             $fechaCreada = Carbon::createFromFormat('d/m/Y', $fechaLimpia);
             if ($fechaCreada && $fechaCreada->year > 1920 && $fechaCreada->year < now()->year) {
@@ -122,24 +155,38 @@ class Archivos extends Component
             $fullPath = storage_path('app/public/' . $ruta);
 
             $spreadsheet = IOFactory::load($fullPath);
-            // IMPORTANTE: El 4to parámetro 'true' habilita los índices por letras (A, B, C...)
-            // El 3er parámetro 'false' evita que Excel formatee las fechas a "chino"
             $rows = $spreadsheet->getActiveSheet()->toArray(null, true, false, true);
 
-            // Eliminar encabezado (Fila 1)
-            unset($rows[1]);
+            if (empty($rows)) {
+                throw new \Exception('El archivo cargado está vacío.');
+            }
+
+            $headerRow = array_shift($rows);
+            $map = $this->getColumnMapping($headerRow);
+
+            if (!isset($map['cedula'])) {
+                throw new \Exception('No se encontró la columna de "Cédula" en la primera fila del Excel.');
+            }
+
+            $getValue = function ($key, $row) use ($map) {
+                $col = $map[$key] ?? null;
+                return $col ? trim($row[$col] ?? '') : '';
+            };
 
             $cedulasProcesadas = [];
             $stats = [
-                'total' => 0, 'insertados' => 0, 'actualizados' => 0, 
-                'omitidos_fecha' => 0, 'omitidos_cedula' => 0, 'omitidos_duplicados' => 0
+                'total' => 0,
+                'insertados' => 0,
+                'actualizados' => 0,
+                'omitidos_fecha' => 0,
+                'omitidos_cedula' => 0,
+                'omitidos_duplicados' => 0
             ];
 
             foreach ($rows as $row) {
                 $stats['total']++;
 
-                // Usamos índices de letras según tu DD
-                $cedula = trim($row['C'] ?? '');
+                $cedula = $getValue('cedula', $row);
 
                 if (!$cedula) {
                     $stats['omitidos_cedula']++;
@@ -153,36 +200,35 @@ class Archivos extends Component
 
                 $cedulasProcesadas[] = $cedula;
 
-                // Columna 'I' para fecha de nacimiento
-                $fechaNacimiento = $this->parseFechaNacimiento($row['I'] ?? null);
+                $fechaNacimiento = $this->parseFechaNacimiento($getValue('fecha_nacimiento', $row));
                 $edad = $fechaNacimiento ? Carbon::parse($fechaNacimiento)->age : null;
 
                 if (!$fechaNacimiento) {
                     $stats['omitidos_fecha']++;
                 }
 
-                $sexoRaw = strtoupper(trim($row['H'] ?? ''));
+                $sexoRaw = strtoupper($getValue('genero', $row));
                 $sexo = match ($sexoRaw) {
-                    'M' => 'MASCULINO',
-                    'F' => 'FEMENINO',
-                    default => 'NO DEFINIDO',
+                    'M', 'MASCULINO' => 'MASCULINO',
+                    'F', 'FEMENINO'  => 'FEMENINO',
+                    default          => 'NO DEFINIDO',
                 };
 
-                $telefono = preg_replace('/\D/', '', $row['J'] ?? '');
+                $telefono = preg_replace('/\D/', '', $getValue('telefono', $row));
 
                 $persona = Persona::updateOrCreate(
                     ['cedula_persona' => $cedula],
                     [
-                        'nombre_persona'            => trim($row['D'] ?? ''),
-                        'segundo_nombre_persona'    => trim($row['E'] ?? '') ?: null,
-                        'apellido_persona'          => trim($row['F'] ?? ''),
-                        'segundo_apellido_persona'  => trim($row['G'] ?? '') ?: null,
+                        'nombre_persona'            => $getValue('nombre', $row),
+                        'segundo_nombre_persona'    => $getValue('segundo_nombre', $row) ?: null,
+                        'apellido_persona'          => $getValue('apellido', $row),
+                        'segundo_apellido_persona'  => $getValue('segundo_apellido', $row) ?: null,
                         'telefono_persona'          => $telefono,
                         'genero_persona'            => $sexo,
                         'edad_persona'              => $edad,
                         'fecha_nacimiento_persona'  => $fechaNacimiento,
-                        'email_persona'             => trim($row['L'] ?? ''),
-                        'semestre_persona'          => $row['N'] ?? null,
+                        'email_persona'             => $getValue('email', $row),
+                        'semestre_persona'          => $getValue('semestre', $row) ?: null,
                         'id_perfil'                 => 2,
                         'id_sede'                   => 1,
                     ]
@@ -194,11 +240,10 @@ class Archivos extends Component
                     $stats['actualizados']++;
                 }
 
-                // Columna 'M' para el PNF
                 PersonaPnf::updateOrCreate(
                     ['id_persona' => $persona->id_persona],
                     [
-                        'id_pnf'       => $this->normalizarPnf(trim($row['M'] ?? '')),
+                        'id_pnf'       => $this->normalizarPnf($getValue('pnf', $row)),
                         'fecha_inicio' => now()->toDateString(),
                         'fecha_fin'    => now()->toDateString(),
                     ]
@@ -217,7 +262,6 @@ class Archivos extends Component
             $this->archivoKey = rand();
 
             $this->dispatch('swal', icon: 'success', title: '¡Éxito!', text: 'Procesado: ' . $stats['insertados'] . ' nuevos y ' . $stats['actualizados'] . ' actualizados.');
-
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);

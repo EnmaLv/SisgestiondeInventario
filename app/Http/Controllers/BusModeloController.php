@@ -19,8 +19,8 @@ class BusModeloController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bus_marca_id' => 'required|exists:bus_marcas,id',
-            'nombre'       => 'required|string|max:100|unique:bus_modelos,nombre',
+            'marca_id' => 'required|exists:marcas,id',
+            'nombre'       => 'required|string|max:100|unique:modelos,nombre',
             'descripcion'  => 'nullable|string|max:255',
         ]);
 
@@ -34,8 +34,8 @@ class BusModeloController extends Controller
                 'id'          => $modelo->id,
                 'nombre'      => $modelo->nombre,
                 'descripcion' => $modelo->descripcion,
-                'marca_id'    => $modelo->bus_marca_id,
-                'marca_nombre'=> $modelo->busMarca->nombre,
+                'marca_id'    => $modelo->marca_id,
+                'marca_nombre' => $modelo->busMarca->nombre,
                 'estado'      => true,
             ],
         ]);
@@ -44,8 +44,8 @@ class BusModeloController extends Controller
     public function update(Request $request, BusModelo $busModelo)
     {
         $validated = $request->validate([
-            'bus_marca_id' => 'required|exists:bus_marcas,id',
-            'nombre'       => 'required|string|max:100|unique:bus_modelos,nombre,' . $busModelo->id,
+            'marca_id' => 'required|exists:marcas,id',
+            'nombre'       => 'required|string|max:100|unique:modelos,nombre,' . $busModelo->id,
             'descripcion'  => 'nullable|string|max:255',
         ]);
 
@@ -59,8 +59,8 @@ class BusModeloController extends Controller
                 'id'          => $busModelo->id,
                 'nombre'      => $busModelo->nombre,
                 'descripcion' => $busModelo->descripcion,
-                'marca_id'    => $busModelo->bus_marca_id,
-                'marca_nombre'=> $busModelo->busMarca->nombre,
+                'marca_id'    => $busModelo->marca_id,
+                'marca_nombre' => $busModelo->busMarca->nombre,
                 'estado'      => $busModelo->estado,
             ],
         ]);

@@ -41,8 +41,8 @@
                     <form action="{{ route('admin.transporte.maestros.bus_modelos.index') }}" method="GET"
                         class="rd-search-inline" role="search">
                         <input type="hidden" name="estado" value="{{ request('estado', 1) }}">
-                        <input type="text" name="buscar" value="{{ request('buscar') }}"
-                            class="rd-search-input" placeholder="Buscar modelo..." />
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
+                            placeholder="Buscar modelo..." />
                         <button class="rd-icon-btn" type="submit"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
@@ -77,18 +77,16 @@
                             </td>
                             <td class="text-center">
                                 <div class="rd-action-group">
-                                    <button type="button" class="rd-action btn-abrir-editar"
-                                        data-id="{{ $modelo->id }}"
-                                        data-nombre="{{ $modelo->nombre }}"
-                                        data-descripcion="{{ $modelo->descripcion }}"
-                                        data-marca="{{ $modelo->bus_marca_id }}"
-                                        data-toggle="modal" data-target="#modalEditar"
+                                    <button type="button" class="rd-action btn-abrir-editar" data-id="{{ $modelo->id }}"
+                                        data-nombre="{{ $modelo->nombre }}" data-descripcion="{{ $modelo->descripcion }}"
+                                        data-marca="{{ $modelo->marca_id }}" data-toggle="modal" data-target="#modalEditar"
                                         title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
                                     @if ($modelo->estado)
-                                        <form action="{{ route('admin.transporte.maestros.bus_modelos.destroy', $modelo) }}"
+                                        <form
+                                            action="{{ route('admin.transporte.maestros.bus_modelos.destroy', $modelo) }}"
                                             method="POST" style="display:inline;">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="rd-action rd-btn-danger"
@@ -97,7 +95,8 @@
                                             </button>
                                         </form>
                                     @else
-                                        <form action="{{ route('admin.transporte.maestros.bus_modelos.activar', $modelo) }}"
+                                        <form
+                                            action="{{ route('admin.transporte.maestros.bus_modelos.activar', $modelo) }}"
                                             method="POST" style="display:inline;">
                                             @csrf @method('PUT')
                                             <button type="submit" class="rd-action rd-btn-success"
@@ -140,9 +139,9 @@
                             <label class="font-weight-bold">Marca</label>
                             <div class="input-group mt-1">
                                 <span class="input-group-text"><i class="fas fa-industry"></i></span>
-                                <select name="bus_marca_id" class="form-control rd-filter-input">
+                                <select name="marca_id" class="form-control rd-filter-input">
                                     <option value="">-- Seleccione una marca --</option>
-                                    @foreach($marcas as $marca)
+                                    @foreach ($marcas as $marca)
                                         <option value="{{ $marca->id }}">{{ $marca->nombre }}</option>
                                     @endforeach
                                 </select>
@@ -157,7 +156,8 @@
                             </div>
                         </div>
                         <div class="form-group mb-0">
-                            <label class="font-weight-bold">Descripción <span class="text-muted font-weight-normal">(opcional)</span></label>
+                            <label class="font-weight-bold">Descripción <span
+                                    class="text-muted font-weight-normal">(opcional)</span></label>
                             <div class="input-group mt-1">
                                 <span class="input-group-text"><i class="fas fa-align-left"></i></span>
                                 <input type="text" name="descripcion" class="form-control rd-filter-input"
@@ -193,9 +193,9 @@
                             <label class="font-weight-bold">Marca</label>
                             <div class="input-group mt-1">
                                 <span class="input-group-text"><i class="fas fa-industry"></i></span>
-                                <select id="editMarca" name="bus_marca_id" class="form-control rd-filter-input">
+                                <select id="editMarca" name="marca_id" class="form-control rd-filter-input">
                                     <option value="">-- Seleccione una marca --</option>
-                                    @foreach($marcas as $marca)
+                                    @foreach ($marcas as $marca)
                                         <option value="{{ $marca->id }}">{{ $marca->nombre }}</option>
                                     @endforeach
                                 </select>
@@ -206,17 +206,17 @@
                             <div class="input-group mt-1">
                                 <span class="input-group-text"><i class="fas fa-tag"></i></span>
                                 <input type="text" id="editNombre" name="nombre"
-                                    class="form-control rd-filter-input"
-                                    placeholder="Nombre del modelo" maxlength="100">
+                                    class="form-control rd-filter-input" placeholder="Nombre del modelo" maxlength="100">
                             </div>
                         </div>
                         <div class="form-group mb-0">
-                            <label class="font-weight-bold">Descripción <span class="text-muted font-weight-normal">(opcional)</span></label>
+                            <label class="font-weight-bold">Descripción <span
+                                    class="text-muted font-weight-normal">(opcional)</span></label>
                             <div class="input-group mt-1">
                                 <span class="input-group-text"><i class="fas fa-align-left"></i></span>
                                 <input type="text" id="editDescripcion" name="descripcion"
-                                    class="form-control rd-filter-input"
-                                    placeholder="Descripción del modelo" maxlength="255">
+                                    class="form-control rd-filter-input" placeholder="Descripción del modelo"
+                                    maxlength="255">
                             </div>
                         </div>
                     </div>
@@ -237,128 +237,142 @@
 @stop
 
 @push('js')
-<script>
-const CSRF = '{{ csrf_token() }}';
-const BASE_URL = '/admin/transporte/maestros/bus_modelos';
+    <script>
+        const CSRF = '{{ csrf_token() }}';
+        const BASE_URL = '/admin/transporte/maestros/bus_modelos';
 
-function toastExito(mensaje) {
-    Swal.fire({
-        toast: true, position: 'top-end', icon: 'success',
-        title: mensaje, showConfirmButton: false,
-        timer: 3000, timerProgressBar: true,
-    });
-}
-
-function mostrarErrores(errors, formId) {
-    document.querySelectorAll(`${formId} .text-danger`).forEach(e => e.remove());
-    document.querySelectorAll(`${formId} .is-invalid`).forEach(e => e.classList.remove('is-invalid'));
-    Object.keys(errors).forEach(function(campo) {
-        const input = document.querySelector(`${formId} [name="${campo}"]`);
-        if (input) {
-            input.classList.add('is-invalid');
-            const div = document.createElement('div');
-            div.className = 'text-danger mt-1';
-            div.innerHTML = `<b>${errors[campo][0]}</b>`;
-            input.closest('.input-group').after(div);
+        function toastExito(mensaje) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: mensaje,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
         }
-    });
-}
 
-// ── CREAR ─────────────────────────────────────────────────────────
-document.getElementById('formCrear').addEventListener('submit', function(e) {
-    e.preventDefault();
-    fetch(this.action, {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-        body: new FormData(this),
-    })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            $('#modalCrear').modal('hide');
-            this.reset();
-            agregarFilaTabla(res.modelo);
-            toastExito(res.message);
-        } else {
-            mostrarErrores(res.errors ?? {}, '#formCrear');
+        function mostrarErrores(errors, formId) {
+            document.querySelectorAll(`${formId} .text-danger`).forEach(e => e.remove());
+            document.querySelectorAll(`${formId} .is-invalid`).forEach(e => e.classList.remove('is-invalid'));
+            Object.keys(errors).forEach(function(campo) {
+                const input = document.querySelector(`${formId} [name="${campo}"]`);
+                if (input) {
+                    input.classList.add('is-invalid');
+                    const div = document.createElement('div');
+                    div.className = 'text-danger mt-1';
+                    div.innerHTML = `<b>${errors[campo][0]}</b>`;
+                    input.closest('.input-group').after(div);
+                }
+            });
         }
-    });
-});
 
-// ── EDITAR ────────────────────────────────────────────────────────
-document.querySelectorAll('.btn-abrir-editar').forEach(bindEditar);
-
-function bindEditar(btn) {
-    btn.addEventListener('click', function() {
-        document.getElementById('editNombre').value      = this.dataset.nombre;
-        document.getElementById('editDescripcion').value = this.dataset.descripcion === 'Ninguna' ? '' : this.dataset.descripcion;
-        document.getElementById('editMarca').value       = this.dataset.marca;
-        document.getElementById('formEditar').action     = `${BASE_URL}/${this.dataset.id}`;
-    });
-}
-
-document.getElementById('formEditar').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const data = new FormData(this);
-    data.append('_method', 'PUT');
-    fetch(this.action, {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-        body: data,
-    })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            $('#modalEditar').modal('hide');
-            actualizarFilaTabla(res.modelo);
-            toastExito(res.message);
-        } else {
-            mostrarErrores(res.errors ?? {}, '#formEditar');
-        }
-    });
-});
-
-// ── INACTIVAR / ACTIVAR ───────────────────────────────────────────
-function confirmAccion(event, button, accion, entidad) {
-    event.preventDefault();
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: `¿Desea ${accion} el ${entidad}?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: `Sí, ${accion}`,
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (!result.isConfirmed) return;
-        const form = button.closest('form');
-        fetch(form.action, {
-            method: 'POST',
-            headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-            body: new FormData(form),
-        })
-        .then(r => r.json())
-        .then(res => {
-            if (res.success) {
-                button.closest('tr').remove();
-                toastExito(res.message);
-            }
+        // ── CREAR ─────────────────────────────────────────────────────────
+        document.getElementById('formCrear').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF,
+                        'Accept': 'application/json'
+                    },
+                    body: new FormData(this),
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        $('#modalCrear').modal('hide');
+                        this.reset();
+                        agregarFilaTabla(res.modelo);
+                        toastExito(res.message);
+                    } else {
+                        mostrarErrores(res.errors ?? {}, '#formCrear');
+                    }
+                });
         });
-    });
-}
 
-// ── Helpers DOM ───────────────────────────────────────────────────
-let contadorFilas = {{ $modelos->total() }};
+        // ── EDITAR ────────────────────────────────────────────────────────
+        document.querySelectorAll('.btn-abrir-editar').forEach(bindEditar);
 
-function agregarFilaTabla(modelo) {
-    contadorFilas++;
-    const tbody = document.querySelector('.rd-table tbody');
-    const vacio = tbody.querySelector('td[colspan]');
-    if (vacio) vacio.closest('tr').remove();
+        function bindEditar(btn) {
+            btn.addEventListener('click', function() {
+                document.getElementById('editNombre').value = this.dataset.nombre;
+                document.getElementById('editDescripcion').value = this.dataset.descripcion === 'Ninguna' ? '' :
+                    this.dataset.descripcion;
+                document.getElementById('editMarca').value = this.dataset.marca;
+                document.getElementById('formEditar').action = `${BASE_URL}/${this.dataset.id}`;
+            });
+        }
 
-    const descripcion = modelo.descripcion || 'Ninguna';
-    const fila = `
+        document.getElementById('formEditar').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = new FormData(this);
+            data.append('_method', 'PUT');
+            fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF,
+                        'Accept': 'application/json'
+                    },
+                    body: data,
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        $('#modalEditar').modal('hide');
+                        actualizarFilaTabla(res.modelo);
+                        toastExito(res.message);
+                    } else {
+                        mostrarErrores(res.errors ?? {}, '#formEditar');
+                    }
+                });
+        });
+
+        // ── INACTIVAR / ACTIVAR ───────────────────────────────────────────
+        function confirmAccion(event, button, accion, entidad) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Desea ${accion} el ${entidad}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Sí, ${accion}`,
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                const form = button.closest('form');
+                fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': CSRF,
+                            'Accept': 'application/json'
+                        },
+                        body: new FormData(form),
+                    })
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.success) {
+                            button.closest('tr').remove();
+                            toastExito(res.message);
+                        }
+                    });
+            });
+        }
+
+        // ── Helpers DOM ───────────────────────────────────────────────────
+        let contadorFilas = {{ $modelos->total() }};
+
+        function agregarFilaTabla(modelo) {
+            contadorFilas++;
+            const tbody = document.querySelector('.rd-table tbody');
+            const vacio = tbody.querySelector('td[colspan]');
+            if (vacio) vacio.closest('tr').remove();
+
+            const descripcion = modelo.descripcion || 'Ninguna';
+            const fila = `
         <tr data-id="${modelo.id}">
             <td class="text-center">${contadorFilas}</td>
             <td class="text-center">${modelo.marca_nombre}</td>
@@ -387,30 +401,31 @@ function agregarFilaTabla(modelo) {
                 </div>
             </td>
         </tr>`;
-    tbody.insertAdjacentHTML('beforeend', fila);
-    bindEditar(tbody.querySelector(`tr[data-id="${modelo.id}"] .btn-abrir-editar`));
-}
+            tbody.insertAdjacentHTML('beforeend', fila);
+            bindEditar(tbody.querySelector(`tr[data-id="${modelo.id}"] .btn-abrir-editar`));
+        }
 
-function actualizarFilaTabla(modelo) {
-    const fila = document.querySelector(`tr[data-id="${modelo.id}"]`);
-    if (!fila) return;
-    const descripcion = modelo.descripcion || 'Ninguna';
-    fila.cells[1].textContent = modelo.marca_nombre;
-    fila.cells[2].textContent = modelo.nombre;
-    fila.cells[3].textContent = descripcion;
-    const btn = fila.querySelector('.btn-abrir-editar');
-    if (btn) {
-        btn.dataset.nombre      = modelo.nombre;
-        btn.dataset.descripcion = descripcion;
-        btn.dataset.marca       = modelo.marca_id;
-    }
-}
+        function actualizarFilaTabla(modelo) {
+            const fila = document.querySelector(`tr[data-id="${modelo.id}"]`);
+            if (!fila) return;
+            const descripcion = modelo.descripcion || 'Ninguna';
+            fila.cells[1].textContent = modelo.marca_nombre;
+            fila.cells[2].textContent = modelo.nombre;
+            fila.cells[3].textContent = descripcion;
+            const btn = fila.querySelector('.btn-abrir-editar');
+            if (btn) {
+                btn.dataset.nombre = modelo.nombre;
+                btn.dataset.descripcion = descripcion;
+                btn.dataset.marca = modelo.marca_id;
+            }
+        }
 
-// ── Toggle estado ─────────────────────────────────────────────────
-document.getElementById('estadoToggle').addEventListener('change', function() {
-    const params = new URLSearchParams(window.location.search);
-    params.set('estado', this.checked ? 1 : 0);
-    window.location.href = "{{ route('admin.transporte.maestros.bus_modelos.index') }}?" + params.toString();
-});
-</script>
+        // ── Toggle estado ─────────────────────────────────────────────────
+        document.getElementById('estadoToggle').addEventListener('change', function() {
+            const params = new URLSearchParams(window.location.search);
+            params.set('estado', this.checked ? 1 : 0);
+            window.location.href = "{{ route('admin.transporte.maestros.bus_modelos.index') }}?" + params
+            .toString();
+        });
+    </script>
 @endpush

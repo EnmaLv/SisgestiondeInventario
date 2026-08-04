@@ -53,29 +53,29 @@ class CompraController extends Controller
     public function store(Request $request)
     {
         $id = Compra::crearCompra($request->validate([
-            'proveedor_id' => 'required|exists:proveedors,id',
-            'fecha'        => 'required|date',
+            'proveedor_id'  => 'required|exists:proveedors,id',
+            'fecha'         => 'required|date',
             'observaciones' => 'nullable|string'
         ]));
 
-        return redirect()->route('admin.movimientos.compras.edit', $id)->with('success', 'Requisicion creada exitosamente.');
+        return redirect()->route('admin.movimientos.compras.edit', $id)->with('success', 'Requisición creada exitosamente.');
     }
 
     public function show($id)
     {
         $compra = Compra::obtenerCompra($id);
-        $sucursal_destino = Compra::obtenerSucursalDestino($id);
+        $sede_destino = Compra::obtenerSedeDestino($id);
         $detalles = Compra::obtenerDetallesCompra($id);
 
-        return view('admin.movimientos.compras.show', compact('compra', 'sucursal_destino', 'detalles'));
+        return view('admin.movimientos.compras.show', compact('compra', 'sede_destino', 'detalles'));
     }
 
     public function destroy($id)
     {
-        $ok = Compra::eliminarCompra($id);
+        Compra::eliminarCompra($id);
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with('success', 'Requisición Eliminada Exitosamente.');
+            ->with('success', 'Requisición eliminada exitosamente.');
     }
 
     public function finalizarCompra(Request $request, Compra $compra)
@@ -89,8 +89,7 @@ class CompraController extends Controller
 
         if ($lotesSinFecha) {
             return back()->withErrors([
-                'fecha_vencimiento' =>
-                'Debe registrar la fecha de vencimiento de todos los productos antes de finalizar la requisición.'
+                'fecha_vencimiento' => 'Debe registrar la fecha de vencimiento de todos los productos antes de finalizar la requisición.'
             ]);
         }
 
@@ -110,7 +109,7 @@ class CompraController extends Controller
 
         return redirect()
             ->route('admin.movimientos.compras.index')
-            ->with('success', 'Requisición Eliminada Exitosamente.');
+            ->with('success', 'Requisición eliminada exitosamente.');
     }
 
     public function enviarCorreo(Compra $compra)
@@ -123,8 +122,6 @@ class CompraController extends Controller
 
         return back()->with('success', 'Correo enviado exitosamente.');
     }
-
-
 
     public function exportPdf(Request $request)
     {
@@ -144,20 +141,20 @@ class CompraController extends Controller
             $totalCompra = $items->sum('subtotal');
 
             return (object) [
-                'id'                  => $compraId,
-                'fecha'               => $primerItem->fecha,
-                'proveedor_empresa'   => $primerItem->proveedor_empresa,
-                'created_at'          => $primerItem->created_at,
-                'total'               => $totalCompra,
-                'observaciones'       => null,
-                'detalles'            => $items->all()
+                'id'                => $compraId,
+                'fecha'             => $primerItem->fecha,
+                'proveedor_empresa' => $primerItem->proveedor_empresa,
+                'created_at'        => $primerItem->created_at,
+                'total'             => $totalCompra,
+                'observaciones'     => null,
+                'detalles'          => $items->all()
             ];
         })->values();
 
         $datos = [
             'compras' => $compras,
-            'buscar' => $request->buscar,
-            'estado' => $request->estado
+            'buscar'  => $request->buscar,
+            'estado'  => $request->estado
         ];
 
         return PdfGeneratorUtil::ShowPdf('pdf.compra', $datos, "Compras");

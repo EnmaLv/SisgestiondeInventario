@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Receta;
 use App\Models\DetalleRegistroDiario;
-use App\Models\InventarioSucursalLote;
+use App\Models\InventarioSedeLote;
 use App\Models\MovimientoInventario;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -140,7 +140,7 @@ class RegistroComida extends Component
         DB::beginTransaction();
 
         try {
-            $sucursalId = 1;
+            $sedeId = 1;
 
             foreach ($this->desayunos_agregados as $registro) {
 
@@ -157,20 +157,20 @@ class RegistroComida extends Component
 
                 foreach ($receta->recetaIngredientes as $ingrediente) {
 
-                    $totalDescontarGramos = $ingrediente->cantidad_gramos * $cantidadServido;
+                    $totalDescontarGramos = $ingrediente->cantidad_convertida * $cantidadServido;
                     $pesoUnidad = $ingrediente->producto->peso_contenido;
 
                     if ($pesoUnidad <= 0) {
                         throw new Exception("El producto {$ingrediente->producto->nombre} no tiene peso_contenido definido.");
                     }
 
-                    $lotes = InventarioSucursalLote::where('sucursal_id', $sucursalId)
+                    $lotes = InventarioSedeLote::where('sede_id', $sedeId)
                         ->whereHas('lote', function ($q) use ($ingrediente) {
                             $q->where('producto_id', $ingrediente->producto_id)
                                 ->whereDate('fecha_vencimiento', '>=', now()->toDateString())
                                 ->where('estado', 1);
                         })
-                        ->where('cantidad_gramos', '>', 0)
+                        ->where('cantidad_convertida', '>', 0)
                         ->orderBy('lote_id', 'asc')
                         ->get();
 
@@ -181,27 +181,27 @@ class RegistroComida extends Component
 
                         if ($pendiente <= 0) break;
 
-                        $dispGramos = $inv->cantidad_gramos;
+                        $dispGramos = $inv->cantidad_convertida;
                         $tomarGramos = min($pendiente, $dispGramos);
 
-                        $inv->cantidad_gramos -= $tomarGramos;
-                        $inv->cantidad = floor($inv->cantidad_gramos / $pesoUnidad);
+                        $inv->cantidad_convertida -= $tomarGramos;
+                        $inv->cantidad = floor($inv->cantidad_convertida / $pesoUnidad);
 
                         $inv->save();
 
                         $lote = $inv->lote;
                         $lote->cantidad_inicial = floor($lote->cantidad_inicial - ($tomarGramos / $pesoUnidad));
-                        $lote->cantidad_actual = $inv->cantidad_gramos;
+                        $lote->cantidad_actual = $inv->cantidad_convertida;
                         $lote->save();
 
                         MovimientoInventario::create([
                             'producto_id'    => $ingrediente->producto_id,
                             'lote_id'        => $lote->id,
-                            'sucursal_id'    => $sucursalId,
+                            'sede_id'        => $sedeId,
                             'tipo_movimiento' => 'SALIDA',
                             'unidad_id'      => $ingrediente->unidad_id,
                             'cantidad'       => floor($tomarGramos / $pesoUnidad),
-                            'cantidad_gramos' => $tomarGramos,
+                            'cantidad_convertida' => $tomarGramos,
                             'fecha'          => now(),
                             'observaciones'  => "Consumo por receta {$receta->nombre} ({$cantidadServido} raciones)"
                         ]);

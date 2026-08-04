@@ -16,6 +16,11 @@ class BusParada extends Model
         'estado' => 'boolean',
     ];
 
+    public function busRuta()
+    {
+        return $this->belongsTo(BusRuta::class, 'bus_ruta_id');
+    }
+
     public function getDireccionAttribute($value): string
     {
         return $value ?? 'Ninguna';
