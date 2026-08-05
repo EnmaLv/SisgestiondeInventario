@@ -9,7 +9,7 @@ class BusMarca extends Model
 {
     use ConvierteAMayusculasNoEloquent;
 
-    protected $table    = 'bus_marcas';
+    protected $table    = 'marcas';
     protected $fillable = ['nombre', 'descripcion', 'estado'];
 
     protected $casts = [

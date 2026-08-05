@@ -1,82 +1,416 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-@stack('styles')
-@stack('scripts')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-modulo="{{ session('modulo_activo', 'general') }}">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
+    <meta name="color-scheme" content="light dark">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Bienestar Estudiantil') }}</title>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <!-- 1. Script Anti-FOUC -->
+    <script>
+        (function() {
+            const getStoredTheme = () => localStorage.getItem('theme');
+            const getSystemTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
-    <!-- Scripts -->
+            let theme = getStoredTheme() || 'auto';
+            const appliedTheme = theme === 'auto' ? getSystemTheme() : theme;
+
+            if (appliedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+            document.documentElement.setAttribute('data-user-theme', theme);
+
+            let sidebarOpen = localStorage.getItem('sidebarOpen');
+            if (sidebarOpen === null) sidebarOpen = 'true';
+            document.documentElement.classList.add(sidebarOpen === 'true' ? 'sidebar-expanded' : 'sidebar-collapsed');
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- SweetAlert2 CDN & Theme Base -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
+    @stack('css')
+
+    <style>
+        /* ========== PALETA UNIFICADA Y LIMPIA BIENESTAR ESTUDIANTIL ========== */
+        :root {
+            --color-primary: #dc2626;
+
+            /* Fondo Vinotinto Uniforme en Navbar y Sidebar */
+            --header-sidebar-bg: #352728;
+            --header-sidebar-border: #5c2028;
+            --header-sidebar-text: #ffffff;
+
+            /* Estructura Base */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+
+            --trans-default: all 0.2s ease;
+        }
+
+        html.dark {
+            /* Vinotinto para modo oscuro */
+            --header-sidebar-bg: #352728;
+            --header-sidebar-border: #5c2028;
+
+            --bg-body: #0d0708;
+            --bg-card: #160c0e;
+            --border-color: #271418;
+            --text-main: #f8fafc;
+            --input-bg: #160c0e;
+            --input-border: #271418;
+        }
+
+        /* ELIMINAR SOBREESCRITURAS DE MÓDULO */
+        html[data-modulo] {
+            --color-primary: #dc2626 !important;
+        }
+
+        body {
+            background-color: var(--bg-body) !important;
+            color: var(--text-main) !important;
+        }
+
+        /* Navbar y Sidebar compartiendo EXACTAMENTE el mismo color de fondo */
+        #top-navbar,
+        #main-sidebar,
+        nav.top-navbar {
+            background-color: var(--header-sidebar-bg) !important;
+            border-color: var(--header-sidebar-border) !important;
+            color: var(--header-sidebar-text) !important;
+        }
+
+        /* Menú Limpio */
+        #main-sidebar nav a,
+        #main-sidebar nav button {
+            background-color: transparent !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-radius: 0.5rem !important;
+            margin-bottom: 0.15rem;
+            padding: 0.5rem 0.75rem !important;
+        }
+
+        #main-sidebar nav a:hover,
+        #main-sidebar nav button:hover,
+        #main-sidebar nav a.active,
+        #main-sidebar nav button.active,
+        #main-sidebar .sidebar-item-active {
+            background-color: #623739 !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+
+        #main-sidebar nav a svg,
+        #main-sidebar nav button svg {
+            color: #ffffff !important;
+        }
+
+        .bg-blue-50,
+        .bg-blue-100,
+        .bg-blue-600,
+        .dark\:bg-blue-900 {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+        }
+
+        * {
+            transition: var(--trans-default);
+        }
+
+        .no-transition,
+        .preload,
+        .preload * {
+            transition: none !important;
+        }
+
+        .invisible-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .invisible-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Inputs */
+        input:not([type="radio"]):not([type="checkbox"]):not([type="file"]),
+        select,
+        textarea {
+            background-color: var(--input-bg) !important;
+            border-color: var(--input-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--color-primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 2px #dc262640;
+        }
+
+        /* Sidebar Colapsable */
+        html.sidebar-collapsed #main-sidebar {
+            width: 4rem !important;
+        }
+
+        html.sidebar-expanded #main-sidebar {
+            width: 16rem !important;
+        }
+
+        /* ========== ESTILOS PERSONALIZADOS DE SWEETALERT2 ========== */
+        .swal2-toast-custom {
+            background: var(--bg-card) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+            padding: 0.85rem 1.25rem !important;
+        }
+
+        .swal2-toast-custom .swal2-title {
+            color: var(--text-main) !important;
+            font-weight: 700 !important;
+            font-size: 0.95rem !important;
+        }
+
+        .swal2-toast-custom .swal2-html-container {
+            color: var(--text-main) !important;
+            opacity: 0.85;
+            font-size: 0.85rem !important;
+        }
+
+        .swal2-popup-custom {
+            background: var(--bg-card) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 1.5rem !important;
+            padding: 1.5rem !important;
+        }
+
+        .swal2-popup-custom .swal2-title {
+            color: var(--text-main) !important;
+            font-weight: 800 !important;
+        }
+
+        .swal2-popup-custom .swal2-html-container {
+            color: var(--text-main) !important;
+            opacity: 0.9;
+        }
+    </style>
 </head>
 
-<body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
+<body
+    class="preload font-sans antialiased overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+    <div class="w-full flex flex-col overflow-hidden" style="height: 100dvh;" x-data="{ isChatOpen: false, sidebarOpen: localStorage.getItem('sidebarOpen') !== 'false' }"
+        x-init="$watch('sidebarOpen', val => {
+            localStorage.setItem('sidebarOpen', val);
+            document.documentElement.classList.toggle('sidebar-expanded', val);
+            document.documentElement.classList.toggle('sidebar-collapsed', !val);
+        })">
 
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+        <header
+            class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-40 flex-shrink-0 relative">
+            @includeIf('layouts.navigation')
+        </header>
 
+        <div class="flex flex-1 overflow-hidden relative" style="min-height: 0;">
+            @includeIf('layouts.sidebar')
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
+            <main class="flex-1 overflow-y-auto invisible-scrollbar p-6 scroll-smooth">
+                @isset($header)
+                    <div class="max-w-7xl mx-auto mb-6">
+                        {{ $header }}
+                    </div>
+                @endisset
 
-                    </ul>
+                @if (isset($slot))
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endif
+            </main>
 
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item d-flex align-items-center">
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="m-0">
-                                    @csrf
-                                    <button type="submit" class="rd-icon-btn" title="Cerrar sesión">
-                                        <i class="fas fa-power-off"></i>
-                                    </button>
-                                </form>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <main class="py-4">
-            @yield('content')
-        </main>
+            @if (View::exists('components.chat-window'))
+                <x-chat-window />
+            @endif
+        </div>
     </div>
+
+    <!-- SCRIPT CONFIGURACIÓN Y DISPARADOR DE SWEETALERT2 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mixin Toast elegante para notificaciones superiores derechas
+            window.Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-toast-custom'
+                },
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+
+            // Reemplazo y mejora de AppModal usando SweetAlert2
+            window.AppModal = {
+                show: function(title, text, options = {}) {
+                    const isDark = document.documentElement.classList.contains('dark');
+                    return Swal.fire({
+                        title: title || 'Aviso',
+                        html: text || '',
+                        icon: options.icon || 'info',
+                        showCancelButton: options.type !== 'alert',
+                        confirmButtonText: options.confirmText || 'Aceptar',
+                        cancelButtonText: options.cancelText || 'Cancelar',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: isDark ? '#374151' : '#e5e7eb',
+                        customClass: {
+                            popup: 'swal2-popup-custom',
+                            cancelButton: 'text-slate-700 dark:text-gray-200 font-bold rounded-xl px-5 py-2.5',
+                            confirmButton: 'text-white font-bold rounded-xl px-5 py-2.5'
+                        },
+                        buttonsStyling: true
+                    }).then((result) => result.isConfirmed);
+                },
+                confirm: function(title, text) {
+                    return this.show(title, text, {
+                        type: 'confirm',
+                        icon: 'warning'
+                    });
+                },
+                alert: function(title, text) {
+                    return this.show(title, text, {
+                        type: 'alert',
+                        icon: 'info'
+                    });
+                }
+            };
+
+            // Disparadores automáticos de sesión de Laravel
+            @if (session('success'))
+                window.Toast.fire({
+                    icon: 'success',
+                    title: '¡Operación Exitosa!',
+                    html: {!! json_encode(session('success')) !!}
+                });
+            @endif
+
+            @if (session('error'))
+                window.Toast.fire({
+                    icon: 'error',
+                    title: 'Atención',
+                    html: {!! json_encode(session('error')) !!}
+                });
+            @endif
+
+            @if (session('info'))
+                window.Toast.fire({
+                    icon: 'info',
+                    title: 'Información',
+                    html: {!! json_encode(session('info')) !!}
+                });
+            @endif
+
+            @if ($errors->any())
+                window.Toast.fire({
+                    icon: 'error',
+                    title: 'Error de Validación',
+                    html: {!! json_encode($errors->first()) !!}
+                });
+            @endif
+        });
+
+        window.addEventListener('load', () => setTimeout(() => document.body.classList.remove('preload'), 150));
+    </script>
+
+    @stack('scripts')
+
+    <form id="form-actualizar-tasa" action="{{ route('productos.actualizar.tasa') }}" method="POST"
+        style="display:none;">
+        @csrf
+    </form>
+
+    @if (session()->has('tasa_pendiente') || session()->has('tasa_obligatoria'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const isDark = document.documentElement.classList.contains('dark');
+
+                @if (session()->has('tasa_obligatoria'))
+                    Swal.fire({
+                        title: '🚨 Tasa requerida',
+                        html: `
+                            <p class="text-sm opacity-90">
+                                Debe registrar la <b>tasa del dólar</b> para poder navegar en el sistema.
+                            </p>
+                        `,
+                        icon: 'error',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        confirmButtonText: 'Registrar tasa',
+                        confirmButtonColor: '#dc2626',
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
+                    }).then(() => {
+                        document.getElementById('form-actualizar-tasa').submit();
+                    });
+                @elseif (session()->has('tasa_pendiente'))
+                    Swal.fire({
+                        title: '🔄 Tasa no actualizada',
+                        html: `
+                            <p class="text-sm opacity-90">
+                                Hay una tasa registrada, pero no corresponde al día de hoy.<br>
+                                ¿Desea actualizarla ahora?
+                            </p>
+                        `,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Actualizar',
+                        cancelButtonText: 'Más tarde',
+                        confirmButtonColor: '#16a34a',
+                        cancelButtonColor: isDark ? '#374151' : '#6b7280',
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('form-actualizar-tasa').submit();
+                        } else {
+                            fetch('{{ route('tasa.ignorar') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                        }
+                    });
+                @endif
+            });
+        </script>
+    @endif
 </body>
 
 </html>

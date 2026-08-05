@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bus_mantenimientos', function (Blueprint $table) {
+        Schema::create('mantenimientos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bus_vehiculo_id')->constrained('bus_vehiculos')->onDelete('cascade');
+            $table->foreignId('vehiculo_id')->constrained('vehiculos')->onDelete('cascade');
             $table->enum('tipo', ['preventivo', 'correctivo']);
             $table->string('titulo', 150);
             $table->text('descripcion')->nullable();
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bus_mantenimientos');
+        Schema::dropIfExists('mantenimientos');
     }
 };

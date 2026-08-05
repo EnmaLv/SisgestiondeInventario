@@ -3,6 +3,7 @@
         <form wire:submit="{{ $isEdit ? 'update' : 'create' }}" method="POST" class="rd-prevent-double-submit">
             @csrf
 
+            <!-- Identidad y Sistema -->
             <div class="mb-4">
                 <h5 class="rd-title-sm text-muted mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-id-card-alt mr-1"></i> Identidad y Sistema
@@ -12,8 +13,8 @@
                         <label class="rd-label">Cédula / ID</label>
                         <div class="rd-input-group {{ $errors->has('cedula') ? 'border-danger' : '' }}">
                             <span><i class="fas fa-fingerprint"></i></span>
-                            <input type="number" wire:model.lazy="cedula" min="7" name="cedula" class="rd-input form-control" placeholder="25123456" value="{{ old('cedula')}}"
-                            {{ $onlyShow ? 'disabled' : ''  }}>
+                            <input type="number" wire:model.lazy="cedula" min="7" name="cedula" class="rd-input form-control" placeholder="25123456" value="{{ old('cedula') }}"
+                            {{ $onlyShow ? 'disabled' : '' }}>
                         </div>
                         @error('cedula')
                             <small class="text-danger">{{ $message }}</small>
@@ -25,7 +26,7 @@
                             <span><i class="fas fa-calendar-day"></i></span>
                             <input wire:model="fecha_nacimiento" type="date" name="fecha_nacimiento" class="rd-input form-control" 
                             {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" value="{{ old('fecha_nacimiento') }}" 
-                            max="{{ Carbon\Carbon::now()->subYears(15)->format('Y-m-d') }}">
+                            max="{{ \Carbon\Carbon::now()->subYears(15)->format('Y-m-d') }}">
                         </div>
                         @error('fecha_nacimiento')
                             <small class="text-danger">{{ $message }}</small>
@@ -34,6 +35,7 @@
                 </div>
             </div>
 
+            <!-- Nombres y Apellidos -->
             <div class="mb-4">
                 <h5 class="rd-title-sm text-muted mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-user mr-1"></i> Nombres y Apellidos
@@ -44,8 +46,8 @@
                             <div class="col-md-6 mb-3">
                                 <label class="rd-label">Primer Nombre</label>
                                 <div class="rd-input-group">
-                                    <input wire:model="nombre" type="text" name="nombre" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }}
-                                     style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Juan" value="{{ old('nombre') }}">
+                                    <input wire:model="nombre" type="text" name="nombre" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}
+                                     style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Juan" value="{{ old('nombre') }}">
                                 </div>
                                 @error('nombre')
                                     <small class="text-danger">{{ $message }}</small>
@@ -54,8 +56,8 @@
                             <div class="col-md-6 mb-3">
                                 <label class="rd-label">Segundo Nombre</label>
                                 <div class="rd-input-group">
-                                    <input wire:model="segundo_nombre" type="text" name="segundo_nombre" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} 
-                                    style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Opcional" value="{{ old('segundo_nombre') }}">
+                                    <input wire:model="segundo_nombre" type="text" name="segundo_nombre" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} 
+                                    style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Opcional" value="{{ old('segundo_nombre') }}">
                                 </div>
                             </div>
                         </div>
@@ -65,8 +67,8 @@
                             <div class="col-md-6 mb-3">
                                 <label class="rd-label">Primer Apellido</label>
                                 <div class="rd-input-group">
-                                    <input wire:model="apellido" type="text" name="apellido" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }}
-                                     style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Pérez" value="{{ old('apellido') }}">
+                                    <input wire:model="apellido" type="text" name="apellido" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}
+                                     style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Pérez" value="{{ old('apellido') }}">
                                 </div>
                                 @error('apellido')
                                     <small class="text-danger">{{ $message }}</small>
@@ -75,7 +77,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="rd-label">Segundo Apellido</label>
                                 <div class="rd-input-group">
-                                    <input wire:model="segundo_apellido" type="text" name="segundo_apellido" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Opcional" value="{{ old('segundo_apellido') }}">
+                                    <input wire:model="segundo_apellido" type="text" name="segundo_apellido" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Opcional" value="{{ old('segundo_apellido') }}">
                                 </div>
                             </div>
                         </div>
@@ -83,6 +85,7 @@
                 </div>
             </div>
 
+            <!-- Información de Contacto -->
             <div class="mb-4">
                 <h5 class="rd-title-sm text-muted mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-address-book mr-1"></i> Información de Contacto
@@ -92,7 +95,7 @@
                         <label class="rd-label">Género</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-venus-mars"></i></span>
-                            <select wire:model="genero" name="genero" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
+                            <select wire:model="genero" name="genero" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="" selected>Seleccione</option>
                                 <option value="MASCULINO">MASCULINO</option>
                                 <option value="FEMENINO">FEMENINO</option>
@@ -106,8 +109,7 @@
                         <label class="rd-label">Teléfono Móvil</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-mobile-alt"></i></span>
-                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="412 123-4567" value="{{ old('telefono') }}"
-                            >
+                            <input wire:model="telefono" id="telefono" type="text" name="telefono" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="412 123-4567" value="{{ old('telefono') }}">
                         </div>
                         @error('telefono')
                             <small class="text-danger">{{ $message }}</small>
@@ -117,7 +119,7 @@
                         <label class="rd-label">Correo Electrónico</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-at"></i></span>
-                            <input wire:model="email" type="email" name="email" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="usuario@gmail.com" value="{{ old('email') }}">
+                            <input wire:model="email" type="email" name="email" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="usuario@gmail.com" value="{{ old('email') }}">
                         </div>
                         @error('email')
                             <small class="text-danger">{{ $message }}</small>
@@ -126,10 +128,10 @@
                 </div>
             </div>
 
-
+            <!-- Información Académica -->
             <div class="mb-4 fade-in">
                 <h5 class="rd-title-sm text-muted mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
-                    <i class="fas fa-address-book mr-1"></i> Información Academica
+                    <i class="fas fa-graduation-cap mr-1"></i> Información Académica
                 </h5>
 
                 <div class="row">
@@ -137,8 +139,8 @@
                         <label class="rd-label">PNF</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-university"></i></span>
-                            <select wire:model="pnfId" class="rd-input form-control" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
-                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
+                            <select wire:model="pnfId" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} 
+                            style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione PNF</option>
                                 @foreach($pnfs as $pnf)
                                     <option value="{{ $pnf->id_pnf }}" {{ old('pnf_id', request('pnf_id')) == $pnf->id_pnf ? 'selected' : '' }}>{{ $pnf->nombre_pnf }}</option>
@@ -150,8 +152,8 @@
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
                                 ¿No encuentras lo que buscas?
-                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
-                                style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.pnf.index', [
+                                <a {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} 
+                                style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.pnf.index', [
                                     'from' => url()->previous()
                                     ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
                                     Créalo aquí
@@ -160,15 +162,18 @@
                             @endif
                         </div>
                     </div>
+
                     <div class="col-md-4 mb-3">
                         <label class="rd-label">Sede del Estudiante</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-university"></i></span>
                             <select wire:model="sedeId" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}
-                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
+                            style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione Sede</option>
                                 @foreach($sede as $sed)
-                                    <option value="{{ $sed->id_sede }}" {{ old('sucursal_id', request('sucursal_id')) == $sed->id_sede ? 'selected' : '' }}>{{ $sed->nombre_sede }}</option>
+                                    <option value="{{ $sed->id }}" {{ old('sede_id', request('sede_id')) == $sed->id ? 'selected' : '' }}>
+                                        {{ $sed->nombre ?? $sed->nombre }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -176,8 +181,8 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
-                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
-                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.sucursales.create', [
+                                <a {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} 
+                                style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.maestros.sedes.create', [
                                     'from' => url()->current()
                                 ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
                                     Créala aquí
@@ -192,31 +197,30 @@
                         <div class="rd-input-group">
                             <span><i class="fas fa-university"></i></span>
                             <select wire:model="semestreId" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }}
-                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
+                            style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione Semestre</option>
-                            @php
-                                $ordinales = [
-                                    1 => '1er', 2 => '2do', 3 => '3er', 4 => '4to', 5 => '5to', 
-                                    6 => '6to', 7 => '7mo', 8 => '8vo', 9 => '9no', 10 => '10mo'
-                                ];
-                            @endphp
+                                @php
+                                    $ordinales = [
+                                        1 => '1er', 2 => '2do', 3 => '3er', 4 => '4to', 5 => '5to', 
+                                        6 => '6to', 7 => '7mo', 8 => '8vo', 9 => '9no', 10 => '10mo'
+                                    ];
+                                @endphp
 
-                            @for ($i = 1; $i <= 10; $i++)
-                                <option value="{{ $ordinales[$i] . ' SEMESTRE' }}">
-                                    {{ $ordinales[$i] }} Semestre
-                                </option>
-                            @endfor
+                                @for ($i = 1; $i <= 10; $i++)
+                                    <option value="{{ $ordinales[$i] . ' SEMESTRE' }}">
+                                        {{ $ordinales[$i] }} Semestre
+                                    </option>
+                                @endfor
                             </select>
                         </div>
                         @error('semestreId') <small class="text-danger">El Semestre es obligatorio</small> @enderror
-                        
                     </div>
                 </div>
             </div>
 
-
             <hr class="my-4" style="border-top: 2px dashed #eef2f6;">
 
+            <!-- Ubicación y Residencia -->
             <div class="mb-3">
                 <h5 class="rd-title-sm text-muted mb-3" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-map-marked-alt mr-1"></i> Ubicación y Residencia
@@ -226,7 +230,7 @@
                         <label class="rd-label">Estado</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-map"></i></span>
-                            <select wire:model.lazy="estadosVeId" name="estado_id" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}">
+                            <select wire:model.lazy="estadosVeId" name="estado_id" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}">
                                 <option value="">Seleccione Estado</option>
                                 @foreach($estadosVE as $estado)
                                     <option value="{{ $estado->id }}">{{ $estado->nombre_estado }}</option>
@@ -239,8 +243,8 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
-                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
-                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.estado.index', [
+                                <a {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} 
+                                style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.estado.index', [
                                     'from' => url()->current()
                                 ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
                                     Créalo aquí
@@ -252,8 +256,8 @@
                     <div class="col-md-4 mb-3">
                         <label class="rd-label">Municipio</label>
                         <div class="rd-input-group">
-                            <select wire:model.lazy="municipiosId"  name="municipio_id" class="rd-input form-control"
-                             {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" @if(!$enabledMunicipio) disabled @endif>
+                            <select wire:model.lazy="municipiosId" name="municipio_id" class="rd-input form-control"
+                             {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" @if(!$enabledMunicipio) disabled @endif>
                                 <option value="">Seleccione Municipio</option>
                                 @foreach($municipiosVE as $municipio)
                                     <option value="{{ $municipio->id }}">{{ $municipio->nombre_municipio }}</option>
@@ -266,8 +270,8 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                             <small style="color: #64748b; font-size: 0.85rem;">
-                                <a {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
-                            style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.municipio.index', [
+                                <a {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} 
+                                style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.municipio.index', [
                                     'from' => url()->current()
                                 ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
                                     Créalo aquí
@@ -280,7 +284,7 @@
                         <label class="rd-label">Localidad</label>
                         <div class="rd-input-group">
                             <select wire:model.lazy="parroquiaId" name="parroquia_id" class="rd-input form-control" 
-                            {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" @if(!$enabledParroquia) disabled @endif>
+                            {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" @if(!$enabledParroquia) disabled @endif>
                                 <option value="">Seleccione Localidad</option>
                                 @foreach($parroquiasVE as $parroquia)
                                     <option value="{{ $parroquia->id }}">{{ $parroquia->nombre_localidad }}</option>
@@ -293,8 +297,8 @@
                         <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
                             @if(!$isEdit)
                                 <small style="color: #64748b; font-size: 0.85rem;">
-                                    <a wire:model.lazy="parroquiaId" {{ $onlyShow  ||  !$formHabilitado? 'disabled' : ''  }} 
-                                style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.localidad.index', [
+                                    <a wire:model.lazy="parroquiaId" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} 
+                                    style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }} color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;" href="{{ route('admin.localidad.index', [
                                         'from' => url()->current()
                                     ]) }}" onclick="return !{{ $onlyShow || !$formHabilitado ? 'true' : 'false' }};">
                                         Créala aquí
@@ -311,7 +315,7 @@
                         <label class="rd-label">Calle / Avenida</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-road"></i></span>
-                            <input wire:model="calle" type="text" name="calle" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Ej: Av. Francisco de Miranda" value="{{ old('calle') }}">
+                            <input wire:model="calle" type="text" name="calle" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Ej: Av. Francisco de Miranda" value="{{ old('calle') }}">
                         </div>
                         @error('calle')
                             <small class="text-danger">{{ $message }}</small>
@@ -322,7 +326,7 @@
                         <label class="rd-label">Sector / Urbanización</label>
                         <div class="rd-input-group">
                             <span><i class="fas fa-building"></i></span>
-                            <input wire:model="sector" type="text" name="sector" class="rd-input form-control" {{$onlyShow ||  !$formHabilitado ? 'disabled' : '' }} style="{{$onlyShow ||  !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Ej: Urb. Los Palos Grandes" value="{{ old('sector') }}">
+                            <input wire:model="sector" type="text" name="sector" class="rd-input form-control" {{ $onlyShow || !$formHabilitado ? 'disabled' : '' }} style="{{ $onlyShow || !$formHabilitado ? 'opacity: 0.5;' : '' }}" placeholder="Ej: Urb. Los Palos Grandes" value="{{ old('sector') }}">
                         </div>
                         @error('sector')
                             <small class="text-danger">{{ $message }}</small>
@@ -367,30 +371,29 @@
         });
 
         $(document).ready(function() {
-            $("[data-mask]").inputmask();
+            if ($.fn.inputmask) {
+                $("[data-mask]").inputmask();
+            }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             const telefonoInput = document.querySelector('#telefono');
-            telefonoInput.addEventListener('input', (e) => {
-                let value = e.target.value.replace(/\D/g, '');
-                value = value.substring(0, 10);
-                if (value.length > 3) {
-                    value = value.substring(0, 3) + ' ' + value.substring(3);
-                }
-
-                // Agregar espacio después del 3er dígito
-                if (value.length > 3) {
-                    value = value.substring(0, 3) + ' ' + value.substring(3);
-                }
-
-                //Agregar guion
-                if (value.length > 8) {
-                    value = value.substring(0, 8) + '-' + value.substring(8);
-                }
-                
-                e.target.value = value;
-            })
+            if (telefonoInput) {
+                telefonoInput.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.substring(0, 10);
+                    
+                    // Formatear espacio y guión: 412 123-4567
+                    if (value.length > 3) {
+                        value = value.substring(0, 3) + ' ' + value.substring(3);
+                    }
+                    if (value.length > 7) {
+                        value = value.substring(0, 7) + '-' + value.substring(7);
+                    }
+                    
+                    e.target.value = value;
+                });
+            }
             
             const cedulaInput = document.querySelector('input[name="cedula"]');
             if (cedulaInput) {
@@ -401,6 +404,7 @@
                     }
                 });
             }
+
             document.addEventListener('livewire:initialized', () => {
                 @this.on('alert', (params) => {
                     Swal.fire({
@@ -412,11 +416,6 @@
                     });
                 });
             });
-        })
+        });
     </script>
 @endsection
-
-
-
-
-

@@ -416,7 +416,7 @@ class RegistroPersona extends Component
 
         $this->pnfs = DB::table('pnf')->where('id_estatus', 1)->get();
         $this->estadosVE = DB::table('estados')->where('status', 1)->get();
-        $this->sede = DB::table('sede')->where('estatus', 1)->get();
+        $this->sede = DB::table('sede')->where('activo', 1)->get();
     }
 
     public function render()

@@ -12,7 +12,7 @@
         <!-- Texto principal -->
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
-                Compra nro {{ $compra->id }}
+                Compra Nro {{ $compra->id }}
             </h1>
 
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -50,10 +50,10 @@
         <div class="col-md-12 m-auto">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title"><b>Compra creada</b></h3>
+                    <h3 class="card-title"><b>Compra Creada</b></h3>
 
                     <div class="card-tools">
-                        <a href="{{ url('admin/movimientos/compras') }}" class="btn btn-tool">
+                        <a href="{{ route('admin.movimientos.compras.index') }}" class="btn btn-tool">
                             <i class="fas fa-arrow-left"></i>
                             <b>Volver</b>
                         </a>
@@ -66,7 +66,7 @@
                             <div class="row">
                                 <div class="col-md-3" style="display: inline-block;">
                                     <div class="form-group">
-                                        <label for="nombre">Proveedor</label>
+                                        <label for="proveedor_id">Proveedor</label>
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text inline-block"><i
@@ -75,8 +75,6 @@
                                             <input type="text" class="form-control" id="proveedor_id" name="proveedor_id"
                                                 placeholder="Seleccione proveedor"
                                                 value="{{ old('proveedor_id', $compra->proveedor_nombre) }}" readonly>
-
-
                                         </div>
                                         @error('proveedor_id')
                                             <div class="alert text-danger p-0 m-0">
@@ -86,16 +84,15 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-md-2" style="display: inline-block;">
-                                    <label for="codigo">Fecha de Compra</label>
+                                    <label for="fecha">Fecha de Compra</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text inline-block"><i
                                                     class="fas fa-calendar-alt"></i></span>
                                         </div>
                                         <input type="datetime-local"
-                                            value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}"
                                             class="form-control" id="fecha" name="fecha"
-                                            value="{{ old('fecha', $compra->fecha) }}" disabled>
+                                            value="{{ old('fecha', $compra->fecha ? \Carbon\Carbon::parse($compra->fecha)->format('Y-m-d\TH:i') : '') }}" disabled>
                                     </div>
                                     @error('fecha')
                                         <div class="alert text-danger p-0 m-0">
@@ -104,21 +101,15 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-md-3" style="display: inline-block;">
-                                    <label for="codigo">Observaciones</label>
+                                    <label for="observaciones">Observaciones</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text inline-block"><i
                                                     class="fas fa-sticky-note"></i></span>
                                         </div>
-                                        @if ($compra->observaciones == !null)
-                                            <input type="text" class="form-control" id="observaciones"
-                                                name="observaciones" placeholder="Ingrese observaciones"
-                                                value="{{ old('observaciones', $compra->observaciones) }}" readonly>
-                                        @else
-                                            <input type="text" class="form-control" id="observaciones"
-                                                name="observaciones" placeholder="Ingrese observaciones"
-                                                value="Sin observaciones" readonly>
-                                        @endif
+                                        <input type="text" class="form-control" id="observaciones"
+                                            name="observaciones" placeholder="Ingrese observaciones"
+                                            value="{{ old('observaciones', $compra->observaciones ?? 'Sin observaciones') }}" readonly>
                                     </div>
                                     @error('observaciones')
                                         <div class="alert text-danger p-0 m-0">
@@ -127,7 +118,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-md-2" style="display: inline-block;">
-                                    <label for="codigo">Compra</label>
+                                    <label for="estado">Estado Compra</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text inline-block"><i
@@ -144,24 +135,17 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-md-2" style="display: inline-block;">
-                                    <label for="codigo">Sedes de Destino</label>
+                                    <label for="sede_destino">Sede de Destino</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text inline-block"><i
-                                                    class="fas fa-sticky-note"></i></span>
+                                                    class="fas fa-building"></i></span>
                                         </div>
-                                        @if ($sucursal_destino != null)
-                                            <input type="text" class="form-control" id="estado" name="estado"
-                                                placeholder="Ingrese estado"
-                                                value="{{ old('estado', $sucursal_destino ? $sucursal_destino->nombre : '') }}"
-                                                readonly>
-                                        @else
-                                            <input type="text" class="form-control" id="sucursal_destino"
-                                                name="sucursal_destino" placeholder="Ingrese sede de destino"
-                                                value="Sin concluir" readonly>
-                                        @endif
+                                        <input type="text" class="form-control" id="sede_destino"
+                                            name="sede_destino" placeholder="Sede de destino"
+                                            value="{{ $sede_destino ? $sede_destino->nombre : 'Sin concluir' }}" readonly>
                                     </div>
-                                    @error('estado')
+                                    @error('sede_destino')
                                         <div class="alert text-danger p-0 m-0">
                                             <b>{{ 'Este campo es obligatorio.' }}</b>
                                         </div>
@@ -171,7 +155,6 @@
 
                         </div>
                     </div>
-
 
                 </div>
             </div>
@@ -216,7 +199,6 @@
                                 <hr>
                             @else
                                 <h4>No hay productos agregados a la compra.</h4>
-
                             @endif
                             <h3 align="right"><b>Total de la Compra:
                                 </b>{{ number_format($compra->total, 2, ',', '.') }}.BS</h3>
@@ -227,13 +209,10 @@
             </div>
         </div>
     </div>
-
-
 @stop
 
 @push('css')
     <style>
-        /* Estilos base para las tarjetas */
         .rd-card {
             background: #ffffff;
             border-radius: 14px;
@@ -242,7 +221,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Header de la tarjeta */
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -259,7 +237,6 @@
             margin: 0;
         }
 
-        /* Estilos para los grupos de formulario */
         .form-group {
             margin-bottom: 1.25rem;
         }
@@ -272,7 +249,6 @@
             font-size: 0.875rem;
         }
 
-        /* Estilos para los inputs */
         .input-group {
             border: 1px solid #d8dee9;
             border-radius: 12px;
@@ -302,7 +278,6 @@
             cursor: not-allowed;
         }
 
-        /* Estilos para la tabla */
         .table {
             width: 100%;
             margin-bottom: 1.5rem;
@@ -330,7 +305,6 @@
             color: #4a5568;
         }
 
-        /* Botones */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -347,7 +321,6 @@
 
         .card-tools {
             margin-left: auto;
-            /* Empuja el botón a la derecha */
             display: flex;
             align-items: center;
         }
@@ -376,7 +349,6 @@
             background-color: #f8f9fa;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .card-header {
                 flex-direction: column;
@@ -391,7 +363,6 @@
             }
         }
 
-        /* Estilos para mensajes de error */
         .alert.alert-danger {
             background-color: #fef2f2;
             border: 1px solid #fecaca;
@@ -402,29 +373,12 @@
             margin-top: 0.25rem;
         }
 
-        /* Mejoras visuales para el contenedor principal */
         .card-body {
             padding: 1.5rem;
         }
 
-        /* Estilos para el encabezado personalizado */
         .content-header {
             padding: 1.5rem 1.5rem 0;
-        }
-
-        /* Ajustes para la imagen de perfil */
-        .profile-image {
-            width: 46px;
-            height: 46px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-        }
-
-        .profile-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
     </style>
 @endpush

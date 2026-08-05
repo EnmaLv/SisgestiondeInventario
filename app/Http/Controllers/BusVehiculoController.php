@@ -6,7 +6,7 @@ use App\Models\BusVehiculo;
 use App\Models\BusModelo;
 use App\Models\BusMarca;
 use App\Models\BusTipoCombustible;
-use App\Models\Sucursal;
+use App\Models\Sede;
 use Illuminate\Http\Request;
 
 class BusVehiculoController extends Controller
@@ -15,18 +15,21 @@ class BusVehiculoController extends Controller
     private function rules(int $excludeId = null): array
     {
         return [
-            'placa'                    => 'required|string|max:20|unique:bus_vehiculos,placa,' . $excludeId,
-            'bus_modelo_id'            => 'required|exists:bus_modelos,id',
+            'placa'                    => 'required|string|max:20|unique:vehiculos,placa,' . $excludeId,
+            'modelo_id'                => 'required|exists:modelos,id',
             'anio'                     => 'required|integer|min:1990|max:' . date('Y'),
             'color'                    => 'required|string|max:50',
             'cantidad_pasajeros'       => 'required|integer|min:1|max:150',
-            'bus_tipo_combustible_id'  => 'required|exists:bus_tipo_combustibles,id',
-            'cantidad_bocas'           => 'required|integer|min:1|max:10',
+            'peso'                     => 'required|string|max:50',
+            'tipo_combustible_id'      => 'required|exists:tipo_combustibles,id',
+            'cantidad_cilindros'       => 'required|integer|min:1|max:10',
             'capacidad_tanque_litros'  => 'required|numeric|min:1|max:1000',
-            'consumo_litros_km'        => 'required|numeric|min:0.001|max:5',
+            'consumo_urbano'           => 'required|numeric|min:0.001|max:5',
+            'consumo_carretera'        => 'required|numeric|min:0.001|max:5',
+            'consumo_relenti'          => 'required|numeric|min:0.001|max:50',
             'km_actual'                => 'required|numeric|min:0|max:9999999',
             'km_proximo_mantenimiento' => 'required|numeric|min:0|max:9999999',
-            'sucursal_id'              => 'required|exists:sucursals,id',
+            'sede_id'                  => 'required|exists:sede,id',
             'estado'                   => 'required|in:disponible,en_ruta,mantenimiento,inactivo',
         ];
     }
@@ -42,9 +45,11 @@ class BusVehiculoController extends Controller
         $modelos    = BusModelo::where('estado', 1)->orderBy('nombre')->get();
         $marcas     = BusMarca::where('estado', 1)->orderBy('nombre')->get();
         $tipos      = BusTipoCombustible::where('estado', 1)->orderBy('nombre')->get();
-        $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
-        return view('admin.transporte.maestros.bus_vehiculos.create',
-            compact('modelos', 'marcas', 'tipos', 'sucursales'));
+        $sedes = Sede::where('activo', 1)->orderBy('nombre')->get();
+        return view(
+            'admin.transporte.maestros.bus_vehiculos.create',
+            compact('modelos', 'marcas', 'tipos', 'sedes')
+        );
     }
 
     public function store(Request $request)
@@ -61,9 +66,11 @@ class BusVehiculoController extends Controller
         $modelos    = BusModelo::where('estado', 1)->orderBy('nombre')->get();
         $marcas     = BusMarca::where('estado', 1)->orderBy('nombre')->get();
         $tipos      = BusTipoCombustible::where('estado', 1)->orderBy('nombre')->get();
-        $sucursales = Sucursal::where('activo', 1)->orderBy('nombre')->get();
-        return view('admin.transporte.maestros.bus_vehiculos.edit',
-            compact('busVehiculo', 'modelos', 'marcas', 'tipos', 'sucursales'));
+        $sedes      = Sede::where('activo', 1)->orderBy('nombre')->get();
+        return view(
+            'admin.transporte.maestros.bus_vehiculos.edit',
+            compact('busVehiculo', 'modelos', 'marcas', 'tipos', 'sedes')
+        );
     }
 
     public function update(Request $request, BusVehiculo $busVehiculo)
@@ -91,7 +98,6 @@ class BusVehiculoController extends Controller
             ->with('success', 'Vehículo activado correctamente.');
     }
 
-    // ── Verificación de placa duplicada en tiempo real ────────────
     public function verificarPlaca(Request $request)
     {
         $query = BusVehiculo::where('placa', strtoupper(trim($request->placa)));

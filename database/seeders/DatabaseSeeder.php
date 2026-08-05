@@ -10,19 +10,19 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            DepartamentoSeeder::class,
             EstatusSeeder::class,
             UnidadSeeder::class,
             ModulosSeeder::class,
             TipoProductoSeeder::class,
             CategoriaSeeder::class,
-            SucursalSeeder::class,
+            SedeSeeder::class,
             RecetaSeeder::class,
             EstadoSeeder::class,
             MunicipioSeeder::class,
             LocalidadSeeder::class,
             PerfilSeeder::class,
             PnfSeeder::class,
-            SedeSeeder::class,
             PersonaSeeder::class,
             ProductoSeeder::class,
             RecetaIngredienteSeeder::class,
@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             EnvasePrimarioSeeder::class,
             CategoriaMedicamentoSeeder::class,
             RolModuloSeeder::class,
+            JornadaBecaSeeder::class,
         ]);
         \App\Models\Proveedor::factory(1)->create();
     }

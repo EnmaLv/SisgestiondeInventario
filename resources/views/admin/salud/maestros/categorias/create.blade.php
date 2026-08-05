@@ -3,7 +3,7 @@
 @section('content_header')
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Nueva Categoria</h1>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Nueva Categoría</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
@@ -46,11 +46,16 @@
                         <div class="input-group mb-2">
                             <span class="input-group-text"><i class="fas fa-tag"></i></span>
                             <input type="text" class="form-control rd-filter-input" id="nombre" name="nombre"
-                                placeholder="Ingrese el nombre de la categoria" value="{{ old('nombre') }}">
+                                placeholder="Ingrese el nombre de la categoría" value="{{ old('nombre') }}">
                         </div>
                         @error('nombre')
                             <div class="text-danger"><b>{{ $message }}</b></div>
                         @enderror
+                    </div>
+                    <div class="form-group mt-3">
+                        <label class="font-weight-bold">Descripción</label>
+                        <textarea class="form-control rd-filter-input" id="descripcion" name="descripcion" rows="3"
+                            placeholder="Ingrese la descripción de la categoría" style="resize:none;">{{ old('descripcion') }}</textarea>
                     </div>
                     <div class="mt-4 d-flex justify-content-end gap-2">
                         <a href="{{ url('admin/salud/maestros/categorias') }}" class="rd-btn rd-btn-default">

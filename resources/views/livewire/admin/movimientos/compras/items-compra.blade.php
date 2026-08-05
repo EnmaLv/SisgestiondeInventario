@@ -121,7 +121,7 @@
                                 <td>{{ $detalle->producto->nombre }}</td>
                                 <td>{{ $detalle->lote->codigo_lote }}</td>
                                 <td>{{ round($detalle->cantidad) }}</td>
-                                <td>{{ $detalle->cantidad_gramos }}</td>
+                                <td>{{ $detalle->cantidad_convertida }}</td>
                                 <td>{{ number_format($detalle->precio_unitario, 2, ',', '.') }} .BS</td>
                                 <td>{{ number_format($detalle->subtotal, 2, ',', '.') }} .BS</td>
                                 <td>

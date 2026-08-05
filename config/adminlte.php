@@ -411,7 +411,7 @@ return [
             'text' => 'Control de Stock',
             'icon' => 'fas fa-warehouse',
             'module' => 'comedor',
-            'active' => ['admin/movimientos/inventario*', 'admin/movimientos/lotes*', 'admin/movimientos/sucursales_lotes*'],
+            'active' => ['admin/movimientos/inventario*', 'admin/movimientos/lotes*', 'admin/movimientos/sedes_lotes*'],
             'submenu' => [
                 [
                     'text' => 'Lotes',
@@ -421,9 +421,9 @@ return [
                 ],
                 [
                     'text' => 'Existencias por Sede',
-                    'url' => 'admin/movimientos/sucursales_lotes',
+                    'url' => 'admin/movimientos/sedes_lotes',
                     'icon' => 'fas fa-store-alt',
-                    'active' => ['admin/movimientos/sucursales_lotes*'],
+                    'active' => ['admin/movimientos/sedes_lotes*'],
                 ],
             ]
         ],
@@ -449,13 +449,13 @@ return [
             'text' => 'Configuración General',
             'icon' => 'fas fa-cog',
             'module' => 'administracion',
-            'active' => ['admin/maestros/sucursales*', 'admin/maestros/proveedores*', 'admin/maestros/pnf*'],
+            'active' => ['admin/maestros/sedes*', 'admin/maestros/proveedores*', 'admin/maestros/pnf*'],
             'submenu' => [
                 [
                     'text' => 'Sedes y Anexos',
-                    'url' => 'admin/maestros/sucursales',
+                    'url' => 'admin/maestros/sedes',
                     'icon' => 'fas fa-store',
-                    'active' => ['admin/maestros/sucursales*'],
+                    'active' => ['admin/maestros/sedes*'],
                 ],
                 [
                     'text' => 'Proveedores',
@@ -679,6 +679,7 @@ return [
             'url'    => 'admin/transporte/maestros/bus_rutas',
             'active' => ['admin/transporte/maestros/bus_rutas*'],
         ],
+
         [
             'text'   => 'Paradas',
             'icon'   => 'fas fa-map-pin',
@@ -687,6 +688,25 @@ return [
             'url'    => 'admin/transporte/maestros/bus_paradas',
             'active' => ['admin/transporte/maestros/bus_paradas*'],
         ],
+
+        [
+            'text'   => 'Viajes',
+            'icon'   => 'fas fa-calendar-alt',
+            'module' => 'transporte',
+            'key'    => 'transporte_viajes',
+            'url'    => 'admin/transporte/maestros/bus_viajes',
+            'active' => ['admin/transporte/maestros/bus_viajes*'],
+        ],
+
+        [
+            'text' => 'Jornada',
+            'key' => 'jornada_becas',
+            'module' => 'beca',
+            'url' => 'admin/becas/jornada',
+            'icon' => 'fas fa-user-clock',
+            'active' => ['admin/becas/jornada*'],
+        ]
+
     ],
 
 

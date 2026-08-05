@@ -54,10 +54,10 @@
                         <th style="width:60px">#</th>
                         <th class="text-center">Placa</th>
                         <th class="text-center">Marca / Modelo</th>
-                        <th class="text-center">Año</th>
-                        <th class="text-center">Color</th>
+                        <th class="text-center">Año / Color</th>
+                        <th class="text-center">Peso</th>
                         <th class="text-center">Combustible</th>
-                        <th class="text-center">Pasajeros</th>
+                        <th class="text-center">Capacidad</th>
                         <th class="text-center">Estado</th>
                         <th style="width:150px" class="text-center">Acciones</th>
                     </tr>
@@ -72,10 +72,14 @@
                             <td class="text-center">
                                 {{ $vehiculo->modelo->busMarca->nombre ?? '-' }} / {{ $vehiculo->modelo->nombre ?? '-' }}
                             </td>
-                            <td class="text-center">{{ $vehiculo->anio }}</td>
-                            <td class="text-center">{{ $vehiculo->color }}</td>
-                            <td class="text-center">{{ $vehiculo->tipoCombustible->nombre ?? '-' }}</td>
-                            <td class="text-center">{{ $vehiculo->cantidad_pasajeros }}</td>
+                            <td class="text-center">{{ $vehiculo->anio }} - <small class="text-muted">{{ $vehiculo->color }}</small></td>
+                            <td class="text-center">{{ $vehiculo->peso }}</td>
+                            <td class="text-center">
+                                <span title="Urbano: {{ $vehiculo->consumo_urbano }} L/km | Carretera: {{ $vehiculo->consumo_carretera }} L/km | Ralentí: {{ $vehiculo->consumo_relenti }} L/h">
+                                    {{ $vehiculo->tipoCombustible->nombre ?? '-' }} <i class="fas fa-info-circle text-muted" style="font-size:0.8rem;"></i>
+                                </span>
+                            </td>
+                            <td class="text-center">{{ $vehiculo->cantidad_pasajeros }} pas.</td>
                             <td class="text-center">{!! $vehiculo->estado_badge !!}</td>
                             <td class="text-center">
                                 <div class="rd-action-group">

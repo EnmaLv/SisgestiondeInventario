@@ -54,7 +54,7 @@ class Categoria extends Model
             'tipo_producto_id' => 1, //ESTO ES MOMENTANEO
             'activo'      => true,
             'created_at'  => now(),
-            'updated_at'  => now(),
+            'updated_at'  => now(), 
         ]);
     }
 

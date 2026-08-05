@@ -11,8 +11,8 @@ class BusParadaController extends Controller
     {
         return [
             'nombre'    => 'required|string|max:100|unique:bus_paradas,nombre,' . $excludeId,
-            'lat'       => 'nullable|numeric|between:-90,90',
-            'lng'       => 'nullable|numeric|between:-180,180',
+            'lat'       => 'required|numeric|between:-90,90',
+            'lng'       => 'required|numeric|between:-180,180',
             'direccion' => 'nullable|string|max:255',
         ];
     }
@@ -23,41 +23,32 @@ class BusParadaController extends Controller
         return view('admin.transporte.maestros.bus_paradas.index', compact('paradas'));
     }
 
+    public function create()
+    {
+        return view('admin.transporte.maestros.bus_paradas.create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules());
-        $parada = BusParada::crearParada($validated);
-        return response()->json([
-            'success' => true,
-            'message' => 'Parada registrada correctamente.',
-            'parada'  => [
-                'id'        => $parada->id,
-                'nombre'    => $parada->nombre,
-                'lat'       => $parada->lat,
-                'lng'       => $parada->lng,
-                'direccion' => $parada->direccion,
-                'estado'    => true,
-            ],
-        ]);
+        BusParada::crearParada($validated);
+
+        return redirect()->route('admin.transporte.maestros.bus_paradas.index')
+            ->with('success', 'Parada registrada correctamente.');
+    }
+
+    public function edit(BusParada $busParada)
+    {
+        return view('admin.transporte.maestros.bus_paradas.edit', compact('busParada'));
     }
 
     public function update(Request $request, BusParada $busParada)
     {
         $validated = $request->validate($this->rules($busParada->id));
         BusParada::actualizarParada($busParada, $validated);
-        $busParada->refresh();
-        return response()->json([
-            'success' => true,
-            'message' => 'Parada actualizada correctamente.',
-            'parada'  => [
-                'id'        => $busParada->id,
-                'nombre'    => $busParada->nombre,
-                'lat'       => $busParada->lat,
-                'lng'       => $busParada->lng,
-                'direccion' => $busParada->direccion,
-                'estado'    => $busParada->estado,
-            ],
-        ]);
+
+        return redirect()->route('admin.transporte.maestros.bus_paradas.index')
+            ->with('success', 'Parada actualizada correctamente.');
     }
 
     public function destroy(BusParada $busParada)

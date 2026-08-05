@@ -123,7 +123,7 @@ class CheckMenuPermission
                     return $next($request);
                 }
 
-                // Also allow simple substring matches for menu keys (e.g. 'sucursales' matching 'admin/maestros/sucursales/create')
+                // Also allow simple substring matches for menu keys (e.g. 'sedes' matching 'admin/maestros/sedes/create')
                 if (Str::contains($path, $p) || ($routeName && Str::contains($routeName, $p))) {
                     return $next($request);
                 }

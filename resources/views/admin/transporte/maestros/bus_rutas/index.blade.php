@@ -41,8 +41,8 @@
                     <form action="{{ route('admin.transporte.maestros.bus_rutas.index') }}" method="GET"
                         class="rd-search-inline" role="search">
                         <input type="hidden" name="estado" value="{{ request('estado', 1) }}">
-                        <input type="text" name="buscar" value="{{ request('buscar') }}"
-                            class="rd-search-input" placeholder="Buscar ruta..." />
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
+                            placeholder="Buscar ruta..." />
                         <button class="rd-icon-btn" type="submit"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
@@ -67,26 +67,31 @@
                                 {{ ($rutas->currentPage() - 1) * $rutas->perPage() + $loop->iteration }}
                             </td>
                             <td class="text-center">{{ $ruta->nombre }}</td>
+
                             <td class="text-center">
-                                {{ $ruta->sucursalOrigen->nombre ?? '-' }}
-                                <i class="fas fa-arrow-right mx-1" style="color:var(--color-primary)"></i>
-                                {{ $ruta->sucursalDestino->nombre ?? '-' }}
+                                @if ($ruta->paradas && $ruta->paradas->isNotEmpty())
+                                    {{ $ruta->paradas->first()->nombre }}
+                                    <i class="fas fa-arrow-right mx-1" style="color:var(--color-primary)"></i>
+                                    {{ $ruta->paradas->last()->nombre }}
+                                @else
+                                    <span class="text-muted" style="font-size: 0.85rem;">Sin paradas trazadas</span>
+                                @endif
                             </td>
+
                             <td class="text-center">{{ $ruta->distancia_km }} km</td>
                             <td class="text-center" style="font-size:0.85rem;">
-                                @if($ruta->hora_salida_manana)
-                                    <span class="rd-badge rd-badge-success"> {{ $ruta->hora_salida_manana }}</span>
-                                @endif
-                                @if($ruta->hora_salida_tarde)
-                                    <span class="rd-badge rd-badge-warning"> {{ $ruta->hora_salida_tarde }}</span>
-                                @endif
-                                @if($ruta->hora_salida_noche)
-                                    <span class="rd-badge rd-badge-danger"> {{ $ruta->hora_salida_noche }}</span>
-                                @endif
-                                @if(!$ruta->hora_salida_manana && !$ruta->hora_salida_tarde && !$ruta->hora_salida_noche)
-                                    <span class="text-muted">Sin horario</span>
-                                @endif
+                                @forelse($ruta->horarios as $horario)
+                                    <span
+                                        class="rd-badge {{ $horario->tipo_viaje === 'entrada' ? 'rd-badge-success' : 'rd-badge-warning' }} m-1"
+                                        title="Viaje de {{ $horario->tipo_viaje }}">
+                                        {{ substr($horario->hora_salida, 0, 5) }}
+                                        {{ $horario->tipo_viaje === 'entrada' ? '☀️' : '🏠' }}
+                                    </span>
+                                @empty
+                                    <span class="text-muted">Sin horarios</span>
+                                @endforelse
                             </td>
+
                             <td class="text-center">
                                 @if ($ruta->estado)
                                     <span class="rd-badge rd-badge-success">Activa</span>
@@ -142,27 +147,27 @@
 @stop
 
 @push('js')
-<script>
-function confirmAccion(event, button, accion, entidad) {
-    event.preventDefault();
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: `¿Desea ${accion} la ${entidad}?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: `Sí, ${accion}`,
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) button.closest('form').submit();
-    });
-}
+    <script>
+        function confirmAccion(event, button, accion, entidad) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Desea ${accion} la ${entidad}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Sí, ${accion}`,
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) button.closest('form').submit();
+            });
+        }
 
-document.getElementById('estadoToggle').addEventListener('change', function() {
-    const params = new URLSearchParams(window.location.search);
-    params.set('estado', this.checked ? 1 : 0);
-    window.location.href = "{{ route('admin.transporte.maestros.bus_rutas.index') }}?" + params.toString();
-});
-</script>
+        document.getElementById('estadoToggle').addEventListener('change', function() {
+            const params = new URLSearchParams(window.location.search);
+            params.set('estado', this.checked ? 1 : 0);
+            window.location.href = "{{ route('admin.transporte.maestros.bus_rutas.index') }}?" + params.toString();
+        });
+    </script>
 @endpush

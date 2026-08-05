@@ -1,230 +1,397 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+        style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Registrar Nueva Ruta</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
-            </p>
+            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem; color:#0f172a; font-weight:700;">Crear Nueva Ruta</h1>
+            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">Registre y trace el recorrido de una nueva ruta de
+                transporte.</p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
-            <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
-                <span style="font-weight:600;font-size:0.95rem;">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</span>
-            </div>
-            <div style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario" style="width:100%;height:100%;object-fit:cover;">
-            </div>
-        </div>
+        <a href="{{ route('admin.transporte.maestros.bus_rutas.index') }}" class="rd-btn rd-btn-default"><i
+                class="fas fa-arrow-left"></i> Volver</a>
     </div>
 @stop
 
 @section('content')
-    <div class="rd-card p-4">
-        <div class="rd-card-header mb-3">
-            <h3 class="rd-title-sm">Datos de la Ruta</h3>
-            <a href="{{ route('admin.transporte.maestros.bus_rutas.index') }}" class="rd-btn rd-btn-default">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
+    @if ($errors->any())
+        <div class="alert alert-danger shadow-sm" style="border-radius: 8px;">
+            <b class="d-block mb-1"><i class="fas fa-exclamation-triangle mr-2"></i> Por favor verifique los siguientes
+                errores:</b>
+            <ul class="mb-0 pl-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
+    @endif
 
-        <form action="{{ route('admin.transporte.maestros.bus_rutas.store') }}" method="POST"
-            class="rd-prevent-double-submit">
-            @csrf
+    @if ($errors->has('error'))
+        <div class="alert alert-danger"><b>{{ $errors->first('error') }}</b></div>
+    @endif
 
-            {{-- Fila 1: Nombre, Distancia --}}
-            <div class="row">
-                <div class="col-md-6">
+    <form action="{{ route('admin.transporte.maestros.bus_rutas.store') }}" method="POST" class="rd-prevent-double-submit">
+        @csrf
+
+        <div id="hidden-paradas-inputs"></div>
+
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="rd-card p-4 mb-4"
+                    style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
+                    <h3 class="rd-title-sm mb-3" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Datos de la Ruta
+                    </h3>
+
                     <div class="form-group">
-                        <label class="font-weight-bold">Nombre de la Ruta</label>
+                        <label class="rd-label">Nombre de la Ruta</label>
                         <div class="input-group mt-1">
                             <span class="input-group-text"><i class="fas fa-route"></i></span>
-                            <input type="text" name="nombre"
-                                class="form-control rd-filter-input @error('nombre') is-invalid @enderror"
-                                placeholder="Ej: Ruta Acarigua - Araure"
-                                value="{{ old('nombre') }}" maxlength="100"
-                                oninput="this.value=this.value.slice(0,100)">
+                            <input type="text" name="nombre" id="inputNombre"
+                                class="form-control rd-input @error('nombre') is-invalid @enderror"
+                                placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre') }}" maxlength="100" required>
                         </div>
-                        @error('nombre') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
+                        <div id="errorNombreUnico" class="text-danger mt-1" style="display:none;"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group mb-3">
+                                <label class="rd-label">Distancia (km)</label>
+                                <div class="input-group mt-1">
+                                    <span class="input-group-text"><i class="fas fa-road"></i></span>
+                                    <input type="number" name="distancia_km" id="inputDistancia" step="0.01"
+                                        class="form-control rd-input" placeholder="Calculando..."
+                                        value="{{ old('distancia_km') }}" min="0.1" required readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group mb-3">
+                                <label class="rd-label">Sede</label>
+                                <div class="input-group mt-1">
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                    <select name="sede_id" class="form-control rd-input" required>
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($sedes as $sede)
+                                            <option value="{{ $sede->id }}"
+                                                {{ old('sede_id') == $sede->id ? 'selected' : '' }}>
+                                                {{ $sede->nombre_sede ?? $sede->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Distancia (km)</label>
+
+                <div class="rd-card p-4 mb-4"
+                    style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="m-0 font-weight-bold" style="font-size:1rem; color:#0f172a;"><i
+                                class="fas fa-clock mr-2 text-primary"></i>Planificación Horarios</h4>
+                        <button type="button" id="btn-add-horario" class="rd-btn rd-btn-success btn-sm"><i
+                                class="fas fa-plus"></i></button>
+                    </div>
+                    <table class="table table-sm table-bordered">
+                        <tbody id="contenedor-horarios"></tbody>
+                    </table>
+                </div>
+
+                <div class="rd-card p-4 mb-4"
+                    style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
+                    <div class="form-group mb-0">
+                        <label class="rd-label">Descripción</label>
                         <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-road"></i></span>
-                            <input type="number" name="distancia_km" step="0.01"
-                                class="form-control rd-filter-input @error('distancia_km') is-invalid @enderror"
-                                placeholder="Ej: 12.50" value="{{ old('distancia_km') }}"
-                                min="0.1" max="9999"
-                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,7)">
+                            <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
+                            <input name="descripcion" class="form-control rd-input" style="resize:none; height: auto;"
+                                placeholder="Transporte a la zona sur" value="{{ old('descripcion') }}">
                         </div>
-                        @error('distancia_km') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
                     </div>
                 </div>
             </div>
 
-            {{-- Fila 2: Origen, Destino --}}
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Sede Origen</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                            <select name="sucursal_origen_id"
-                                class="form-control rd-filter-input @error('sucursal_origen_id') is-invalid @enderror">
-                                <option value="">-- Seleccione --</option>
-                                @foreach($sucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}" {{ old('sucursal_origen_id') == $sucursal->id ? 'selected' : '' }}>
-                                        {{ $sucursal->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @error('sucursal_origen_id') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
+            <div class="col-lg-7">
+                <div class="rd-card p-4 mb-4"
+                    style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
+                    <div class="mb-3">
+                        <h3 class="rd-title-sm m-0" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Trazado e
+                            Itinerario de Paradas</h3>
+                        <small class="text-danger font-weight-bold">Haga clic en los marcadores del mapa para agregar o
+                            alterar el orden.</small>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Sede Destino</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-map-marker-alt" style="color:var(--color-primary)"></i></span>
-                            <select name="sucursal_destino_id"
-                                class="form-control rd-filter-input @error('sucursal_destino_id') is-invalid @enderror">
-                                <option value="">-- Seleccione --</option>
-                                @foreach($sucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}" {{ old('sucursal_destino_id') == $sucursal->id ? 'selected' : '' }}>
-                                        {{ $sucursal->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @error('sucursal_destino_id') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
-                    </div>
-                </div>
-            </div>
 
-            {{-- Fila 3: Horarios --}}
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Hora Salida Mañana <span class="text-muted font-weight-normal">(opcional)</span></label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                            <input type="time" name="hora_salida_manana"
-                                class="form-control rd-filter-input @error('hora_salida_manana') is-invalid @enderror"
-                                value="{{ old('hora_salida_manana') }}">
+                    <div class="row">
+                        <div class="col-md-8 mb-3 mb-md-0">
+                            <div id="mapa-constructor"
+                                style="height:440px; border-radius:12px; border:2px solid #cbd5e1; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);">
+                            </div>
                         </div>
-                        @error('hora_salida_manana') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
+                        <div class="col-md-4">
+                            <label class="rd-label" style="font-size: 0.85rem;"><i class="fas fa-list-ol mr-1"></i>
+                                Secuencia (Arrastra para reordenar)</label>
+                            <div id="lista-secuencia-paradas" class="list-group style-scroll"
+                                style="max-height:400px; overflow-y:auto; border:1px solid #dce1e6; border-radius:8px; padding:6px; min-height: 60px;">
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Hora Salida Tarde <span class="text-muted font-weight-normal">(opcional)</span></label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                            <input type="time" name="hora_salida_tarde"
-                                class="form-control rd-filter-input @error('hora_salida_tarde') is-invalid @enderror"
-                                value="{{ old('hora_salida_tarde') }}">
-                        </div>
-                        @error('hora_salida_tarde') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Hora Salida Noche <span class="text-muted font-weight-normal">(opcional)</span></label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                            <input type="time" name="hora_salida_noche"
-                                class="form-control rd-filter-input @error('hora_salida_noche') is-invalid @enderror"
-                                value="{{ old('hora_salida_noche') }}">
-                        </div>
-                        @error('hora_salida_noche') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
+                    @error('paradas')
+                        <div class="text-danger mt-2"><b>Debe añadir al menos 2 paradas al trazado en el mapa.</b></div>
+                    @enderror
+                    <div class="d-flex justify-content-end" style="gap:12px;">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"
+                            style="color:white; width:200px;"><i class="fas fa-save mr-2"></i> Guardar Ruta</button>
                     </div>
                 </div>
             </div>
-
-            {{-- Fila 4: Descripción --}}
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Descripción <span class="text-muted font-weight-normal">(opcional)</span></label>
-                        <textarea name="descripcion" rows="3"
-                            class="form-control rd-filter-input @error('descripcion') is-invalid @enderror"
-                            placeholder="Describe el recorrido, paradas principales, observaciones..."
-                            maxlength="1000"
-                            oninput="this.value=this.value.slice(0,1000); document.getElementById('contadorDesc').textContent=this.value.length"
-                            style="resize:none;">{{ old('descripcion') }}</textarea>
-                        <small class="text-muted"><span id="contadorDesc">0</span>/1000 caracteres</small>
-                        @error('descripcion') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-            <div class="d-flex justify-content-end" style="gap:12px;">
-                <a href="{{ route('admin.transporte.maestros.bus_rutas.index') }}" class="rd-btn rd-btn-default">
-                    Cancelar
-                </a>
-                <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn" style="color:white;">
-                    <i class="fas fa-check"></i> Guardar
-                </button>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 @stop
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+    <!-- Estilos de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .parada-item {
+            cursor: grab;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .parada-item:active {
+            cursor: grabbing;
+            background: #f1f5f9;
+        }
+
+        .badge-orden {
+            background: #3b82f6;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            margin-right: 6px;
+        }
+
+        .leaflet-container {
+            font-family: inherit;
+        }
+    </style>
 @stop
 
 @push('js')
-<script>
-const CSRF = '{{ csrf_token() }}';
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- Librería JavaScript de Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-// ── Validación en tiempo real ─────────────────────────────────────
-function mostrarErrorInline(input, msg) {
-    limpiarErrorInline(input);
-    input.classList.add('is-invalid');
-    const div = document.createElement('div');
-    div.className = 'text-danger mt-1 error-inline';
-    div.innerHTML = `<b>${msg}</b>`;
-    input.closest('.form-group').appendChild(div);
-}
+    <script>
+        const paradasDisponibles = @json($paradas);
+        let secuenciaRuta = [];
+        let map;
+        let polyline;
+        let marcadoresMap = {};
 
-function limpiarErrorInline(input) {
-    input.classList.remove('is-invalid');
-    const prev = input.closest('.form-group').querySelector('.error-inline');
-    if (prev) prev.remove();
-}
+        function initMap() {
+            // Inicializar mapa de Leaflet
+            map = L.map('mapa-constructor').setView([9.56, -69.20], 13);
 
-// Distancia
-document.querySelector('[name="distancia_km"]').addEventListener('input', function() {
-    const val = parseFloat(this.value);
-    if (this.value && (val < 0.1 || val > 9999)) {
-        mostrarErrorInline(this, 'Entre 0.1 y 9,999 km.');
-    } else {
-        limpiarErrorInline(this);
-    }
-});
+            // Capa gratuita de OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
 
-// Nombre único en tiempo real
-let nombreTimer = null;
-document.querySelector('[name="nombre"]').addEventListener('input', function() {
-    const val = this.value.trim();
-    limpiarErrorInline(this);
-    if (!val) return;
-    clearTimeout(nombreTimer);
-    nombreTimer = setTimeout(() => {
-        fetch(`/admin/transporte/maestros/bus_rutas/verificar-nombre?nombre=${encodeURIComponent(val)}`, {
-            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF }
-        })
-        .then(r => r.json())
-        .then(res => {
-            if (res.existe) mostrarErrorInline(document.querySelector('[name="nombre"]'), 'Ya existe una ruta con este nombre.');
+            // Inicializar la polilínea del recorrido
+            polyline = L.polyline([], {
+                color: '#B71C1C',
+                opacity: 0.85,
+                weight: 5
+            }).addTo(map);
+
+            // Dibujar marcadores circulares nativos
+            paradasDisponibles.forEach(parada => {
+                if (!parada.lat || !parada.lng) return;
+
+                let marker = L.circleMarker([parseFloat(parada.lat), parseFloat(parada.lng)], {
+                    radius: 7,
+                    fillColor: '#64748b',
+                    color: '#ffffff',
+                    weight: 2,
+                    fillOpacity: 0.9
+                }).addTo(map);
+
+                marker.bindPopup(`<strong>${parada.nombre}</strong>`, {
+                    closeButton: false
+                });
+                marker.on('mouseover', function() {
+                    this.openPopup();
+                });
+                marker.on('mouseout', function() {
+                    this.closePopup();
+                });
+
+                marcadoresMap[parada.id] = marker;
+
+                marker.on('click', () => {
+                    agregarParadaASecuencia(parada);
+                });
+            });
+
+            // Cargar paradas previas en caso de fallos de validación (old inputs)
+            const oldParadas = @json(old('paradas'));
+            if (oldParadas && oldParadas.length > 0) {
+                oldParadas.forEach(id => {
+                    let pEncontrada = paradasDisponibles.find(x => x.id == id);
+                    if (pEncontrada) secuenciaRuta.push(pEncontrada);
+                });
+            }
+
+            actualizarInterfazYPolilinea();
+        }
+
+        function agregarParadaASecuencia(parada) {
+            secuenciaRuta.push(parada);
+            actualizarInterfazYPolilinea();
+        }
+
+        async function actualizarInterfazYPolilinea() {
+            const listaHTML = document.getElementById('lista-secuencia-paradas');
+            const inputsHidden = document.getElementById('hidden-paradas-inputs');
+            const inputDistancia = document.getElementById('inputDistancia');
+
+            listaHTML.innerHTML = '';
+            inputsHidden.innerHTML = '';
+
+            // Reset color gris base
+            paradasDisponibles.forEach(p => {
+                if (marcadoresMap[p.id]) marcadoresMap[p.id].setStyle({
+                    fillColor: '#64748b'
+                });
+            });
+
+            // Pintar de azul las seleccionadas y armar lista HTML
+            secuenciaRuta.forEach((parada, index) => {
+                if (marcadoresMap[parada.id]) {
+                    marcadoresMap[parada.id].setStyle({
+                        fillColor: '#3b82f6'
+                    });
+                }
+
+                listaHTML.innerHTML += `
+                    <div class="parada-item" data-id="${parada.id}">
+                        <div>
+                            <span class="badge-orden">${index + 1}</span>
+                            <span>${parada.nombre}</span>
+                        </div>
+                        <button type="button" class="btn btn-xs text-danger" onclick="eliminarPuntoSecuencia(${index})"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+
+                inputsHidden.innerHTML += `<input type="hidden" name="paradas[]" value="${parada.id}">`;
+            });
+
+            if (secuenciaRuta.length < 2) {
+                polyline.setLatLngs([]);
+                if (inputDistancia) inputDistancia.value = '';
+                return;
+            }
+
+            // Integración OSRM (Ruteo real por calles)
+            const coordenadasOSRM = secuenciaRuta.map(p => `${p.lng},${p.lat}`).join(';');
+            const url =
+                `https://router.project-osrm.org/route/v1/driving/${coordenadasOSRM}?overview=full&geometries=geojson`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Respuesta errónea OSRM');
+
+                const data = await response.json();
+                if (data.code === 'Ok' && data.routes.length > 0) {
+                    const rutaEncontrada = data.routes[0];
+
+                    const coordenadasLinea = rutaEncontrada.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                    polyline.setLatLngs(coordenadasLinea);
+
+                    const kilometrajeReal = (rutaEncontrada.distance / 1000).toFixed(2);
+                    if (inputDistancia) {
+                        inputDistancia.value = kilometrajeReal;
+                    }
+                }
+            } catch (error) {
+                console.error('OSRM Fallback en Create:', error);
+                const coordenadasLineaFallback = secuenciaRuta.map(p => [parseFloat(p.lat), parseFloat(p.lng)]);
+                polyline.setLatLngs(coordenadasLineaFallback);
+            }
+        }
+
+        function eliminarPuntoSecuencia(index) {
+            secuenciaRuta.splice(index, 1);
+            actualizarInterfazYPolilinea();
+        }
+
+        // SortableJS para reordenar la lista arrastrando
+        const elLista = document.getElementById('lista-secuencia-paradas');
+        Sortable.create(elLista, {
+            animation: 150,
+            onEnd: function() {
+                let nuevoOrdenIds = Array.from(elLista.querySelectorAll('.parada-item')).map(item => item
+                    .getAttribute('data-id'));
+                let mapaTemporal = [];
+                nuevoOrdenIds.forEach(id => {
+                    let pEncontrada = secuenciaRuta.find(x => x.id == id);
+                    if (pEncontrada) mapaTemporal.push(pEncontrada);
+                });
+                secuenciaRuta = mapaTemporal;
+                actualizarInterfazYPolilinea();
+            }
         });
-    }, 500);
-});
-</script>
+
+        // Manejo dinámico de Horarios
+        let indiceHorario = 0;
+
+        function agregarFilaHorario(hora = '', tipo = 'entrada') {
+            const fila = document.createElement('tr');
+            fila.setAttribute('id', `fila-horario-${indiceHorario}`);
+            fila.innerHTML = `
+                <td><input type="time" name="horarios[${indiceHorario}][hora_salida]" value="${hora}" class="form-control form-control-sm" required></td>
+                <td>
+                    <select name="horarios[${indiceHorario}][tipo_viaje]" class="form-control form-control-sm" required>
+                        <option value="entrada" ${tipo === 'entrada' ? 'selected' : ''}>Entrada ☀️</option>
+                        <option value="salida" ${tipo === 'salida' ? 'selected' : ''}>Salida 🏠</option>
+                    </select>
+                </td>
+                <td class="text-center"><button type="button" class="btn btn-xs btn-danger" onclick="document.getElementById('fila-horario-${indiceHorario}').remove()"><i class="fas fa-trash"></i></button></td>
+            `;
+            document.getElementById('contenedor-horarios').appendChild(fila);
+            indiceHorario++;
+        }
+
+        document.getElementById('btn-add-horario').addEventListener('click', () => agregarFilaHorario());
+
+        // Cargar viejos horarios si hubo error de validación
+        const oldHorarios = @json(old('horarios'));
+        if (oldHorarios && Object.keys(oldHorarios).length > 0) {
+            Object.values(oldHorarios).forEach(h => {
+                agregarFilaHorario(h.hora_salida, h.tipo_viaje);
+            });
+        } else {
+            agregarFilaHorario();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initMap();
+        });
+    </script>
 @endpush
