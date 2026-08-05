@@ -70,18 +70,18 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
-                                        <a href="{{ route('admin.becas.show', $beca) }}" class="rd-action" title="Ver">
+                                        <a href="{{ route('admin.becas.show', $beca) }}" class="rd-action rd-action-sm" title="Ver">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.becas.edit', $beca) }}" class="rd-action" title="Editar">
+                                        <a href="{{ route('admin.becas.edit', $beca) }}" class="rd-action rd-action-sm" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.becas.toggle', $beca) }}" method="POST">
+                                        <form action="{{ route('admin.becas.toggle', $beca) }}" method="POST" style="display:inline-block; margin:0;">
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="rd-action {{ $beca->activo ? 'rd-btn-danger' : 'rd-btn-success' }}"
+                                            <button type="submit" class="rd-action rd-action-sm {{ $beca->activo ? 'rd-action-danger' : 'rd-action-success' }}"
                                                 title="{{ $beca->activo ? 'Desactivar' : 'Activar' }}">
-                                                <i class="fas {{ $beca->activo ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i>
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
                                     </div>

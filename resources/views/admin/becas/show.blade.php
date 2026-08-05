@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-md-4">
                 <strong>Estado</strong>
-                <p>
+                <p class="mb-0 mt-2">
                     <span class="rd-badge {{ $beca->activo ? 'rd-badge-success' : 'rd-badge-danger' }}">
                         {{ $beca->activo ? 'Activa' : 'Inactiva' }}
                     </span>

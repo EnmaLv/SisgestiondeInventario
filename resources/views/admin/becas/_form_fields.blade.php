@@ -150,27 +150,35 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Agregar tutor a la beca</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal" aria-label="Cerrar" style="border:0;">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Rol del tutor</label>
-                            <select id="tutorRoleSelect" class="form-control rd-filter-input">
-                                <option value="">Seleccione rol</option>
-                                @foreach($roles as $role)
-                                    <option value="{{ $role->id_rol }}">{{ $role->nombre }}</option>
-                                @endforeach
-                            </select>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                                <select id="tutorRoleSelect" class="form-control rd-filter-input">
+                                    <option value="">Seleccione rol</option>
+                                    @foreach($roles as $role)
+                                        <option value="{{ $role->id_rol }}">{{ $role->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Persona</label>
-                            <select id="tutorPersonSelect" class="form-control rd-filter-input" disabled>
-                                <option value="">Seleccione primero un rol</option>
-                            </select>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <select id="tutorPersonSelect" class="form-control rd-filter-input" disabled>
+                                    <option value="">Seleccione primero un rol</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -346,6 +346,30 @@ label{
     color: #b91c1c;
     border: 1px solid #fecaca;
 }
+/* Small action icons used in tables */
+.rd-action-group {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
+
+.rd-action-sm {
+    padding: 6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #374151;
+}
+
+.rd-action-sm:hover {
+    background: #f3f4f6;
+}
 /* small accessibility */
 .sr-only {
     position: absolute !important;
