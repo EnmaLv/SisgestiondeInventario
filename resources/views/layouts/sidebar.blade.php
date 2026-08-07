@@ -58,6 +58,10 @@
         @includeIf('layouts.sidebar.salud')
         @endcanModule
 
+        @canModule('psicologia')
+        @includeIf('layouts.sidebar.psicologia')
+        @endcanModule
+
         @canModule('beca')
         @includeIf('layouts.sidebar.becas')
         @endcanModule
