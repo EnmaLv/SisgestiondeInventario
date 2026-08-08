@@ -15,8 +15,8 @@ class Producto extends Model
     use ConvierteAMayusculasNoEloquent;
     use HasFactory;
     use WithPagination;
- 
-    protected $table = 'productos'; 
+
+    protected $table = 'productos';
 
     protected $fillable = [
         'codigo',
@@ -34,10 +34,6 @@ class Producto extends Model
         'envase_primario_id',
         'requiere_receta_medica'
     ];
-
-    public function envasePrimario(){
-        return $this->belongsTo(EnvasePrimario::class);
-    }
 
     public function unidad()
     {
@@ -91,24 +87,27 @@ class Producto extends Model
         return $this->hasMany(RecetaIngrediente::class);
     }
 
-    public static function listarProductos($buscar = null, $activo = 1, $categoria = null, $perPage = 10, $cantidadMin = null, $cantidadMax = null)
+    public static function listarProductos($buscar = null, $activo = 1, $categoria = null, $perPage = 10, $cantidadMin = null, $cantidadMax = null, $tipoProductoId = 2)
     {
         $query = self::with(['categoria', 'unidad'])
+            ->select('productos.*')
+            ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
+            ->where('categorias.tipo_producto_id', $tipoProductoId)
             ->withSum([
                 'inventarioSedeAcarigua as cantidad_actual' => function ($query) {}
             ], 'cantidad');
 
         if (!empty($buscar)) {
             $query->where(function ($q) use ($buscar) {
-                $q->where('codigo', 'like', "%{$buscar}%")
-                    ->orWhere('nombre', 'like', "%{$buscar}%");
+                $q->where('productos.codigo', 'like', "%{$buscar}%")
+                    ->orWhere('productos.nombre', 'like', "%{$buscar}%");
             });
         }
 
         if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int)$activo);
+            $query->where('productos.estado', (int)$activo);
         } else {
-            $query->where('estado', 1);
+            $query->where('productos.estado', 1);
         }
 
         if ($cantidadMin !== null) {
@@ -118,8 +117,8 @@ class Producto extends Model
             $query->having('cantidad_actual', '<=', $cantidadMax);
         }
 
-        if ($categoria !== null) {
-            $query->where('categoria_id', $categoria);
+        if ($categoria !== null && $categoria !== '') {
+            $query->where('productos.categoria_id', $categoria);
         }
 
         return $query->orderByDesc('cantidad_actual')->paginate($perPage)->withQueryString();
@@ -134,10 +133,15 @@ class Producto extends Model
             ->sum('inventario_sede_lotes.cantidad');
     }
 
-    public static function getDatosFormulario()
+    public static function getDatosFormulario(?int $tipoProductoId = null)
     {
+        $query = DB::table('categorias')->select('id', 'nombre')->where('activo', 1);
+
+        if ($tipoProductoId !== null) {
+            $query->where('tipo_producto_id', $tipoProductoId);
+        }
         return [
-            'categorias' => DB::table('categorias')->select('id', 'nombre')->where('activo', 1)->get(),
+            'categorias' =>  $query->get(),
             'unidades'   => DB::table('unidades')->select('id', 'nombre', 'abreviatura')->get(),
             'envases'   => DB::table('envase_primarios')->select('id', 'nombre')->get(),
         ];
@@ -179,7 +183,7 @@ class Producto extends Model
                 'stock_maximo'  => $data['stock_maximo'] ?? 0,
                 'peso_contenido' => $pesoBase,
                 'unidad_id'     => $data['unidad_id'] ?? null,
-                'envase_primario_id'=> $data['envase_primario_id'] ?? null,
+                'presentacion_id' => $data['envase_primario_id'] ?? null,
                 'estado'        => isset($data['estado']) ? (int)$data['estado'] : 1,
                 'created_at'    => now(),
                 'updated_at'    => now(),

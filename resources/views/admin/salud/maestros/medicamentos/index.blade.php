@@ -7,7 +7,7 @@
             border-radius: 14px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
-         ">
+        ">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Medicamentos
@@ -24,7 +24,7 @@
                 </span>
             </div>
             <a href="{{ url('admin/salud/maestros/medicamentos/create') }}" class="rd-btn rd-btn-primary">
-                <i class="fas fa-plus"></i> 
+                <i class="fas fa-plus"></i>
                 <span class="d-none d-md-inline">Crear Medicamento</span>
                 <span class="d-inline d-md-none">Crear</span>
             </a>
@@ -42,9 +42,10 @@
                 </div>
                 <div class="rd-actions">
                     <div class="d-flex gap-3 align-items-center rd-toggle-wrapper">
-                        <span class="font-weight-bold rd-toggle-label">Filtrar por estado:</span>     
+                        <span class="font-weight-bold rd-toggle-label">Filtrar por estado:</span>
                         <div class="toggle-container">
-                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ request('activo', 1) == 1 ? 'checked' : '' }}>
+                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
+                                {{ request('activo', 1) == 1 ? 'checked' : '' }}>
                             <label for="estadoToggle" class="toggle-label">
                                 <span class="toggle-inner"></span>
                                 <span class="toggle-switch"></span>
@@ -52,16 +53,18 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('admin.salud.maestros.medicamentos.index') }}" method="GET" class="rd-search-inline" role="search">
+                    <form action="{{ route('admin.salud.maestros.medicamentos.index') }}" method="GET"
+                        class="rd-search-inline" role="search">
                         <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
                         <input type="hidden" name="categoria" value="{{ request('categoria') }}">
 
-                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input" placeholder="Buscar medicamento..." />
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
+                            placeholder="Buscar medicamento..." />
                         <button class="rd-icon-btn" type="submit" title="Buscar">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
-                    
+
                     <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
@@ -70,9 +73,10 @@
             </div>
 
             <!-- FILTROS COLAPSABLES -->
-            <div class="collapse {{ request('categoria') ? 'show' : '' }}" id="filters"> 
+            <div class="collapse {{ request('categoria') ? 'show' : '' }}" id="filters">
                 <div class="rd-filters">
-                    <form action="{{ route('admin.salud.maestros.medicamentos.index') }}" method="GET" class="rd-filters-form">
+                    <form action="{{ route('admin.salud.maestros.medicamentos.index') }}" method="GET"
+                        class="rd-filters-form">
                         <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
                         <input type="hidden" name="buscar" value="{{ request('buscar') }}">
 
@@ -81,7 +85,7 @@
                             <select name="categoria" id="categoria" class="rd-filter-input">
                                 <option value="">Todas</option>
                                 @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->id }}" @if(request('categoria') == $categoria->id) selected @endif>
+                                    <option value="{{ $categoria->id }}" @if (request('categoria') == $categoria->id) selected @endif>
                                         {{ $categoria->nombre }}
                                     </option>
                                 @endforeach
@@ -91,7 +95,8 @@
                             <button class="rd-btn rd-btn-primary" type="submit">
                                 <i class="fas fa-check"></i> Aplicar
                             </button>
-                            <a href="{{ route('admin.salud.maestros.medicamentos.index', ['activo' => request('activo', 1)]) }}" class="rd-btn rd-btn-default text-decoration-none d-inline-flex align-items-center justify-content-center">
+                            <a href="{{ route('admin.salud.maestros.medicamentos.index', ['activo' => request('activo', 1)]) }}"
+                                class="rd-btn rd-btn-default text-decoration-none d-inline-flex align-items-center justify-content-center">
                                 <i class="fas fa-times"></i> Limpiar
                             </a>
                         </div>
@@ -154,41 +159,32 @@
                                 </td>
                                 <td class="text-center" data-label="Acciones">
                                     <div class="rd-action-group">
-                                        <a href="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}" 
-                                           class="rd-action" 
-                                           title="Ver detalles">
+                                        <a href="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}"
+                                            class="rd-action" title="Ver detalles">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/edit') }}"
-                                           class="rd-action" 
-                                           title="Editar">
+                                            class="rd-action" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @if ($producto->estado == true)
                                             <form action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}"
-                                                method="POST" 
-                                                class="form-delete" 
-                                                style="display:inline;">
+                                                method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
-                                                        class="rd-action rd-btn-danger"
-                                                        onclick="confirmDelete(event, this, 'inactivar')"
-                                                        title="Inactivar">
+                                                <button type="submit" class="rd-action rd-btn-danger"
+                                                    onclick="confirmDelete(event, this, 'inactivar')" title="Inactivar">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         @else
-                                            <form action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/activar') }}"
-                                                method="POST" 
-                                                class="form-activate" 
-                                                style="display:inline;">
+                                            <form
+                                                action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/activar') }}"
+                                                method="POST" class="form-activate" style="display:inline;">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" 
-                                                        class="rd-action rd-action-success"
-                                                        onclick="confirmDelete(event, this, 'activar')"
-                                                        title="Activar">
+                                                <button type="submit" class="rd-action rd-action-success"
+                                                    onclick="confirmDelete(event, this, 'activar')" title="Activar">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
@@ -200,7 +196,8 @@
                             <tr>
                                 <td colspan="7" class="text-center py-4">
                                     <div class="rd-empty-state">
-                                        <i class="fas fa-box-open" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                                        <i class="fas fa-box-open"
+                                            style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
                                         <p style="color: #64748b; margin: 0;">No hay medicamentos registrados</p>
                                     </div>
                                 </td>
@@ -234,15 +231,15 @@
         // Confirmación unificada para activar/inactivar
         function confirmDelete(event, button, action) {
             event.preventDefault();
-            
+
             const isActivate = action === 'activar';
             const title = isActivate ? '¿Activar medicamento?' : '¿Inactivar medicamento?';
-            const text = isActivate 
-                ? 'El medicamento volverá a estar disponible en el sistema.' 
-                : 'El medicamento dejará de estar disponible en el sistema.';
+            const text = isActivate ?
+                'El medicamento volverá a estar disponible en el sistema.' :
+                'El medicamento dejará de estar disponible en el sistema.';
             const confirmText = isActivate ? 'Sí, activar' : 'Sí, inactivar';
             const icon = isActivate ? 'question' : 'warning';
-            
+
             Swal.fire({
                 title: title,
                 text: text,

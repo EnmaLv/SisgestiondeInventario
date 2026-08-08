@@ -1,5 +1,5 @@
 <?php
-
+ 
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
@@ -7,7 +7,7 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Models\ExchangeRates;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB; 
 use App\Http\Requests\ProductoRequest;
 use Illuminate\Support\Facades\Log; 
 

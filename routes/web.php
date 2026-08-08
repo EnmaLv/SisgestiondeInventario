@@ -85,7 +85,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::put('/maestros/sedes/{sede}', [SedeController::class, 'update'])->name('admin.maestros.sedes.update');
         Route::delete('/maestros/sedes/{id}', [SedeController::class, 'destroy'])->name('admin.maestros.sedes.destroy');
         Route::put('/maestros/sedes/{sede}/activar', [SedeController::class, 'activar'])->name('admin.maestros.sedes.activar');
-        
+
         /* Productos */
 
         Route::get('/maestros/productos', [ProductoController::class, 'index'])->name('admin.maestros.productos.index');
@@ -299,8 +299,6 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::get('/salud/maestros/categorias', [CategoriaMedicamentoController::class, 'index'])->name('admin.salud.maestros.categorias.index');
         Route::get('/salud/maestros/categorias/create', [CategoriaMedicamentoController::class, 'create'])->name('admin.salud.maestros.categorias.create');
         Route::post('/salud/maestros/categorias/store', [CategoriaMedicamentoController::class, 'store'])->name('admin.salud.maestros.categorias.store');
-        Route::get('/salud/maestros/categorias/{categoria}/edit', [CategoriaMedicamentoController::class, 'edit'])->name('admin.salud.maestros.categorias.edit');
-        Route::put('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'update'])->name('admin.salud.maestros.categorias.update');
         Route::delete('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'destroy'])->name('admin.salud.maestros.categorias.destroy');
         Route::put('/salud/maestros/categorias/{categoria}/activar', [CategoriaMedicamentoController::class, 'activar'])->name('admin.salud.maestros.categorias.activar');
 
@@ -309,11 +307,13 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::get('/salud/maestros/medicamentos/create', [MedicamentoController::class, 'create'])->name('admin.salud.maestros.medicamentos.create');
         Route::post('/salud/maestros/medicamentos/store', [MedicamentoController::class, 'store'])->name('admin.salud.maestros.medicamentos.store');
         Route::get('/salud/maestros/medicamentos/{medicamento}/edit', [MedicamentoController::class, 'edit'])->name('admin.salud.maestros.medicamentos.edit');
-        Route::put('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'update'])->name('admin.salud.maestros.medicamentos.update');
         Route::get('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'show'])->name('admin.salud.maestros.medicamentos.show');
+        Route::put('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'update'])->name('admin.salud.maestros.medicamentos.update');
         Route::delete('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'destroy'])->name('admin.salud.maestros.medicamentos.destroy');
         Route::put('/salud/maestros/medicamentos/{medicamento}/activar', [MedicamentoController::class, 'activar'])->name('admin.salud.maestros.medicamentos.activar');
 
+
+        
         // TRANSPORTE
         require __DIR__ . '/transporte.php';
 

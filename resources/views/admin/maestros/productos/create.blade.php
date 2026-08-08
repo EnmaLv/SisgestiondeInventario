@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"> 
+    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Nuevo Producto</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">

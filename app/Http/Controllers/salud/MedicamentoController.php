@@ -8,9 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MedicamentoRequest;
 use App\Models\Categoria;
 use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Log;
 use App\Models\ExchangeRates;
 use App\Models\Producto;
+use Illuminate\Support\Facades\Http;
 
 class MedicamentoController extends Controller
 {
@@ -19,14 +21,24 @@ class MedicamentoController extends Controller
     {
         $activo = $request->input('activo', 1);
         $categoria = $request->input('categoria', null);
+
         $productos = Producto::listarProductos($request->buscar, $activo, $categoria);
-        $categorias = Categoria::select('id', 'nombre')->where('activo', 1)->get();
+
+        // Filtrar categorías que correspondan al tipo de producto de salud
+        $categorias = Categoria::select('id', 'nombre')
+            ->where('activo', 1)
+            ->where('tipo_producto_id', 2)
+            ->get();
+
         return view('admin.salud.maestros.medicamentos.index', compact('productos', 'categorias'));
     }
 
     public function create()
     {
-        $datos = Producto::getDatosFormulario();
+        $datos = Producto::getDatosFormulario(2);
+
+        $datos['envases'] = DB::table('envase_primarios')->select('id', 'nombre')->get();
+
         return view('admin.salud.maestros.medicamentos.create', $datos);
     }
 
@@ -59,16 +71,15 @@ class MedicamentoController extends Controller
                 return redirect()->route('admin.salud.maestros.medicamentos.index')
                     ->with('success', 'Medicamento creado y precio actualizado Exitosamente.');
             }
-
         } catch (\Exception $e) {
 
             DB::rollBack();
-            Log::error('Error al crear medicamentto', ['error' => $e->getMessage()]);
+            Log::error('Error al crear medicamento', ['error' => $e->getMessage()]);
 
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Error al crear el medicamento.');
+                ->with('error', 'Error al crear el medicamento: ' . $e->getMessage());
         }
     }
 
@@ -156,7 +167,7 @@ class MedicamentoController extends Controller
      */
     public function show($id)
     {
-        $medicamento = Medicamento::obtenerDatos($id);
+        $medicamento = Producto::obtenerDatos($id);
         return view('admin.salud.maestros.medicamentos.show', compact('medicamento'));
     }
 
@@ -165,8 +176,11 @@ class MedicamentoController extends Controller
      */
     public function edit($id)
     {
-        $medicamento = Medicamento::findOrFail($id);
-        $datos = Medicamento::getDatosFormulario();
+        $medicamento = Producto::findOrFail($id);
+
+        $datos = Producto::getDatosFormulario(2);
+
+        $datos['envases'] = DB::table('envase_primarios')->select('id', 'nombre')->get();
 
         return view('admin.salud.maestros.medicamentos.edit', array_merge($datos, [
             'medicamento' => $medicamento
@@ -185,7 +199,9 @@ class MedicamentoController extends Controller
             $validated['imagen'] = $path;
         }
 
-        Medicamento::actualizar($id, $validated);
+        // Cambiar Medicamento::actualizar por Producto::actualizarProducto
+        Producto::actualizarProducto($id, $validated);
+
         $this->procesarTasaYPrecios($id);
 
         return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento actualizado exitosamente.');
@@ -196,8 +212,7 @@ class MedicamentoController extends Controller
      */
     public function destroy($id)
     {
-
-        Medicamento::inactivar($id);
+        Producto::inactivar($id);
 
         return redirect()
             ->route('admin.salud.maestros.medicamentos.index')
@@ -207,7 +222,54 @@ class MedicamentoController extends Controller
 
     public function activar($id)
     {
-        Medicamento::activar($id);
+        Producto::activar($id);
         return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento activado exitosamente.');
+    }
+
+    private function procesarTasaYPrecios(?int $productoId = null)
+    {
+        $tasa = ExchangeRates::orderByDesc('fecha_vigencia')->first();
+
+        if (!$tasa) {
+            throw new \Exception('No existe una tasa registrada');
+        }
+
+        $query = Producto::with('precioProducto');
+
+        if ($productoId) {
+            $query->where('id', $productoId);
+        }
+
+        $productos = $query->get();
+
+        foreach ($productos as $producto) {
+
+            if (!$producto->precioProducto) {
+                continue;
+            }
+
+            $precioUSD =
+                $producto->precioProducto->costo_usd ??
+                $producto->precioProducto->precio_usd ??
+                0;
+
+            if ($precioUSD <= 0) {
+                continue;
+            }
+
+            $margen = $producto->precioProducto->margen ?? 0;
+
+            $precioBs = round(
+                $precioUSD * (1 + $margen / 100) * $tasa->promedio,
+                2
+            );
+
+            DB::table('productos')
+                ->where('id', $producto->id)
+                ->update([
+                    'precio_compra' => $precioBs,
+                    'updated_at'    => now()
+                ]);
+        }
     }
 }
