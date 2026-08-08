@@ -32,7 +32,7 @@ use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
-use App\Http\Controllers\salud\EnfermedadController;
+use App\Http\Controllers\salud\NotificationController;
 
 Auth::routes();
 
@@ -50,6 +50,9 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
     // TODAS tus rutas protegidas aquí
     Route::prefix('/admin')->middleware(\App\Http\Middleware\CheckMenuPermission::class)->group(function () {
+
+        Route::get('/notificaciones/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('/notificaciones/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
         /* Categorias */
 
@@ -86,7 +89,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::put('/maestros/sedes/{sede}', [SedeController::class, 'update'])->name('admin.maestros.sedes.update');
         Route::delete('/maestros/sedes/{id}', [SedeController::class, 'destroy'])->name('admin.maestros.sedes.destroy');
         Route::put('/maestros/sedes/{sede}/activar', [SedeController::class, 'activar'])->name('admin.maestros.sedes.activar');
-        
+
         /* Productos */
 
         Route::get('/maestros/productos', [ProductoController::class, 'index'])->name('admin.maestros.productos.index');
@@ -286,15 +289,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
             ]);
         })->where('archivo', '.*');
 
-        // SALUD
-
-        Route::get('enfermedades', [EnfermedadController::class, 'index'])->name('admin.enfermedades.index');
-        Route::get('enfermedades/create', [EnfermedadController::class, 'create'])->name('admin.enfermedades.create');
-        Route::post('enfermedades/store', [EnfermedadController::class, 'store'])->name('admin.enfermedades.store');
-        Route::get('enfermedades/{enfermedad}/edit', [EnfermedadController::class, 'edit'])->name('admin.enfermedades.edit');
-        Route::put('enfermedades/{enfermedad}', [EnfermedadController::class, 'update'])->name('admin.enfermedades.update');
-        Route::delete('enfermedades/{enfermedad}', [EnfermedadController::class, 'destroy'])->name('admin.enfermedades.destroy');
-
+        // SALUD        
 
         // Envases Primarios
         Route::get('/salud/maestros/envases_primarios', [EnvasePrimarioController::class, 'index'])->name('admin.salud.maestros.envases_primarios.index');
@@ -326,6 +321,9 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         // TRANSPORTE
         require __DIR__ . '/transporte.php';
+
+        // PSICOLOGIA
+        require __DIR__ . '/psicologia.php';
 
         /* Configuración - Empleados, Permisos, Roles */
 

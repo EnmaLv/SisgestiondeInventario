@@ -1,17 +1,25 @@
-{{-- 2. components/dropdown.blade.php --}}
-@props(['align' => 'right', 'width' => '48', 'contentClasses' => 'py-1 bg-[#352728] border border-[#5c2028]'])
+@props(['align' => 'right', 'width' => '48', 'contentClasses' => null])
 
 @php
-$alignmentClasses = match ($align) {
-    'left' => 'ltr:origin-top-left rtl:origin-top-right start-0',
-    'top' => 'origin-top',
-    default => 'ltr:origin-top-right rtl:origin-top-left end-0',
-};
+    $moduloActivo = strtolower(session('modulo_activo', 'general'));
+    $isPsico = in_array($moduloActivo, ['psicologia', 'psicología', 'mental']);
 
-$width = match ($width) {
-    '48' => 'w-48',
-    default => $width,
-};
+    $defaultClasses = $isPsico
+        ? 'py-1 bg-slate-900/95 border border-indigo-900/60 backdrop-blur-md'
+        : 'py-1 bg-[#352728] border border-[#5c2028]';
+
+    $contentClasses = $contentClasses ?? $defaultClasses;
+
+    $alignmentClasses = match ($align) {
+        'left' => 'ltr:origin-top-left rtl:origin-top-right start-0',
+        'top' => 'origin-top',
+        default => 'ltr:origin-top-right rtl:origin-top-left end-0',
+    };
+
+    $width = match ($width) {
+        '48' => 'w-48',
+        default => $width,
+    };
 @endphp
 
 <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
@@ -26,10 +34,10 @@ $width = match ($width) {
             x-transition:leave="transition ease-in duration-75"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="absolute z-50 mt-2 {{ $width }} rounded-md shadow-lg {{ $alignmentClasses }}"
+            class="absolute z-50 mt-2 {{ $width }} rounded-xl shadow-lg {{ $alignmentClasses }}"
             style="display: none;"
             @click="open = false">
-        <div class="rounded-md shadow-xl overflow-hidden {{ $contentClasses }}">
+        <div class="rounded-xl shadow-2xl overflow-hidden {{ $contentClasses }}">
             {{ $content }}
         </div>
     </div>
