@@ -1,5 +1,10 @@
+@php
+    $moduloActivo = session('modulo_activo', 'general');
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'mental']);
+    $primaryColorHex = $esPsicologia ? '#2563eb' : '#dc2626'; // Azul vs Vinotinto
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-modulo="{{ session('modulo_activo', 'general') }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-modulo="{{ $moduloActivo }}">
 
 <head>
     <meta charset="utf-8">
@@ -45,16 +50,18 @@
     @stack('css')
 
     <style>
-        /* ========== PALETA UNIFICADA Y LIMPIA BIENESTAR ESTUDIANTIL ========== */
+        /* ========== PALETA POR DEFECTO (GENERAL / VINOTINTO) ========== */
         :root {
             --color-primary: #dc2626;
+            --color-primary-alpha: rgba(220, 38, 38, 0.25);
 
             /* Fondo Vinotinto Uniforme en Navbar y Sidebar */
             --header-sidebar-bg: #352728;
             --header-sidebar-border: #5c2028;
             --header-sidebar-text: #ffffff;
+            --sidebar-active-bg: #623739;
 
-            /* Estructura Base */
+            /* Estructura Base Light */
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
             --border-color: #e2e8f0;
@@ -66,9 +73,10 @@
         }
 
         html.dark {
-            /* Vinotinto para modo oscuro */
+            /* Vinotinto para modo oscuro general */
             --header-sidebar-bg: #352728;
             --header-sidebar-border: #5c2028;
+            --sidebar-active-bg: #623739;
 
             --bg-body: #0d0708;
             --bg-card: #160c0e;
@@ -78,17 +86,38 @@
             --input-border: #271418;
         }
 
-        /* ELIMINAR SOBREESCRITURAS DE MÓDULO */
-        html[data-modulo] {
-            --color-primary: #dc2626 !important;
+        /* ========== TEMA AZUL PARA MÓDULO PSICOLOGÍA / MENTAL ========== */
+        html[data-modulo="psicologia"],
+        html[data-modulo="mental"] {
+            --color-primary: #2563eb;
+            --color-primary-alpha: rgba(37, 99, 235, 0.25);
+
+            /* Navbar y Sidebar Azul Marino / Índigo */
+            --header-sidebar-bg: #0f172a;
+            --header-sidebar-border: #1e293b;
+            --sidebar-active-bg: #1e3a8a;
         }
 
+        html.dark[data-modulo="psicologia"],
+        html.dark[data-modulo="mental"] {
+            --header-sidebar-bg: #0b0f19;
+            --header-sidebar-border: #1e293b;
+            --sidebar-active-bg: #1e3a8a;
+
+            --bg-body: #090d16;
+            --bg-card: #0f172a;
+            --border-color: #1e293b;
+            --input-bg: #0f172a;
+            --input-border: #1e293b;
+        }
+
+        /* ========== APLICACIÓN DE ESTILOS ========== */
         body {
             background-color: var(--bg-body) !important;
             color: var(--text-main) !important;
         }
 
-        /* Navbar y Sidebar compartiendo EXACTAMENTE el mismo color de fondo */
+        /* Navbar y Sidebar */
         #top-navbar,
         #main-sidebar,
         nav.top-navbar {
@@ -97,7 +126,7 @@
             color: var(--header-sidebar-text) !important;
         }
 
-        /* Menú Limpio */
+        /* Menú y Estados Activos */
         #main-sidebar nav a,
         #main-sidebar nav button {
             background-color: transparent !important;
@@ -112,21 +141,13 @@
         #main-sidebar nav a.active,
         #main-sidebar nav button.active,
         #main-sidebar .sidebar-item-active {
-            background-color: #623739 !important;
+            background-color: var(--sidebar-active-bg) !important;
             color: #ffffff !important;
             font-weight: 600 !important;
         }
 
         #main-sidebar nav a svg,
         #main-sidebar nav button svg {
-            color: #ffffff !important;
-        }
-
-        .bg-blue-50,
-        .bg-blue-100,
-        .bg-blue-600,
-        .dark\:bg-blue-900 {
-            background-color: rgba(255, 255, 255, 0.15) !important;
             color: #ffffff !important;
         }
 
@@ -163,7 +184,7 @@
         textarea:focus {
             border-color: var(--color-primary) !important;
             outline: none;
-            box-shadow: 0 0 0 2px #dc262640;
+            box-shadow: 0 0 0 2px var(--color-primary-alpha) !important;
         }
 
         /* Sidebar Colapsable */
@@ -257,7 +278,9 @@
     <!-- SCRIPT CONFIGURACIÓN Y DISPARADOR DE SWEETALERT2 -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mixin Toast elegante para notificaciones superiores derechas
+            const primaryColor = '{{ $primaryColorHex }}';
+
+            // Mixin Toast elegante para notificaciones
             window.Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -284,7 +307,7 @@
                         showCancelButton: options.type !== 'alert',
                         confirmButtonText: options.confirmText || 'Aceptar',
                         cancelButtonText: options.cancelText || 'Cancelar',
-                        confirmButtonColor: '#dc2626',
+                        confirmButtonColor: primaryColor,
                         cancelButtonColor: isDark ? '#374151' : '#e5e7eb',
                         customClass: {
                             popup: 'swal2-popup-custom',
@@ -356,20 +379,17 @@
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const isDark = document.documentElement.classList.contains('dark');
+                const primaryColor = '{{ $primaryColorHex }}';
 
                 @if (session()->has('tasa_obligatoria'))
                     Swal.fire({
                         title: '🚨 Tasa requerida',
-                        html: `
-                            <p class="text-sm opacity-90">
-                                Debe registrar la <b>tasa del dólar</b> para poder navegar en el sistema.
-                            </p>
-                        `,
+                        html: `<p class="text-sm opacity-90">Debe registrar la <b>tasa del dólar</b> para poder navegar en el sistema.</p>`,
                         icon: 'error',
                         allowOutsideClick: false,
                         allowEscapeKey: false,
                         confirmButtonText: 'Registrar tasa',
-                        confirmButtonColor: '#dc2626',
+                        confirmButtonColor: primaryColor,
                         customClass: {
                             popup: 'swal2-popup-custom'
                         }
@@ -379,12 +399,7 @@
                 @elseif (session()->has('tasa_pendiente'))
                     Swal.fire({
                         title: '🔄 Tasa no actualizada',
-                        html: `
-                            <p class="text-sm opacity-90">
-                                Hay una tasa registrada, pero no corresponde al día de hoy.<br>
-                                ¿Desea actualizarla ahora?
-                            </p>
-                        `,
+                        html: `<p class="text-sm opacity-90">Hay una tasa registrada, pero no corresponde al día de hoy.<br>¿Desea actualizarla ahora?</p>`,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Actualizar',

@@ -1,3 +1,9 @@
+@php
+    $moduloActivo = session('modulo_activo', 'general');
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'mental']);
+    $avatarBg = $esPsicologia ? 'bg-blue-600 ring-blue-400' : 'bg-red-600 ring-red-400';
+@endphp
+
 <style>
     /* Estilos Unificados para el Breadcrumb en Navbar */
     #top-navbar .breadcrumb {
@@ -69,7 +75,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
-                            class="group flex items-center gap-3 px-3 py-1.5 rounded-full hover:bg-[#623739] transition-all border border-white/10 focus:outline-none">
+                            class="group flex items-center gap-3 px-3 py-1.5 rounded-full hover:bg-[var(--sidebar-active-bg,#623739)] transition-all border border-white/10 focus:outline-none">
                             <div class="text-right">
                                 <div class="text-sm font-semibold text-white leading-tight">
                                     {{ Auth::user()->persona?->nombre_persona ?? (Auth::user()->nombres ?? Auth::user()->name) }}
@@ -85,7 +91,7 @@
                                     $initials = strtoupper(mb_substr($user->name ?? ($user->nombres ?? 'U'), 0, 1));
                                 @endphp
                                 <div
-                                    class="h-9 w-9 rounded-full bg-red-600 flex items-center justify-center text-white text-sm font-black shadow-md ring-2 ring-red-400">
+                                    class="h-9 w-9 rounded-full {{ $avatarBg }} flex items-center justify-center text-white text-sm font-black shadow-md ring-2">
                                     {{ $initials }}
                                 </div>
                             </div>
@@ -120,7 +126,7 @@
             <!-- Botón Móvil -->
             <div class="-me-2 flex items-center sm:hidden gap-1">
                 <button @click="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white hover:bg-[#623739]">
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white hover:bg-[var(--sidebar-active-bg,#623739)]">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

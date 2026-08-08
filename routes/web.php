@@ -32,6 +32,7 @@ use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\salud\EnfermedadController;
 
 Auth::routes();
 
@@ -286,6 +287,15 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         })->where('archivo', '.*');
 
         // SALUD
+
+        Route::get('enfermedades', [EnfermedadController::class, 'index'])->name('admin.enfermedades.index');
+        Route::get('enfermedades/create', [EnfermedadController::class, 'create'])->name('admin.enfermedades.create');
+        Route::post('enfermedades/store', [EnfermedadController::class, 'store'])->name('admin.enfermedades.store');
+        Route::get('enfermedades/{enfermedad}/edit', [EnfermedadController::class, 'edit'])->name('admin.enfermedades.edit');
+        Route::put('enfermedades/{enfermedad}', [EnfermedadController::class, 'update'])->name('admin.enfermedades.update');
+        Route::delete('enfermedades/{enfermedad}', [EnfermedadController::class, 'destroy'])->name('admin.enfermedades.destroy');
+
+
         // Envases Primarios
         Route::get('/salud/maestros/envases_primarios', [EnvasePrimarioController::class, 'index'])->name('admin.salud.maestros.envases_primarios.index');
         Route::get('/salud/maestros/envases_primarios/create', [EnvasePrimarioController::class, 'create'])->name('admin.salud.maestros.envases_primarios.create');
