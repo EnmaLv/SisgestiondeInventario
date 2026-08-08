@@ -107,9 +107,9 @@
                                         <option value="" selected disabled>Seleccione presentación</option>
                                         @foreach ($envases as $envase)
                                             <option value="{{ $envase->id }}"
-                                                {{ old('envase_primario_id', optional($modelo)->envase_primario_id) == $envase->id ? 'selected' : '' }}>
+                                                {{ old('envase_primario_id', optional($modelo)->presentacion_id) == $envase->id ? 'selected' : '' }}>
                                                 {{ $envase->nombre }}
-                                            </option>
+                                                </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -135,11 +135,11 @@
                             <label class="font-weight-bold">Precio base (USD)</label>
                             <div class="input-group mb-2">
                                 <span class="input-group-text">$</span>
-                                <input type="number" name="precio_compra" class="form-control rd-filter-input"
-                                    value="{{ old('precio_compra', optional($modelo)->precio_compra) }}"
-                                    placeholder="0.00" min="0" step="0.01">
+                                <input type="number" name="costo_usd" class="form-control rd-filter-input"
+                                    value="{{ old('costo_usd', optional($modelo)->precio_compra) }}" placeholder="0.00"
+                                    min="0" step="0.01">
                             </div>
-                            @error('precio_compra')
+                            @error('costo_usd')
                                 <div class="text-danger"><b>{{ $message }}</b></div>
                             @enderror
                         </div>

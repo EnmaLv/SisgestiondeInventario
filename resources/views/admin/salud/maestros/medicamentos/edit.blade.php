@@ -20,7 +20,7 @@
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
-    </div>
+    </div> 
 @stop
 
 @section('content')
@@ -33,6 +33,8 @@
                 :rutaVolver="route('admin.salud.maestros.medicamentos.index')"
                 :categorias="$categorias"
                 :unidades="$unidades"
+                :envases="$envases"
+                :es-medicamento="true"
                 :modelo="$medicamento"
             />
         </div>

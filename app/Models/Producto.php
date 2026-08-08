@@ -233,39 +233,48 @@ class Producto extends Model
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
 
-        $unidad = DB::table('unidades')
-            ->where('id', $data['unidad_id'])
-            ->first();
+        // Manejo seguro de unidad
+        $unidadId = $data['unidad_id'] ?? null;
+        $unidad = $unidadId ? DB::table('unidades')->where('id', $unidadId)->first() : null;
 
-        $pesoBase = $data['peso_contenido'] * ($unidad->factor_a_base ?? 1);
+        $pesoContenido = $data['peso_contenido'] ?? 0;
+        $pesoBase = $pesoContenido * ($unidad->factor_a_base ?? 1);
+
+        // Capturamos costo_usd o precio_compra (según lo que venga en el $data)
+        $precioUsd = $data['costo_usd'] ?? $data['precio_compra'] ?? 0;
 
         $update = [
-            'categoria_id'  => $data['categoria_id'],
-            'codigo'        => strtoupper($data['codigo'] ?? ''),
-            'nombre'        => $data['nombre'],
-            'descripcion'   => $data['descripcion'] ?? null,
-            'imagen'        => $data['imagen'] ?? null,
-            'precio_compra' => $data['precio_compra'] ?? 0,
-            'stock_minimo'  => $data['stock_minimo'] ?? 0,
-            'stock_maximo'  => $data['stock_maximo'] ?? 0,
-            'peso_contenido' => $pesoBase,
-            'unidad_id'     => $data['unidad_id'] ?? null,
-            'estado'        => isset($data['estado']) ? (int)$data['estado'] : 1,
-            'updated_at'    => now(),
+            'categoria_id'    => $data['categoria_id'],
+            'nombre'          => $data['nombre'],
+            'descripcion'     => $data['descripcion'] ?? null,
+            'precio_compra'   => $precioUsd,
+            'stock_minimo'    => $data['stock_minimo'] ?? 0,
+            'stock_maximo'    => $data['stock_maximo'] ?? 0,
+            'peso_contenido'   => $pesoBase,
+            'unidad_id'       => $unidadId,
+            'presentacion_id' => $data['envase_primario_id'] ?? null, // <-- AQUÍ: Guardamos envase_primario_id en la columna real 'presentacion_id'
+            'estado'          => isset($data['estado']) ? (int)$data['estado'] : 1,
+            'updated_at'      => now(),
         ];
 
-        if (empty($update['imagen'])) {
-            unset($update['imagen']);
+        // Si viene un nuevo código en $data, lo actualizamos; si no, dejamos el que ya tiene
+        if (!empty($data['codigo'])) {
+            $update['codigo'] = strtoupper($data['codigo']);
         }
 
-        $ultimoPrecio = PrecioProducto::where('producto_id', $id)->latest()->first();
+        // Si se subió una nueva imagen
+        if (!empty($data['imagen'])) {
+            $update['imagen'] = $data['imagen'];
+        }
 
+        // Manejo del historial de Precios
+        $ultimoPrecio = PrecioProducto::where('producto_id', $id)->latest()->first();
         $margenRequest = $data['margen'] ?? 0;
 
-        if (!$ultimoPrecio || $ultimoPrecio->costo_usd != $data['costo_usd'] || $ultimoPrecio->margen != $margenRequest) {
+        if (!$ultimoPrecio || $ultimoPrecio->costo_usd != $precioUsd || $ultimoPrecio->margen != $margenRequest) {
             PrecioProducto::create([
                 'producto_id' => $id,
-                'costo_usd'   => $data['costo_usd'],
+                'costo_usd'   => $precioUsd,
                 'margen'      => $margenRequest,
             ]);
         }

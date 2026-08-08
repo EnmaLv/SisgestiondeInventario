@@ -192,19 +192,34 @@ class MedicamentoController extends Controller
      */
     public function update(MedicamentoRequest $request, $id)
     {
-        $validated = $request->validated();
+        DB::beginTransaction();
 
-        if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('imagenes/productos', 'public');
-            $validated['imagen'] = $path;
+        try {
+            $validated = $request->validated();
+
+            if ($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen')
+                    ->store('imagenes/productos', 'public');
+            }
+
+            Producto::actualizarProducto($id, $validated);
+
+            $this->procesarTasaYPrecios($id);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.salud.maestros.medicamentos.index')
+                ->with('success', 'Medicamento actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar medicamento', ['error' => $e->getMessage()]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el medicamento: ' . $e->getMessage());
         }
-
-        // Cambiar Medicamento::actualizar por Producto::actualizarProducto
-        Producto::actualizarProducto($id, $validated);
-
-        $this->procesarTasaYPrecios($id);
-
-        return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento actualizado exitosamente.');
     }
 
     /**
@@ -212,7 +227,7 @@ class MedicamentoController extends Controller
      */
     public function destroy($id)
     {
-        Producto::inactivar($id);
+        Producto::eliminarProducto($id);
 
         return redirect()
             ->route('admin.salud.maestros.medicamentos.index')
@@ -222,7 +237,7 @@ class MedicamentoController extends Controller
 
     public function activar($id)
     {
-        Producto::activar($id);
+        Producto::activarProducto($id);
         return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento activado exitosamente.');
     }
 
