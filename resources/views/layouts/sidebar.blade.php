@@ -1,11 +1,22 @@
+@php
+    $moduloActivo = session('modulo_activo', 'general');
+    $isPsico = $esPsicologia ?? in_array($moduloActivo, ['psicologia', 'mental']);
+
+    // Clases de estilo dinámicas según el módulo activo
+    $sidebarHover = $isPsico ? 'hover:bg-indigo-600/30' : 'hover:bg-[#623739]';
+    $btnSelectBg = $isPsico
+        ? 'bg-indigo-600/20 hover:bg-indigo-600/40 border-indigo-500/30'
+        : 'bg-white/20 hover:bg-[#623739] border-white/20';
+@endphp
+
 <aside id="main-sidebar" :class="sidebarOpen ? 'w-64' : 'w-20'"
     class="hidden lg:flex lg:flex-col h-full border-r shadow-sm py-3 flex-shrink-0 transition-all duration-300 ease-in-out overflow-y-auto invisible-scrollbar z-20 relative"
     x-data="{ activeSection: '{{ request()->segment(2) ?? request()->segment(1) }}' }">
 
     <div class="flex items-center px-3 h-12 mb-2" :class="sidebarOpen ? 'justify-between' : 'justify-center'">
-        {{-- Botón Inicio --}}
+        {{-- Enlace Inicio --}}
         <a href="{{ Route::has('home') ? route('home') : url('/') }}"
-            class="flex items-center gap-3 transition-colors overflow-hidden group rounded-lg p-1.5 hover:bg-[#623739]"
+            class="flex items-center gap-3 transition-colors overflow-hidden group rounded-lg p-1.5 {{ $sidebarHover }}"
             :class="sidebarOpen ? 'flex' : 'hidden'" title="Inicio">
             <div
                 class="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center text-white flex-shrink-0 group-hover:bg-white/20 transition-all">
@@ -18,7 +29,7 @@
 
         {{-- Botón Colapsar Sidebar --}}
         <button @click="sidebarOpen = !sidebarOpen"
-            class="h-8 w-8 flex items-center justify-center rounded-lg text-white/80 hover:text-white hover:bg-[#623739] transition-colors flex-shrink-0">
+            class="h-8 w-8 flex items-center justify-center rounded-lg text-white/80 hover:text-white {{ $sidebarHover }} transition-colors flex-shrink-0">
             <svg class="h-4 w-4 transition-transform duration-300" :class="sidebarOpen ? 'rotate-180' : ''"
                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="9 18 15 12 9 6"></polyline>
@@ -26,7 +37,6 @@
         </button>
     </div>
 
-    <!-- 🔄 Indicador de Módulo Activo -->
     @if (session('modulo_activo'))
         <div class="mx-3 mb-2 px-3 py-1.5 rounded-lg bg-black/20 border border-white/10 flex items-center justify-between"
             :class="sidebarOpen ? 'flex' : 'hidden'">
@@ -74,7 +84,7 @@
             <div class="p-3 text-center" :class="sidebarOpen ? 'block' : 'hidden'">
                 <p class="text-xs text-white/70 mb-2">Ningún módulo activo</p>
                 <a href="{{ route('admin.modulos.seleccionar') }}"
-                    class="inline-block text-xs font-bold text-white bg-white/20 hover:bg-[#623739] px-3 py-1.5 rounded-lg transition-colors border border-white/20">
+                    class="inline-block text-xs font-bold text-white {{ $btnSelectBg }} px-3 py-1.5 rounded-lg transition-colors border">
                     Seleccionar Módulo
                 </a>
             </div>

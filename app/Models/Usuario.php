@@ -130,6 +130,16 @@ class Usuario extends Authenticatable
         }
     }
 
+    public function tieneRol(array $roles): bool
+    {
+        return $this->roles()
+            ->where(function ($query) use ($roles) {
+                $query->whereIn('slug', $roles)
+                    ->orWhereIn('nombre', $roles);
+            })
+            ->exists();
+    }
+
     public function verifyPassword($candidate)
     {
         try {

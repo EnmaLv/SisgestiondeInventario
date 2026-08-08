@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -21,6 +23,41 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer(['admin.psicologia.*', 'admin.enfermedades.*'], function ($view) {
+            $data = $view->getData();
+            $categoriaVal = $data['categoria'] ?? $data['categoriaFiltro'] ?? request('categoria') ?? request('categoriaFiltro') ?? '';
+
+            // CAMBIO AQUÍ: Se reemplaza 'psicologia' por 'general' en el fallback de la sesión
+            $tipoVal = $data['tipo'] ?? request('tipo') ?? session('modulo_activo', 'general');
+
+            $esPsicologia = in_array(strtolower($categoriaVal), ['mental', 'psicologia', 'psicología'])
+                || in_array(strtolower($tipoVal), ['mental', 'psicologia', 'psicología']);
+
+            $themeColor = $esPsicologia ? 'indigo' : 'blue';
+
+            $categoriaTexto = match ($categoriaVal) {
+                'mental' => 'Salud Mental / Psiquiátrica',
+                'biopsicosocial' => 'Biopsicosocial',
+                default => 'Salud General / Médica',
+            };
+
+            $view->with([
+                'esPsicologia' => $esPsicologia,
+                'themeColor' => $themeColor,
+                'categoriaTexto' => $categoriaTexto,
+                'btnClass' => $esPsicologia
+                    ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'
+                    : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20',
+                'focusRingClass' => $esPsicologia
+                    ? 'focus:ring-indigo-500/30 focus:border-indigo-500'
+                    : 'focus:ring-blue-500/30 focus:border-blue-500',
+                'categoriaBadgeClass' => $esPsicologia
+                    ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800'
+                    : 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
+                'spinnerColor' => $esPsicologia ? 'border-indigo-600' : 'border-blue-600',
+            ]);
+        });
+
         Blade::if('canMenu', function ($keys) {
             return auth()->check() && auth()->user()->canAccessMenu($keys);
         });

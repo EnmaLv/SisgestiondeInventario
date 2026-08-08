@@ -1,34 +1,14 @@
-@php
-    $esPsicologia = $categoria === 'mental' || in_array($tipo, ['mental', 'psicologia']);
-    $themeColor = $esPsicologia ? 'indigo' : 'blue';
-    $categoriaTexto = match ($categoria) {
-        'mental' => 'Psiquiátrica / Salud Mental',
-        'biopsicosocial' => 'Biopsicosocial',
-        default => 'Médica / Salud General',
-    };
-    $categoriaBadgeClass = $esPsicologia
-        ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800'
-        : 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800';
-    $btnClass = $esPsicologia
-        ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'
-        : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20';
-    $focusRingClass = $esPsicologia
-        ? 'focus:ring-indigo-500/30 focus:border-indigo-500'
-        : 'focus:ring-blue-500/30 focus:border-blue-500';
-@endphp
 
 <x-app-layout>
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- Botón Volver -->
             <a href="{{ route('admin.enfermedades.index', ['tipo' => $tipo, 'return_to' => $returnTo, 'editing' => $editing]) }}"
                 class="inline-flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-{{ $themeColor }}-600 mb-6 transition-colors group">
                 <i class="fas fa-arrow-left text-xs transition-transform group-hover:-translate-x-1"></i>
                 <span>Volver al catálogo</span>
             </a>
 
-            <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
                     Nueva Enfermedad
@@ -39,7 +19,6 @@
                 </p>
             </div>
 
-            <!-- Card Form -->
             <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
                 class="rounded-2xl border shadow-sm overflow-hidden p-6 sm:p-8">
 
@@ -51,7 +30,6 @@
 
                     <div class="space-y-6">
 
-                        <!-- Categoría Asignada (Informativa/Fija) -->
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
                                 Categoría Asignada
@@ -63,7 +41,6 @@
                             </div>
                         </div>
 
-                        <!-- Nombre -->
                         <div>
                             <label for="nombre"
                                 class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
@@ -81,7 +58,6 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <!-- Código CIE-10 / DSM-5 -->
                             <div>
                                 <label for="codigo"
                                     class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
@@ -98,7 +74,6 @@
                                 @enderror
                             </div>
 
-                            <!-- Nivel de Gravedad (0 - 5) -->
                             <div>
                                 <label for="nivel"
                                     class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
@@ -120,7 +95,6 @@
 
                     </div>
 
-                    <!-- Botones de Acción -->
                     <div
                         class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-3">
                         <a href="{{ route('admin.enfermedades.index', ['tipo' => $tipo, 'return_to' => $returnTo, 'editing' => $editing]) }}"

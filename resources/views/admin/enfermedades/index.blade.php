@@ -1,36 +1,18 @@
-@php
-    $esPsicologia = ($categoriaFiltro === 'mental') || in_array($tipo, ['mental', 'psicologia']);
-    $themeColor = $esPsicologia ? 'indigo' : 'blue';
-    $categoriaTexto = match($categoriaFiltro) {
-        'mental' => 'Salud Mental / Psiquiátrica',
-        'biopsicosocial' => 'Biopsicosocial',
-        default => 'Salud General / Médica',
-    };
-    $btnClass = $esPsicologia
-        ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'
-        : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20';
-    $focusRingClass = $esPsicologia
-        ? 'focus:ring-indigo-500/30 focus:border-indigo-500'
-        : 'focus:ring-blue-500/30 focus:border-blue-500';
-    $spinnerColor = $esPsicologia ? 'border-indigo-600' : 'border-blue-600';
-@endphp
-
 <x-app-layout>
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- Encabezado de Página -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
                         Catálogo de Enfermedades y Diagnósticos
                     </h1>
                     <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
-                        Gestión y administración del catálogo para el módulo de <strong class="text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400">{{ $categoriaTexto }}</strong>.
+                        Gestión y administración del catálogo para el módulo de <strong
+                            class="text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400">{{ $categoriaTexto }}</strong>.
                     </p>
                 </div>
 
-                <!-- Botón de Acción Principal -->
                 <div class="flex items-center gap-3">
                     <a href="{{ route('admin.enfermedades.create', ['tipo' => $tipo, 'return_to' => $returnTo, 'editing' => $editing]) }}"
                         class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl {{ $btnClass }} text-white font-bold text-sm shadow-md active:scale-95 transition-all">
@@ -40,7 +22,6 @@
                 </div>
             </div>
 
-            <!-- Buscador de texto -->
             <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                 class="p-4 rounded-2xl border shadow-sm mb-6 flex items-center justify-between gap-4">
 
@@ -58,7 +39,6 @@
                 </div>
             </div>
 
-            <!-- Contenedor del Listado (AJAX) -->
             <div id="disease-content">
                 @include('admin.enfermedades.components.disease_list')
             </div>
@@ -82,7 +62,8 @@
                             <i class="fas {{ $esPsicologia ? 'fa-brain' : 'fa-file-medical' }} text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-bold" style="color: var(--text-main);">Detalles del Diagnóstico</h3>
+                            <h3 class="text-base font-bold" style="color: var(--text-main);">Detalles del Diagnóstico
+                            </h3>
                             <p class="text-xs text-gray-500 dark:text-gray-400">Ficha técnica maestra</p>
                         </div>
                     </div>
@@ -97,7 +78,8 @@
                         <span class="text-[10px] font-black uppercase tracking-wider text-gray-400">
                             Nombre / Diagnóstico
                         </span>
-                        <h4 class="text-lg font-extrabold mt-0.5" id="modalNombre" style="color: var(--text-main);">-</h4>
+                        <h4 class="text-lg font-extrabold mt-0.5" id="modalNombre" style="color: var(--text-main);">-
+                        </h4>
                     </div>
 
                     <div class="flex flex-wrap gap-2">
@@ -111,7 +93,8 @@
                         </span>
                     </div>
 
-                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 space-y-2">
+                    <div
+                        class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 space-y-2">
                         <div class="flex justify-between items-center text-xs">
                             <span class="text-gray-500 dark:text-gray-400 font-medium">Nivel de Gravedad (0-5):</span>
                             <span id="modalNivel" class="font-bold" style="color: var(--text-main);">0</span>
@@ -203,7 +186,8 @@
                 'biopsicosocial': 'bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800'
             };
             catEl.textContent = catMap[enfermedad.categoria] || 'General';
-            catEl.className = 'px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ' + (catClasses[enfermedad.categoria] || 'bg-gray-100 dark:bg-gray-800 text-gray-600');
+            catEl.className = 'px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ' + (catClasses[
+                enfermedad.categoria] || 'bg-gray-100 dark:bg-gray-800 text-gray-600');
 
             document.getElementById('modalNivel').textContent = enfermedad.nivel ?? 0;
 
