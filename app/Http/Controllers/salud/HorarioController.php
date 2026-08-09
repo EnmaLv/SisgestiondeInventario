@@ -299,7 +299,7 @@ class HorarioController extends Controller
             $horariosPorDia[$dia] = $horarios->where('dia', $dia);
         }
 
-        $psicologo = \App\Models\User::obtenerUsuarioPorId($userId);
+        $psicologo = \App\Models\Usuario::obtenerUsuarioPorId($userId);
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.psicologia.maestros.horarios.pdf', compact('horariosPorDia', 'dias', 'psicologo'))
             ->setPaper('a4', 'landscape');

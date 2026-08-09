@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de cita</title>
+</head>
+<body>
+    <p>Hola <strong>{{ $paciente }}</strong>,</p>
+
+    <p>El psicólogo <strong>{{ $psicologo }}</strong> ha confirmado un encuentro, el día <strong>{{ $fecha }}</strong> a las <strong>{{ $hora }}</strong>.</p>
+    
+    <p>Bloque asignado: <strong>{{ $bloque }}</strong></p>
+
+    <p><a href="{{ route('admin.psicologia.maestros.citas.index') }}" style="padding: 10px 15px; background-color: #0284c7; color: white; text-decoration: none; border-radius: 5px;">Ver mis Citas</a></p>
+
+    <p>Por favor, guarda esta información y llega con tiempo.</p>
+
+    <p>Gracias,</p>
+    <p>Equipo de Psicoguía</p>
+</body>
+</html>

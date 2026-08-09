@@ -17,7 +17,6 @@
                     <tr class="disease-row hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors"
                         data-search="{{ strtolower(($enfermedad->codigo ?? '') . ' ' . $enfermedad->nombre . ' ' . $enfermedad->categoria) }}">
 
-                        <!-- Código -->
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span
                                 class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/40">
@@ -25,14 +24,12 @@
                             </span>
                         </td>
 
-                        <!-- Nombre -->
                         <td class="px-6 py-4">
                             <span class="font-bold text-sm" style="color: var(--text-main);">
                                 {{ $enfermedad->nombre }}
                             </span>
                         </td>
 
-                        <!-- Categoría Badge -->
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span
                                 class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
@@ -49,24 +46,20 @@
                             </span>
                         </td>
 
-                        <!-- Acciones -->
                         <td class="px-6 py-4 whitespace-nowrap text-right">
                             <div class="flex items-center justify-end gap-1">
-                                <!-- Ver -->
                                 <button type="button" onclick="verEnfermedad({{ json_encode($enfermedad) }})"
                                     class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-all"
                                     title="Ver Detalles">
                                     <i class="fas fa-eye text-sm"></i>
                                 </button>
 
-                                <!-- Editar -->
                                 <a href="{{ route('admin.enfermedades.edit', $enfermedad->id) }}"
                                     class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-all"
                                     title="Editar">
                                     <i class="fas fa-pen-to-square text-sm"></i>
                                 </a>
 
-                                <!-- Eliminar -->
                                 <form action="{{ route('admin.enfermedades.destroy', $enfermedad->id) }}" method="POST"
                                     class="inline">
                                     @csrf
@@ -104,8 +97,6 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Paginación -->
     @if ($enfermedades->hasPages())
         <div id="disease-pagination"
             class="px-6 py-4 flex justify-center border-t border-gray-100 dark:border-gray-800">

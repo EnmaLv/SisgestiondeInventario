@@ -15,7 +15,6 @@ class EnfermedadController extends Controller
         $editing = $request->get('editing');
         $search = $request->get('search');
 
-        // La categoría se resuelve automáticamente por el módulo activo (mental, fisica o biopsicosocial)
         $categoriaFiltro = $this->resolverCategoria($request);
 
         $enfermedades = Enfermedad::obtenerEnfermedades(10, $search, $categoriaFiltro);
@@ -35,7 +34,6 @@ class EnfermedadController extends Controller
     {
         $moduloActivo = session('modulo_activo');
 
-        // 1. Evaluación por sesión activa (Módulo actual del usuario)
         if ($moduloActivo) {
             return match ($moduloActivo) {
                 'psicologia', 'mental' => 'mental',
@@ -45,7 +43,6 @@ class EnfermedadController extends Controller
             };
         }
 
-        // 2. Fallback por parámetros de la URL/Request si no hay sesión activa
         $contexto = $request ? $request->get('tipo_contexto', $request->get('tipo')) : null;
 
         return match ($contexto) {
@@ -72,7 +69,7 @@ class EnfermedadController extends Controller
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'codigo' => 'nullable|string|max:50',
-            'nivel'  => 'nullable|integer|min:0|max:5', // Restringido de 0 (nada grave) a 5 (muy grave)
+            'nivel'  => 'nullable|integer|min:0|max:5',
         ]);
 
         $codigo = $validated['codigo'] ?? null;

@@ -2,36 +2,45 @@
 
 namespace App\Models\salud;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
 
-class Notification
+class Notification extends Model
 {
-    /**
-     * Obtiene una notificación específica por su ID y el ID del usuario.
-     */
+    protected $table = 'notifications';
+
+    protected $fillable = [
+        'type',
+        'notifiable_type',
+        'notifiable_id',
+        'data',
+        'read_at',
+    ];
+
+    protected $casts = [
+        'data' => 'array',
+        'read_at' => 'datetime',
+    ];
+
     public static function obtenerPorIdYUsuario($id, $userId)
     {
-        return DB::table('notifications')
-            ->where('id', $id)
+        return self::where('id', $id)
             ->where('notifiable_id', $userId)
             ->first();
     }
 
-    /**
-     * Obtiene las notificaciones del último mes para un usuario.
-     */
     public static function obtenerNotificacionesRecientes($userId)
     {
         $fechaLimite = now()->subMonth();
-        $notificaciones = DB::table('notifications')
-            ->where('notifiable_type', 'App\Models\User')
+
+        $notificaciones = self::where('notifiable_type', Usuario::class)
             ->where('notifiable_id', $userId)
             ->where('created_at', '>=', $fechaLimite)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Obtener psicólogos para acortar nombres en las notificaciones
-        $psicologos = DB::table('usuario')->where('id_perfil', 1)->get();
+        $psicologos = Usuario::all()->filter(fn($usuario) => $usuario->tieneRol(['psicologo', 'administrador', 'admin']));
+
         $replacements = [];
         foreach ($psicologos as $psi) {
             $nombres = trim($psi->nombres ?? '');
@@ -46,101 +55,61 @@ class Notification
         }
 
         return $notificaciones->map(function ($notif) use ($replacements) {
-            $notif->data = is_string($notif->data) ? json_decode($notif->data, true) : $notif->data;
-            if (is_array($notif->data)) {
-                if (isset($notif->data['body'])) {
+            $data = is_string($notif->data) ? json_decode($notif->data, true) : $notif->data;
+
+            if (is_array($data)) {
+                if (isset($data['body'])) {
                     foreach ($replacements as $full => $short) {
-                        $notif->data['body'] = str_replace($full, $short, $notif->data['body']);
+                        $data['body'] = str_replace($full, $short, $data['body']);
                     }
                 }
-                if (isset($notif->data['psicologo_name'])) {
+                if (isset($data['psicologo_name'])) {
                     foreach ($replacements as $full => $short) {
-                        if ($notif->data['psicologo_name'] === $full) {
-                            $notif->data['psicologo_name'] = $short;
+                        if ($data['psicologo_name'] === $full) {
+                            $data['psicologo_name'] = $short;
                         }
                     }
                 }
             }
+
+            $notif->data = $data;
             return $notif;
         });
     }
 
-    /**
-     * Obtiene el conteo de notificaciones no leídas del último mes.
-     */
     public static function obtenerConteoNoLeidas($userId)
     {
-        $fechaLimite = now()->subMonth();
-        return DB::table('notifications')
-            ->where('notifiable_type', 'App\Models\User')
+        return self::where('notifiable_type', Usuario::class)
             ->where('notifiable_id', $userId)
-            ->where('created_at', '>=', $fechaLimite)
+            ->where('created_at', '>=', now()->subMonth())
             ->whereNull('read_at')
             ->count();
     }
 
-    /**
-     * Marca una notificación específica como leída.
-     */
     public static function marcarComoLeida($id)
     {
-        try {
-            DB::beginTransaction();
-            $res = DB::table('notifications')
-                ->where('id', $id)
-                ->update(['read_at' => now(), 'updated_at' => now()]);
-            DB::commit();
-            return $res;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return self::where('id', $id)->update(['read_at' => now()]);
     }
 
-    /**
-     * Marca todas las notificaciones no leídas de un usuario como leídas.
-     */
     public static function marcarTodasComoLeidas($userId)
     {
-        try {
-            DB::beginTransaction();
-            $res = DB::table('notifications')
-                ->where('notifiable_id', $userId)
-                ->whereNull('read_at')
-                ->update(['read_at' => now(), 'updated_at' => now()]);
-            DB::commit();
-            return $res;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return self::where('notifiable_id', $userId)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
     }
 
-    /**
-     * Limpia las notificaciones de mensajes nuevos flotantes enviadas por un usuario específico.
-     */
     public static function limpiarNotificacionesMensajes($userId, $targetUserId)
     {
-        try {
-            DB::beginTransaction();
-            $notifications = DB::table('notifications')
-                ->where('notifiable_id', $userId)
-                ->where('type', 'App\Notifications\NewMessageNotification')
-                ->whereNull('read_at')
-                ->get();
+        $notifications = self::where('notifiable_id', $userId)
+            ->where('type', 'App\Notifications\NewMessageNotification')
+            ->whereNull('read_at')
+            ->get();
 
-            foreach ($notifications as $notification) {
-                $data = json_decode($notification->data, true);
-                if (($data['sender_id'] ?? null) == $targetUserId) {
-                    DB::table('notifications')
-                        ->where('id', $notification->id)
-                        ->update(['read_at' => now(), 'updated_at' => now()]);
-                }
+        foreach ($notifications as $notification) {
+            $data = is_string($notification->data) ? json_decode($notification->data, true) : $notification->data;
+            if (($data['sender_id'] ?? null) == $targetUserId) {
+                $notification->update(['read_at' => now()]);
             }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
         }
     }
 }

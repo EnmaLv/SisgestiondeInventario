@@ -10,14 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class AvanceSesionController extends Controller
 {
-    /**
-     * Verifica si el usuario autenticado tiene permisos de Administrador o Psicólogo.
-     */
     private function verificarAcceso(): void
     {
         $user = Auth::user();
 
-        // Roles permitidos por slug o nombre
         $rolesPermitidos = ['psicologo', 'administrador', 'admin'];
 
         if (!$user || !$user->tieneRol($rolesPermitidos)) {

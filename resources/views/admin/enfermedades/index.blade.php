@@ -46,7 +46,6 @@
         </div>
     </div>
 
-    <!-- Modal de Detalles -->
     <div id="modalDetalles" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title"
         role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
@@ -112,7 +111,6 @@
         </div>
     </div>
 
-    <!-- Script de Buscador AJAX y Modal -->
     <script>
         const searchInput = document.getElementById('disease-search');
         const searchIcon = document.getElementById('search-icon-disease');
