@@ -318,6 +318,7 @@
                                                         <div class="flex items-center justify-end gap-1">
                                                             <button type="button"
                                                                 onclick="abrirDetalleCita({{ json_encode([
+                                                                    'id' => $cita->id,
                                                                     'paciente' => $cita->paciente_nombre,
                                                                     'estado' => $cita->estado,
                                                                     'motivo' => $cita->motivo ?? 'No especificado',
@@ -849,7 +850,7 @@
 
                 try {
                     const response = await fetch(
-                        '/psicologia/maestros/citas/manual', { // Ajusta si tu ruta tiene otro nombre
+                        '{{ route('admin.psicologia.maestros.agenda.crear_cita_manual') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -881,7 +882,7 @@
             if (!citaId) return;
             state.currentCitaId = citaId;
 
-            const url = customUrl || `/psicologia/maestros/citas/${citaId}/json`;
+            const url = customUrl || `{{ route('admin.psicologia.maestros.citas.show.json', ['cita' => ':id']) }}`.replace(':id', citaId);
 
             try {
                 const response = await fetch(url, {
@@ -895,12 +896,12 @@
 
                 const data = await response.json();
 
-                // Usar la función existente abrirDetalleCita con los datos recibidos
                 abrirDetalleCita({
+                    id: data.id,
                     paciente: data.paciente || 'No especificado',
                     estado: data.estado || 'Pendiente',
                     prioridad: data.prioridad || 'Media',
-                    fecha_programada: data.fecha_programada || 'Sin fecha asignada',
+                    fecha_programada: data.fecha_confirmada || 'Sin fecha asignada',
                     motivo: data.motivo || 'No especificado'
                 });
 
@@ -917,17 +918,17 @@
 
             const CONFIG = {
                 endpoints: {
-                    json: (id) => `{{ url('citas') }}/${id}/json`,
-                    prioridad: (id) => `{{ url('citas') }}/${id}/prioridad`,
-                    rechazar: (id) => `{{ url('citas') }}/${id}/rechazar`,
-                    aceptar: (id) => `{{ url('citas') }}/${id}/aceptar`,
-                    proponer: (id) => `{{ url('citas') }}/${id}/proponer`,
-                    quitarPropuesta: (id) => `{{ url('citas') }}/${id}/quitar-propuesta`,
-                    enviarPropuesta: (id) => `{{ url('citas') }}/${id}/enviar-propuesta`,
-                    realizar: (id) => `{{ url('citas') }}/${id}/realizar`,
-                    noAsistio: (id) => `{{ url('citas') }}/${id}/no-asistio`,
-                    posponer: (id) => `{{ url('citas') }}/${id}/posponer`,
-                    cancelar: (id) => `{{ url('citas') }}/${id}/cancelar-psicologo`,
+                    json: (id) => `{{ route('admin.psicologia.maestros.citas.show.json', ['cita' => ':id']) }}`.replace(':id', id),
+                    prioridad: (id) => `{{ route('admin.psicologia.maestros.citas.update.prioridad', ['cita' => ':id']) }}`.replace(':id', id),
+                    rechazar: (id) => `{{ route('admin.psicologia.maestros.citas.reject', ['cita' => ':id']) }}`.replace(':id', id),
+                    aceptar: (id) => `{{ route('admin.psicologia.maestros.citas.accept', ['cita' => ':id']) }}`.replace(':id', id),
+                    proponer: (id) => `{{ route('admin.psicologia.maestros.citas.proponer', ['cita' => ':id']) }}`.replace(':id', id),
+                    quitarPropuesta: (id) => `{{ route('admin.psicologia.maestros.citas.quitar_propuesta', ['cita' => ':id']) }}`.replace(':id', id),
+                    enviarPropuesta: (id) => `{{ route('admin.psicologia.maestros.citas.enviar_propuesta', ['cita' => ':id']) }}`.replace(':id', id),
+                    realizar: (id) => `{{ route('admin.psicologia.maestros.citas.realizar', ['cita' => ':id']) }}`.replace(':id', id),
+                    noAsistio: (id) => `{{ route('admin.psicologia.maestros.citas.no_asistio', ['cita' => ':id']) }}`.replace(':id', id),
+                    posponer: (id) => `{{ route('admin.psicologia.maestros.citas.posponer', ['cita' => ':id']) }}`.replace(':id', id),
+                    cancelar: (id) => `{{ route('admin.psicologia.maestros.citas.cancel.psicologo', ['cita' => ':id']) }}`.replace(':id', id),
                     pendingList: '{{ route('admin.psicologia.maestros.agenda.pending.list') }}',
                     dailyCitas: '{{ route('admin.psicologia.maestros.agenda.daily_citas') }}'
                 },
@@ -1274,9 +1275,14 @@
         function abrirDetalleCita(data) {
             currentCitaId = data.id || data.cita_id;
 
+            if (!currentCitaId) {
+                console.error("ID de cita no encontrado en los datos:", data);
+                return;
+            }
+
             const formPrioridad = document.getElementById('formPrioridadModal');
             if (formPrioridad) {
-                formPrioridad.action = `{{ url('admin/psicologia/maestros/citas') }}/${currentCitaId}/prioridad`;
+                formPrioridad.action = `{{ route('admin.psicologia.maestros.citas.update.prioridad', ['cita' => ':id']) }}`.replace(':id', currentCitaId);
             }
 
             const pacienteNombre = data.paciente || 'No especificado';
