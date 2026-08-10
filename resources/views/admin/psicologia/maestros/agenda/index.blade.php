@@ -221,14 +221,17 @@
                                 style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
                                 class="rounded-2xl border shadow-sm overflow-hidden">
 
-                                <div class="p-6 border-b border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div
+                                    class="p-6 border-b border-gray-100 dark:border-gray-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                     <div>
                                         <h3 class="text-lg font-bold tracking-tight" style="color: var(--text-main);">
                                             Historial de Citas
                                         </h3>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">Consulta y gestiona las citas agendadas.</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Consulta y gestiona las
+                                            citas agendadas.</p>
                                     </div>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/40">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/40">
                                         Total: {{ $citasCalendario->total() }} registros
                                     </span>
                                 </div>
@@ -236,7 +239,8 @@
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-left border-collapse">
                                         <thead>
-                                            <tr class="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-gray-800 text-[11px] font-black uppercase tracking-wider text-gray-400">
+                                            <tr
+                                                class="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-gray-800 text-[11px] font-black uppercase tracking-wider text-gray-400">
                                                 <th class="px-6 py-4">Paciente</th>
                                                 <th class="px-6 py-4">Solicitada</th>
                                                 <th class="px-6 py-4">Fecha y Hora</th>
@@ -244,15 +248,19 @@
                                                 <th class="px-6 py-4 text-right">Acciones</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800/60 text-xs font-medium">
+                                        <tbody
+                                            class="divide-y divide-gray-100 dark:divide-gray-800/60 text-xs font-medium">
                                             @forelse($citasCalendario as $cita)
-                                                <tr class="hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors">
+                                                <tr
+                                                    class="hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors">
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="flex items-center gap-3">
-                                                            <div class="w-8 h-8 rounded-xl bg-{{ $themeColor }}-50 dark:bg-{{ $themeColor }}-950/50 text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400 flex items-center justify-center font-bold text-xs">
+                                                            <div
+                                                                class="w-8 h-8 rounded-xl bg-{{ $themeColor }}-50 dark:bg-{{ $themeColor }}-950/50 text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400 flex items-center justify-center font-bold text-xs">
                                                                 {{ substr($cita->paciente_nombre, 0, 1) }}
                                                             </div>
-                                                            <span class="font-bold text-sm" style="color: var(--text-main);">
+                                                            <span class="font-bold text-sm"
+                                                                style="color: var(--text-main);">
                                                                 {{ $cita->paciente_nombre }}
                                                             </span>
                                                         </div>
@@ -260,7 +268,8 @@
 
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="flex flex-col">
-                                                            <span class="text-xs font-medium text-gray-600 dark:text-gray-300">
+                                                            <span
+                                                                class="text-xs font-medium text-gray-600 dark:text-gray-300">
                                                                 {{ $cita->created_at ? \Carbon\Carbon::parse($cita->created_at)->translatedFormat('d M, Y') : 'N/A' }}
                                                             </span>
                                                             <span class="text-[10px] text-gray-400">
@@ -272,9 +281,12 @@
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="flex flex-col">
                                                             @if (!$cita->hora)
-                                                                <span class="text-xs font-medium text-gray-400 italic">Sin horario asignado</span>
+                                                                <span
+                                                                    class="text-xs font-medium text-gray-400 italic">Sin
+                                                                    horario asignado</span>
                                                             @else
-                                                                <span class="font-bold text-xs" style="color: var(--text-main);">
+                                                                <span class="font-bold text-xs"
+                                                                    style="color: var(--text-main);">
                                                                     {{ $cita->fecha ? $cita->fecha->translatedFormat('d M, Y') : 'Sin fecha' }}
                                                                 </span>
                                                                 <span class="text-[10px] text-gray-400">
@@ -285,7 +297,8 @@
                                                     </td>
 
                                                     <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                                                        <span
+                                                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
                                                             {{ $cita->estado === 'realizada'
                                                                 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
                                                                 : ($cita->estado === 'cancelada'
@@ -333,7 +346,8 @@
                                                     <td colspan="5" class="px-6 py-12 text-center text-gray-400">
                                                         <div class="flex flex-col items-center gap-2">
                                                             <i class="fas fa-folder-open text-3xl opacity-40 mb-1"></i>
-                                                            <p class="text-xs font-semibold">No se encontraron registros de citas.</p>
+                                                            <p class="text-xs font-semibold">No se encontraron
+                                                                registros de citas.</p>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -478,10 +492,15 @@
                                                             $horarioBloque = $horarios
                                                                 ->where('dia', $dia)
                                                                 ->first(function ($h) use ($horaInicio, $horaFin) {
-                                                                    $inicioConfig = \Carbon\Carbon::parse($h->hora_inicio)->format('H:i');
-                                                                    $finConfig = \Carbon\Carbon::parse($h->hora_fin)->format('H:i');
+                                                                    $inicioConfig = \Carbon\Carbon::parse(
+                                                                        $h->hora_inicio,
+                                                                    )->format('H:i');
+                                                                    $finConfig = \Carbon\Carbon::parse(
+                                                                        $h->hora_fin,
+                                                                    )->format('H:i');
 
-                                                                    return $inicioConfig <= $horaInicio && $finConfig >= $horaFin;
+                                                                    return $inicioConfig <= $horaInicio &&
+                                                                        $finConfig >= $horaFin;
                                                                 });
                                                             $bloqueLabel = $horarioBloque
                                                                 ? $dia .
@@ -801,7 +820,101 @@
     </div>
 
     <script>
+        const state = {
+            currentCitaId: null
+        };
+
+        document.addEventListener('click', async (e) => {
+            const pendingPaginationLink = e.target.closest('#pendingListWrapper nav a');
+            if (pendingPaginationLink) {
+                e.preventDefault();
+                if (typeof refreshAll === 'function') refreshAll(pendingPaginationLink.href);
+                return;
+            }
+
+            const btn = e.target.closest('button, a');
+            if (!btn) return;
+
+            if (btn.classList.contains('detail-btn')) {
+                const citaId = btn.dataset.citaId;
+                const jsonUrl = btn.dataset.citaJsonUrl;
+                openCitaModal(citaId, jsonUrl);
+            } else if (['closeCitaModal', 'closeDailyAgendaModal'].includes(btn.id) || btn.classList
+                .contains('close-modal-btn')) {
+                closeModals();
+            } else if (btn.classList.contains('agregar-manual-btn')) {
+                const pacienteId = btn.dataset.pacienteId;
+                btn.disabled = true;
+                btn.textContent = '...';
+
+                try {
+                    const response = await fetch(
+                        '/psicologia/maestros/citas/manual', { // Ajusta si tu ruta tiene otro nombre
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]')?.getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                paciente_id: pacienteId
+                            })
+                        });
+
+                    const res = await response.json();
+                    if (res.success && typeof refreshAll === 'function') {
+                        refreshAll();
+                    } else {
+                        alert(res.message || 'Error al agregar paciente');
+                        btn.disabled = false;
+                        btn.textContent = 'Agregar';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    btn.disabled = false;
+                    btn.textContent = 'Agregar';
+                }
+            }
+        });
+
+        async function openCitaModal(citaId, customUrl = null) {
+            if (!citaId) return;
+            state.currentCitaId = citaId;
+
+            const url = customUrl || `/psicologia/maestros/citas/${citaId}/json`;
+
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('No se pudo obtener el detalle');
+
+                const data = await response.json();
+
+                // Usar la función existente abrirDetalleCita con los datos recibidos
+                abrirDetalleCita({
+                    paciente: data.paciente || 'No especificado',
+                    estado: data.estado || 'Pendiente',
+                    prioridad: data.prioridad || 'Media',
+                    fecha_programada: data.fecha_programada || 'Sin fecha asignada',
+                    motivo: data.motivo || 'No especificado'
+                });
+
+            } catch (error) {
+                console.error('Error al cargar la cita:', error);
+            }
+        }
+
+        function setText(elementId, value) {
+            const el = document.getElementById(elementId);
+            if (el) el.textContent = value || 'No especificado';
+        }
         document.addEventListener('DOMContentLoaded', function() {
+
             const CONFIG = {
                 endpoints: {
                     json: (id) => `{{ url('citas') }}/${id}/json`,
@@ -1061,59 +1174,164 @@
         </div>
     </div>
 
-    <!-- Modal: Detalle de Cita -->
-    <div id="detalleCitaModal"
-        class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div style="background-color: var(--bg-card); border-color: var(--border-color);"
-            class="w-full max-w-lg rounded-2xl border shadow-xl p-6 relative">
-            <div class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800 mb-4">
-                <h3 class="text-base font-extrabold uppercase tracking-wider" style="color: var(--text-main);">Detalle
-                    de la Cita</h3>
-                <button type="button" onclick="document.getElementById('detalleCitaModal').classList.add('hidden')"
-                    class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
+    <div id="citaDetailsModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm px-3 transition-all duration-300">
+        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+            class="w-full max-w-lg rounded-2xl border shadow-2xl overflow-hidden transform transition-all flex flex-col">
+
+            <!-- Encabezado de la Modal -->
+            <div class="bg-{{ $themeColor }}-600 text-white px-6 py-4 flex items-center justify-between shrink-0">
+                <div>
+                    <span class="block text-[10px] font-black uppercase tracking-wider text-white/70">Gestión
+                        Rápida</span>
+                    <h3 class="text-lg font-extrabold tracking-tight leading-none">Cambiar Prioridad</h3>
+                </div>
+                <button type="button" onclick="closeModals()"
+                    class="h-9 w-9 flex items-center justify-center rounded-xl bg-white/10 hover:bg-red-500 text-white transition-colors">
+                    <i class="fas fa-xmark text-sm"></i>
                 </button>
             </div>
-            <div class="space-y-3 text-xs" id="detalleCitaContent">
-                <!-- Renderizado dinámico vía JS -->
-            </div>
+
+            <!-- Formulario que envía directamente al controlador -->
+            <form id="formPrioridadModal" method="POST" action="" class="p-6 space-y-5">
+                @csrf
+                @method('PATCH')
+
+                <!-- Información Básica Necesaria -->
+                <div style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color);"
+                    class="p-4 rounded-xl border space-y-2">
+                    <div class="flex items-center gap-3">
+                        <div id="citaAvatarContainer"
+                            class="flex items-center justify-center h-10 w-10 rounded-xl bg-{{ $themeColor }}-600 text-white font-extrabold text-sm shrink-0">
+                            <span id="citaAvatarText">--</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] font-black uppercase text-gray-400">Paciente</p>
+                            <h2 id="citaPacienteName" class="text-base font-extrabold truncate"
+                                style="color: var(--text-main);">-</h2>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-gray-100 dark:border-gray-800 flex justify-between text-xs">
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold block">FECHA CITA</span>
+                            <span id="citaFechaConfirmada" class="font-bold">-</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-gray-400 font-bold block">MOTIVO</span>
+                            <span id="citaMotivo"
+                                class="font-medium italic text-gray-600 dark:text-gray-300 truncate max-w-[180px] block">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opciones de Prioridad -->
+                <div style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color);"
+                    class="border rounded-xl p-4 space-y-3">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400">
+                        Seleccionar Prioridad
+                    </label>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        @foreach ($prioridadesDisponibles as $prioridad)
+                            @php
+                                $peerClasses = match (strtolower($prioridad->nombre)) {
+                                    'crítica' => 'peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-600 dark:peer-checked:bg-red-950/40 dark:peer-checked:text-red-400 peer-checked:ring-2 peer-checked:ring-red-500/20',
+                                    'alta' => 'peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-600 dark:peer-checked:bg-amber-950/40 dark:peer-checked:text-amber-400 peer-checked:ring-2 peer-checked:ring-amber-500/20',
+                                    'media' => 'peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-600 dark:peer-checked:bg-sky-950/40 dark:peer-checked:text-sky-400 peer-checked:ring-2 peer-checked:ring-sky-500/20',
+                                    'baja' => 'peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 dark:peer-checked:bg-emerald-950/40 dark:peer-checked:text-emerald-400 peer-checked:ring-2 peer-checked:ring-emerald-500/20',
+                                    default => 'peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-600 dark:peer-checked:bg-indigo-950/40 dark:peer-checked:text-indigo-400 peer-checked:ring-2 peer-checked:ring-indigo-500/20',
+                                };
+                            @endphp
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="prioridad" value="{{ $prioridad->nombre }}" class="peer hidden">
+                                <div class="flex items-center justify-center p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 font-bold text-[10px] uppercase transition-all duration-200 hover:border-gray-300 {{ $peerClasses }}">
+                                    {{ $prioridad->nombre }}
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeModals()"
+                        class="px-4 py-2 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl {{ $btnClass }} text-white text-xs font-bold shadow-md active:scale-95 transition-all">
+                        <i class="fas fa-floppy-disk text-xs"></i>
+                        <span>Guardar Cambios</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
+        let currentCitaId = null;
+
         function abrirDetalleCita(data) {
-            const container = document.getElementById('detalleCitaContent');
-            if (!container) return;
+            currentCitaId = data.id || data.cita_id;
 
-            container.innerHTML = `
-            <div class="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl space-y-1">
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Paciente</span>
-                <p class="font-bold text-sm text-gray-800 dark:text-gray-200">${data.paciente}</p>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div class="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Estado</span>
-                    <p class="font-bold text-gray-700 dark:text-gray-300 uppercase">${data.estado}</p>
-                </div>
-                <div class="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Prioridad</span>
-                    <p class="font-bold text-gray-700 dark:text-gray-300">${data.prioridad}</p>
-                </div>
-            </div>
-            <div class="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Fecha y Hora Programada</span>
-                <p class="font-bold text-gray-800 dark:text-gray-200">${data.fecha_programada}</p>
-            </div>
-            <div class="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Motivo de Atención</span>
-                <p class="text-gray-600 dark:text-gray-400 mt-0.5">${data.motivo}</p>
-            </div>
-        `;
+            const formPrioridad = document.getElementById('formPrioridadModal');
+            if (formPrioridad) {
+                formPrioridad.action = `{{ url('admin/psicologia/maestros/citas') }}/${currentCitaId}/prioridad`;
+            }
 
-            const modal = document.getElementById('detalleCitaModal');
+            const pacienteNombre = data.paciente || 'No especificado';
+            const initials = pacienteNombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'P';
+
+            setText('citaPacienteName', pacienteNombre);
+            setText('citaAvatarText', initials);
+            setText('citaMotivo', data.motivo || 'No especificado');
+            setText('citaFechaConfirmada', data.fecha_programada || 'Sin horario asignado');
+
+            const prioridadText = data.prioridad || 'Media';
+            const radioPrioridad = document.querySelector(`input[name="prioridad"][value="${prioridadText}"]`);
+            if (radioPrioridad) {
+                radioPrioridad.checked = true;
+            }
+
+            const modal = document.getElementById('citaDetailsModal');
             if (modal) {
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
+            }
+        }
+
+        function actualizarBadgesPrioridad(prioridadText) {
+            setText('citaPrioridadTexto', prioridadText);
+
+            const radioPrioridad = document.querySelector(`input[name="prioridad"][value="${prioridadText}"]`);
+            if (radioPrioridad) {
+                radioPrioridad.checked = true;
+            }
+
+            const dot = document.getElementById('citaPrioridadDot');
+            if (dot) {
+                const pLower = prioridadText.toLowerCase();
+                const colors = {
+                    'crítica': 'bg-rose-500',
+                    'alta': 'bg-amber-500',
+                    'media': 'bg-sky-500',
+                    'baja': 'bg-emerald-500'
+                };
+                dot.className = `h-1.5 w-1.5 rounded-full ${colors[pLower] || 'bg-indigo-500'}`;
+            }
+        }
+
+        function closeModals() {
+            const modal = document.getElementById('citaDetailsModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            const legacyModal = document.getElementById('detalleCitaModal');
+            if (legacyModal) {
+                legacyModal.classList.add('hidden');
+                legacyModal.classList.remove('flex');
             }
         }
 
@@ -1126,6 +1344,20 @@
             event.stopPropagation();
             const parent = event.target.closest('[onclick="event.stopPropagation()"]');
             if (parent) parent.remove();
+        }
+
+        function manejarExitoPrioridad(nuevaPrioridad, btn) {
+            actualizarBadgesPrioridad(nuevaPrioridad);
+
+            const msg = document.getElementById('prioridadMensaje');
+            if (msg) {
+                msg.innerHTML = `<i class="fas fa-check-circle"></i> Guardado`;
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 3000);
+            }
+
+            if (btn) btn.disabled = false;
+            if (typeof refreshAll === 'function') refreshAll();
         }
     </script>
 </x-app-layout>
