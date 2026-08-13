@@ -45,9 +45,9 @@ class Producto extends Model
         return $this->belongsTo(Categoria::class);
     }
 
-    public function envasePrimario()
+    public function presentacion()
     {
-        return $this->belongsTo(EnvasePrimario::class);
+        return $this->belongsTo(EnvasePrimario::class, 'presentacion_id');
     }
 
     public function precioProducto()
@@ -246,12 +246,11 @@ class Producto extends Model
         // Logica para update del codigo
         $productoAntiguo = DB::table('productos')->where('id', $id)->first();
 
-        $codigoFinal = $productoAntiguo->codigo; 
+        $codigoFinal = $productoAntiguo->codigo;
 
         if (!empty($data['codigo'])) {
             $codigoFinal = strtoupper($data['codigo']);
-        }
-        else if ($productoAntiguo->nombre !== $data['nombre'] || $productoAntiguo->categoria_id != $data['categoria_id']) {
+        } else if ($productoAntiguo->nombre !== $data['nombre'] || $productoAntiguo->categoria_id != $data['categoria_id']) {
 
             $categoriaNombre = DB::table('categorias')
                 ->where('id', $data['categoria_id'])
@@ -264,7 +263,7 @@ class Producto extends Model
         }
 
         $update = [
-            'codigo'          => $codigoFinal, 
+            'codigo'          => $codigoFinal,
             'categoria_id'    => $data['categoria_id'],
             'nombre'          => $data['nombre'],
             'descripcion'     => $data['descripcion'] ?? null,

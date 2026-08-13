@@ -25,146 +25,16 @@
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="rd-card p-4 card-body">
-                <div class="rd-card-header mb-3">
-                    <h3 class="rd-title-sm">Información del Medicamento</h3>
-                    <a href="{{ url('admin/salud/maestros/medicamentos') }}" class="rd-btn rd-btn-default">
-                        <i class="fas fa-arrow-left"></i> Volver
-                    </a>
-                </div>
-                <div class="row">
-                    <div class="col-md-9">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="font-weight-bold">Categoría</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                    <input type="text" class="form-control"
-                                        value="{{ $medicamento->categoria_medicamento_nombre }}" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="font-weight-bold">Código</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                    <input type="text" class="form-control" value="{{ $medicamento->codigo }}" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="font-weight-bold">Nombre</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                                    <input type="text" class="form-control" value="{{ $medicamento->nombre }}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mt-2 mb-3">
-                            <div class="col-md-12">
-                                <label class="font-weight-bold">Descripción</label>
-                                <div class="p-3"
-                                    style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; min-height:140px;">
-                                    {!! $medicamento->descripcion ?? 'Sin Descripción' !!}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2 mb-3">
-                                <label class="font-weight-bold">Precio Compra</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-                                    <input type="text" class="form-control" value="{{ $medicamento->precio_compra }}.BS"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <label class="font-weight-bold">Stock Mínimo</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
-                                    <input type="text" class="form-control" value="{{ $medicamento->stock_minimo }}"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <label class="font-weight-bold">Stock Máximo</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
-                                    <input type="text" class="form-control" value="{{ $medicamento->stock_maximo }}"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="font-weight-bold">Unidad Medida</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
-                                    <input type="text" class="form-control" value="{{ $medicamento->unidad->nombre }}"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="font-weight-bold" id="label-peso">
-                                        Peso del contenido
-                                    </label>
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="fas fa-weight"></i></span>
-                                        <input type="number" class="form-control rd-filter-input" name="peso_contenido"
-                                            value="{{ round(old('peso_contenido', $medicamento->peso_contenido)) }}"
-                                            placeholder="Peso contenido" min="0" step="0.01" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="font-weight-bold">Imagen del Medicamento</label>
-                        @if ($medicamento->imagen)
-                            <div class="rd-card p-2"
-                                style="border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
-                                <img src="{{ asset('storage/' . $medicamento->imagen) }}" alt="Imagen del medicamento"
-                                    style="width:100%; height:auto; border-radius:10px; object-fit:cover;">
-                            </div>
-                        @else
-                            <h4 style="text-align: center; margin-top: 3rem">Imagen no disponible</h4>
-                        @endif
-                    </div>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-end">
-                    <a href="{{ url('admin/salud/maestros/medicamentos') }}" class="rd-btn rd-btn-default">
-                        Volver
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-producto-show 
+        :producto="$medicamento" 
+        ruta-volver="{{ route('admin.salud.maestros.medicamentos.index') }}" 
+        :es-medicamento="true" 
+    />
 @stop
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
 @stop
 
-@section('css')
-    <style>
-        .ck.ck-editor {
-            width: 100% !important;
-        }
-
-        .ck.ck-editor__editable {
-            width: 100% !important;
-            min-height: 300px;
-            box-sizing: border-box;
-        }
-
-        @media (max-width: 768px) {
-            .ck.ck-editor__editable {
-                min-height: 250px;
-                padding: 10px;
-            }
-        }
-    </style>
-@stop
 
 @section('js')
     <script>

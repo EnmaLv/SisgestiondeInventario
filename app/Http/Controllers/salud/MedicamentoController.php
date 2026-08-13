@@ -167,7 +167,8 @@ class MedicamentoController extends Controller
      */
     public function show($id)
     {
-        $medicamento = Producto::obtenerDatos($id);
+        $medicamento = Producto::with(['categoria', 'unidad', 'presentacion'])->findOrFail($id);
+
         return view('admin.salud.maestros.medicamentos.show', compact('medicamento'));
     }
 

@@ -15,28 +15,21 @@
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
             </div>
-            <div style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
+            <div
+                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
                 <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
-    </div> 
+    </div>
 @stop
 
 @section('content')
     <div class="row">
         <div class="col-md-12 m-auto">
-            <x-formulario-producto 
-                titulo="Editar medicamento: {{ $medicamento->nombre }}"
-                :action="route('admin.salud.maestros.medicamentos.update', $medicamento->id)"
-                metodo="PUT"
-                :rutaVolver="route('admin.salud.maestros.medicamentos.index')"
-                :categorias="$categorias"
-                :unidades="$unidades"
-                :envases="$envases"
-                :es-medicamento="true"
-                :modelo="$medicamento"
-            />
+            <x-producto-formulario titulo="Editar medicamento: {{ $medicamento->nombre }}" :action="route('admin.salud.maestros.medicamentos.update', $medicamento->id)" metodo="PUT"
+                :rutaVolver="route('admin.salud.maestros.medicamentos.index')" :categorias="$categorias" :unidades="$unidades" :envases="$envases" :es-medicamento="true"
+                :modelo="$medicamento" />
         </div>
     </div>
 @stop
