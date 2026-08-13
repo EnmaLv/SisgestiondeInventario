@@ -62,6 +62,10 @@
                 @include('components.salud-home')
             @break
 
+            @case('psicologia')
+                @include('components.psicologia-home')
+            @break
+
             @case('becas')
                 {{-- @include('admin.dashboard.modules.becas') --}}
             @break

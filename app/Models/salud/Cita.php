@@ -81,14 +81,18 @@ class Cita extends Model
 
     public static function obtenerCitasGlobales($estado = null, $cantidad = 10)
     {
-        $paginator = self::with(['paciente', 'psicologo'])
+        $paginator = self::with(['paciente.persona', 'psicologo.persona'])
             ->porEstado($estado)
             ->latest('created_at')
             ->paginate($cantidad);
 
         $paginator->getCollection()->transform(function ($item) {
-            $item->paciente_nombre = $item->paciente ? trim("{$item->paciente->nombres} {$item->paciente->apellidos}") : '';
-            $item->psicologo_nombre = $item->psicologo ? trim("{$item->psicologo->nombres} {$item->psicologo->apellidos}") : '';
+            $item->paciente_nombre = $item->paciente && $item->paciente->persona
+                ? trim("{$item->paciente->persona->nombre_persona} {$item->paciente->persona->apellido_persona}")
+                : '';
+            $item->psicologo_nombre = $item->psicologo && $item->psicologo->persona
+                ? trim("{$item->psicologo->persona->nombre_persona} {$item->psicologo->persona->apellido_persona}")
+                : '';
             $item->fecha = $item->fecha ? Carbon::parse($item->fecha) : null;
             $item->created_at = $item->created_at ? Carbon::parse($item->created_at) : null;
             return self::desencriptarItem($item);
@@ -121,14 +125,6 @@ class Cita extends Model
         $citas = $query->latest('created_at')->get();
         $citas->transform(fn($item) => self::desencriptarItem($item));
 
-        if ($avanceId) {
-            $citas = $citas->filter(function ($cita) use ($avanceId) {
-                if (!$cita->notas) return false;
-                $notas = json_decode($cita->notas, true);
-                return (json_last_error() === JSON_ERROR_NONE && isset($notas['avance_estado']) && $notas['avance_estado'] == $avanceId);
-            })->values();
-        }
-
         return $citas->map(function ($cita) {
             $paciente = $cita->paciente;
             if ($paciente) {
@@ -141,13 +137,16 @@ class Cita extends Model
 
                 try {
                     if (strlen($cita->nombres) > 40) $cita->nombres = Crypt::decryptString($cita->nombres);
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
                 try {
                     if (strlen($cita->apellidos) > 40) $cita->apellidos = Crypt::decryptString($cita->apellidos);
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
                 try {
                     if (strlen($cita->genero) > 40) $cita->genero = Crypt::decryptString($cita->genero);
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
             }
 
             $cita->paciente_nombre = trim(($cita->nombres ?? '') . ' ' . ($cita->apellidos ?? ''));
@@ -289,16 +288,24 @@ class Cita extends Model
                 if ($pnfVal === 'Electrica') $pnfVal = 'Electricidad';
 
                 if (!in_array($pnfVal, [
-                    'Administracion', 'Mecanica', 'Mantenimiento', 'Electricidad', 'Veterinaria',
-                    'Informatica', 'PDA', 'Distribucion_Logistica', 'Agroalimentacion', 'Seguridad_Alimentaria_Nutricional'
+                    'Administracion',
+                    'Mecanica',
+                    'Mantenimiento',
+                    'Electricidad',
+                    'Veterinaria',
+                    'Informatica',
+                    'PDA',
+                    'Distribucion_Logistica',
+                    'Agroalimentacion',
+                    'Seguridad_Alimentaria_Nutricional'
                 ])) {
                     $pnfVal = ($perfil === 'Estudiante') ? 'No especificado' : 'No aplica';
                 }
                 $resumen['pnf'][$pnfVal] = ($resumen['pnf'][$pnfVal] ?? 0) + 1;
 
                 $avanceId = null;
-                if ($cita->notas) {
-                    $notas = is_string($cita->notas) ? json_decode($cita->notas, true) : $cita->notas;
+                if ($cita->notes) {
+                    $notas = is_string($cita->notes) ? json_decode($cita->notes, true) : $cita->notes;
                     if (json_last_error() === JSON_ERROR_NONE && is_array($notas) && isset($notas['avance_estado'])) {
                         $avanceId = $notas['avance_estado'];
                     }
@@ -349,7 +356,8 @@ class Cita extends Model
         if ($fechaInicio && $fechaFin) {
             $inicio = Carbon::parse($fechaInicio);
             $fin = Carbon::parse($fechaFin);
-            $semanasTotal = max(1, $inicio->diffInDays($fin)) / 7;
+            $dias = $inicio->diffInDays($fin);
+            $semanasTotal = max(1, $dias) / 7;
         }
         $resumen['promedio_semanal'] = round($resumen['total_citas'] / max(0.1, $semanasTotal), 1);
 
@@ -400,7 +408,7 @@ class Cita extends Model
 
     public static function obtenerCitasPorPsicologo($psicologoId, $estado = null, $cantidad = 10)
     {
-        $paginator = self::with('paciente')
+        $paginator = self::with(['paciente.persona'])
             ->porPsicologo($psicologoId)
             ->porEstado($estado)
             ->latest('created_at')
@@ -409,7 +417,9 @@ class Cita extends Model
         $coleccionFiltrada = $paginator->getCollection()->transform(function ($item) {
             $item->fecha = $item->fecha ? Carbon::parse($item->fecha) : null;
             $item->created_at = $item->created_at ? Carbon::parse($item->created_at) : null;
-            $item->paciente_nombre = $item->paciente ? trim("{$item->paciente->nombres} {$item->paciente->apellidos}") : '';
+            $item->paciente_nombre = $item->paciente && $item->paciente->persona
+                ? trim("{$item->paciente->persona->nombre_persona} {$item->paciente->persona->apellido_persona}")
+                : '';
             return self::desencriptarItem($item);
         })->filter(fn($item) => trim($item->motivo) !== 'Nota de Evolución (Manual)')->values();
 
@@ -438,7 +448,8 @@ class Cita extends Model
                 if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
                     return $data['observaciones'] ?? ($data['motivo_consulta'] ?? ($data['intervenciones'] ?? 'Sesión con datos estructurados.'));
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
         }
 
         return $raw;
@@ -446,7 +457,7 @@ class Cita extends Model
 
     public static function obtenerDetalle($id)
     {
-        $cita = self::with(['paciente', 'psicologo'])->find($id);
+        $cita = self::with(['paciente.persona', 'psicologo.persona'])->find($id);
         if (!$cita) return null;
 
         $cita = self::desencriptarItem($cita);
@@ -456,12 +467,12 @@ class Cita extends Model
         if (isset($cita->updated_at) && $cita->updated_at) $cita->updated_at = Carbon::parse($cita->updated_at);
         if (isset($cita->confirmado_en) && $cita->confirmado_en) $cita->confirmado_en = Carbon::parse($cita->confirmado_en);
 
-        $pNombre = explode(' ', trim($cita->paciente->nombres ?? ''))[0];
-        $pApellido = explode(' ', trim($cita->paciente->apellidos ?? ''))[0];
+        $pNombre = explode(' ', trim($cita->paciente->persona->nombre_persona ?? ''))[0];
+        $pApellido = explode(' ', trim($cita->paciente->persona->apellido_persona ?? ''))[0];
         $cita->paciente_short_name = trim($pNombre . ' ' . $pApellido) ?: 'Paciente';
 
-        $psNombre = explode(' ', trim($cita->psicologo->nombres ?? ''))[0];
-        $psApellido = explode(' ', trim($cita->psicologo->apellidos ?? ''))[0];
+        $psNombre = explode(' ', trim($cita->psicologo->persona->nombre_persona ?? ''))[0];
+        $psApellido = explode(' ', trim($cita->psicologo->persona->apellido_persona ?? ''))[0];
         $cita->psicologo_short_name = trim($psNombre . ' ' . $psApellido) ?: 'Psicólogo';
 
         return $cita;
@@ -471,7 +482,7 @@ class Cita extends Model
     {
         if (!$item) return $item;
 
-        $campos = ['motivo', 'notas', 'bloques_sugeridos', 'bloques_propuestos', 'bloque_propuesto', 'propuesta_bloque_seleccionado'];
+        $campos = ['motivo', 'notes', 'notas', 'bloque_propuesto', 'bloques_sugeridos', 'bloques_propuestos', 'propuesta_bloque_seleccionado'];
         foreach ($campos as $campo) {
             if (isset($item->$campo) && !empty($item->$campo) && is_string($item->$campo)) {
                 if (strlen($item->$campo) > 40 && !str_contains($item->$campo, ' ')) {
@@ -481,7 +492,8 @@ class Cita extends Model
                     } catch (\Exception $e) {
                         try {
                             $item->$campo = Crypt::decryptString($item->$campo);
-                        } catch (\Exception $e2) {}
+                        } catch (\Exception $e2) {
+                        }
                     }
                 }
             }
@@ -618,7 +630,7 @@ class Cita extends Model
             }
 
             $psicologo = Usuario::find($validated['psicologo_id']);
-            if (!$psicologo || !$psicologo->tieneRol(['psicologo', 'administrador', 'admin'])) {
+            if (!$psicologo || !$psicologo->tieneRol(['psicologo', 'administrador'])) {
                 return [false, 'Selecciona un psicólogo válido.', null];
             }
 
@@ -820,9 +832,9 @@ class Cita extends Model
 
                 $actor = 'paciente';
                 if ($user->tieneRol('admin')) $actor = 'admin';
-                if ($user->tieneRol(['psicologo', 'administrador', 'admin'])) $actor = 'psicologo';
+                if ($user->tieneRol(['psicologo', 'administrador'])) $actor = 'psicologo';
 
-                if ($actor === 'psicologo' || $actor === 'administrador') {
+                if ($actor === 'psicologo' || $actor === 'admin') {
                     if ($cita->estado !== 'confirmada') {
                         return [false, 'Validación: Solo se pueden cancelar citas que ya estén confirmadas.'];
                     }
@@ -1208,8 +1220,8 @@ class Cita extends Model
         if ($avanceId) {
             $filtered = $paginator->getCollection()->filter(function ($item) use ($avanceId) {
                 if (!$item->notas) return false;
-                $notas = is_string($item->notas) ? json_decode($item->notas, true) : $item->notas;
-                return (json_last_error() === JSON_ERROR_NONE && is_array($notas) && isset($notas['avance_estado']) && $notas['avance_estado'] == $avanceId);
+                $notes = is_string($item->notas) ? json_decode($item->notas, true) : $item->notas;
+                return (json_last_error() === JSON_ERROR_NONE && is_array($notes) && isset($notes['avance_estado']) && $notes['avance_estado'] == $avanceId);
             });
             $paginator->setCollection($filtered->values());
         }
@@ -1229,11 +1241,13 @@ class Cita extends Model
     {
         try {
             return DB::transaction(function () use ($cita, $prioridad) {
-                $model = is_object($cita) ? $cita : self::findOrFail($cita);
-                $model->update(['prioridad' => $prioridad]);
+                $id = is_object($cita) ? $cita->id : $cita;
+                
+                // Actualizar directamente en la base de datos para evitar guardar atributos dinámicos como paciente_short_name
+                $updated = self::where('id', $id)->update(['prioridad' => $prioridad]);
 
-                if ($model->user_id) {
-                    Usuario::where('id_usuario', $model->user_id)->update(['infracciones_reset_at' => now()]);
+                if (!$updated) {
+                    throw new \Exception('No se pudo guardar la prioridad en la base de datos.');
                 }
 
                 return [true, 'Prioridad actualizada correctamente.'];

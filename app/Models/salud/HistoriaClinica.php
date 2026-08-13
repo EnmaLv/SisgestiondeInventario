@@ -35,12 +35,12 @@ class HistoriaClinica extends Model
 
     public static function obtenerPaciente($userId)
     {
-        return Usuario::where('id_usuario', $userId)->first();
+        return Usuario::with('persona')->where('id_usuario', $userId)->first();
     }
 
     public static function obtenerPsicologo($psicologoId)
     {
-        return Usuario::where('id_usuario', $psicologoId)->first();
+        return Usuario::with('persona')->where('id_usuario', $psicologoId)->first();
     }
 
     public static function obtenerSeccionesPersonalizadas($historiaId)
@@ -115,17 +115,19 @@ class HistoriaClinica extends Model
         return Usuario::whereHas('citas', function ($q) use ($psicologoId) {
             $q->where('psicologo_id', $psicologoId);
         })
-        ->where(function ($q) use ($query) {
-            $q->where('nombres', 'like', '%' . $query . '%')
-              ->orWhere('apellidos', 'like', '%' . $query . '%')
-              ->orWhere('cedula', 'like', '%' . $query . '%');
+        ->whereHas('persona', function ($q) use ($query) {
+            $q->where('nombre_persona', 'like', '%' . $query . '%')
+              ->orWhere('apellido_persona', 'like', '%' . $query . '%')
+              ->orWhere('cedula_persona', 'like', '%' . $query . '%');
         })
-        ->get(['id_usuario as id', 'nombres', 'apellidos', 'email'])
+        ->with('persona')
+        ->get()
         ->map(function ($usuario) {
+            $persona = $usuario->persona;
             return (object) [
-                'id' => $usuario->id,
-                'name' => trim(($usuario->nombres ?? '') . ' ' . ($usuario->apellidos ?? '')),
-                'email' => $usuario->email
+                'id' => $usuario->id_usuario,
+                'name' => trim(($persona->nombre_persona ?? '') . ' ' . ($persona->apellido_persona ?? '')),
+                'email' => $persona->email_persona ?? ''
             ];
         });
     }
@@ -134,6 +136,7 @@ class HistoriaClinica extends Model
     {
         $query = DB::table('citas')
             ->join('usuario', 'citas.user_id', '=', 'usuario.id_usuario')
+            ->join('persona', 'usuario.id_persona', '=', 'persona.id_persona')
             ->leftJoin('historia_clinicas', 'usuario.id_usuario', '=', 'historia_clinicas.user_id')
             ->where('citas.psicologo_id', $psicologoId)
             ->where('citas.estado', 'realizada');
@@ -142,18 +145,19 @@ class HistoriaClinica extends Model
             $query->leftJoin('historia_enfermedad', 'historia_clinicas.id', '=', 'historia_enfermedad.historia_clinica_id')
                   ->leftJoin('enfermedades', 'historia_enfermedad.enfermedad_id', '=', 'enfermedades.id')
                   ->where(function ($q) use ($search) {
-                      $q->where('usuario.nombres', 'like', "%{$search}%")
-                        ->orWhere('usuario.apellidos', 'like', "%{$search}%")
-                        ->orWhere('usuario.cedula', 'like', "%{$search}%");
+                      $q->where('persona.nombre_persona', 'like', "%{$search}%")
+                        ->orWhere('persona.apellido_persona', 'like', "%{$search}%")
+                        ->orWhere('persona.cedula_persona', 'like', "%{$search}%");
                   });
         }
 
         if (!empty($filters['pnf'])) {
-            $query->where('usuario.pnf', $filters['pnf']);
+            $query->join('persona_pnf', 'persona.id_persona', '=', 'persona_pnf.id_persona')
+                  ->where('persona_pnf.id_pnf', $filters['pnf']);
         }
 
         if (!empty($filters['edad'])) {
-            $query->whereYear('usuario.fecha_nacimiento', Carbon::now()->subYears($filters['edad'])->year);
+            $query->whereYear('persona.fecha_nacimiento_persona', Carbon::now()->subYears($filters['edad'])->year);
         }
 
         $tipoFiltroFecha = $filters['tipo_filtro_fecha'] ?? 'rango';
@@ -217,8 +221,8 @@ class HistoriaClinica extends Model
 
         $historiasBase = $query->select(
                 'usuario.id_usuario as id',
-                DB::raw("CONCAT(usuario.nombres, ' ', usuario.apellidos) as patient_name"),
-                'usuario.email',
+                DB::raw("CONCAT(persona.nombre_persona, ' ', persona.apellido_persona) as patient_name"),
+                'persona.email_persona as email',
                 'citas.fecha as ultima_sesion',
                 'citas.notas'
             )
@@ -258,10 +262,11 @@ class HistoriaClinica extends Model
             })->count();
 
             $paciente = self::obtenerPaciente($item->id);
-            if ($paciente) {
-                $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
+            if ($paciente && $paciente->persona) {
+                $p = $paciente->persona;
+                $paciente->name = trim(($p->nombre_persona ?? '') . ' ' . ($p->apellido_persona ?? ''));
                 $paciente->avatar = strtoupper(
-                    substr($paciente->nombres ?? '', 0, 1) . substr($paciente->apellidos ?? '', 0, 1)
+                    substr($p->nombre_persona ?? '', 0, 1) . substr($p->apellido_persona ?? '', 0, 1)
                 );
             }
 

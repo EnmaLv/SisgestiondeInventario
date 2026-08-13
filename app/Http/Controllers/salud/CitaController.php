@@ -28,7 +28,7 @@ class CitaController extends Controller
         $user = Auth::user();
         abort_if(!$user, 403);
 
-        if ($user->tieneRol('admin')) {
+        if ($user->tieneRol(['psicologo', 'administrador'])) {
             $citas = Cita::obtenerCitasGlobales();
             return view('admin.psicologia.maestros.citas.index', compact('citas'));
         }
@@ -36,7 +36,7 @@ class CitaController extends Controller
         if ($user->tieneRol('paciente')) {
             $user->unreadNotifications()
                 ->whereIn('type', [
-                    'App\Notifications\CitaConfirmedNotification', 
+                    'App\Notifications\CitaConfirmedNotification',
                     'App\Notifications\CitaRechazadaNotification',
                     'App\Notifications\CitaCancelledNotification'
                 ])
@@ -123,7 +123,7 @@ class CitaController extends Controller
                 if ($i === 0 && $inicio->format('H:i:s') <= $ahora->format('H:i:s')) {
                     continue;
                 }
-                
+
                 $ocupado = false;
                 foreach ($citasDelDia as $horaCita) {
                     if ($horaCita->betweenIncluded($inicio, $fin->copy()->subMinute())) {
@@ -185,19 +185,19 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         $avances = AvanceSesion::orderBy('nombre', 'asc')->get();
         $estadosAnimo = EstadoAnimo::orderBy('valor', 'asc')->get();
 
         $camposGuardadosRaw = CitaNotaEvolucion::obtenerPorCita($citaId);
-        
+
         $camposOcultos = [
-            'Detalle del Avance', 
-            'Plan de Tratamiento', 
-            'Diagnósticos Oficiales', 
-            'Estado de Ánimo del Paciente', 
-            'Estado de Evolución', 
+            'Detalle del Avance',
+            'Plan de Tratamiento',
+            'Diagnósticos Oficiales',
+            'Estado de Ánimo del Paciente',
+            'Estado de Evolución',
             'Próxima Cita Recomendada'
         ];
 
@@ -212,7 +212,7 @@ class CitaController extends Controller
         } else {
             $camposGuardados = $camposGuardadosRaw->filter(fn($campo) => !in_array($campo->titulo, $camposOcultos))->values();
         }
-        
+
         $camposDisponibles = NotaEvolucionCampo::obtenerPorPsicologo($user->id_usuario);
 
         return view('admin.psicologia.maestros.citas.edit_note', compact('cita', 'avances', 'estadosAnimo', 'camposGuardados', 'camposDisponibles'));
@@ -241,8 +241,8 @@ class CitaController extends Controller
         $paciente = Usuario::with('persona')->find($cita->user_id);
         $psicologo = Usuario::with('persona')->find($cita->psicologo_id);
 
-        $pacienteName = $paciente ? $paciente->persona->nombre_completo : 'Desconocido';
-        $psicologoName = $psicologo ? $psicologo->persona->nombre_completo : 'Desconocido';
+        $pacienteName = $paciente ? $paciente->persona->nombre_persona : 'Desconocido';
+        $psicologoName = $psicologo ? $psicologo->persona->nombre_persona : 'Desconocido';
 
         $headerLines = [
             'Psico-Guía UPTP',
@@ -361,53 +361,53 @@ class CitaController extends Controller
     {
         $cita = Cita::obtenerDetalle($citaId);
         abort_if(!$cita, 404);
+
         $this->authorizeAccess($cita);
 
-        $detalle = Cita::obtenerDetalle($cita->id);
-        if (!$detalle) {
-            return response()->json(['error' => 'No se encontró el detalle de la cita'], 404);
-        }
-
-        // Cargar usuario con su relación persona usando Eloquent
-        $paciente = Usuario::with('persona')->find($detalle->user_id);
+        $paciente = $cita->paciente;
         $persona = $paciente?->persona;
 
         $fotoUrl = null;
         if ($paciente && $paciente->profile_photo_path) {
-            $fotoPath = $paciente->profile_photo_path;
-            if (file_exists(public_path('storage/' . $fotoPath))) {
-                $fotoUrl = asset('storage/' . $fotoPath);
+            if (file_exists(public_path('storage/' . $paciente->profile_photo_path))) {
+                $fotoUrl = asset('storage/' . $paciente->profile_photo_path);
             }
         }
 
-        $pacienteNombresStr = isset($detalle->paciente_nombres) ? explode(' ', trim($detalle->paciente_nombres))[0] : '';
-        $pacienteApellidosStr = isset($detalle->paciente_apellidos) ? explode(' ', trim($detalle->paciente_apellidos))[0] : '';
-        $pacienteShortName = trim($pacienteNombresStr . ' ' . $pacienteApellidosStr);
+        $pacienteShortName = 'Paciente';
+        if ($persona && !empty($persona->nombre_persona)) {
+            $pacienteNombresStr = explode(' ', trim($persona->nombre_persona))[0];
+            $pacienteApellidosStr = !empty($persona->apellido_persona) ? explode(' ', trim($persona->apellido_persona))[0] : '';
+            $pacienteShortName = trim($pacienteNombresStr . ' ' . $pacienteApellidosStr) ?: 'Paciente';
+        }
 
-        $psicologoNombresStr = isset($detalle->psicologo_nombres) ? explode(' ', trim($detalle->psicologo_nombres))[0] : '';
-        $psicologoApellidosStr = isset($detalle->psicologo_apellidos) ? explode(' ', trim($detalle->psicologo_apellidos))[0] : '';
-        $psicologoShortName = trim($psicologoNombresStr . ' ' . $psicologoApellidosStr);
+        $psicologoShortName = 'Sin asignar';
+        if ($cita->psicologo && $cita->psicologo->persona && !empty($cita->psicologo->persona->nombre_persona)) {
+            $psicologoNombresStr = explode(' ', trim($cita->psicologo->persona->nombre_persona))[0];
+            $psicologoApellidosStr = !empty($cita->psicologo->persona->apellido_persona) ? explode(' ', trim($cita->psicologo->persona->apellido_persona))[0] : '';
+            $psicologoShortName = trim($psicologoNombresStr . ' ' . $psicologoApellidosStr) ?: 'Sin asignar';
+        }
 
         return response()->json([
-            'id' => $detalle->id,
+            'id' => $cita->id,
             'paciente' => $pacienteShortName,
             'paciente_foto' => $fotoUrl,
             'psicologo' => $psicologoShortName,
-            'fecha_solicitud' => Carbon::parse($detalle->created_at)->format('g:i A'),
-            'fecha_solicitud_iso' => Carbon::parse($detalle->created_at)->toIso8601String(),
-            'fecha_confirmada' => $detalle->estado === 'pendiente' ? 'Pendiente' : Carbon::parse($detalle->fecha)->format('Y-m-d'),
-            'bloque_confirmado' => $detalle->bloque_propuesto ?: null,
-            'hora_confirmada' => $detalle->confirmado_en ? Carbon::parse($detalle->confirmado_en)->format('g:i A') : 'En espera',
-            'hora_confirmada_iso' => $detalle->confirmado_en ? Carbon::parse($detalle->confirmado_en)->toIso8601String() : null,
-            'estado' => $detalle->estado === 'no_asistio' ? 'Ausente' : ucfirst($detalle->estado),
-            'prioridad' => $detalle->prioridad ?? 'media',
-            'motivo' => $detalle->motivo ?: 'No especificado',
-            'bloques_sugeridos' => $detalle->bloques_sugeridos ?? '',
-            'bloque_propuesto' => $detalle->bloque_propuesto,
-            'bloques_propuestos' => $detalle->bloques_propuestos ?? '',
-            'propuesta_estado' => $detalle->propuesta_estado ?? null,
-            'propuesta_bloque_seleccionado' => $detalle->propuesta_bloque_seleccionado ?? null,
-            'motivo_rechazo_propuesta' => $detalle->motivo_rechazo_propuesta ?? null,
+            'fecha_solicitud' => Carbon::parse($cita->created_at)->format('g:i A'),
+            'fecha_solicitud_iso' => Carbon::parse($cita->created_at)->toIso8601String(),
+            'fecha_confirmada' => $cita->estado === 'pendiente' ? 'Pendiente' : ($cita->fecha ? Carbon::parse($cita->fecha)->format('Y-m-d') : 'Sin fecha'),
+            'bloque_confirmado' => $cita->bloque_propuesto ?: null,
+            'hora_confirmada' => $cita->confirmado_en ? Carbon::parse($cita->confirmado_en)->format('g:i A') : 'En espera',
+            'hora_confirmada_iso' => $cita->confirmado_en ? Carbon::parse($cita->confirmado_en)->toIso8601String() : null,
+            'estado' => $cita->estado === 'no_asistio' ? 'Ausente' : ucfirst($cita->estado),
+            'prioridad' => $cita->prioridad ?? 'media',
+            'motivo' => $cita->motivo ?: 'No especificado',
+            'bloques_sugeridos' => $cita->bloques_sugeridos ?? '',
+            'bloque_propuesto' => $cita->bloque_propuesto,
+            'bloques_propuestos' => $cita->bloques_propuestos ?? '',
+            'propuesta_estado' => $cita->propuesta_estado ?? null,
+            'propuesta_bloque_seleccionado' => $cita->propuesta_bloque_seleccionado ?? null,
+            'motivo_rechazo_propuesta' => $cita->motivo_rechazo_propuesta ?? null,
             'paciente_horario' => $paciente && isset($paciente->horario_path) && $paciente->horario_path ? asset('storage/' . $paciente->horario_path) : null,
             'email' => $persona->email_persona ?? $paciente->email ?? null,
             'telefono' => $persona->telefono_persona ?? null,
@@ -431,12 +431,19 @@ class CitaController extends Controller
         /** @var Usuario $user */
         $user = Auth::user();
 
-        abort_if(!$user || (!$user->tieneRol('paciente') && !$user->tieneRol('psicologo') && !$user->tieneRol('admin')), 403);
+        abort_if(!$user || (!$user->tieneRol('paciente') && !$user->tieneRol('psicologo') && !$user->tieneRol('administrador')), 403);
 
-        if ($user->tieneRol('admin')) return;
+        if ($user->tieneRol('administrador')) return;
 
-        if ($user->tieneRol('paciente') && $cita->user_id !== $user->id_usuario) abort(403);
-        if ($user->tieneRol('psicologo') && $cita->psicologo_id !== $user->id_usuario) abort(403);
+        if ($user->tieneRol('paciente') && $cita->user_id !== $user->id_usuario) {
+            abort(403);
+        }
+
+        if ($user->tieneRol(['psicologo', 'administrador'])) {
+            if ($cita->psicologo_id && $cita->psicologo_id !== $user->id_usuario && $cita->estado !== 'pendiente') {
+                abort(403);
+            }
+        }
     }
 
     public function updatePriority(Request $request, $citaId)
@@ -446,15 +453,34 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         $validated = $request->validate([
             'prioridad' => 'required|string|max:50',
         ]);
 
-        Cita::actualizarPrioridad($cita, $validated['prioridad']);
+        // Llamar al método de actualización y capturar el resultado
+        list($success, $message) = Cita::actualizarPrioridad($cita, $validated['prioridad']);
 
-        return response()->json(['success' => true, 'prioridad' => $cita->prioridad]);
+        if (!$success) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $message], 400);
+            }
+            return back()->withErrors(['prioridad' => $message])->withInput();
+        }
+
+        // Refrescar la cita para obtener los datos actualizados
+        $cita->refresh();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'prioridad' => $cita->prioridad,
+                'message' => $message
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     public function updateNote(Request $request, $citaId)
@@ -464,7 +490,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         $marcarRealizada = ($cita->estado === 'confirmada');
         $isManual = ($cita->motivo === 'Nota de Evolución (Manual)');
@@ -513,9 +539,9 @@ class CitaController extends Controller
             $camposDinamicos = $request->input('campos_dinamicos', []);
 
             if ($isManual) {
-                $hasContent = !empty(trim($request->input('titulo_manual'))) 
-                    || $request->input('estado_animo_id') 
-                    || $request->input('avance_estado') 
+                $hasContent = !empty(trim($request->input('titulo_manual')))
+                    || $request->input('estado_animo_id')
+                    || $request->input('avance_estado')
                     || !empty($request->input('diagnosticos'));
 
                 if (!$hasContent) {
@@ -572,8 +598,8 @@ class CitaController extends Controller
             return response()->json(['success' => true, 'notas' => $cita->notas]);
         }
 
-        $msg = $marcarRealizada 
-            ? 'La cita se ha completado con éxito y la nota de evolución ha sido registrada.' 
+        $msg = $marcarRealizada
+            ? 'La cita se ha completado con éxito y la nota de evolución ha sido registrada.'
             : 'Nota de sesión actualizada correctamente.';
 
         return redirect()->route('historias.show', ['paciente' => $cita->user_id, 'tab' => 'evolucion'])->with('success', $msg);
@@ -631,9 +657,9 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || (!$user->tieneRol('paciente') && !$user->tieneRol('admin')), 403);
+        abort_if(!$user || (!$user->tieneRol('paciente') && !$user->tieneRol('administrador')), 403);
 
-        if (!$user->tieneRol('admin') && $cita->user_id !== $user->id_usuario) {
+        if (!$user->tieneRol('administrador') && $cita->user_id !== $user->id_usuario) {
             abort(403);
         }
 
@@ -656,7 +682,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         $validated = $request->validate([
             'motivo_cancelacion' => 'nullable|string|max:1000',
@@ -677,7 +703,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         [$isPass, $message] = Cita::posponer($cita->id, $user->id_usuario);
 
@@ -694,7 +720,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         $validated = $request->validate([
             'fecha' => 'required|date',
@@ -718,7 +744,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         $fecha = $request->input('fecha');
         if (!$fecha) {
@@ -740,8 +766,8 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || (!$user->tieneRol('psicologo') && !$user->tieneRol('admin')), 403);
-        if ($user->tieneRol('psicologo') && $cita->psicologo_id !== $user->id_usuario) {
+        abort_if(!$user || (!$user->tieneRol(['psicologo', 'administrador']) && !$user->tieneRol('administrador')), 403);
+        if ($user->tieneRol(['psicologo', 'administrador']) && $cita->psicologo_id !== $user->id_usuario) {
             abort(403);
         }
 
@@ -772,7 +798,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         if ($cita->estado !== 'confirmada') {
             return response()->json([
@@ -804,9 +830,9 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || (!$user->tieneRol('psicologo') && !$user->tieneRol('admin')), 403);
+        abort_if(!$user || (!$user->tieneRol(['psicologo', 'administrador']) && !$user->tieneRol('administrador')), 403);
 
-        if ($user->tieneRol('psicologo') && $cita->psicologo_id !== $user->id_usuario) {
+        if ($user->tieneRol(['psicologo', 'administrador']) && $cita->psicologo_id !== $user->id_usuario) {
             abort(403);
         }
 
@@ -864,7 +890,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         [$isPass, $message] = Cita::enviarPropuesta($cita->id);
 
@@ -891,10 +917,10 @@ class CitaController extends Controller
         ]);
 
         [$isPass, $message] = Cita::responderPropuesta(
-            $cita->id, 
-            $validated['opcion'], 
-            $validated['bloque'] ?? null, 
-            $validated['motivo_rechazo'] ?? null, 
+            $cita->id,
+            $validated['opcion'],
+            $validated['bloque'] ?? null,
+            $validated['motivo_rechazo'] ?? null,
             $validated['nuevos_bloques'] ?? null
         );
 
@@ -911,7 +937,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
         abort_if($cita->estado !== 'realizada', 400, 'La constancia solo se puede generar de citas realizadas.');
         abort_if($cita->motivo === 'Nota de Evolución (Manual)', 400, 'No se puede generar constancia de asistencia para notas manuales.');
 
@@ -919,10 +945,10 @@ class CitaController extends Controller
         $psicologo = Usuario::with('persona')->find($cita->psicologo_id);
 
         if ($paciente) {
-            $paciente->name = $paciente->persona->nombre_completo ?? 'Paciente';
+            $paciente->name = $paciente->persona->nombre_persona ?? 'Paciente';
         }
         if ($psicologo) {
-            $psicologo->name = $psicologo->persona->nombre_completo ?? 'Psicólogo';
+            $psicologo->name = $psicologo->persona->nombre_persona ?? 'Psicólogo';
         }
 
         $pdf = Pdf::loadView('historias.constanciaPDF', compact('cita', 'paciente', 'psicologo'))
@@ -940,7 +966,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
         abort_if($cita->motivo !== 'Nota de Evolución (Manual)', 400, 'Solo se pueden eliminar notas de evolución creadas manualmente.');
 
         $cita->update(['status' => 0]);
@@ -955,7 +981,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         [$isPass, $message] = Cita::ocultarMensajeCancelacion($citaId);
 
