@@ -59,12 +59,12 @@ class Message
 
     public static function obtenerRemitente($senderId)
     {
-        return DB::table('users')->where('id', $senderId)->first();
+        return DB::table('usuario')->where('id_usuario', $senderId)->first();
     }
 
     public static function registrarActividadChat($userId, $chatActivoId)
     {
-        return DB::table('users')->where('id', $userId)->update([
+        return DB::table('usuario')->where('id_usuario', $userId)->update([
             'ultima_actividad_chat' => now(),
             'chat_activo_user_id' => $chatActivoId,
         ]);
@@ -72,7 +72,7 @@ class Message
 
     public static function usuarioEstaActivoEnChat($userId, $senderId)
     {
-        $user = DB::table('users')->where('id', $userId)->first();
+        $user = DB::table('usuario')->where('id_usuario', $userId)->first();
         if (!$user || !$user->ultima_actividad_chat || !$user->chat_activo_user_id) {
             return false;
         }

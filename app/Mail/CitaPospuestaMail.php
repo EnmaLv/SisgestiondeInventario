@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class CitaPospuestaMail extends Mailable implements ShouldQueue
+{
+    use Queueable, SerializesModels;
+
+    protected $cita;
+    protected $psicologo;
+
+    public function __construct($cita, $psicologo)
+    {
+        $this->cita = $cita;
+        $this->psicologo = $psicologo;
+    }
+
+    public function build()
+    {
+        return $this->subject('Aviso de Cita Pospuesta')
+            ->view('emails.cita_pospuesta')
+            ->with([
+                'psicologo' => optional($this->psicologo)->name ?: 'Psicólogo'
+            ]);
+    }
+}

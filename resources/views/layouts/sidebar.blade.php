@@ -1,8 +1,6 @@
 @php
     $moduloActivo = session('modulo_activo', 'general');
     $isPsico = $esPsicologia ?? in_array($moduloActivo, ['psicologia', 'mental']);
-
-    // Clases de estilo dinámicas según el módulo activo
     $sidebarHover = $isPsico ? 'hover:bg-indigo-600/30' : 'hover:bg-[#623739]';
     $btnSelectBg = $isPsico
         ? 'bg-indigo-600/20 hover:bg-indigo-600/40 border-indigo-500/30'
@@ -14,7 +12,6 @@
     x-data="{ activeSection: '{{ request()->segment(2) ?? request()->segment(1) }}' }">
 
     <div class="flex items-center px-3 h-12 mb-2" :class="sidebarOpen ? 'justify-between' : 'justify-center'">
-        {{-- Enlace Inicio --}}
         <a href="{{ Route::has('home') ? route('home') : url('/') }}"
             class="flex items-center gap-3 transition-colors overflow-hidden group rounded-lg p-1.5 {{ $sidebarHover }}"
             :class="sidebarOpen ? 'flex' : 'hidden'" title="Inicio">
@@ -27,7 +24,6 @@
             <span class="font-bold text-sm text-white whitespace-nowrap">Inicio</span>
         </a>
 
-        {{-- Botón Colapsar Sidebar --}}
         <button @click="sidebarOpen = !sidebarOpen"
             class="h-8 w-8 flex items-center justify-center rounded-lg text-white/80 hover:text-white {{ $sidebarHover }} transition-colors flex-shrink-0">
             <svg class="h-4 w-4 transition-transform duration-300" :class="sidebarOpen ? 'rotate-180' : ''"

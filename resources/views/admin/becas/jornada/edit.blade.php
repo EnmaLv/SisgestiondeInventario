@@ -169,9 +169,9 @@
                     <div class="col-md-6 form-group mb-3">
                         <label class="font-weight-bold">
                             Cupos Máximos <span class="text-danger">*</span>
-                            <span class="text-info ml-1" data-toggle="tooltip" data-placement="top"
+                            <span class="ml-1" data-toggle="tooltip" data-placement="top"
                                 title="El número de cupos máximos de la jornada no puede superar los cupos disponibles del beneficio seleccionado.">
-                                <i class="fas fa-info-circle" style="cursor: help;"></i>
+                                <i class="fas fa-info-circle"></i>
                             </span>
                         </label>
                         <div class="input-group">

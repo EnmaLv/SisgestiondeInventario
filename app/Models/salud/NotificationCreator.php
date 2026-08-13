@@ -19,7 +19,7 @@ class NotificationCreator
         DB::table('notifications')->insert([
             'id' => $data['id'] ?? Str::uuid()->toString(),
             'type' => $data['type'],
-            'notifiable_type' => 'App\Models\User',
+            'notifiable_type' => 'App\Models\Usuario',
             'notifiable_id' => $this->userId,
             'data' => is_array($data['data']) ? json_encode($data['data']) : $data['data'],
             'read_at' => null,

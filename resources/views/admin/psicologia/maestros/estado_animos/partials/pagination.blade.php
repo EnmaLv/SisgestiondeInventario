@@ -3,6 +3,7 @@
         <ul style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
             class="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl shadow-sm border">
             
+            {{-- Anterior --}}
             @if ($paginator->onFirstPage())
                 <li>
                     <span class="w-8 h-8 flex items-center justify-center text-gray-300 dark:text-gray-600 rounded-xl cursor-not-allowed">
@@ -18,6 +19,7 @@
                 </li>
             @endif
 
+            {{-- Elementos de Paginación --}}
             @foreach ($elements as $element)
                 @if (is_string($element))
                     <li>
@@ -45,6 +47,7 @@
                 @endif
             @endforeach
 
+            {{-- Siguiente --}}
             @if ($paginator->hasMorePages())
                 <li>
                     <a href="{{ $paginator->nextPageUrl() }}" rel="next" 
