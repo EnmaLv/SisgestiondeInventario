@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\salud\EnfermedadController;
 use App\Http\Controllers\salud\EstadoAnimoController;
 use App\Http\Controllers\salud\GrupoHorarioController;
+use App\Http\Controllers\salud\HistoriaController;
 use App\Http\Controllers\salud\NotaEvolucionCampoController;
 use App\Http\Controllers\salud\PlantillaGlobalController;
 use App\Http\Controllers\salud\PlantillaSeccionController;
@@ -22,6 +23,7 @@ Route::post('enfermedades/store', [EnfermedadController::class, 'store'])->name(
 Route::get('enfermedades/{enfermedad}/edit', [EnfermedadController::class, 'edit'])->name('admin.enfermedades.edit');
 Route::put('enfermedades/{enfermedad}', [EnfermedadController::class, 'update'])->name('admin.enfermedades.update');
 Route::delete('enfermedades/{enfermedad}', [EnfermedadController::class, 'destroy'])->name('admin.enfermedades.destroy');
+Route::get('enfermedades/api/search', [EnfermedadController::class, 'search'])->name('admin.enfermedades.api.search');
 
 
 Route::get('/psicologia/maestros/estado_animos', [EstadoAnimoController::class, 'index'])->name('admin.psicologia.maestros.estado_animos.index');
@@ -95,6 +97,7 @@ Route::put('/psicologia/maestros/prioridades/{prioridad}', [PrioridadController:
 Route::delete('/psicologia/maestros/prioridades/{prioridad}', [PrioridadController::class, 'destroy'])->name('admin.psicologia.maestros.prioridades.destroy');
 
 
+Route::get('/psicologia/maestros/mural', [PublicacionController::class, 'mural'])->name('admin.psicologia.maestros.mural');
 Route::get('/psicologia/maestros/publicaciones', [PublicacionController::class, 'index'])->name('admin.psicologia.maestros.publicaciones.index');
 Route::get('/psicologia/maestros/publicaciones/create', [PublicacionController::class, 'create'])->name('admin.psicologia.maestros.publicaciones.create');
 Route::post('/psicologia/maestros/publicaciones', [PublicacionController::class, 'store'])->name('admin.psicologia.maestros.publicaciones.store');
@@ -148,3 +151,24 @@ Route::get('/psicologia/maestros/agenda/exportar-pdf', [AgendaController::class,
 Route::get('/psicologia/maestros/agenda/estadisticas', [AgendaController::class, 'estadisticas'])->name('admin.psicologia.maestros.agenda.estadisticas');
 Route::resource('/psicologia/maestros/agenda/prioridades', PrioridadController::class)->names('admin.psicologia.maestros.agenda.prioridades')->except(['show', 'edit', 'update']);
 Route::resource('/psicologia/maestros/agenda/estado-animos', EstadoAnimoController::class)->names('admin.psicologia.maestros.agenda.estado_animos')->except(['show']);
+
+
+Route::get('/psicologia/maestros/historias', [HistoriaController::class, 'index'])->name('admin.psicologia.maestros.historias.index');
+Route::get('/psicologia/maestros/historias/{paciente}', [HistoriaController::class, 'show'])->name('admin.psicologia.maestros.historias.show');
+Route::get('/psicologia/maestros/historias/{paciente}/download-zip', [HistoriaController::class, 'downloadZip'])->name('admin.psicologia.maestros.historias.downloadZip');
+Route::get('/psicologia/maestros/historias/buscar/paciente', [HistoriaController::class, 'buscarPaciente'])->name('admin.psicologia.maestros.historias.buscar');
+Route::get('/psicologia/maestros/historias/exportar/pdf', [HistoriaController::class, 'exportarPdf'])->name('admin.psicologia.maestros.historias.exportar.pdf');
+Route::get('/psicologia/maestros/historias/exportar/excel', [HistoriaController::class, 'exportarExcel'])->name('admin.psicologia.maestros.historias.exportar.excel');
+Route::patch('/psicologia/maestros/historias/{paciente}', [HistoriaController::class, 'update'])->name('admin.psicologia.maestros.historias.update');
+Route::get('/psicologia/maestros/historias/{paciente}/reporte-pdf', [HistoriaController::class, 'reportePdf'])->name('admin.psicologia.maestros.historias.reportePdf');
+Route::get('/psicologia/maestros/historias/{paciente}/reporte-word', [HistoriaController::class, 'reporteWord'])->name('admin.psicologia.maestros.historias.reporteWord');
+Route::get('/psicologia/maestros/historias/{paciente}/expediente-completo-pdf', [HistoriaController::class, 'expedienteCompletoPdf'])->name('admin.psicologia.maestros.historias.expedienteCompletoPdf');
+Route::get('/psicologia/maestros/historias/{paciente}/expediente-completo-word', [HistoriaController::class, 'expedienteCompletoWord'])->name('admin.psicologia.maestros.historias.expedienteCompletoWord');
+Route::post('/psicologia/maestros/historias/enfermedad/vincular', [HistoriaController::class, 'vincularEnfermedad'])->name('admin.psicologia.maestros.historias.enfermedad.vincular');
+Route::delete('/psicologia/maestros/historias/enfermedad/desvincular', [HistoriaController::class, 'desvincularEnfermedad'])->name('admin.psicologia.maestros.historias.enfermedad.desvincular');
+Route::post('/psicologia/maestros/historias/{paciente}/secciones', [HistoriaController::class, 'storeSeccion'])->name('admin.psicologia.maestros.historias.secciones.store');
+Route::delete('/psicologia/maestros/historias/secciones/{seccion}', [HistoriaController::class, 'destroySeccion'])->name('admin.psicologia.maestros.historias.secciones.destroy');
+Route::patch('/psicologia/maestros/historias/secciones/{seccion}/reorder', [HistoriaController::class, 'reorderSeccion'])->name('admin.psicologia.maestros.historias.secciones.reorder');
+Route::post('/psicologia/maestros/historias/{paciente}/evolucion', [HistoriaController::class, 'storeEvolucion'])->name('admin.psicologia.maestros.historias.evolucion.store');
+Route::post('/psicologia/maestros/historias/{paciente}/evolucion-pdf', [HistoriaController::class, 'evolucionPdf'])->name('admin.psicologia.maestros.historias.evolucion.pdf');
+Route::post('/psicologia/maestros/historias/{paciente}/evolucion-word', [HistoriaController::class, 'evolucionWord'])->name('admin.psicologia.maestros.historias.evolucion.word');

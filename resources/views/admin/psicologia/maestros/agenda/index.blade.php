@@ -206,7 +206,7 @@
                                                                     ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
                                                                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400')) }}">
                                                             {{ $cita->hora ? \Carbon\Carbon::parse($cita->hora)->format('g:i A') : 'S/H' }}
-                                                            - {{ $cita->paciente_short_name }}
+                                                            - {{ $cita->paciente->persona->nombre_persona }}
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -257,11 +257,11 @@
                                                         <div class="flex items-center gap-3">
                                                             <div
                                                                 class="w-8 h-8 rounded-xl bg-{{ $themeColor }}-50 dark:bg-{{ $themeColor }}-950/50 text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400 flex items-center justify-center font-bold text-xs">
-                                                                {{ substr($cita->paciente_nombre, 0, 1) }}
+                                                                {{ substr($cita->paciente->persona->nombre_persona, 0, 1) }}
                                                             </div>
                                                             <span class="font-bold text-sm"
                                                                 style="color: var(--text-main);">
-                                                                {{ $cita->paciente_nombre }}
+                                                                {{ $cita->paciente->persona->nombre_persona }}
                                                             </span>
                                                         </div>
                                                     </td>
@@ -319,7 +319,7 @@
                                                             <button type="button"
                                                                 onclick="abrirDetalleCita({{ json_encode([
                                                                     'id' => $cita->id,
-                                                                    'paciente' => $cita->paciente_nombre,
+                                                                    'paciente' => $cita->paciente->persona->nombre_persona,
                                                                     'estado' => $cita->estado,
                                                                     'motivo' => $cita->motivo ?? 'No especificado',
                                                                     'prioridad' => $cita->prioridad ?? 'Normal',
@@ -525,13 +525,19 @@
                                                                     'confirmada',
                                                                     'realizada',
                                                                     'no_asistio',
+                                                                    'pendiente',
                                                                 ]) &&
+                                                                    $cita->fecha &&
                                                                     $cita->fecha->isSameDay($fechaDelDia) &&
-                                                                    $cita->bloque_propuesto &&
-                                                                    str_contains(
-                                                                        $normalizeBlock($cita->bloque_propuesto),
-                                                                        $normalizedSlotText,
-                                                                    ),
+                                                                    (($cita->bloque_propuesto &&
+                                                                        str_contains(
+                                                                            $normalizeBlock($cita->bloque_propuesto),
+                                                                            $normalizedSlotText,
+                                                                        )) ||
+                                                                        ($cita->hora &&
+                                                                            \Carbon\Carbon::parse($cita->hora)->format(
+                                                                                'H:i',
+                                                                            ) === $horaInicio)),
                                                             );
                                                             $assignedCita = $citasConfirmadasEnSlot->first();
 
@@ -559,9 +565,21 @@
                                                                 $horaFin,
                                                                 $fechaDelDia,
                                                             ) {
-                                                                if (!$cita->bloques_sugeridos) {
+                                                                // Coincidencia directa por fecha y hora o bloque propuesto
+                                                                if ($cita->fecha && \Carbon\Carbon::parse($cita->fecha)->isSameDay($fechaDelDia)) {
+                                                                    if ($cita->hora && \Carbon\Carbon::parse($cita->hora)->format('H:i') === $horaInicio) {
+                                                                        return true;
+                                                                    }
+                                                                    if ($cita->bloque_propuesto && str_contains($normalizeBlock($cita->bloque_propuesto), $normalizedSlotText)) {
+                                                                        return true;
+                                                                    }
+                                                                }
+
+                                                                // Evaluación por bloques sugeridos si no coincide por fecha/hora directa
+                                                                if (!$cita->bloques_sugeridos || $cita->bloques_sugeridos === 'x') {
                                                                     return false;
                                                                 }
+
                                                                 $raw = $cita->bloques_sugeridos;
                                                                 $excepcionesStr = '';
                                                                 $horariosStr = $raw;
@@ -570,76 +588,24 @@
                                                                     $leftPart = trim($parts[0]);
                                                                     $rightPart = trim($parts[1]);
                                                                     if (str_contains($leftPart, 'exceptuados')) {
-                                                                        $excepcionesStr = trim(
-                                                                            str_replace(
-                                                                                'Días exceptuados:',
-                                                                                '',
-                                                                                $leftPart,
-                                                                            ),
-                                                                        );
+                                                                        $excepcionesStr = trim(str_replace('Días exceptuados:', '', $leftPart));
                                                                     }
-                                                                    $horariosStr = preg_replace(
-                                                                        '/^\s*Horarios\s*(propuestos)?\s*:\s*/i',
-                                                                        '',
-                                                                        $rightPart,
-                                                                    );
+                                                                    $horariosStr = preg_replace('/^\s*Horarios\s*(propuestos)?\s*:\s*/i', '', $rightPart);
                                                                 }
                                                                 if ($excepcionesStr !== '') {
-                                                                    $excepcionesArray = array_map(
-                                                                        'trim',
-                                                                        explode(',', $excepcionesStr),
-                                                                    );
+                                                                    $excepcionesArray = array_map('trim', explode(',', $excepcionesStr));
                                                                     if (in_array($fechaDelDia, $excepcionesArray)) {
                                                                         return false;
                                                                     }
                                                                 }
-                                                                if (
-                                                                    \Carbon\Carbon::parse($fechaDelDia)->isBefore(
-                                                                        \Carbon\Carbon::today(),
-                                                                    )
-                                                                ) {
-                                                                    return false;
-                                                                }
-                                                                if (
-                                                                    \Carbon\Carbon::parse($fechaDelDia)->isAfter(
-                                                                        \Carbon\Carbon::today()->addMonth(),
-                                                                    )
-                                                                ) {
-                                                                    return false;
-                                                                }
 
-                                                                $bloques = array_filter(
-                                                                    array_map(
-                                                                        'trim',
-                                                                        explode(
-                                                                            ';',
-                                                                            str_replace(',', ';', $horariosStr),
-                                                                        ),
-                                                                    ),
-                                                                );
+                                                                $bloques = array_filter(array_map('trim', explode(';', str_replace(',', ';', $horariosStr))));
                                                                 foreach ($bloques as $bloque) {
-                                                                    if (
-                                                                        str_contains($bloque, $fechaDelDia) ||
-                                                                        str_contains(
-                                                                            $normalizeBlock($bloque),
-                                                                            strtolower($dia),
-                                                                        )
-                                                                    ) {
-                                                                        if (
-                                                                            preg_match(
-                                                                                '/(\d{1,2}:\d{2}(?:\s*[aApP][mM])?)\s*[-\x96\x97]\s*(\d{1,2}:\d{2}(?:\s*[aApP][mM])?)/i',
-                                                                                $bloque,
-                                                                                $m,
-                                                                            )
-                                                                        ) {
+                                                                    if (str_contains($bloque, $fechaDelDia) || str_contains($normalizeBlock($bloque), strtolower($dia))) {
+                                                                        if (preg_match('/(\d{1,2}:\d{2}(?:\s*[aApP][mM])?)\s*[-\x96\x97]\s*(\d{1,2}:\d{2}(?:\s*[aApP][mM])?)/i', $bloque, $m)) {
                                                                             $sI = \Carbon\Carbon::parse($m[1]);
                                                                             $sF = \Carbon\Carbon::parse($m[2]);
-                                                                            if (
-                                                                                \Carbon\Carbon::parse($horaInicio)->lt(
-                                                                                    $sF,
-                                                                                ) &&
-                                                                                \Carbon\Carbon::parse($horaFin)->gt($sI)
-                                                                            ) {
+                                                                            if (\Carbon\Carbon::parse($horaInicio)->lt($sF) && \Carbon\Carbon::parse($horaFin)->gt($sI)) {
                                                                                 return true;
                                                                             }
                                                                         }
@@ -651,21 +617,29 @@
                                                         <td class="px-1.5 py-2">
                                                             @if ($horarioBloque)
                                                                 <button type="button"
-                                                                    class="block-slot-button w-full rounded-xl border p-2 text-center transition-all group
-                                                                {{ $assignedCita
-                                                                    ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 shadow-sm'
-                                                                    : ($horarioBloque->activo === \App\Models\salud\Horario::STATUS_ACTIVE
-                                                                        ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-' .
-                                                                            $themeColor .
-                                                                            '-500 hover:shadow-sm'
-                                                                        : 'bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400') }}"
-                                                                    data-block-label="{{ $bloqueLabel }}"
-                                                                    data-block-date="{{ $fechaDelDia }}"
-                                                                    data-block-time="{{ $horarioBloque->hora_inicio }}"
-                                                                    data-block-active="{{ $horarioBloque->activo === \App\Models\salud\Horario::STATUS_ACTIVE ? 'true' : 'false' }}"
-                                                                    @if ($assignedCita) data-assigned-cita-id="{{ $assignedCita->id }}" data-assigned-paciente="{{ $assignedCita->paciente_short_name }}" data-assigned-estado="{{ $assignedCita->estado }}" data-assigned-block="true" @endif>
-
-                                                                    <div
+                                                                        class="block-slot-button w-full rounded-xl border p-2 text-center transition-all group
+                                                                        {{ $assignedCita
+                                                                            ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 shadow-sm'
+                                                                            : ($horarioBloque->activo === \App\Models\salud\Horario::STATUS_ACTIVE
+                                                                                ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-' . $themeColor . '-500 hover:shadow-sm'
+                                                                                : 'bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400') }}"
+                                                                        data-block-label="{{ $bloqueLabel }}"
+                                                                        data-block-date="{{ $fechaDelDia }}"
+                                                                        data-block-time="{{ $horarioBloque->hora_inicio }}"
+                                                                        data-block-active="{{ $horarioBloque->activo === \App\Models\salud\Horario::STATUS_ACTIVE ? 'true' : 'false' }}"
+                                                                        data-pending-requests="{{ json_encode($citasEnSlot->map(fn($c) => [
+                                                                            'id' => $c->id,
+                                                                            'paciente' => $c->paciente_short_name ?? ($c->paciente->persona->nombre_persona ?? 'Paciente'),
+                                                                            'motivo' => $c->motivo ?? 'Solicitud pendiente',
+                                                                            'estado' => $c->estado ?? 'pendiente'
+                                                                        ])->values()) }}"
+                                                                        @if ($assignedCita) 
+                                                                            data-assigned-cita-id="{{ $assignedCita->id }}" 
+                                                                            data-assigned-paciente="{{ $assignedCita->paciente_short_name }}" 
+                                                                            data-assigned-estado="{{ $assignedCita->estado }}" 
+                                                                            data-assigned-block="true" 
+                                                                        @endif>
+                                                                                                                                        <div
                                                                         class="flex items-center justify-center mb-0.5">
                                                                         <span
                                                                             class="text-[9px] font-black uppercase tracking-wider text-gray-400">
@@ -882,7 +856,8 @@
             if (!citaId) return;
             state.currentCitaId = citaId;
 
-            const url = customUrl || `{{ route('admin.psicologia.maestros.citas.show.json', ['cita' => ':id']) }}`.replace(':id', citaId);
+            const url = customUrl || `{{ route('admin.psicologia.maestros.citas.show.json', ['cita' => ':id']) }}`
+                .replace(':id', citaId);
 
             try {
                 const response = await fetch(url, {
@@ -895,6 +870,16 @@
                 if (!response.ok) throw new Error('No se pudo obtener el detalle');
 
                 const data = await response.json();
+
+                console.log('Detalle de cita recibido:', data);
+                console.log('Datos procesados:', {
+                    id: data.id,
+                    paciente: data.paciente || 'No especificado',
+                    estado: data.estado || 'Pendiente',
+                    prioridad: data.prioridad || 'Media',
+                    fecha_programada: data.fecha_confirmada || 'Sin fecha asignada',
+                    motivo: data.motivo || 'No especificado'
+                });
 
                 abrirDetalleCita({
                     id: data.id,
@@ -918,17 +903,37 @@
 
             const CONFIG = {
                 endpoints: {
-                    json: (id) => `{{ route('admin.psicologia.maestros.citas.show.json', ['cita' => ':id']) }}`.replace(':id', id),
-                    prioridad: (id) => `{{ route('admin.psicologia.maestros.citas.update.prioridad', ['cita' => ':id']) }}`.replace(':id', id),
-                    rechazar: (id) => `{{ route('admin.psicologia.maestros.citas.reject', ['cita' => ':id']) }}`.replace(':id', id),
-                    aceptar: (id) => `{{ route('admin.psicologia.maestros.citas.accept', ['cita' => ':id']) }}`.replace(':id', id),
-                    proponer: (id) => `{{ route('admin.psicologia.maestros.citas.proponer', ['cita' => ':id']) }}`.replace(':id', id),
-                    quitarPropuesta: (id) => `{{ route('admin.psicologia.maestros.citas.quitar_propuesta', ['cita' => ':id']) }}`.replace(':id', id),
-                    enviarPropuesta: (id) => `{{ route('admin.psicologia.maestros.citas.enviar_propuesta', ['cita' => ':id']) }}`.replace(':id', id),
-                    realizar: (id) => `{{ route('admin.psicologia.maestros.citas.realizar', ['cita' => ':id']) }}`.replace(':id', id),
-                    noAsistio: (id) => `{{ route('admin.psicologia.maestros.citas.no_asistio', ['cita' => ':id']) }}`.replace(':id', id),
-                    posponer: (id) => `{{ route('admin.psicologia.maestros.citas.posponer', ['cita' => ':id']) }}`.replace(':id', id),
-                    cancelar: (id) => `{{ route('admin.psicologia.maestros.citas.cancel.psicologo', ['cita' => ':id']) }}`.replace(':id', id),
+                    json: (id) => `{{ route('admin.psicologia.maestros.citas.show.json', ['cita' => ':id']) }}`
+                        .replace(':id', id),
+                    prioridad: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.update.prioridad', ['cita' => ':id']) }}`
+                        .replace(':id', id),
+                    rechazar: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.reject', ['cita' => ':id']) }}`.replace(
+                            ':id', id),
+                    aceptar: (id) => `{{ route('admin.psicologia.maestros.citas.accept', ['cita' => ':id']) }}`
+                        .replace(':id', id),
+                    proponer: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.proponer', ['cita' => ':id']) }}`.replace(
+                            ':id', id),
+                    quitarPropuesta: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.quitar_propuesta', ['cita' => ':id']) }}`
+                        .replace(':id', id),
+                    enviarPropuesta: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.enviar_propuesta', ['cita' => ':id']) }}`
+                        .replace(':id', id),
+                    realizar: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.realizar', ['cita' => ':id']) }}`.replace(
+                            ':id', id),
+                    noAsistio: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.no_asistio', ['cita' => ':id']) }}`.replace(
+                            ':id', id),
+                    posponer: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.posponer', ['cita' => ':id']) }}`.replace(
+                            ':id', id),
+                    cancelar: (id) =>
+                        `{{ route('admin.psicologia.maestros.citas.cancel.psicologo', ['cita' => ':id']) }}`
+                        .replace(':id', id),
                     pendingList: '{{ route('admin.psicologia.maestros.agenda.pending.list') }}',
                     dailyCitas: '{{ route('admin.psicologia.maestros.agenda.daily_citas') }}'
                 },
@@ -1093,12 +1098,12 @@
                     }
 
                     assignedList.innerHTML = `
-                    <div class="w-14 h-14 rounded-2xl bg-{{ $themeColor }}-50 dark:bg-{{ $themeColor }}-950/50 text-{{ $themeColor }}-600 flex items-center justify-center mb-3 text-xl font-bold shadow-sm">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Paciente Asignado</span>
-                    <h3 class="text-lg font-bold" style="color: var(--text-main);">${Utils.escapeHtml(assignedPac)}</h3>
-                `;
+                        <div class="w-14 h-14 rounded-2xl bg-{{ $themeColor }}-50 dark:bg-{{ $themeColor }}-950/50 text-{{ $themeColor }}-600 flex items-center justify-center mb-3 text-xl font-bold shadow-sm">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Paciente Asignado</span>
+                        <h3 class="text-lg font-bold" style="color: var(--text-main);">${Utils.escapeHtml(assignedPac)}</h3>
+                    `;
                 } else {
                     if (colEstado) colEstado.classList.add('hidden');
                     if (colCandidatos) {
@@ -1107,12 +1112,41 @@
                     }
                     if (badge) badge.classList.add('hidden');
 
-                    list.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-center py-8 text-gray-400">
-                        <i class="fas fa-user-clock text-2xl mb-2"></i>
-                        <p class="text-xs font-bold uppercase tracking-wider">Sin pacientes asignados</p>
-                    </div>
-                `;
+                    // Leer e intentar parsear la lista de solicitudes pendientes guardadas en la celda
+                    let pendientes = [];
+                    try {
+                        const rawData = cell.dataset.pendingRequests || cell.dataset.candidatos;
+                        pendientes = rawData ? JSON.parse(rawData) : [];
+                    } catch (e) {
+                        console.error('Error al parsear las solicitudes pendientes:', e);
+                        pendientes = [];
+                    }
+
+                    if (pendientes.length > 0) {
+                        list.innerHTML = pendientes.map(p => `
+                            <div onclick="openCitaModal(${p.id})" class="p-3 mb-2 rounded-xl border border-amber-200/60 dark:border-amber-800/60 bg-amber-50/30 dark:bg-amber-950/20 flex items-center justify-between shadow-sm hover:border-amber-400 cursor-pointer transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold" style="color: var(--text-main);">${Utils.escapeHtml(p.paciente)}</h4>
+                                        <span class="text-[10px] text-gray-400">${Utils.escapeHtml(p.motivo)}</span>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-600 uppercase">
+                                    ${Utils.escapeHtml(p.estado)}
+                                </span>
+                            </div>
+                        `).join('');
+                    } else {
+                        list.innerHTML = `
+                            <div class="flex flex-col items-center justify-center h-full text-center py-8 text-gray-400">
+                                <i class="fas fa-user-clock text-2xl mb-2"></i>
+                                <p class="text-xs font-bold uppercase tracking-wider">Sin pacientes asignados</p>
+                            </div>
+                        `;
+                    }
                 }
             }
         });
@@ -1236,16 +1270,23 @@
                         @foreach ($prioridadesDisponibles as $prioridad)
                             @php
                                 $peerClasses = match (strtolower($prioridad->nombre)) {
-                                    'crítica' => 'peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-600 dark:peer-checked:bg-red-950/40 dark:peer-checked:text-red-400 peer-checked:ring-2 peer-checked:ring-red-500/20',
-                                    'alta' => 'peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-600 dark:peer-checked:bg-amber-950/40 dark:peer-checked:text-amber-400 peer-checked:ring-2 peer-checked:ring-amber-500/20',
-                                    'media' => 'peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-600 dark:peer-checked:bg-sky-950/40 dark:peer-checked:text-sky-400 peer-checked:ring-2 peer-checked:ring-sky-500/20',
-                                    'baja' => 'peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 dark:peer-checked:bg-emerald-950/40 dark:peer-checked:text-emerald-400 peer-checked:ring-2 peer-checked:ring-emerald-500/20',
-                                    default => 'peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-600 dark:peer-checked:bg-indigo-950/40 dark:peer-checked:text-indigo-400 peer-checked:ring-2 peer-checked:ring-indigo-500/20',
+                                    'crítica'
+                                        => 'peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-600 dark:peer-checked:bg-red-950/40 dark:peer-checked:text-red-400 peer-checked:ring-2 peer-checked:ring-red-500/20',
+                                    'alta'
+                                        => 'peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-600 dark:peer-checked:bg-amber-950/40 dark:peer-checked:text-amber-400 peer-checked:ring-2 peer-checked:ring-amber-500/20',
+                                    'media'
+                                        => 'peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-600 dark:peer-checked:bg-sky-950/40 dark:peer-checked:text-sky-400 peer-checked:ring-2 peer-checked:ring-sky-500/20',
+                                    'baja'
+                                        => 'peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 dark:peer-checked:bg-emerald-950/40 dark:peer-checked:text-emerald-400 peer-checked:ring-2 peer-checked:ring-emerald-500/20',
+                                    default
+                                        => 'peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-600 dark:peer-checked:bg-indigo-950/40 dark:peer-checked:text-indigo-400 peer-checked:ring-2 peer-checked:ring-indigo-500/20',
                                 };
                             @endphp
                             <label class="relative cursor-pointer">
-                                <input type="radio" name="prioridad" value="{{ $prioridad->nombre }}" class="peer hidden">
-                                <div class="flex items-center justify-center p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 font-bold text-[10px] uppercase transition-all duration-200 hover:border-gray-300 {{ $peerClasses }}">
+                                <input type="radio" name="prioridad" value="{{ $prioridad->nombre }}"
+                                    class="peer hidden">
+                                <div
+                                    class="flex items-center justify-center p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-500 font-bold text-[10px] uppercase transition-all duration-200 hover:border-gray-300 {{ $peerClasses }}">
                                     {{ $prioridad->nombre }}
                                 </div>
                             </label>
@@ -1282,7 +1323,9 @@
 
             const formPrioridad = document.getElementById('formPrioridadModal');
             if (formPrioridad) {
-                formPrioridad.action = `{{ route('admin.psicologia.maestros.citas.update.prioridad', ['cita' => ':id']) }}`.replace(':id', currentCitaId);
+                formPrioridad.action =
+                    `{{ route('admin.psicologia.maestros.citas.update.prioridad', ['cita' => ':id']) }}`.replace(':id',
+                        currentCitaId);
             }
 
             const pacienteNombre = data.paciente || 'No especificado';

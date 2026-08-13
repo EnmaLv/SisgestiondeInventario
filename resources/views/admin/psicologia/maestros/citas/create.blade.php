@@ -2,7 +2,6 @@
     <div class="py-6 bg-gray-100 dark:bg-gray-900">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Alerta: Cita pendiente existente --}}
             @if(!empty($tieneCitaPendiente))
                 <div class="bg-white dark:bg-gray-800 shadow-xl rounded-3xl border border-blue-200 dark:border-blue-800 overflow-hidden">
                     <div class="p-8 text-center space-y-4">

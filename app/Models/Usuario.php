@@ -166,10 +166,9 @@ class Usuario extends Authenticatable
 
     public static function obtenerUsuarioPorId($id)
     {
-        $userRaw = DB::table('users')
-            ->select('users.*', DB::raw("CONCAT(nombres, ' ', apellidos) as name"))
-            ->where('id', $id)
-            ->where('status', 1)
+        $userRaw = DB::table('usuario')
+            ->select('usuario.*', DB::raw("CONCAT(nombres, ' ', apellidos) as name"))
+            ->where('id_usuario', $id)
             ->first();
 
         if ($userRaw) {
