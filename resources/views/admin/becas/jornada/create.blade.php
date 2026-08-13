@@ -33,13 +33,19 @@
         <div class="col-md-10 m-auto">
             <div class="rd-card p-4">
                 <div class="rd-card-header mb-4">
-                    <h3 class="rd-title-sm">Registrar Nueva Jornada</h3>
+                    <div>
+                        <h3 class="rd-title-sm">Registrar Nueva Jornada</h3>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                            Permite crear un nuevo período o proceso de postulación (jornada) para que los estudiantes soliciten los beneficios de beca disponibles.
+                        </p>
+                    </div>
                     <div>
                         <a href="{{ url('admin/becas/jornada') }}" class="rd-btn rd-btn-default">
                             <i class="fas fa-arrow-left"></i> Volver
                         </a>
                     </div>
                 </div>
+
 
                 @if (session('error'))
                     <div class="rd-alert rd-alert-danger mb-3">
