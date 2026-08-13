@@ -4,7 +4,7 @@
     'esMedicamento' => false
 ])
 
-<div class="rd-card p-4 card-body">
+<div class="rd-card p-4 card-body"> 
     <div class="rd-card-header mb-3">
         <h3 class="rd-title-sm">Información del Producto</h3>
         <a href="{{ $rutaVolver }}" class="rd-btn rd-btn-default">

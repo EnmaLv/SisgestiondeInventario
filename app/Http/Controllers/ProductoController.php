@@ -1,5 +1,5 @@
 <?php
- 
+
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
@@ -7,9 +7,9 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Models\ExchangeRates;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ProductoRequest;
-use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Log;
 
 class ProductoController extends Controller
 {
@@ -18,14 +18,20 @@ class ProductoController extends Controller
     {
         $activo = $request->input('activo', 1);
         $categoria = $request->input('categoria', null);
-        $productos = Producto::listarProductos($request->buscar, $activo, $categoria);
-        $categorias = Categoria::select('id', 'nombre')->where('activo', 1)->get();
+
+        $productos = Producto::listarProductos($request->buscar, $activo, $categoria, 10, null, null, 1);
+
+        $categorias = Categoria::select('id', 'nombre')
+            ->where('activo', 1)
+            ->where('tipo_producto_id', 1)
+            ->get();
+
         return view('admin.maestros.productos.index', compact('productos', 'categorias'));
     }
 
     public function create()
     {
-        $datos = Producto::getDatosFormulario();
+        $datos = Producto::getDatosFormulario(1);
         return view('admin.maestros.productos.create', $datos);
     }
 
@@ -58,7 +64,6 @@ class ProductoController extends Controller
                 return redirect()->route('admin.maestros.productos.index')
                     ->with('success', 'Producto creado y precio actualizado Exitosamente.');
             }
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -67,21 +72,24 @@ class ProductoController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Error al crear el producto.');
+                ->with('error', 'Error al crear el producto: ' . $e->getMessage());
         }
     }
 
 
+
     public function show($id)
     {
-        $producto = Producto::obtenerProducto($id);
+        $producto = Producto::with(['categoria', 'unidad'])->findOrFail($id);
+
         return view('admin.maestros.productos.show', compact('producto'));
     }
 
     public function edit($id)
     {
         $producto = Producto::findOrFail($id);
-        $datos = Producto::getDatosFormulario();
+
+        $datos = Producto::getDatosFormulario(1);
 
         return view('admin.maestros.productos.edit', array_merge($datos, [
             'producto' => $producto
@@ -90,17 +98,34 @@ class ProductoController extends Controller
 
     public function update(ProductoRequest $request, $id)
     {
-        $validated = $request->validated();
+        DB::beginTransaction();
 
-        if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('imagenes/productos', 'public');
-            $validated['imagen'] = $path;
+        try {
+            $validated = $request->validated();
+
+            if ($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen')
+                    ->store('imagenes/productos', 'public');
+            }
+
+            Producto::actualizarProducto($id, $validated);
+
+            $this->procesarTasaYPrecios($id);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.maestros.productos.index')
+                ->with('success', 'Producto actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar producto', ['error' => $e->getMessage()]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el producto: ' . $e->getMessage());
         }
-
-        Producto::actualizarProducto($id, $validated);
-        $this->procesarTasaYPrecios($id);
-
-        return redirect()->route('admin.maestros.productos.index')->with('success', 'Producto actualizado exitosamente.');
     }
 
     public function destroy($id)

@@ -22,9 +22,8 @@ class MedicamentoController extends Controller
         $activo = $request->input('activo', 1);
         $categoria = $request->input('categoria', null);
 
-        $productos = Producto::listarProductos($request->buscar, $activo, $categoria);
+        $productos = Producto::listarProductos($request->buscar, $activo, $categoria, 10, null, null, 2);
 
-        // Filtrar categorías que correspondan al tipo de producto de salud
         $categorias = Categoria::select('id', 'nombre')
             ->where('activo', 1)
             ->where('tipo_producto_id', 2)

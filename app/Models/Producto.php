@@ -87,15 +87,18 @@ class Producto extends Model
         return $this->hasMany(RecetaIngrediente::class);
     }
 
-    public static function listarProductos($buscar = null, $activo = 1, $categoria = null, $perPage = 10, $cantidadMin = null, $cantidadMax = null, $tipoProductoId = 2)
+    public static function listarProductos($buscar = null, $activo = 1, $categoria = null, $perPage = 10, $cantidadMin = null, $cantidadMax = null, $tipoProductoId = null)
     {
         $query = self::with(['categoria', 'unidad'])
             ->select('productos.*')
             ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
-            ->where('categorias.tipo_producto_id', $tipoProductoId)
             ->withSum([
                 'inventarioSedeAcarigua as cantidad_actual' => function ($query) {}
             ], 'cantidad');
+
+        if ($tipoProductoId !== null) {
+            $query->where('categorias.tipo_producto_id', $tipoProductoId);
+        }
 
         if (!empty($buscar)) {
             $query->where(function ($q) use ($buscar) {

@@ -108,7 +108,7 @@
                                             <option value="{{ $envase->id }}"
                                                 {{ old('envase_primario_id', optional($modelo)->presentacion_id) == $envase->id ? 'selected' : '' }}>
                                                 {{ $envase->nombre }}
-                                                </option>
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -135,8 +135,8 @@
                             <div class="input-group mb-2">
                                 <span class="input-group-text">$</span>
                                 <input type="number" name="costo_usd" class="form-control rd-filter-input"
-                                    value="{{ old('costo_usd', optional($modelo)->precioProducto) }}" placeholder="0.00"
-                                    min="0" step="0.01">
+                                    value="{{ old('costo_usd', optional($modelo)->precioProducto) }}"
+                                    placeholder="0.00" min="0" step="0.01">
                             </div>
                             @error('costo_usd')
                                 <div class="text-danger"><b>{{ $message }}</b></div>
@@ -149,7 +149,7 @@
                             <div class="input-group mb-2">
                                 <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
                                 <input type="number" class="form-control rd-filter-input" name="stock_minimo"
-                                    value="{{ old('stock_minimo', optional($modelo)->stock_minimo) }}"
+                                    value="{{ old('stock_minimo', optional($modelo)->stock_minimo ? intval($modelo->stock_minimo) : '') }}"
                                     placeholder="Mínimo" min="0">
                             </div>
                             @error('stock_minimo')
@@ -163,7 +163,7 @@
                             <div class="input-group mb-2">
                                 <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
                                 <input type="number" class="form-control rd-filter-input" name="stock_maximo"
-                                    value="{{ old('stock_maximo', optional($modelo)->stock_maximo) }}"
+                                    value="{{ old('stock_maximo', optional($modelo)->stock_maximo ? intval($modelo->stock_maximo) : '') }}"
                                     placeholder="Máximo" min="0">
                             </div>
                             @error('stock_maximo')
