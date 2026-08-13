@@ -1,4 +1,3 @@
-<!-- resources/views/components/formulario-producto.blade.php -->
 @props([
     'action',
     'rutaVolver',
@@ -63,7 +62,7 @@
                         </div>
                     </div>
 
-                    <!-- Código (Condicional si es edición o creación) -->
+                    <!-- Código -->
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="font-weight-bold">Código</label>
@@ -136,7 +135,7 @@
                             <div class="input-group mb-2">
                                 <span class="input-group-text">$</span>
                                 <input type="number" name="costo_usd" class="form-control rd-filter-input"
-                                    value="{{ old('costo_usd', optional($modelo)->precio_compra) }}" placeholder="0.00"
+                                    value="{{ old('costo_usd', optional($modelo)->precioProducto) }}" placeholder="0.00"
                                     min="0" step="0.01">
                             </div>
                             @error('costo_usd')

@@ -233,36 +233,51 @@ class Producto extends Model
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
 
-        // Manejo seguro de unidad
+        // Unidad
         $unidadId = $data['unidad_id'] ?? null;
         $unidad = $unidadId ? DB::table('unidades')->where('id', $unidadId)->first() : null;
 
         $pesoContenido = $data['peso_contenido'] ?? 0;
         $pesoBase = $pesoContenido * ($unidad->factor_a_base ?? 1);
 
-        // Capturamos costo_usd o precio_compra (según lo que venga en el $data)
+        // Precios
         $precioUsd = $data['costo_usd'] ?? $data['precio_compra'] ?? 0;
 
+        // Logica para update del codigo
+        $productoAntiguo = DB::table('productos')->where('id', $id)->first();
+
+        $codigoFinal = $productoAntiguo->codigo; 
+
+        if (!empty($data['codigo'])) {
+            $codigoFinal = strtoupper($data['codigo']);
+        }
+        else if ($productoAntiguo->nombre !== $data['nombre'] || $productoAntiguo->categoria_id != $data['categoria_id']) {
+
+            $categoriaNombre = DB::table('categorias')
+                ->where('id', $data['categoria_id'])
+                ->value('nombre') ?? 'CAT';
+
+            $codigoFinal = self::generarCodigoProducto(
+                $categoriaNombre,
+                $data['nombre']
+            );
+        }
+
         $update = [
+            'codigo'          => $codigoFinal, 
             'categoria_id'    => $data['categoria_id'],
             'nombre'          => $data['nombre'],
             'descripcion'     => $data['descripcion'] ?? null,
             'precio_compra'   => $precioUsd,
             'stock_minimo'    => $data['stock_minimo'] ?? 0,
             'stock_maximo'    => $data['stock_maximo'] ?? 0,
-            'peso_contenido'   => $pesoBase,
+            'peso_contenido'  => $pesoBase,
             'unidad_id'       => $unidadId,
-            'presentacion_id' => $data['envase_primario_id'] ?? null, // <-- AQUÍ: Guardamos envase_primario_id en la columna real 'presentacion_id'
+            'presentacion_id' => $data['envase_primario_id'] ?? null,
             'estado'          => isset($data['estado']) ? (int)$data['estado'] : 1,
             'updated_at'      => now(),
         ];
 
-        // Si viene un nuevo código en $data, lo actualizamos; si no, dejamos el que ya tiene
-        if (!empty($data['codigo'])) {
-            $update['codigo'] = strtoupper($data['codigo']);
-        }
-
-        // Si se subió una nueva imagen
         if (!empty($data['imagen'])) {
             $update['imagen'] = $data['imagen'];
         }
@@ -281,7 +296,6 @@ class Producto extends Model
 
         return DB::table('productos')->where('id', $id)->update($update);
     }
-
     public static function eliminarProducto($id)
     {
         return DB::table('productos')
