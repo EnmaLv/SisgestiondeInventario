@@ -34,6 +34,11 @@ class BecaRequest extends FormRequest
             'asignaciones.*.tutor_id' => ['nullable', 'exists:persona,id_persona'],
             'asignaciones.*.observaciones' => ['nullable', 'string'],
             'asignaciones.*.activo' => ['nullable', 'boolean'],
+            'preguntas' => ['nullable', 'array'],
+            'preguntas.*.texto' => ['required', 'string', 'filled'],
+            'preguntas.*.tipo' => ['required', 'in:text,number'],
+            'preguntas.*.min' => ['nullable', 'numeric'],
+            'preguntas.*.max' => ['nullable', 'numeric'],
         ];
     }
 

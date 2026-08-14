@@ -38,7 +38,21 @@ class BecaService
             $this->tutorService->sincronizar($beca, $data['tutores'] ?? []);
             $this->asignacionService->sincronizar($beca, $data['asignaciones'] ?? []);
 
-            return $beca->load(['beneficios', 'tutores.tutor', 'asignacionesTrabajo.tutor']);
+            // sincronizar preguntas (si vienen)
+            if (!empty($data['preguntas']) && is_array($data['preguntas'])) {
+                // crear preguntas nuevas relacionadas a la beca
+                foreach ($data['preguntas'] as $p) {
+                    if (empty($p['texto'])) continue;
+                    $beca->preguntas()->create([
+                        'texto' => $p['texto'],
+                        'tipo' => $p['tipo'] ?? 'text',
+                        'min' => $p['min'] ?? null,
+                        'max' => $p['max'] ?? null,
+                    ]);
+                }
+            }
+
+            return $beca->load(['beneficios', 'tutores.tutor', 'asignacionesTrabajo.tutor', 'preguntas']);
         });
     }
 
@@ -52,10 +66,26 @@ class BecaService
             $this->tutorService->sincronizar($beca, $data['tutores'] ?? []);
             $this->asignacionService->sincronizar($beca, $data['asignaciones'] ?? []);
 
+            // sincronizar preguntas: eliminamos existentes y creamos las nuevas
+            if (array_key_exists('preguntas', $data)) {
+                $beca->preguntas()->delete();
+                if (!empty($data['preguntas']) && is_array($data['preguntas'])) {
+                    foreach ($data['preguntas'] as $p) {
+                        if (empty($p['texto'])) continue;
+                        $beca->preguntas()->create([
+                            'texto' => $p['texto'],
+                            'tipo' => $p['tipo'] ?? 'text',
+                            'min' => $p['min'] ?? null,
+                            'max' => $p['max'] ?? null,
+                        ]);
+                    }
+                }
+            }
+
             $beneficiosDespues = $beca->beneficios()->pluck('be_beneficios.id')->sort()->values()->all();
 
             return [
-                'beca' => $beca->fresh(['beneficios', 'asignacionesTrabajo.tutor']),
+                'beca' => $beca->fresh(['beneficios', 'asignacionesTrabajo.tutor', 'preguntas']),
                 'beneficios_cambiaron' => $beneficiosAntes !== $beneficiosDespues,
             ];
         });

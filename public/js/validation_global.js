@@ -82,7 +82,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('.rd-prevent-double-submit').forEach(form => {
 
-        form.addEventListener('submit', function () {
+        form.addEventListener('submit', function (event) {
+
+            const hasEmptyQuestionFields = Array.from(form.querySelectorAll('.question-field')).some(input => !input.value || !input.value.trim());
+
+            if (!form.checkValidity() || hasEmptyQuestionFields) {
+                return;
+            }
 
             const btn = form.querySelector('.rd-submit-btn');
 

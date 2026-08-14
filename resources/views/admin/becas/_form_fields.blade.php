@@ -42,6 +42,61 @@
 
 <hr>
 
+<div id="preguntasError" class="alert alert-danger mt-2" style="display:none;">Hay preguntas sin rellenar. Completa el nombre de cada pregunta antes de guardar.</div>
+
+<div class="rd-card-header mb-3 d-flex justify-content-between align-items-center">
+    <h3 class="rd-title-sm">Preguntas de la beca</h3>
+    <button type="button" id="addQuestionBtn" class="rd-btn rd-btn-secondary">
+        <i class="fas fa-plus"></i> Agregar pregunta
+    </button>
+</div>
+<div class="table-responsive mb-4">
+    <table class="rd-table" id="questionsTable" style="width:100%; border-collapse:separate; border-spacing:0 10px;">
+        <thead>
+            <tr>
+                <th style="width:38%; padding:0 10px 12px 0;">Pregunta</th>
+                <th style="width:22%; padding:0 10px 12px 0;">Tipo</th>
+                <th style="width:25%; padding:0 10px 12px 0;">Limitador (para número)</th>
+                <th style="width:15%; text-align:right; padding:0 0 12px 0;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php
+                $preguntas = old('preguntas', isset($beca) && isset($beca->preguntas) ? $beca->preguntas->map(function($p){ return ['texto'=>$p->texto ?? '','tipo'=>$p->tipo ?? 'text','min'=>$p->min ?? '','max'=>$p->max ?? '']; })->toArray() : []);
+            @endphp
+
+            @forelse($preguntas as $index => $pregunta)
+                <tr data-index="{{ $index }}" style="vertical-align:middle;">
+                    <td style="padding:0 10px 0 0;">
+                        <input type="text" name="preguntas[{{ $index }}][texto]" class="form-control question-field" value="{{ $pregunta['texto'] ?? '' }}" placeholder="Nombre de la pregunta" style="height:42px; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                    </td>
+                    <td style="padding:0 10px 0 0;">
+                        <select name="preguntas[{{ $index }}][tipo]" class="form-control question-type" style="height:42px; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                            <option value="text" {{ ($pregunta['tipo'] ?? '') == 'text' ? 'selected' : '' }}>Texto</option>
+                            <option value="number" {{ ($pregunta['tipo'] ?? '') == 'number' ? 'selected' : '' }}>Número</option>
+                        </select>
+                    </td>
+                    <td style="padding:0 10px 0 0;">
+                        <div class="limit-container" style="display:{{ ($pregunta['tipo'] ?? '') == 'number' ? 'flex' : 'none' }}; gap:10px; align-items:center; width:100%;">
+                            <input type="number" name="preguntas[{{ $index }}][min]" class="form-control question-limit-input" value="{{ $pregunta['min'] ?? '' }}" placeholder="Min" style="height:42px; width:50%; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                            <input type="number" name="preguntas[{{ $index }}][max]" class="form-control question-limit-input" value="{{ $pregunta['max'] ?? '' }}" placeholder="Max" style="height:42px; width:50%; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                        </div>
+                    </td>
+                    <td class="text-right" style="padding:0;">
+                        <button type="button" class="rd-btn rd-btn-danger btn-sm remove-question" title="Eliminar pregunta" style="height:42px; width:42px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center py-4">No hay preguntas agregadas aún.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
 <div class="rd-card-header mb-3">
     <h3 class="rd-title-sm">Beneficios asignados</h3>
 </div>
@@ -155,13 +210,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Rol del tutor</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
-                                <select id="tutorRoleSelect" class="form-control rd-filter-input">
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold mb-2 d-block">Rol del tutor</label>
+                            <div class="input-group" style="border:1px solid #d1d5db; border-radius: 12px; overflow:hidden; background:#fff;">
+                                <span class="input-group-text border-0 bg-transparent" style="padding-left:12px; color:#6b7280;">
+                                    <i class="fas fa-briefcase"></i>
+                                </span>
+                                <select id="tutorRoleSelect" class="form-control border-0 shadow-none" style="background:transparent; height:46px; padding-left:10px; font-size:1rem; color:#374151;">
                                     <option value="">Seleccione rol</option>
                                     @foreach($roles as $role)
                                         <option value="{{ $role->id_rol }}">{{ $role->nombre }}</option>
@@ -171,11 +228,13 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Persona</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <select id="tutorPersonSelect" class="form-control rd-filter-input" disabled>
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold mb-2 d-block">Persona</label>
+                            <div class="input-group" style="border:1px solid #d1d5db; border-radius: 12px; overflow:hidden; background:#fff;">
+                                <span class="input-group-text border-0 bg-transparent" style="padding-left:12px; color:#6b7280;">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <select id="tutorPersonSelect" class="form-control border-0 shadow-none" style="background:transparent; height:46px; padding-left:10px; font-size:1rem; color:#374151;" disabled>
                                     <option value="">Seleccione primero un rol</option>
                                 </select>
                             </div>
@@ -358,6 +417,123 @@
 
             tutorTableBody.querySelectorAll('.remove-tutor').forEach(attachRemoveHandler);
             updateTutorButtonLabel();
+
+            // Preguntas dinámicas
+            const questionsTableBody = document.querySelector('#questionsTable tbody');
+            const addQuestionBtn = document.getElementById('addQuestionBtn');
+
+            function getQuestionRowCount() {
+                return Array.from(questionsTableBody.querySelectorAll('tr')).filter(function (row) {
+                    return row.querySelector('input[name^="preguntas"]');
+                }).length;
+            }
+
+            function attachQuestionRemove(button) {
+                button.addEventListener('click', function () {
+                    const row = button.closest('tr');
+                    row.remove();
+                    if (!getQuestionRowCount()) {
+                        questionsTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No hay preguntas agregadas aún.</td></tr>';
+                    }
+                });
+            }
+
+            function onTypeChange(select) {
+                select.addEventListener('change', function () {
+                    const tr = this.closest('tr');
+                    const container = tr.querySelector('.limit-container');
+                    if (this.value === 'number') {
+                        container.style.display = 'flex';
+                    } else {
+                        container.style.display = 'none';
+                    }
+                });
+            }
+
+            function buildQuestionRow(index) {
+                const row = document.createElement('tr');
+                row.dataset.index = index;
+                row.innerHTML = `
+                    <td style="padding:0 10px 0 0;">
+                        <input type="text" name="preguntas[${index}][texto]" class="form-control question-field" placeholder="Nombre de la pregunta" style="height:42px; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                    </td>
+                    <td style="padding:0 10px 0 0;">
+                        <select name="preguntas[${index}][tipo]" class="form-control question-type" style="height:42px; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                            <option value="text">Texto</option>
+                            <option value="number">Número</option>
+                        </select>
+                    </td>
+                    <td style="padding:0 10px 0 0;">
+                        <div class="limit-container" style="display:none; gap:10px; align-items:center; width:100%;">
+                            <input type="number" name="preguntas[${index}][min]" class="form-control question-limit-input" placeholder="Min" style="height:42px; width:50%; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                            <input type="number" name="preguntas[${index}][max]" class="form-control question-limit-input" placeholder="Max" style="height:42px; width:50%; border:1px solid #d1d5db; border-radius:10px; background:#fff; box-shadow:none;">
+                        </div>
+                    </td>
+                    <td class="text-right" style="padding:0;">
+                        <button type="button" class="rd-btn rd-btn-danger btn-sm remove-question" title="Eliminar pregunta" style="height:42px; width:42px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+                attachQuestionRemove(row.querySelector('.remove-question'));
+                onTypeChange(row.querySelector('.question-type'));
+                return row;
+            }
+
+            addQuestionBtn.addEventListener('click', function () {
+                const placeholder = questionsTableBody.querySelector('tr td[colspan="4"]');
+                if (placeholder) {
+                    placeholder.closest('tr').remove();
+                }
+
+                const index = getQuestionRowCount();
+                const newRow = buildQuestionRow(index);
+                questionsTableBody.appendChild(newRow);
+            });
+
+            function validateQuestionFields() {
+                const errorBox = document.getElementById('preguntasError');
+                const rows = questionsTableBody.querySelectorAll('tr');
+                let hasEmpty = false;
+
+                rows.forEach(function (row) {
+                    if (row.querySelector('td[colspan="4"]')) {
+                        return;
+                    }
+
+                    const input = row.querySelector('input[name^="preguntas"][name$="[texto]"]');
+                    if (input && !input.value.trim()) {
+                        hasEmpty = true;
+                        input.style.borderColor = '#dc3545';
+                        input.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.15)';
+                    } else if (input) {
+                        input.style.borderColor = '#d1d5db';
+                        input.style.boxShadow = 'none';
+                    }
+                });
+
+                if (hasEmpty) {
+                    errorBox.style.display = 'block';
+                    errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    return false;
+                }
+
+                errorBox.style.display = 'none';
+                return true;
+            }
+
+            const form = document.querySelector('form.rd-prevent-double-submit');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!validateQuestionFields()) {
+                        event.preventDefault();
+                    }
+                });
+            }
+
+            questionsTableBody.querySelectorAll('.remove-question').forEach(attachQuestionRemove);
+            questionsTableBody.querySelectorAll('.question-type').forEach(onTypeChange);
         });
     </script>
 @endpush

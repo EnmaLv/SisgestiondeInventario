@@ -43,6 +43,11 @@ class Beca extends Model
         return $this->hasMany(BecaTutor::class, 'beca_id');
     }
 
+    public function preguntas()
+    {
+        return $this->hasMany(BecaPregunta::class, 'beca_id');
+    }
+
     public function scopeBuscar($query, ?string $buscar)
     {
         return $query->when($buscar, function ($q) use ($buscar) {

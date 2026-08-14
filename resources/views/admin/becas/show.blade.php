@@ -39,6 +39,40 @@
 
     <div class="rd-card p-4 mb-4">
         <div class="rd-card-header mb-3">
+            <h3 class="rd-title-sm">Preguntas de la beca</h3>
+        </div>
+        <table class="rd-table">
+            <thead>
+                <tr>
+                    <th>Pregunta</th>
+                    <th>Tipo</th>
+                    <th>Limitador</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($beca->preguntas as $pregunta)
+                    <tr>
+                        <td>{{ $pregunta->texto }}</td>
+                        <td>{{ $pregunta->tipo === 'number' ? 'Número' : 'Texto' }}</td>
+                        <td>
+                            @if($pregunta->tipo === 'number')
+                                {{ $pregunta->min !== null || $pregunta->max !== null ? 'Min: ' . ($pregunta->min ?? '-') . ' / Max: ' . ($pregunta->max ?? '-') : 'Sin límite' }}
+                            @else
+                                —
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3" class="text-center py-4">No hay preguntas registradas para esta beca.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="rd-card p-4 mb-4">
+        <div class="rd-card-header mb-3">
             <h3 class="rd-title-sm">Beneficios asignados</h3>
         </div>
         <table class="rd-table">
