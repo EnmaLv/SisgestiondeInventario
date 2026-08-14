@@ -5,6 +5,9 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+.aider.chat.history.md
+.aider.input.history
+.aider.tags.cache.v4
 /.fleet
 /.idea
 /.nova
@@ -22,3 +25,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+_ide_*
+.aider*

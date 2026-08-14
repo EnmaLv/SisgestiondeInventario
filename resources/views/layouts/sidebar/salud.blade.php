@@ -48,19 +48,4 @@
             </span>
         </a>
     @endcanMenu
-
-    {{-- Agenda Psicológica --}}
-    @canMenu('agenda_psicologica')
-        @if(Route::has('agenda.index'))
-            <a href="{{ route('agenda.index') }}"
-               class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
-               :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
-               title="Agenda Psicológica">
-                <i class="fas fa-calendar-check text-base w-5 text-center flex-shrink-0 text-white"></i>
-                <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
-                    Agenda Psicológica
-                </span>
-            </a>
-        @endif
-    @endcanMenu
 @endcanMenu

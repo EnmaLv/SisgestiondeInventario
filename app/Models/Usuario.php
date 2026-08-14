@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Rol;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
@@ -33,10 +35,7 @@ class Usuario extends Authenticatable
 
     public function canAccessMenu($keys): bool
     {
-        // Convertir a arreglo si se pasa una sola clave
         $keysToCheck = is_array($keys) ? $keys : [$keys];
-
-        // 1. Bypass para Administrador y Secretaria de Bienestar (Super-Admins)
         foreach ($this->roles ?? [] as $r) {
             $nombreRol = is_object($r) ? ($r->nombre ?? '') : ($r['nombre'] ?? '');
             if (in_array(mb_strtolower($nombreRol), ['administrador', 'secretaria de bienestar'])) {
@@ -44,7 +43,6 @@ class Usuario extends Authenticatable
             }
         }
 
-        // 2. Extraer sobreescrituras explícitas del usuario (deny / allow)
         $extra = is_array($this->extra_permissions)
             ? $this->extra_permissions
             : (is_string($this->extra_permissions) ? json_decode($this->extra_permissions, true) : []);
@@ -52,7 +50,6 @@ class Usuario extends Authenticatable
         $userDeny = $extra['deny'] ?? [];
         $userAllow = $extra['allow'] ?? [];
 
-        // 3. Extraer permisos provenientes de los roles del usuario
         $rolePermissions = collect($this->roles)
             ->pluck('menu_permissions')
             ->flatten()
@@ -60,25 +57,31 @@ class Usuario extends Authenticatable
             ->unique()
             ->all();
 
-        // 4. Evaluar cada clave solicitada (si al menos una es accesible, retorna true)
         foreach ($keysToCheck as $key) {
-            // A. Denegado explícito individual
             if (in_array($key, $userDeny)) {
                 continue;
             }
 
-            // B. Permitido explícito individual
             if (in_array($key, $userAllow)) {
                 return true;
             }
 
-            // C. Permitido por rol
             if (in_array($key, $rolePermissions)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public function paciente()
+    {
+        return $this->belongsTo(Usuario::class, 'user_id', 'id_usuario');
+    }
+
+    public function psicologo()
+    {
+        return $this->belongsTo(Usuario::class, 'psicologo_id', 'id_usuario');
     }
 
     public function getAuthPassword()
@@ -130,6 +133,18 @@ class Usuario extends Authenticatable
         }
     }
 
+    public function tieneRol(array|string $roles): bool
+    {
+        $roles = (array) $roles;
+
+        return $this->roles()
+            ->where(function ($query) use ($roles) {
+                $query->whereIn('slug', $roles)
+                    ->orWhereIn('nombre', $roles);
+            })
+            ->exists();
+    }
+
     public function verifyPassword($candidate)
     {
         try {
@@ -147,5 +162,35 @@ class Usuario extends Authenticatable
 
             return false;
         }
+    }
+
+    public static function obtenerUsuarioPorId($id)
+    {
+        $userRaw = DB::table('usuario')
+            ->select('usuario.*', DB::raw("CONCAT(nombres, ' ', apellidos) as name"))
+            ->where('id_usuario', $id)
+            ->first();
+
+        if ($userRaw) {
+            $user = new self($userRaw);
+
+            if (!isset($user->profile_photo_path)) {
+                $user->profile_photo_path = null;
+            }
+
+            $user->profile_photo_url = !empty($user->profile_photo_path) ? Storage::disk('public')->url($user->profile_photo_path) : null;
+            $initials = strtoupper(substr($user->nombres ?? '', 0, 1) . substr($user->apellidos ?? '', 0, 1));
+            $user->avatar = $user->profile_photo_url ?: ($initials ?: 'PR');
+
+            $user->primera_cita = DB::table('citas')
+                ->where('user_id', $id)
+                ->whereNotNull('fecha')
+                ->orderBy('fecha', 'asc')
+                ->value('fecha');
+
+            return $user;
+        }
+
+        return null;
     }
 }

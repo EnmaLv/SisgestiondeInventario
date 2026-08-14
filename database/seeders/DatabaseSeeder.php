@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            EnfermedadesSeeder::class,
             DepartamentoSeeder::class,
             EstatusSeeder::class,
             UnidadSeeder::class,
@@ -31,6 +32,12 @@ class DatabaseSeeder extends Seeder
             CategoriaMedicamentoSeeder::class,
             RolModuloSeeder::class,
             JornadaBecaSeeder::class,
+            GrupoHorarioSeeder::class,
+            AvanceSesionSeeder::class,
+            NotaEvolucionSeeder::class,
+            EstadoAnimoSeeder::class,
+            PlantillaGlobalSeeder::class,
+            PrioridadesSeeder::class,
         ]);
         \App\Models\Proveedor::factory(1)->create();
     }

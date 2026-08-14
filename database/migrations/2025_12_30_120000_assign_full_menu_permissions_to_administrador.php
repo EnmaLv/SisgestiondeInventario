@@ -30,7 +30,6 @@ return new class extends Migration
             return;
         }
 
-        // ── ENCOFRAR PERMISOS PARA EL ADMINISTRADOR ──────────────────────────
         $rolAdmin = DB::table('rol')->where('nombre', 'Administrador')->first();
         if (!$rolAdmin) {
             DB::table('rol')->insertGetId([
@@ -47,7 +46,6 @@ return new class extends Migration
             ]);
         }
 
-        // ── ENCOFRAR MISMOS PERMISOS PARA LA SECRETARIA ──────────────────────
         $rolSecretaria = DB::table('rol')->where('nombre', 'Secretaria De Bienestar')->first();
         if (!$rolSecretaria) {
             DB::table('rol')->insertGetId([
@@ -67,7 +65,6 @@ return new class extends Migration
 
     public function down()
     {
-        // Limpiar Administrador
         $rolAdmin = DB::table('rol')->where('nombre', 'Administrador')->first();
         if ($rolAdmin) {
             DB::table('rol')->where('id_rol', $rolAdmin->id_rol)->update([
@@ -76,7 +73,6 @@ return new class extends Migration
             ]);
         }
 
-        // Limpiar Secretaria
         $rolSecretaria = DB::table('rol')->where('nombre', 'Secretaria De Bienestar')->first();
         if ($rolSecretaria) {
             DB::table('rol')->where('id_rol', $rolSecretaria->id_rol)->update([

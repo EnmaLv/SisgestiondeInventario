@@ -1,9 +1,17 @@
+@php
+    $moduloActivo = session('modulo_activo', 'general');
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'mental']);
+    $headerGradient = $esPsicologia
+        ? 'from-blue-600 via-indigo-700 to-slate-900'
+        : 'from-[var(--color-primary,#c52222)] to-[var(--color-tertiary,#800000)]';
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         @include('components.alert')
 
         <div
-            class="dashboard-header bg-gradient-to-r from-[var(--color-primary,#c52222)] to-[var(--color-tertiary,#800000)] rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
+            class="dashboard-header bg-gradient-to-r {{ $headerGradient }} rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
             <div class="absolute -top-1/2 -right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none">
             </div>
 
@@ -45,13 +53,17 @@
     </x-slot>
 
     <div>
-        @switch(session('modulo_activo'))
+        @switch($moduloActivo)
             @case('comedor')
                 @include('components.comedor-home')
             @break
 
             @case('salud')
                 @include('components.salud-home')
+            @break
+
+            @case('psicologia')
+                @include('components.psicologia-home')
             @break
 
             @case('becas')
