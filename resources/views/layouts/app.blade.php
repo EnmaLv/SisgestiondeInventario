@@ -1,7 +1,7 @@
 @php
     $moduloActivo = session('modulo_activo', 'general');
     $esPsicologia = in_array($moduloActivo, ['psicologia', 'mental']);
-    $primaryColorHex = $esPsicologia ? '#2563eb' : '#dc2626'; // Azul vs Vinotinto
+    $primaryColorHex = $esPsicologia ? '#2563eb' : '#dc2626';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-modulo="{{ $moduloActivo }}">
@@ -14,7 +14,6 @@
 
     <title>{{ config('app.name', 'Bienestar Estudiantil') }}</title>
 
-    <!-- 1. Script Anti-FOUC -->
     <script>
         (function() {
             const getStoredTheme = () => localStorage.getItem('theme');
@@ -42,7 +41,6 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- SweetAlert2 CDN & Theme Base -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -50,18 +48,13 @@
     @stack('css')
 
     <style>
-        /* ========== PALETA POR DEFECTO (GENERAL / VINOTINTO) ========== */
         :root {
             --color-primary: #dc2626;
             --color-primary-alpha: rgba(220, 38, 38, 0.25);
-
-            /* Fondo Vinotinto Uniforme en Navbar y Sidebar */
             --header-sidebar-bg: #352728;
             --header-sidebar-border: #5c2028;
             --header-sidebar-text: #ffffff;
             --sidebar-active-bg: #623739;
-
-            /* Estructura Base Light */
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
             --border-color: #e2e8f0;
@@ -73,7 +66,6 @@
         }
 
         html.dark {
-            /* Vinotinto para modo oscuro general */
             --header-sidebar-bg: #352728;
             --header-sidebar-border: #5c2028;
             --sidebar-active-bg: #623739;
@@ -86,13 +78,10 @@
             --input-border: #271418;
         }
 
-        /* ========== TEMA AZUL PARA MÓDULO PSICOLOGÍA / MENTAL ========== */
         html[data-modulo="psicologia"],
         html[data-modulo="mental"] {
             --color-primary: #2563eb;
             --color-primary-alpha: rgba(37, 99, 235, 0.25);
-
-            /* Navbar y Sidebar Azul Marino / Índigo */
             --header-sidebar-bg: #0f172a;
             --header-sidebar-border: #1e293b;
             --sidebar-active-bg: #1e3a8a;
@@ -111,13 +100,11 @@
             --input-border: #1e293b;
         }
 
-        /* ========== APLICACIÓN DE ESTILOS ========== */
         body {
             background-color: var(--bg-body) !important;
             color: var(--text-main) !important;
         }
 
-        /* Navbar y Sidebar */
         #top-navbar,
         #main-sidebar,
         nav.top-navbar {
@@ -126,7 +113,6 @@
             color: var(--header-sidebar-text) !important;
         }
 
-        /* Menú y Estados Activos */
         #main-sidebar nav a,
         #main-sidebar nav button {
             background-color: transparent !important;
@@ -170,7 +156,6 @@
             scrollbar-width: none;
         }
 
-        /* Inputs */
         input:not([type="radio"]):not([type="checkbox"]):not([type="file"]),
         select,
         textarea {
@@ -187,7 +172,6 @@
             box-shadow: 0 0 0 2px var(--color-primary-alpha) !important;
         }
 
-        /* Sidebar Colapsable */
         html.sidebar-collapsed #main-sidebar {
             width: 4rem !important;
         }
@@ -196,7 +180,6 @@
             width: 16rem !important;
         }
 
-        /* ========== ESTILOS PERSONALIZADOS DE SWEETALERT2 ========== */
         .swal2-toast-custom {
             background: var(--bg-card) !important;
             color: var(--text-main) !important;
@@ -275,12 +258,10 @@
         </div>
     </div>
 
-    <!-- SCRIPT CONFIGURACIÓN Y DISPARADOR DE SWEETALERT2 -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const primaryColor = '{{ $primaryColorHex }}';
 
-            // Mixin Toast elegante para notificaciones
             window.Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -296,7 +277,6 @@
                 }
             });
 
-            // Reemplazo y mejora de AppModal usando SweetAlert2
             window.AppModal = {
                 show: function(title, text, options = {}) {
                     const isDark = document.documentElement.classList.contains('dark');
@@ -331,7 +311,6 @@
                 }
             };
 
-            // Disparadores automáticos de sesión de Laravel
             @if (session('success'))
                 window.Toast.fire({
                     icon: 'success',
