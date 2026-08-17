@@ -1,9 +1,45 @@
-{{-- MÓDULO BECAS --}}
-<div class="pt-3 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
-    <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Becas</span>
-</div>
+@php
+    $becaItems = collect(config('adminlte.menu'))->filter(function ($item) {
+        return isset($item['module']) && $item['module'] === 'beca';
+    });
 
-<a href="{{ url('admin/becas/solicitudes') }}" class="flex items-center gap-3 h-10 rounded-xl px-3 text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:text-blue-600 transition-all" :class="sidebarOpen ? 'px-3' : 'justify-center px-0'">
-    <svg class="h-5 w-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>
-    <span class="text-sm font-medium whitespace-nowrap" :class="sidebarOpen ? 'block' : 'hidden'">Solicitudes</span>
-</a>
+    $headerItem = $becaItems->first(function ($item) {
+        return isset($item['header']);
+    });
+
+    $menuItems = $becaItems->filter(function ($item) {
+        return !isset($item['header']) && isset($item['key']);
+    });
+
+    $allKeys = $menuItems->pluck('key')->toArray();
+@endphp
+
+@canMenu($allKeys)
+    @if ($headerItem)
+        <div class="pt-3 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
+            <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-white/50">
+                {{ $headerItem['header'] }}
+            </span>
+        </div>
+    @else
+        <div class="pt-3 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
+            <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-white/50">
+                Gestión de Becas
+            </span>
+        </div>
+    @endif
+
+    @foreach ($menuItems as $item)
+        @canMenu($item['key'])
+            <a href="{{ url($item['url']) }}"
+               class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
+               :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+               title="{{ $item['text'] }}">
+                <i class="{{ $item['icon'] ?? 'fas fa-link' }} text-base w-5 text-center flex-shrink-0 text-white"></i>
+                <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                    {{ $item['text'] }}
+                </span>
+            </a>
+        @endcanMenu
+    @endforeach
+@endcanMenu

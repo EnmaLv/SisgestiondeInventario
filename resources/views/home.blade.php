@@ -68,6 +68,8 @@
 
             @case('becas')
                 {{-- @include('admin.dashboard.modules.becas') --}}
+            @case('beca')
+                @include('components.becas-home')
             @break
 
             @case('transporte')
