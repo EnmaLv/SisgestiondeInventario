@@ -31,12 +31,9 @@ class Producto extends Model
         'presentacion_id',
         'estado',
         'categoria_id',
-        "costo_usd"
+        'envase_primario_id',
+        'requiere_receta_medica'
     ];
-
-    public function envasePrimario(){
-        return $this->belongsTo(EnvasePrimario::class);
-    }
 
     public function unidad()
     {
@@ -46,6 +43,11 @@ class Producto extends Model
     public function categoria()
     {
         return $this->belongsTo(Categoria::class);
+    }
+
+    public function presentacion()
+    {
+        return $this->belongsTo(EnvasePrimario::class, 'presentacion_id');
     }
 
     public function precioProducto()
@@ -85,24 +87,30 @@ class Producto extends Model
         return $this->hasMany(RecetaIngrediente::class);
     }
 
-    public static function listarProductos($buscar = null, $activo = 1, $categoria = null, $perPage = 10, $cantidadMin = null, $cantidadMax = null)
+    public static function listarProductos($buscar = null, $activo = 1, $categoria = null, $perPage = 10, $cantidadMin = null, $cantidadMax = null, $tipoProductoId = null)
     {
         $query = self::with(['categoria', 'unidad'])
+            ->select('productos.*')
+            ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
             ->withSum([
                 'inventarioSedeAcarigua as cantidad_actual' => function ($query) {}
             ], 'cantidad');
 
+        if ($tipoProductoId !== null) {
+            $query->where('categorias.tipo_producto_id', $tipoProductoId);
+        }
+
         if (!empty($buscar)) {
             $query->where(function ($q) use ($buscar) {
-                $q->where('codigo', 'like', "%{$buscar}%")
-                    ->orWhere('nombre', 'like', "%{$buscar}%");
+                $q->where('productos.codigo', 'like', "%{$buscar}%")
+                    ->orWhere('productos.nombre', 'like', "%{$buscar}%");
             });
         }
 
         if ($activo !== null && $activo !== '') {
-            $query->where('estado', (int)$activo);
+            $query->where('productos.estado', (int)$activo);
         } else {
-            $query->where('estado', 1);
+            $query->where('productos.estado', 1);
         }
 
         if ($cantidadMin !== null) {
@@ -112,8 +120,8 @@ class Producto extends Model
             $query->having('cantidad_actual', '<=', $cantidadMax);
         }
 
-        if ($categoria !== null) {
-            $query->where('categoria_id', $categoria);
+        if ($categoria !== null && $categoria !== '') {
+            $query->where('productos.categoria_id', $categoria);
         }
 
         return $query->orderByDesc('cantidad_actual')->paginate($perPage)->withQueryString();
@@ -128,11 +136,17 @@ class Producto extends Model
             ->sum('inventario_sede_lotes.cantidad');
     }
 
-    public static function getDatosFormulario()
+    public static function getDatosFormulario(?int $tipoProductoId = null)
     {
+        $query = DB::table('categorias')->select('id', 'nombre')->where('activo', 1);
+
+        if ($tipoProductoId !== null) {
+            $query->where('tipo_producto_id', $tipoProductoId);
+        }
         return [
-            'categorias' => DB::table('categorias')->select('id', 'nombre')->where('activo', 1)->get(),
+            'categorias' =>  $query->get(),
             'unidades'   => DB::table('unidades')->select('id', 'nombre', 'abreviatura')->get(),
+            'envases'   => DB::table('envase_primarios')->select('id', 'nombre')->get(),
         ];
     }
 
@@ -172,6 +186,7 @@ class Producto extends Model
                 'stock_maximo'  => $data['stock_maximo'] ?? 0,
                 'peso_contenido' => $pesoBase,
                 'unidad_id'     => $data['unidad_id'] ?? null,
+                'presentacion_id' => $data['envase_primario_id'] ?? null,
                 'estado'        => isset($data['estado']) ? (int)$data['estado'] : 1,
                 'created_at'    => now(),
                 'updated_at'    => now(),
@@ -221,46 +236,68 @@ class Producto extends Model
 
         $data = $helper->convertirCamposAMayusculas($data, ['nombre', 'descripcion']);
 
-        $unidad = DB::table('unidades')
-            ->where('id', $data['unidad_id'])
-            ->first();
+        // Unidad
+        $unidadId = $data['unidad_id'] ?? null;
+        $unidad = $unidadId ? DB::table('unidades')->where('id', $unidadId)->first() : null;
 
-        $pesoBase = $data['peso_contenido'] * ($unidad->factor_a_base ?? 1);
+        $pesoContenido = $data['peso_contenido'] ?? 0;
+        $pesoBase = $pesoContenido * ($unidad->factor_a_base ?? 1);
 
-        $update = [
-            'categoria_id'  => $data['categoria_id'],
-            'codigo'        => strtoupper($data['codigo'] ?? ''),
-            'nombre'        => $data['nombre'],
-            'descripcion'   => $data['descripcion'] ?? null,
-            'imagen'        => $data['imagen'] ?? null,
-            'precio_compra' => $data['precio_compra'] ?? 0,
-            'stock_minimo'  => $data['stock_minimo'] ?? 0,
-            'stock_maximo'  => $data['stock_maximo'] ?? 0,
-            'peso_contenido' => $pesoBase,
-            'unidad_id'     => $data['unidad_id'] ?? null,
-            'estado'        => isset($data['estado']) ? (int)$data['estado'] : 1,
-            'updated_at'    => now(),
-        ];
+        // Precios
+        $precioUsd = $data['costo_usd'] ?? $data['precio_compra'] ?? 0;
 
-        if (empty($update['imagen'])) {
-            unset($update['imagen']);
+        // Logica para update del codigo
+        $productoAntiguo = DB::table('productos')->where('id', $id)->first();
+
+        $codigoFinal = $productoAntiguo->codigo;
+
+        if (!empty($data['codigo'])) {
+            $codigoFinal = strtoupper($data['codigo']);
+        } else if ($productoAntiguo->nombre !== $data['nombre'] || $productoAntiguo->categoria_id != $data['categoria_id']) {
+
+            $categoriaNombre = DB::table('categorias')
+                ->where('id', $data['categoria_id'])
+                ->value('nombre') ?? 'CAT';
+
+            $codigoFinal = self::generarCodigoProducto(
+                $categoriaNombre,
+                $data['nombre']
+            );
         }
 
-        $ultimoPrecio = PrecioProducto::where('producto_id', $id)->latest()->first();
+        $update = [
+            'codigo'          => $codigoFinal,
+            'categoria_id'    => $data['categoria_id'],
+            'nombre'          => $data['nombre'],
+            'descripcion'     => $data['descripcion'] ?? null,
+            'precio_compra'   => $precioUsd,
+            'stock_minimo'    => $data['stock_minimo'] ?? 0,
+            'stock_maximo'    => $data['stock_maximo'] ?? 0,
+            'peso_contenido'  => $pesoBase,
+            'unidad_id'       => $unidadId,
+            'presentacion_id' => $data['envase_primario_id'] ?? null,
+            'estado'          => isset($data['estado']) ? (int)$data['estado'] : 1,
+            'updated_at'      => now(),
+        ];
 
+        if (!empty($data['imagen'])) {
+            $update['imagen'] = $data['imagen'];
+        }
+
+        // Manejo del historial de Precios
+        $ultimoPrecio = PrecioProducto::where('producto_id', $id)->latest()->first();
         $margenRequest = $data['margen'] ?? 0;
 
-        if (!$ultimoPrecio || $ultimoPrecio->costo_usd != $data['costo_usd'] || $ultimoPrecio->margen != $margenRequest) {
+        if (!$ultimoPrecio || $ultimoPrecio->costo_usd != $precioUsd || $ultimoPrecio->margen != $margenRequest) {
             PrecioProducto::create([
                 'producto_id' => $id,
-                'costo_usd'   => $data['costo_usd'],
+                'costo_usd'   => $precioUsd,
                 'margen'      => $margenRequest,
             ]);
         }
 
         return DB::table('productos')->where('id', $id)->update($update);
     }
-
     public static function eliminarProducto($id)
     {
         return DB::table('productos')

@@ -8,9 +8,15 @@
                 Codigo <strong>{{ $beca->codigo }}</strong>
             </p>
         </div>
-        <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
+        @if(request('from') == 'show')
+            <a href="{{ route('admin.becas.show', $beca) }}" class="rd-btn rd-btn-default">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        @else
+            <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        @endif
     </div>
 @stop
 
@@ -22,6 +28,9 @@
             <h3 class="rd-title-sm">Datos de la beca</h3>
         </div>
         <form action="{{ route('admin.becas.update', $beca) }}" method="POST" class="rd-prevent-double-submit">
+            @if(request('from') == 'show')
+                <input type="hidden" name="from" value="show">
+            @endif
             @csrf
             @method('PUT')
 
@@ -30,7 +39,11 @@
                     @include('admin.becas._form_fields')
                     <hr>
                     <div class="d-flex justify-content-end" style="gap:12px;">
-                        <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">Cancelar</a>
+                        @if(request('from') == 'show')
+                            <a href="{{ route('admin.becas.show', $beca) }}" class="rd-btn rd-btn-default">Cancelar</a>
+                        @else
+                            <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">Cancelar</a>
+                        @endif
                         <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                             <i class="fas fa-save"></i> Guardar cambios
                         </button>

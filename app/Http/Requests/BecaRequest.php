@@ -42,11 +42,38 @@ class BecaRequest extends FormRequest
         ];
     }
 
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $preguntas = $this->input('preguntas', []);
+            foreach ($preguntas as $index => $pregunta) {
+                if (($pregunta['tipo'] ?? null) === 'number') {
+                    $min = isset($pregunta['min']) && $pregunta['min'] !== '' ? $pregunta['min'] : null;
+                    $max = isset($pregunta['max']) && $pregunta['max'] !== '' ? $pregunta['max'] : null;
+                    if (!is_null($min) && !is_null($max) && is_numeric($min) && is_numeric($max) && $min > $max) {
+                        $validator->errors()->add("preguntas.$index.min", 'El valor mínimo no puede ser mayor que el máximo.');
+                    }
+                }
+            }
+        });
+    }
+
     protected function prepareForValidation(): void
     {
-        $this->merge([
-            'activo' => $this->boolean('activo'),
+        $merge = [
             'requiere_tutor' => $this->boolean('requiere_tutor'),
-        ]);
+        ];
+
+        // Si el formulario envía explícitamente 'activo', usar ese valor.
+        if ($this->has('activo')) {
+            $merge['activo'] = $this->boolean('activo');
+        }
+
+        // Si es creación (POST) y no se envía 'activo', asumimos activo = true.
+        if (!$this->has('activo') && $this->isMethod('post')) {
+            $merge['activo'] = true;
+        }
+
+        $this->merge($merge);
     }
 }

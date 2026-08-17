@@ -92,12 +92,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const btn = form.querySelector('.rd-submit-btn');
 
-            if (btn) {
-                btn.disabled = true;
-                btn.classList.add('disabled');
-                btn.dataset.originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-            }
+            // Esperar al siguiente ciclo para permitir que otros handlers de 'submit'
+            // (validaciones personalizadas) llamen preventDefault(). Si el envío
+            // fue prevenido, no activamos la animación ni bloqueamos el botón.
+            setTimeout(function () {
+                if (event.defaultPrevented) {
+                    // otro handler previno el envío; no hacer nada
+                    return;
+                }
+
+                if (btn) {
+                    btn.disabled = true;
+                    btn.classList.add('disabled');
+                    btn.dataset.originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                }
+            }, 0);
 
         }, { once: true });
 

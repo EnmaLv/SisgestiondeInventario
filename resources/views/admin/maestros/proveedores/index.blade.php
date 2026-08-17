@@ -89,7 +89,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="rd-action-group">
-
+ 
                                         <a href="{{ url('admin/maestros/proveedores/' . $proveedor->id . '/edit') }}"
                                             class="rd-action" title="Editar"><i class="fas fa-edit"></i></a>
                                         @if ($proveedor->estado == true)

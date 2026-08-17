@@ -15,7 +15,7 @@ class CategoriaMedicamentoController extends Controller
     {
         $categorias = Categoria::listarCategorias(
             $request->input('buscar'), 
-            $request->input('activo', 1)
+            $request->input('activo', 1), 2
         );
         return view('admin.salud.maestros.categorias.index', compact('categorias'));
     }
@@ -40,7 +40,7 @@ class CategoriaMedicamentoController extends Controller
         ], [
             'nombre.unique' => 'Ya existe una categoria con este nombre',
         ]);
-        $fromidreuse = Categoria::crearCategoria($validated);
+        $fromidreuse = Categoria::crearCategoria($validated, 2);
 
         $from = $request->input('from');
 

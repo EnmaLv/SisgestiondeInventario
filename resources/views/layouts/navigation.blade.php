@@ -1,41 +1,31 @@
 @php
     $moduloActivo = strtolower(session('modulo_activo', 'general'));
     $esPsicologia = in_array($moduloActivo, ['psicologia', 'psicología', 'mental']);
-
-    // Variables de estilo dinámicas alineadas con el Theme Switcher
     $avatarBg = $esPsicologia ? 'bg-indigo-600 ring-indigo-400' : 'bg-red-600 ring-red-400';
     $navHoverBg = $esPsicologia ? 'hover:bg-indigo-600/30' : 'hover:bg-[#623739]';
     $focusRing = $esPsicologia ? 'focus:ring-indigo-500' : 'focus:ring-[#dc2626]';
-
-    // Dropdown Notificaciones
     $dropdownBg = $esPsicologia ? 'bg-slate-900/95 border-indigo-900/60' : 'bg-[#352728]/95 border-[#5c2028]';
     $btnHover = $esPsicologia ? 'hover:bg-indigo-600/20' : 'hover:bg-[#623739]';
     $badgeBg = $esPsicologia ? 'bg-indigo-600' : 'bg-red-600';
     $badgeBorder = $esPsicologia ? 'border-slate-900' : 'border-[#352728]';
-
     $filterActiveBg = $esPsicologia
         ? 'bg-indigo-600/30 text-white border-indigo-500/50'
         : 'bg-[#623739] text-white border-[#5c2028]';
     $filterInactiveBg = $esPsicologia
         ? 'text-gray-300 hover:bg-indigo-600/20 border-transparent'
         : 'text-gray-300 hover:bg-[#623739] border-transparent';
-
     $checkIconColor = $esPsicologia ? 'text-indigo-400' : 'text-red-400';
     $itemHoverBg = $esPsicologia ? 'hover:bg-indigo-600/10' : 'hover:bg-[#623739]/40';
     $unreadItemBg = $esPsicologia ? 'bg-indigo-600/15' : 'bg-red-950/30';
     $unreadTimeColor = $esPsicologia ? 'text-indigo-400' : 'text-red-400';
     $unreadDotBg = $esPsicologia ? 'bg-indigo-500' : 'bg-red-500';
-
     $primaryIconBg = $esPsicologia ? 'bg-indigo-500/20' : 'bg-red-500/20';
     $primaryIconColor = $esPsicologia ? 'text-indigo-400' : 'text-red-400';
-
-    // Consultas
     $unreadCount = \App\Models\salud\Notification::obtenerConteoNoLeidas(auth()->id());
     $allNotifications = \App\Models\salud\Notification::obtenerNotificacionesRecientes(auth()->id());
 @endphp
 
 <style>
-    /* Estilos Unificados para el Breadcrumb en Navbar */
     #top-navbar .breadcrumb {
         background: transparent !important;
         margin-bottom: 0 !important;
@@ -72,8 +62,6 @@
 <nav id="top-navbar" x-data="{ open: false }" class="relative z-50 border-b border-white/10">
     <div class="w-full px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
-
-            <!-- Logo, Marca & Breadcrumb -->
             <div class="flex items-center gap-3 overflow-hidden">
                 <a href="{{ Route::has('home') ? route('home') : url('/') }}"
                     class="flex items-center gap-3 flex-shrink-0">
@@ -90,11 +78,7 @@
                     </nav>
                 @endif
             </div>
-
-            <!-- Acciones Derecha -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 gap-3">
-
-                <!-- Botón y Menú Desplegable de Notificaciones -->
                 <div class="relative" x-data="{ openNotif: false, optionsOpen: false, filter: 'all' }" @click.away="openNotif = false; optionsOpen = false">
                     <button @click="openNotif = !openNotif"
                         class="relative p-2 text-gray-200 hover:text-white bg-white/10 {{ $btnHover }} rounded-full transition-all duration-200 focus:outline-none focus:ring-2 {{ $focusRing }}"
@@ -111,8 +95,6 @@
                             </span>
                         @endif
                     </button>
-
-                    <!-- Dropdown Notificaciones -->
                     <div x-show="openNotif" x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -334,12 +316,9 @@
                         </div>
                     </div>
                 </div>
-
                 @if (View::exists('components.theme-switcher'))
                     <x-theme-switcher />
                 @endif
-
-                <!-- Menú Usuario Dropdown -->
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
@@ -391,7 +370,6 @@
                 </x-dropdown>
             </div>
 
-            <!-- Botón Móvil -->
             <div class="-me-2 flex items-center sm:hidden gap-1">
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white {{ $navHoverBg }}">

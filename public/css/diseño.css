@@ -237,7 +237,7 @@
 }
 
 .rd-badge-danger {
-    background: #fffbeb;
+    background: #fef2f2;
     color: #b91c1c;
     border: 1px solid #fecaca;
 }
@@ -364,6 +364,20 @@ label[for="archivo"] {
     border-color:#e63946;
 }
 
+.rd-alert-warning{
+    background:#fffbeb;
+    border-color:#f59e0b;
+}
+
+.rd-alert-warning .rd-alert-icon{
+    color:#f59e0b;
+}
+
+.rd-alert-warning .rd-alert-title,
+.rd-alert-warning .rd-alert-text {
+    color: #78350f;
+}
+
 .rd-alert-icon{
     font-size:24px;
     color:#e63946;
@@ -394,4 +408,35 @@ label[for="archivo"] {
 .rd-alert-list i{
     color:#e63946;
     margin-right:6px;
+}
+
+/* Modo oscuro para alertas unificadas */
+html.dark .rd-alert-warning {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-color: #d97706 !important;
+}
+
+html.dark .rd-alert-warning .rd-alert-icon,
+html.dark .rd-alert-warning .rd-alert-title {
+    color: #fbbf24 !important;
+}
+
+html.dark .rd-alert-warning .rd-alert-text {
+    color: #fef3c7 !important;
+}
+
+html.dark .rd-alert-danger {
+    background: rgba(230, 57, 70, 0.1) !important;
+    border-color: #e63946 !important;
+}
+
+html.dark .rd-alert-danger .rd-alert-icon,
+html.dark .rd-alert-danger .rd-alert-title,
+html.dark .rd-alert-list i {
+    color: #fca5a5 !important;
+}
+
+html.dark .rd-alert-danger .rd-alert-text,
+html.dark .rd-alert-list li {
+    color: #fee2e2 !important;
 }

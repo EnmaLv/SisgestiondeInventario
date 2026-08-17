@@ -3,18 +3,13 @@
     $inventarioKeys = ['productos_categorias', 'productos', 'lotes', 'sedes_lotes', 'historial_movimientos'];
 @endphp
 
-{{-- ==========================================
-    SECCIÓN 1: GESTIÓN DE COMEDOR
-========================================== --}}
 @canMenu($comedorKeys)
-    {{-- Título de la Sección --}}
     <div class="pt-3 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
         <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-white/50">
             Gestión de Comedor
         </span>
     </div>
 
-    {{-- Submenú: Recetas y Platos --}}
     @canMenu(['recetas', 'receta_ingredientes'])
     <div class="flex flex-col">
         <button @click="activeSection = (activeSection === 'recetas' ? '' : 'recetas')"
@@ -54,7 +49,6 @@
     </div>
     @endcanMenu
 
-    {{-- Submenú: Registro de Comidas --}}
     @canMenu(['registro_comida', 'registro_diario'])
     <div class="flex flex-col">
         <button @click="activeSection = (activeSection === 'registro_comida' ? '' : 'registro_comida')"
@@ -95,18 +89,13 @@
     @endcanMenu
 @endcanMenu
 
-{{-- ==========================================
-    SECCIÓN 2: GESTIÓN DE INVENTARIO
-========================================== --}}
 @canMenu($inventarioKeys)
-    {{-- Título de la Sección --}}
     <div class="pt-3 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
         <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-white/50">
             Gestión de Inventario
         </span>
     </div>
 
-    {{-- Submenú: Catálogo de Productos --}}
     @canMenu(['productos_categorias', 'productos'])
     <div class="flex flex-col">
         <button @click="activeSection = (activeSection === 'catalogo' ? '' : 'catalogo')"
@@ -146,7 +135,6 @@
     </div>
     @endcanMenu
 
-    {{-- Submenú: Control de Stock --}}
     @canMenu(['lotes', 'sedes_lotes'])
     <div class="flex flex-col">
         <button @click="activeSection = (activeSection === 'control_stock' ? '' : 'control_stock')"
@@ -186,7 +174,6 @@
     </div>
     @endcanMenu
 
-    {{-- Enlace Directo: Historial de Movimientos --}}
     @canMenu('historial_movimientos')
     <a href="{{ url('admin/movimientos/historial_movimientos') }}"
        class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"

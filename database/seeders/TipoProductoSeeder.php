@@ -15,6 +15,7 @@ class TipoProductoSeeder extends Seeder
     {
         DB::table('tipo_productos')->insert([
             ['nombre' => 'Alimento', 'modulo_id' => 2, 'activo' => 1],
+            ['nombre' => 'Medicamento', 'modulo_id' => 1, 'activo' => 1]
         ]);
     }
 }

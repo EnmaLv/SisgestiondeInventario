@@ -5,47 +5,42 @@ namespace App\Http\Controllers\salud;
 use App\Models\salud\Medicamento;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\salud\CategoriaMedicamento;
 use App\Http\Requests\MedicamentoRequest;
+use App\Models\Categoria;
 use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Log;
 use App\Models\ExchangeRates;
-
+use App\Models\Producto;
+use Illuminate\Support\Facades\Http;
 
 class MedicamentoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
-        $categoria = $request->input('categoria_medicamentos', null);
+        $activo = $request->input('activo', 1);
+        $categoria = $request->input('categoria', null);
 
-        $categoria_medicamentos = CategoriaMedicamento::select('id', 'nombre')
-            ->where('estado', 1)
+        $productos = Producto::listarProductos($request->buscar, $activo, $categoria, 10, null, null, 2);
+
+        $categorias = Categoria::select('id', 'nombre')
+            ->where('activo', 1)
+            ->where('tipo_producto_id', 2)
             ->get();
 
-        $medicamentos = Medicamento::listar(
-            $request->input('buscar'),
-            $request->input('estado', 1),
-            $categoria
-        );
-
-        return view('admin.salud.maestros.medicamentos.index', compact('medicamentos', 'categoria_medicamentos'));
+        return view('admin.salud.maestros.medicamentos.index', compact('productos', 'categorias'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $datos = Medicamento::getDatosFormulario();
+        $datos = Producto::getDatosFormulario(2);
+
+        $datos['envases'] = DB::table('envase_primarios')->select('id', 'nombre')->get();
+
         return view('admin.salud.maestros.medicamentos.create', $datos);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(MedicamentoRequest $request)
     {
         DB::beginTransaction();
@@ -60,16 +55,16 @@ class MedicamentoController extends Controller
                 $validated['imagen'] = 'imagenes/productos/product-defect.webp';
             }
 
-            $medicamentoId = Medicamento::crear($validated);
+            $productoId = Producto::crearProducto($validated);
 
-            $this->procesarTasaYPrecios($medicamentoId);
+            $this->procesarTasaYPrecios($productoId);
 
             DB::commit();
 
             $from = $request->input('from');
 
             if ($from) {
-                return redirect($from . '?medicamentoId=' . $medicamentoId)
+                return redirect($from . '?productoId=' . $productoId)
                     ->with('success', 'Medicamento creado exitosamente.');
             } else {
                 return redirect()->route('admin.salud.maestros.medicamentos.index')
@@ -83,54 +78,86 @@ class MedicamentoController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Error al crear el medicamento.');
+                ->with('error', 'Error al crear el medicamento: ' . $e->getMessage());
         }
     }
 
-    private function procesarTasaYPrecios(?int $medicamentoId = null)
+    public function actualizarTasaDolar()
     {
-        $tasa = ExchangeRates::orderByDesc('fecha_vigencia')->first();
+        DB::beginTransaction();
 
-        if (!$tasa) {
-            throw new \Exception('No existe una tasa registrada');
-        }
+        try {
+            $response = Http::get('https://ve.dolarapi.com/v1/dolares/oficial');
 
-        $query = Medicamento::with('precioMedicamento');
-
-        if ($medicamentoId) {
-            $query->where('id', $medicamentoId);
-        }
-
-        $medicamentos = $query->get();
-
-        foreach ($medicamentos as $medicamento) {
-
-            if (!$medicamento->precioMedicamento) {
-                continue;
+            if (!$response->ok()) {
+                return redirect()->back()->with('error', 'No se pudo obtener la tasa del dólar.');
             }
 
-            $precioUSD =
-                $medicamento->precioMedicamento->costo_usd ??
-                $medicamento->precioMedicamento->precio_usd ??
-                0;
+            $data = $response->json();
 
-            if ($precioUSD <= 0) {
-                continue;
-            }
+            $fechaVigencia = isset($data['fecha'])
+                ? \Carbon\Carbon::parse($data['fecha'])->toDateString()
+                : now()->toDateString();
 
-            $margen = $medicamento->precioMedicamento->margen ?? 0;
-
-            $precioBs = round(
-                $precioUSD * (1 + $margen / 100) * $tasa->promedio,
-                2
+            $tasa = ExchangeRates::updateOrCreate(
+                [
+                    'nombre'         => 'Oficial',
+                    'fecha_vigencia' => $fechaVigencia
+                ],
+                [
+                    'fuente'   => $data['fuente'],
+                    'promedio' => $data['promedio'],
+                ]
             );
 
-            DB::table('medicamentos')
-                ->where('id', $medicamento->id)
-                ->update([
-                    'precio_compra' => $precioBs,
-                    'updated_at'    => now()
-                ]);
+            $productos = Producto::with('precioProducto')->get();
+
+            foreach ($productos as $producto) {
+                if (!$producto->precioProducto) {
+                    continue;
+                }
+
+                $precioUSD = $producto->precioProducto->precio_usd
+                    ?? $producto->precioProducto->costo_usd;
+
+                if (!$precioUSD || $precioUSD <= 0) {
+                    continue;
+                }
+
+                $margen = $producto->precioProducto->margen ?? 0;
+
+                $precioBs = round(
+                    $precioUSD * (1 + $margen / 100) * $tasa->promedio,
+                    2
+                );
+
+                DB::table('productos')
+                    ->where('id', $producto->id)
+                    ->update([
+                        'precio_compra' => $precioBs,
+                        'updated_at'    => now()
+                    ]);
+            }
+
+            DB::commit();
+
+            session()->forget('tasa_pendiente');
+
+            return redirect()->route('home')->with(
+                'success',
+                'Tasa registrada y precios recalculados Exitosamente.'
+            );
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error al actualizar la tasa', [
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()->back()->with(
+                'error',
+                'Ocurrió un error al actualizar la tasa.'
+            );
         }
     }
 
@@ -139,7 +166,8 @@ class MedicamentoController extends Controller
      */
     public function show($id)
     {
-        $medicamento = Medicamento::obtenerDatos($id);
+        $medicamento = Producto::with(['categoria', 'unidad', 'presentacion'])->findOrFail($id);
+
         return view('admin.salud.maestros.medicamentos.show', compact('medicamento'));
     }
 
@@ -148,8 +176,11 @@ class MedicamentoController extends Controller
      */
     public function edit($id)
     {
-        $medicamento = Medicamento::findOrFail($id);
-        $datos = Medicamento::getDatosFormulario();
+        $medicamento = Producto::findOrFail($id);
+
+        $datos = Producto::getDatosFormulario(2);
+
+        $datos['envases'] = DB::table('envase_primarios')->select('id', 'nombre')->get();
 
         return view('admin.salud.maestros.medicamentos.edit', array_merge($datos, [
             'medicamento' => $medicamento
@@ -161,17 +192,34 @@ class MedicamentoController extends Controller
      */
     public function update(MedicamentoRequest $request, $id)
     {
-        $validated = $request->validated();
+        DB::beginTransaction();
 
-        if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('imagenes/productos', 'public');
-            $validated['imagen'] = $path;
+        try {
+            $validated = $request->validated();
+
+            if ($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen')
+                    ->store('imagenes/productos', 'public');
+            }
+
+            Producto::actualizarProducto($id, $validated);
+
+            $this->procesarTasaYPrecios($id);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.salud.maestros.medicamentos.index')
+                ->with('success', 'Medicamento actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar medicamento', ['error' => $e->getMessage()]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el medicamento: ' . $e->getMessage());
         }
-
-        Medicamento::actualizar($id, $validated);
-        $this->procesarTasaYPrecios($id);
-
-        return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento actualizado exitosamente.');
     }
 
     /**
@@ -179,8 +227,7 @@ class MedicamentoController extends Controller
      */
     public function destroy($id)
     {
-
-        Medicamento::inactivar($id);
+        Producto::eliminarProducto($id);
 
         return redirect()
             ->route('admin.salud.maestros.medicamentos.index')
@@ -190,7 +237,54 @@ class MedicamentoController extends Controller
 
     public function activar($id)
     {
-        Medicamento::activar($id);
+        Producto::activarProducto($id);
         return redirect()->route('admin.salud.maestros.medicamentos.index')->with('success', 'Medicamento activado exitosamente.');
+    }
+
+    private function procesarTasaYPrecios(?int $productoId = null)
+    {
+        $tasa = ExchangeRates::orderByDesc('fecha_vigencia')->first();
+
+        if (!$tasa) {
+            throw new \Exception('No existe una tasa registrada');
+        }
+
+        $query = Producto::with('precioProducto');
+
+        if ($productoId) {
+            $query->where('id', $productoId);
+        }
+
+        $productos = $query->get();
+
+        foreach ($productos as $producto) {
+
+            if (!$producto->precioProducto) {
+                continue;
+            }
+
+            $precioUSD =
+                $producto->precioProducto->costo_usd ??
+                $producto->precioProducto->precio_usd ??
+                0;
+
+            if ($precioUSD <= 0) {
+                continue;
+            }
+
+            $margen = $producto->precioProducto->margen ?? 0;
+
+            $precioBs = round(
+                $precioUSD * (1 + $margen / 100) * $tasa->promedio,
+                2
+            );
+
+            DB::table('productos')
+                ->where('id', $producto->id)
+                ->update([
+                    'precio_compra' => $precioBs,
+                    'updated_at'    => now()
+                ]);
+        }
     }
 }

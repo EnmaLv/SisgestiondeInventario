@@ -18,20 +18,6 @@
             @enderror
         </div>
     </div>
-    <div class="col-md-4">
-        <label class="font-weight-bold d-block">Estado</label>
-        <div class="d-flex align-items-center mt-2">
-            <div class="toggle-container">
-                <input type="checkbox" id="activo" name="activo" value="1" class="toggle-checkbox"
-                    {{ old('activo', $beca->activo ?? true) ? 'checked' : '' }}>
-                <label for="activo" class="toggle-label">
-                    <span class="toggle-inner"></span>
-                    <span class="toggle-switch"></span>
-                </label>
-            </div>
-            <span class="ml-2 text-muted">Activa</span>
-        </div>
-    </div>
 </div>
 
 <div class="form-group mb-3">

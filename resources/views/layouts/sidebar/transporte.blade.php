@@ -3,14 +3,12 @@
 @endphp
 
 @canMenu($transporteKeys)
-    {{-- Título de Sección Directo --}}
     <div class="pt-2 pb-1" :class="sidebarOpen ? 'block' : 'hidden'">
         <span class="px-3 text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
             Gestión de Transporte
         </span>
     </div>
 
-    {{-- 1. Marcas --}}
     @canMenu('bus_marcas')
         <a href="{{ url('admin/transporte/maestros/bus_marcas') }}"
            class="flex items-center gap-3 h-10 rounded-xl px-3 transition-all {{ request()->is('admin/transporte/maestros/bus_marcas*') ? 'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-900/50 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:text-blue-600' }}"
@@ -24,7 +22,6 @@
         </a>
     @endcanMenu
 
-    {{-- 2. Modelos --}}
     @canMenu('bus_modelos')
         <a href="{{ url('admin/transporte/maestros/bus_modelos') }}"
            class="flex items-center gap-3 h-10 rounded-xl px-3 transition-all {{ request()->is('admin/transporte/maestros/bus_modelos*') ? 'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-900/50 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:text-blue-600' }}"
@@ -39,7 +36,6 @@
         </a>
     @endcanMenu
 
-    {{-- 3. Combustibles --}}
     @canMenu('bus_tipo_combustibles')
         <a href="{{ url('admin/transporte/maestros/bus_tipo_combustibles') }}"
            class="flex items-center gap-3 h-10 rounded-xl px-3 transition-all {{ request()->is('admin/transporte/maestros/bus_tipo_combustibles*') ? 'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-900/50 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:text-blue-600' }}"
@@ -52,7 +48,6 @@
         </a>
     @endcanMenu
 
-    {{-- 4. Vehículos --}}
     @canMenu('bus_vehiculos')
         <a href="{{ url('admin/transporte/maestros/bus_vehiculos') }}"
            class="flex items-center gap-3 h-10 rounded-xl px-3 transition-all {{ request()->is('admin/transporte/maestros/bus_vehiculos*') ? 'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-900/50 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:text-blue-600' }}"
@@ -67,7 +62,6 @@
         </a>
     @endcanMenu
 
-    {{-- 5. Rutas --}}
     @canMenu('bus_rutas')
         <a href="{{ url('admin/transporte/maestros/bus_rutas') }}"
            class="flex items-center gap-3 h-10 rounded-xl px-3 transition-all {{ request()->is('admin/transporte/maestros/bus_rutas*') ? 'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-900/50 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:text-blue-600' }}"
@@ -82,7 +76,6 @@
         </a>
     @endcanMenu
 
-    {{-- 6. Paradas --}}
     @canMenu('bus_paradas')
         <a href="{{ url('admin/transporte/maestros/bus_paradas') }}"
            class="flex items-center gap-3 h-10 rounded-xl px-3 transition-all {{ request()->is('admin/transporte/maestros/bus_paradas*') ? 'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-900/50 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:text-blue-600' }}"
@@ -96,7 +89,6 @@
         </a>
     @endcanMenu
 
-    {{-- 7. Viajes --}}
     @canMenu('bus_viajes')
         <a href="{{ url('admin/transporte/maestros/bus_viajes') }}"
            class="flex items-center gap-3 h-10 rounded-xl px-3 transition-all {{ request()->is('admin/transporte/maestros/bus_viajes*') ? 'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-900/50 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/40 hover:text-blue-600' }}"

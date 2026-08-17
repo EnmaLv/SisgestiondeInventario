@@ -68,8 +68,13 @@ class BecaController extends Controller
 
         $resultado = $this->becaService->actualizar($beca, $request->validated());
 
+        $redirectUrl = route('admin.becas.edit', $resultado['beca']);
+        if ($request->input('from') === 'show' || $request->query('from') === 'show') {
+            $redirectUrl .= '?from=show';
+        }
+
         return redirect()
-            ->route('admin.becas.edit', $resultado['beca'])
+            ->to($redirectUrl)
             ->with('success', 'Beca actualizada exitosamente.')
             ->with('beneficios_alerta', $resultado['beneficios_cambiaron']);
     }

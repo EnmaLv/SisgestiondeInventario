@@ -18,20 +18,6 @@
             @enderror
         </div>
     </div>
-    <div class="col-md-4">
-        <label class="font-weight-bold d-block">Estado</label>
-        <div class="d-flex align-items-center mt-2">
-            <div class="toggle-container">
-                <input type="checkbox" id="activo" name="activo" value="1" class="toggle-checkbox"
-                    {{ old('activo', $beca->activo ?? true) ? 'checked' : '' }}>
-                <label for="activo" class="toggle-label">
-                    <span class="toggle-inner"></span>
-                    <span class="toggle-switch"></span>
-                </label>
-            </div>
-            <span class="ml-2 text-muted">Activa</span>
-        </div>
-    </div>
 </div>
 
 <div class="form-group mb-3">
@@ -50,7 +36,12 @@
         <i class="fas fa-plus"></i> Agregar pregunta
     </button>
 </div>
-<div class="table-responsive mb-4">
+<div class="table-responsive mb-4" id="questionsContainer">
+    <style>
+        /* Ocultar scrollbar sólo para el contenedor de preguntas */
+        #questionsContainer { -ms-overflow-style: none; scrollbar-width: none; }
+        #questionsContainer::-webkit-scrollbar { display: none; }
+    </style>
     <table class="rd-table" id="questionsTable" style="width:100%; border-collapse:separate; border-spacing:0 10px;">
         <thead>
             <tr>
@@ -496,6 +487,7 @@
                 const errorBox = document.getElementById('preguntasError');
                 const rows = questionsTableBody.querySelectorAll('tr');
                 let hasEmpty = false;
+                let hasMinMaxError = false;
 
                 rows.forEach(function (row) {
                     if (row.querySelector('td[colspan="4"]')) {
@@ -511,11 +503,49 @@
                         input.style.borderColor = '#d1d5db';
                         input.style.boxShadow = 'none';
                     }
+
+                    // validar min/max si aplica
+                    const tipo = row.querySelector('.question-type');
+                    if (tipo && tipo.value === 'number') {
+                        const minInput = row.querySelector('input[name^="preguntas"][name$="[min]"]');
+                        const maxInput = row.querySelector('input[name^="preguntas"][name$="[max]"]');
+                        const minVal = minInput && minInput.value !== '' ? parseFloat(minInput.value) : null;
+                        const maxVal = maxInput && maxInput.value !== '' ? parseFloat(maxInput.value) : null;
+                        if (minVal !== null && maxVal !== null && !isNaN(minVal) && !isNaN(maxVal) && minVal > maxVal) {
+                            hasMinMaxError = true;
+                            if (minInput) {
+                                minInput.style.borderColor = '#dc3545';
+                                minInput.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.15)';
+                            }
+                            if (maxInput) {
+                                maxInput.style.borderColor = '#dc3545';
+                                maxInput.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.15)';
+                            }
+                        } else if (minInput && maxInput) {
+                            minInput.style.borderColor = '#d1d5db';
+                            minInput.style.boxShadow = 'none';
+                            maxInput.style.borderColor = '#d1d5db';
+                            maxInput.style.boxShadow = 'none';
+                        }
+                    }
                 });
 
                 if (hasEmpty) {
                     errorBox.style.display = 'block';
                     errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    return false;
+                }
+
+                if (hasMinMaxError) {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Rango inválido',
+                            text: 'El valor mínimo no puede ser mayor que el máximo en una pregunta numérica.',
+                        });
+                    } else {
+                        alert('El valor mínimo no puede ser mayor que el máximo en una pregunta numérica.');
+                    }
                     return false;
                 }
 
@@ -531,6 +561,39 @@
                     }
                 });
             }
+
+            // validación en tiempo real para inputs min/max
+            function attachMinMaxListener(input) {
+                input.addEventListener('change', function () {
+                    const row = input.closest('tr');
+                    const tipo = row.querySelector('.question-type');
+                    if (!tipo || tipo.value !== 'number') return;
+                    const minInput = row.querySelector('input[name^="preguntas"][name$="[min]"]');
+                    const maxInput = row.querySelector('input[name^="preguntas"][name$="[max]"]');
+                    const minVal = minInput && minInput.value !== '' ? parseFloat(minInput.value) : null;
+                    const maxVal = maxInput && maxInput.value !== '' ? parseFloat(maxInput.value) : null;
+                    if (minVal !== null && maxVal !== null && !isNaN(minVal) && !isNaN(maxVal) && minVal > maxVal) {
+                        if (window.Swal) {
+                            Swal.fire({ icon: 'error', title: 'Rango inválido', text: 'El valor mínimo no puede ser mayor que el máximo.' });
+                        } else {
+                            alert('El valor mínimo no puede ser mayor que el máximo.');
+                        }
+                        if (minInput) minInput.focus();
+                    }
+                });
+            }
+
+            questionsTableBody.querySelectorAll('.question-limit-input').forEach(attachMinMaxListener);
+            questionsTableBody.querySelectorAll('.question-type').forEach(function (sel) {
+                sel.addEventListener('change', function () {
+                    const tr = this.closest('tr');
+                    // cuando cambia a number, attach listeners a sus inputs
+                    const min = tr.querySelector('input[name^="preguntas"][name$="[min]"]');
+                    const max = tr.querySelector('input[name^="preguntas"][name$="[max]"]');
+                    if (min) attachMinMaxListener(min);
+                    if (max) attachMinMaxListener(max);
+                });
+            });
 
             questionsTableBody.querySelectorAll('.remove-question').forEach(attachQuestionRemove);
             questionsTableBody.querySelectorAll('.question-type').forEach(onTypeChange);

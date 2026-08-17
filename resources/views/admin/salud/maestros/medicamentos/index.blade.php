@@ -7,7 +7,7 @@
             border-radius: 14px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
-         ">
+        ">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Medicamentos
@@ -45,21 +45,26 @@
                         <span class="font-weight-bold rd-toggle-label">Filtrar por estado:</span>
                         <div class="toggle-container">
                             <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
-                                {{ request('estado', 1) == 1 ? 'checked' : '' }}>
+                                {{ request('activo', 1) == 1 ? 'checked' : '' }}>
                             <label for="estadoToggle" class="toggle-label">
                                 <span class="toggle-inner"></span>
                                 <span class="toggle-switch"></span>
                             </label>
                         </div>
                     </div>
+
                     <form action="{{ route('admin.salud.maestros.medicamentos.index') }}" method="GET"
                         class="rd-search-inline" role="search">
-                        <input type="text" name="buscar" value="{{ $buscar ?? '' }}" class="rd-search-input"
+                        <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
+                        <input type="hidden" name="categoria" value="{{ request('categoria') }}">
+
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
                             placeholder="Buscar medicamento..." />
                         <button class="rd-icon-btn" type="submit" title="Buscar">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
+
                     <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
@@ -68,17 +73,20 @@
             </div>
 
             <!-- FILTROS COLAPSABLES -->
-            <div class="collapse" id="filters">
+            <div class="collapse {{ request('categoria') ? 'show' : '' }}" id="filters">
                 <div class="rd-filters">
                     <form action="{{ route('admin.salud.maestros.medicamentos.index') }}" method="GET"
                         class="rd-filters-form">
+                        <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
+                        <input type="hidden" name="buscar" value="{{ request('buscar') }}">
+
                         <div class="rd-filter-row">
                             <label>Categoría</label>
-                            <select name="categoria_medicamentos" id="categoria_medicamentos" class="rd-filter-input">
+                            <select name="categoria" id="categoria" class="rd-filter-input">
                                 <option value="">Todas</option>
-                                @foreach ($categoria_medicamentos as $item)
-                                    <option value="{{ $item->id }}" @if (request('categoria_medicamentos') == $item->id) selected @endif>
-                                        {{ $item->nombre }}
+                                @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}" @if (request('categoria') == $categoria->id) selected @endif>
+                                        {{ $categoria->nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -87,15 +95,16 @@
                             <button class="rd-btn rd-btn-primary" type="submit">
                                 <i class="fas fa-check"></i> Aplicar
                             </button>
-                            <button type="button" class="rd-btn rd-btn-default"
-                                onclick="document.getElementById('categoria_medicamentos').value=''; this.form.submit();">
+                            <a href="{{ route('admin.salud.maestros.medicamentos.index', ['activo' => request('activo', 1)]) }}"
+                                class="rd-btn rd-btn-default text-decoration-none d-inline-flex align-items-center justify-content-center">
                                 <i class="fas fa-times"></i> Limpiar
-                            </button>
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
 
+            <!-- TABLA RESPONSIVE -->
             <div id="printArea">
                 <table class="rd-table">
                     <thead>
@@ -110,35 +119,35 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($medicamentos as $medicamento)
+                        @forelse($productos as $producto)
                             <tr>
                                 <td class="text-center" data-label="Código">
-                                    <span class="rd-code-badge">{{ $medicamento->codigo }}</span>
+                                    <span class="rd-code-badge">{{ $producto->codigo }}</span>
                                 </td>
                                 <td class="text-center" data-label="Nombre">
-                                    <strong>{{ $medicamento->nombre }}</strong>
+                                    <strong>{{ $producto->nombre }}</strong>
                                 </td>
                                 <td class="text-center" data-label="Categoría">
-                                    {{ $medicamento->categoriaMedicamento->nombre ?? 'N/A' }}
+                                    {{ $producto->categoria->nombre }}
                                 </td>
                                 <td class="text-center" data-label="Cantidad">
-                                    @if ($medicamento->cantidad_actual == null)
+                                    @if ($producto->cantidad_actual == null)
                                         <span class="rd-badge rd-badge-secondary">
                                             <i class="fas fa-info-circle"></i> Sin compra
                                         </span>
-                                    @elseif ($medicamento->cantidad_actual == 0)
+                                    @elseif ($producto->cantidad_actual == 0)
                                         <span class="rd-badge rd-badge-warning">
                                             <i class="fas fa-exclamation-triangle"></i> Agotado
                                         </span>
                                     @else
-                                        <span class="rd-quantity-badge">{{ $medicamento->cantidad_actual }}</span>
+                                        <span class="rd-quantity-badge">{{ $producto->cantidad_actual }}</span>
                                     @endif
                                 </td>
                                 <td class="text-center" data-label="Unidad">
-                                    {{ $medicamento->unidad->nombre }}
+                                    {{ $producto->unidad->nombre }}
                                 </td>
                                 <td class="text-center" data-label="Estado">
-                                    @if ($medicamento->estado == true)
+                                    @if ($producto->estado == true)
                                         <span class="rd-badge rd-badge-success">
                                             <i class="fas fa-check-circle"></i> Activo
                                         </span>
@@ -150,17 +159,16 @@
                                 </td>
                                 <td class="text-center" data-label="Acciones">
                                     <div class="rd-action-group">
-                                        <a href="{{ url('admin/salud/maestros/medicamentos/' . $medicamento->id) }}"
+                                        <a href="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}"
                                             class="rd-action" title="Ver detalles">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ url('admin/salud/maestros/medicamentos/' . $medicamento->id . '/edit') }}"
+                                        <a href="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/edit') }}"
                                             class="rd-action" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        @if ($medicamento->estado == true)
-                                            <form
-                                                action="{{ url('admin/salud/maestros/medicamentos/' . $medicamento->id) }}"
+                                        @if ($producto->estado == true)
+                                            <form action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}"
                                                 method="POST" class="form-delete" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -171,7 +179,7 @@
                                             </form>
                                         @else
                                             <form
-                                                action="{{ url('admin/salud/maestros/medicamentos/' . $medicamento->id . '/activar') }}"
+                                                action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/activar') }}"
                                                 method="POST" class="form-activate" style="display:inline;">
                                                 @csrf
                                                 @method('PUT')
@@ -201,7 +209,7 @@
 
             <!-- PAGINACIÓN -->
             <div class="mt-3 d-flex justify-content-center">
-                {{ $medicamentos->onEachSide(1)->links('components.pagination') }}
+                {{ $productos->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>
@@ -213,12 +221,10 @@
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
                 // Activos
-                window.location.href =
-                    "{{ route('admin.salud.maestros.medicamentos.index', array_merge(request()->query(), ['estado' => 1])) }}";
+                window.location.href = "{!! route('admin.salud.maestros.medicamentos.index', array_merge(request()->query(), ['activo' => 1])) !!}";
             } else {
                 // Inactivos
-                window.location.href =
-                    "{{ route('admin.salud.maestros.medicamentos.index', array_merge(request()->query(), ['estado' => 0])) }}";
+                window.location.href = "{!! route('admin.salud.maestros.medicamentos.index', array_merge(request()->query(), ['activo' => 0])) !!}";
             }
         });
 

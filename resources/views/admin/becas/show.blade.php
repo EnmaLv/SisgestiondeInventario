@@ -9,7 +9,7 @@
             </p>
         </div>
         <div class="d-flex" style="gap:12px;">
-            <a href="{{ route('admin.becas.edit', $beca) }}" class="rd-btn rd-btn-primary">
+            <a href="{{ route('admin.becas.edit', $beca) }}?from=show" class="rd-btn rd-btn-primary">
                 <i class="fas fa-edit"></i> Editar
             </a>
             <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">

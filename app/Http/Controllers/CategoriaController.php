@@ -13,7 +13,7 @@ class CategoriaController extends Controller
     {
         $categorias = Categoria::listarCategorias(
             $request->input('buscar'),
-            $request->input('activo', 1) 
+            $request->input('activo', 1), 1 
         );
 
         return view('admin.maestros.categorias.index', compact('categorias'));
@@ -37,7 +37,7 @@ class CategoriaController extends Controller
         ], [
             'nombre.unique' => 'Ya existe una categoria con este nombre',
         ]);
-        $fromidreuse = Categoria::crearCategoria($validated);
+        $fromidreuse = Categoria::crearCategoria($validated, 1);
 
         $from = $request->input('from');
 
