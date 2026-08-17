@@ -1,6 +1,6 @@
 @php
     $moduloActivo = strtolower(session('modulo_activo', 'general'));
-    $esPsicologia = in_array($moduloActivo, ['psicologia', 'psicología', 'mental']);
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'psicología', 'salud']);
     $avatarBg = $esPsicologia ? 'bg-indigo-600 ring-indigo-400' : 'bg-red-600 ring-red-400';
     $navHoverBg = $esPsicologia ? 'hover:bg-indigo-600/30' : 'hover:bg-[#623739]';
     $focusRing = $esPsicologia ? 'focus:ring-indigo-500' : 'focus:ring-[#dc2626]';

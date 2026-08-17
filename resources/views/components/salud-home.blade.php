@@ -5,8 +5,8 @@
     @if ($visibleModules['envases_primarios'] ?? true)
         <a href="{{ url('/admin/salud/maestros/envases_primarios') }}"
            style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
-           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
-            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-blue-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-box"></i>
             </div>
             <div>
@@ -22,8 +22,8 @@
     @if ($visibleModules['categorias_medicamentos'] ?? true)
         <a href="{{ url('/admin/salud/maestros/categorias') }}"
            style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
-           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
-            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:bg-blue-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-tags"></i>
             </div>
             <div>
@@ -39,8 +39,8 @@
     @if ($visibleModules['medicamentos'] ?? true)
         <a href="{{ url('/admin/salud/maestros/medicamentos') }}"
            style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
-           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
-            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:bg-blue-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-pills"></i>
             </div>
             <div>
@@ -56,8 +56,8 @@
     @if (($visibleModules['agenda_psicologica'] ?? true) && Route::has('agenda.index'))
         <a href="{{ route('agenda.index') }}"
            style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
-           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:border-red-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
-            <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-400 text-2xl group-hover:scale-110 transition-transform">
+           class="p-6 rounded-2xl border shadow-sm hover:shadow-md hover:bg-blue-500/40 transition-all text-center flex flex-col items-center justify-center gap-3 group">
+            <div class="w-14 h-14 rounded-2xl bg-blue-500 dark:bg-blue-950/40 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-calendar-check"></i>
             </div>
             <div>
@@ -78,7 +78,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
         <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5">
-            <div class="text-3xl font-black text-red-600 dark:text-red-500">
+            <div class="text-3xl font-black text-blue-600 dark:text-blue-500">
                 {{ $total_envases_primarios ?? 0 }}
             </div>
             <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1">
@@ -87,7 +87,7 @@
         </div>
 
         <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5">
-            <div class="text-3xl font-black text-red-600 dark:text-red-500">
+            <div class="text-3xl font-black text-blue-600 dark:text-blue-500">
                 {{ $total_categorias_medicamentos ?? $total_categorias ?? 0 }}
             </div>
             <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1">
@@ -96,7 +96,7 @@
         </div>
 
         <div class="p-4 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5">
-            <div class="text-3xl font-black text-red-600 dark:text-red-500">
+            <div class="text-3xl font-black text-blue-600 dark:text-blue-500">
                 {{ $total_medicamentos ?? 0 }}
             </div>
             <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-1">

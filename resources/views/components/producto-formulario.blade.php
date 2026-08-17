@@ -10,15 +10,9 @@
     'metodo' => 'POST',
 ])
 
-<div class="rd-card p-4">
-    <div class="rd-card-header mb-3">
-        <h3 class="rd-title-sm">{{ $titulo }}</h3>
-        <div>
-            <a href="{{ $rutaVolver }}" class="rd-btn rd-btn-default">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
-        </div>
-    </div>
+<div style="background-color: var(--bg-card); border-color: var(--border-color);"
+    class="rounded-2xl border shadow-sm p-4 sm:p-6 mb-8">
+
     <form action="{{ $action }}" method="POST" enctype="multipart/form-data" class="rd-prevent-double-submit">
         @csrf
         @if ($metodo !== 'POST')
@@ -26,322 +20,423 @@
         @endif
 
         <input type="hidden" name="from" value="{{ request('from') }}">
-        <div class="row">
-            <div class="col-md-9">
-                <div class="row">
-                    <!-- Categoría -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Categoría</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                <select class="form-control rd-filter-input" id="categoria_id" name="categoria_id">
-                                    <option value="" selected disabled>Seleccione una categoría</option>
-                                    @foreach ($categorias as $categoria)
-                                        <option value="{{ $categoria->id }}"
-                                            {{ old('categoria_id', optional($modelo)->categoria_id ?? request('categoria_id')) == $categoria->id ? 'selected' : '' }}>
-                                            {{ $categoria->nombre }}
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6">
+
+            {{-- Columna principal (Formulario) --}}
+            <div class="lg:col-span-9 flex flex-col gap-6">
+
+                {{-- SECCIÓN 1: Identificación --}}
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+                    {{-- Código --}}
+                    <div class="md:col-span-3">
+                        <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                            Código
+                        </label>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden opacity-60"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                style="border-color: var(--border-color);">
+                                <i class="fas fa-barcode text-sm"></i>
+                            </span>
+                            <input type="text" value="{{ optional($modelo)->codigo ?? 'Automático' }}" disabled
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none">
+                        </div>
+                        @error('codigo')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Categoría --}}
+                    <div class="md:col-span-4">
+                        <div class="flex justify-between items-end mb-1.5">
+                            <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400">
+                                Categoría
+                            </label>
+                            <a href="{{ route('admin.maestros.categorias.create', ['from' => url()->current()]) }}"
+                                class="text-[10px] font-bold transition-colors {{ $esMedicamento ? 'text-sky-600 hover:text-sky-700' : 'text-rose-700 hover:text-rose-800' }}">
+                                + Nueva
+                            </a>
+                        </div>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                style="border-color: var(--border-color);">
+                                <i class="fas fa-tags text-sm"></i>
+                            </span>
+                            <select id="categoria_id" name="categoria_id"
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
+                                <option value="" selected disabled>Seleccione...</option>
+                                @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}"
+                                        {{ old('categoria_id', optional($modelo)->categoria_id ?? request('categoria_id')) == $categoria->id ? 'selected' : '' }}>
+                                        {{ $categoria->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('categoria_id')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Nombre --}}
+                    <div class="md:col-span-5">
+                        <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                            Nombre del producto
+                        </label>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                style="border-color: var(--border-color);">
+                                <i class="fas fa-tag text-sm"></i>
+                            </span>
+                            <input type="text" name="nombre" placeholder="Ej: Paracetamol 500mg"
+                                value="{{ old('nombre', optional($modelo)->nombre) }}"
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
+                        </div>
+                        @error('nombre')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                {{-- SECCIÓN 2: Medidas y Presentación --}}
+                @php
+                    $colClass = $esMedicamento && count($envases) > 0 ? 'md:col-span-4' : 'md:col-span-6';
+                @endphp
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+
+                    {{-- Unidad de Medida --}}
+                    <div class="{{ $colClass }} min-w-0">
+                        <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                            Unidad de Medida
+                        </label>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                style="border-color: var(--border-color);">
+                                <i class="fas fa-balance-scale text-sm"></i>
+                            </span>
+                            <select name="unidad_id" id="unidad_id"
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
+                                <option value="" selected disabled>Seleccione...</option>
+                                @foreach ($unidades as $unidad)
+                                    <option value="{{ $unidad->id }}" data-abreviatura="{{ $unidad->abreviatura }}"
+                                        {{ old('unidad_id', optional($modelo)->unidad_id) == $unidad->id ? 'selected' : '' }}>
+                                        {{ $unidad->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('unidad_id')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Peso del contenido --}}
+                    <div class="{{ $colClass }} min-w-0">
+                        <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5"
+                            id="label-peso">
+                            Peso / Cantidad
+                        </label>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                style="border-color: var(--border-color);">
+                                <i class="fas fa-weight text-sm"></i>
+                            </span>
+                            <input type="number" name="peso_contenido" min="0" step="0.01" placeholder="0.00"
+                                value="{{ old('peso_contenido', optional($modelo)->peso_contenido) }}"
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
+                        </div>
+                        @error('peso_contenido')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Presentación (Solo Medicamentos) --}}
+                    @if ($esMedicamento && count($envases) > 0)
+                        <div class="md:col-span-4 min-w-0">
+                            <label
+                                class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                                Presentación (Envase)
+                            </label>
+                            <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                                style="border-color: var(--border-color);">
+                                <span
+                                    class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                    style="border-color: var(--border-color);">
+                                    <i class="fas fa-pills text-sm"></i>
+                                </span>
+                                <select name="envase_primario_id"
+                                    style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                    class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
+                                    <option value="" selected disabled>Seleccione...</option>
+                                    @foreach ($envases as $envase)
+                                        <option value="{{ $envase->id }}"
+                                            {{ old('envase_primario_id', optional($modelo)->presentacion_id) == $envase->id ? 'selected' : '' }}>
+                                            {{ $envase->nombre }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            @error('categoria_id')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
+                            @error('envase_primario_id')
+                                <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
                             @enderror
-                            <div class="mt-2 pt-2" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
-                                <small style="color: #64748b; font-size: 0.85rem;">
-                                    ¿No encuentras lo que buscas?
-                                    <a style="color: #a84348; text-decoration: none; font-weight: 600; transition: color 0.2s;"
-                                        href="{{ route('admin.maestros.categorias.create', [
-                                            'from' => url()->current(),
-                                        ]) }}">
-                                        Créala aquí
-                                    </a>
-                                </small>
-                            </div>
                         </div>
+                    @endif
+                </div>
+
+                {{-- SECCIÓN 3: Inventario y Precio --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    {{-- Precio --}}
+                    <div>
+                        <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                            Precio base (USD)
+                        </label>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r font-bold text-sm"
+                                style="border-color: var(--border-color);">
+                                $
+                            </span>
+                            <input type="number" name="costo_usd" min="0" step="0.01" placeholder="0.00"
+                                value="{{ old('costo_usd', optional($modelo)->precioProducto) }}"
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
+                        </div>
+                        @error('costo_usd')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Código -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Código</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                <input type="text" class="form-control"
-                                    value="{{ optional($modelo)->codigo ?? 'Se generará automáticamente' }}" disabled>
-                            </div>
-                            @error('codigo')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
+                    {{-- Stock Mínimo --}}
+                    <div>
+                        <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                            Stock Mínimo
+                        </label>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                style="border-color: var(--border-color);">
+                                <i class="fas fa-arrow-down text-sm"></i>
+                            </span>
+                            <input type="number" name="stock_minimo" min="0" placeholder="Ej: 10"
+                                value="{{ old('stock_minimo', optional($modelo)->stock_minimo ? intval($modelo->stock_minimo) : '') }}"
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
                         </div>
+                        @error('stock_minimo')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Nombre -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Nombre</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                                <input type="text" value="{{ old('nombre', optional($modelo)->nombre) }}"
-                                    class="form-control rd-filter-input" name="nombre"
-                                    placeholder="Nombre del producto">
-                            </div>
-                            @error('nombre')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
+                    {{-- Stock Máximo --}}
+                    <div>
+                        <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                            Stock Máximo
+                        </label>
+                        <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
+                            style="border-color: var(--border-color);">
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                                style="border-color: var(--border-color);">
+                                <i class="fas fa-arrow-up text-sm"></i>
+                            </span>
+                            <input type="number" name="stock_maximo" min="0" placeholder="Ej: 100"
+                                value="{{ old('stock_maximo', optional($modelo)->stock_maximo ? intval($modelo->stock_maximo) : '') }}"
+                                style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
+                                class="w-full px-3 py-2.5 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
                         </div>
+                        @error('stock_maximo')
+                            <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
-                <!-- Campo Envase Condicional (Si es medicamento) -->
-                @if ($esMedicamento && count($envases) > 0)
-                    <div class="row mt-3">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="font-weight-bold">Presentación (Envase)</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-pills"></i></span>
-                                    <select class="form-control rd-filter-input" name="envase_primario_id">
-                                        <option value="" selected disabled>Seleccione presentación</option>
-                                        @foreach ($envases as $envase)
-                                            <option value="{{ $envase->id }}"
-                                                {{ old('envase_primario_id', optional($modelo)->presentacion_id) == $envase->id ? 'selected' : '' }}>
-                                                {{ $envase->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @error('envase_primario_id')
-                                    <div class="text-danger"><b>{{ $message }}</b></div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                <div class="form-group mt-3">
-                    <label class="font-weight-bold">Descripción</label>
+                {{-- SECCIÓN 4: Descripción --}}
+                <div>
+                    <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                        Descripción detallada
+                    </label>
                     <textarea name="descripcion" id="descripcion">{{ old('descripcion', optional($modelo)->descripcion) }}</textarea>
                     @error('descripcion')
-                        <div class="text-danger"><b>{{ $message }}</b></div>
+                        <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="row mt-3">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Precio base (USD)</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text">$</span>
-                                <input type="number" name="costo_usd" class="form-control rd-filter-input"
-                                    value="{{ old('costo_usd', optional($modelo)->precioProducto) }}"
-                                    placeholder="0.00" min="0" step="0.01">
-                            </div>
-                            @error('costo_usd')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Stock Mínimo</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="fas fa-arrow-down"></i></span>
-                                <input type="number" class="form-control rd-filter-input" name="stock_minimo"
-                                    value="{{ old('stock_minimo', optional($modelo)->stock_minimo ? intval($modelo->stock_minimo) : '') }}"
-                                    placeholder="Mínimo" min="0">
-                            </div>
-                            @error('stock_minimo')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Stock Máximo</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="fas fa-arrow-up"></i></span>
-                                <input type="number" class="form-control rd-filter-input" name="stock_maximo"
-                                    value="{{ old('stock_maximo', optional($modelo)->stock_maximo ? intval($modelo->stock_maximo) : '') }}"
-                                    placeholder="Máximo" min="0">
-                            </div>
-                            @error('stock_maximo')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Unidad de Medida</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="fas fa-balance-scale"></i></span>
-                                <select class="form-control rd-filter-input" name="unidad_id" id="unidad_id">
-                                    <option value="" selected disabled>Seleccione una unidad</option>
-                                    @foreach ($unidades as $unidad)
-                                        <option value="{{ $unidad->id }}"
-                                            data-abreviatura="{{ $unidad->abreviatura }}"
-                                            {{ old('unidad_id', optional($modelo)->unidad_id) == $unidad->id ? 'selected' : '' }}>
-                                            {{ $unidad->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            @error('unidad_id')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label class="font-weight-bold" id="label-peso">
-                                Peso del contenido
-                            </label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="fas fa-weight"></i></span>
-                                <input type="number" class="form-control rd-filter-input" name="peso_contenido"
-                                    value="{{ old('peso_contenido', optional($modelo)->peso_contenido) }}"
-                                    placeholder="Peso contenido" min="0" step="0.01">
-                            </div>
-                            @error('peso_contenido')
-                                <div class="text-danger"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label class="font-weight-bold">Imagen del producto</label>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text"><i class="fas fa-image"></i></span>
-                        <label for="imagen" class="p-2"
-                            style="margin: 0; cursor: pointer; width: 90%;">Seleccione una foto</label>
-                        <input type="file" name="imagen" id="imagen" class="form-control rd-filter-input"
-                            accept="image/*" onchange="previewImage(event)" style="display: none">
-                    </div>
+            {{-- Columna lateral (Imagen) --}}
+            <div class="lg:col-span-3">
+                <div class="sticky top-6">
+                    <label class="block text-[16px] font-black uppercase tracking-wider dark:text-gray-400 mb-1.5">
+                        Imagen del producto
+                    </label>
 
                     @php
                         $imagenActual = optional($modelo)->imagen;
                     @endphp
 
-                    <img id="imgPreview" src="{{ $imagenActual ? asset('storage/' . $imagenActual) : '#' }}"
-                        style="width: 100%; {{ $imagenActual ? 'display:block;' : 'display:none;' }} border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,0.08);" />
+                    <label for="imagen"
+                        class="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-6 text-center cursor-pointer hover:border-sky-400 hover:bg-sky-50/40 dark:hover:bg-sky-950/10 transition-colors"
+                        style="border-color: var(--border-color); background-color: rgba(0,0,0,0.02); min-height: 250px;">
 
-                    <em id="fileName" style="margin: 10px"></em>
+                        <img id="imgPreview" src="{{ $imagenActual ? asset('storage/' . $imagenActual) : '#' }}"
+                            style="{{ $imagenActual ? 'display:block;' : 'display:none;' }}"
+                            class="w-full rounded-xl shadow-sm mb-2 object-cover">
+
+                        <div id="imgPlaceholderIcon" style="{{ $imagenActual ? 'display:none;' : 'display:flex;' }}"
+                            class="flex-col items-center justify-center gap-2">
+                            <div
+                                class="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-2">
+                                <i class="fas fa-cloud-upload-alt text-2xl text-gray-400"></i>
+                            </div>
+                            <span class="text-sm font-bold text-gray-500 dark:text-gray-400">Subir imagen</span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-gray-400">PNG, JPG hasta
+                                2MB</span>
+                        </div>
+
+                        <em id="fileName"
+                            class="text-xs text-sky-600 dark:text-sky-400 font-medium not-italic mt-2 truncate max-w-full"></em>
+
+                        <input type="file" name="imagen" id="imagen" accept="image/*"
+                            onchange="previewImage(event)" class="hidden">
+                    </label>
 
                     @error('imagen')
-                        <div class="text-danger"><b>{{ $message }}</b></div>
+                        <p class="mt-1.5 text-xs font-semibold text-rose-500">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
         </div>
-        <hr>
-        <div class="d-flex justify-content-end gap-2">
-            <a href="{{ $rutaVolver }}" class="rd-btn rd-btn-default">Cancelar</a>
-            <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
-                <i class="fas fa-save"></i> {{ $modelo ? 'Actualizar' : 'Guardar' }}
+
+        <div class="mt-8 pt-6 border-t flex items-center justify-end gap-3"
+            style="border-color: var(--border-color);">
+            <a href="{{ $rutaVolver }}"
+                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                style="border-color: var(--border-color); color: var(--text-main);">
+                Cancelar
+            </a>
+
+            <button type="submit"
+                class="rd-submit-btn inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-md active:scale-95 transition-all 
+                {{ $esMedicamento ? 'bg-sky-500 hover:bg-sky-700' : 'bg-rose-700 hover:bg-rose-800' }}">
+                <i class="fas fa-save text-xs"></i> {{ $modelo ? 'Actualizar' : 'Guardar' }}
             </button>
         </div>
     </form>
 </div>
 
-@push('css')
-    <style>
-        .ck.ck-editor {
-            width: 100% !important;
-        }
+<style>
+    .ck.ck-editor {
+        width: 100% !important;
+    }
 
+    .ck.ck-editor__editable {
+        width: 100% !important;
+        min-height: 250px;
+        box-sizing: border-box;
+        border-bottom-left-radius: 0.75rem !important;
+        border-bottom-right-radius: 0.75rem !important;
+        border-color: var(--border-color) !important;
+    }
+
+    .ck.ck-toolbar {
+        border-top-left-radius: 0.75rem !important;
+        border-top-right-radius: 0.75rem !important;
+        border-color: var(--border-color) !important;
+    }
+
+    @media (max-width: 768px) {
         .ck.ck-editor__editable {
-            width: 100% !important;
-            min-height: 300px;
-            box-sizing: border-box;
+            min-height: 200px;
+            padding: 10px;
         }
+    }
+</style>
 
-        @media (max-width: 768px) {
-            .ck.ck-editor__editable {
-                min-height: 250px;
-                padding: 10px;
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('imgPreview');
+                const icon = document.getElementById('imgPlaceholderIcon');
+                img.style.display = 'block';
+                img.src = e.target.result;
+                if (icon) icon.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+            const fileName = document.getElementById('fileName');
+            if (fileName) {
+                fileName.textContent = file.name;
             }
         }
-    </style>
-@endpush
+    }
 
-@push('js')
-    <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.getElementById('imgPreview');
-                    img.style.display = 'block';
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-                const fileName = document.getElementById('fileName');
-                if (fileName) {
-                    fileName.textContent = file.name;
-                }
-            }
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        const unidadSelect = document.getElementById('unidad_id');
+        if (unidadSelect) {
+            unidadSelect.addEventListener('change', function() {
+                const selected = this.options[this.selectedIndex];
+                const abrev = selected.getAttribute('data-abreviatura');
+                const label = document.getElementById('label-peso');
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const unidadSelect = document.getElementById('unidad_id');
-            if (unidadSelect) {
-                unidadSelect.addEventListener('change', function() {
-                    const selected = this.options[this.selectedIndex];
-                    const abrev = selected.getAttribute('data-abreviatura');
-                    const label = document.getElementById('label-peso');
-
-                    if (label) {
-                        if (abrev) {
-                            label.textContent = `Peso contenido (en ${abrev})`;
-                        } else {
-                            label.textContent = 'Peso contenido';
-                        }
+                if (label) {
+                    if (abrev) {
+                        label.textContent = `Peso / Cantidad (en ${abrev})`;
+                    } else {
+                        label.textContent = 'Peso / Cantidad';
                     }
-                });
-            }
-        });
-    </script>
+                }
+            });
+        }
+    });
+</script>
 
-    <script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
         let descripcionEditor;
-        ClassicEditor
-            .create(document.querySelector('#descripcion'), {
+
+        // Verificamos que el textarea exista antes de inicializar
+        const descripcionEl = document.querySelector('#descripcion');
+
+        if (descripcionEl) {
+            ClassicEditor.create(descripcionEl, {
                 toolbar: {
                     items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', 'strikethrough', 'subscript', '|',
-                        'link', 'bulletedList', 'numberedList', '|',
-                        'outdent', 'indent', '|',
+                        'heading', '|', 'bold', 'italic', 'underline', 'strikethrough', 'subscript',
+                        '|',
+                        'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|',
                         'undo', 'redo'
                     ],
                     shouldNotGroupWhenFull: true
                 },
                 language: 'es'
-            })
-            .then(editor => {
+            }).then(editor => {
                 descripcionEditor = editor;
                 const editorEl = editor.ui.view.element;
                 editorEl.style.width = '100%';
                 editorEl.querySelector('.ck-editor__editable').style.width = '100%';
-            })
-            .catch(error => {
-                console.error(error);
+            }).catch(error => {
+                console.error('Ocurrió un error al inicializar CKEditor:', error);
             });
-
-        // Asegurar que el textarea tenga el contenido antes de enviar el formulario
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    if (descripcionEditor) {
-                        document.querySelector('#descripcion').value = descripcionEditor.getData();
-                    }
-                });
-            }
-        });
-    </script>
-@endpush
+        }
+    });
+</script>

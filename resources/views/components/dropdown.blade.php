@@ -2,7 +2,7 @@
 
 @php
     $moduloActivo = strtolower(session('modulo_activo', 'general'));
-    $isPsico = in_array($moduloActivo, ['psicologia', 'psicología', 'mental']);
+    $isPsico = in_array($moduloActivo, ['psicologia', 'psicología', 'salud']);
 
     $defaultClasses = $isPsico
         ? 'py-1 bg-slate-900/95 border border-indigo-900/60 backdrop-blur-md'

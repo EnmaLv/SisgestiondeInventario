@@ -1,6 +1,6 @@
 @php
     $moduloActivo = strtolower(session('modulo_activo', 'general'));
-    $esPsicologia = in_array($moduloActivo, ['psicologia', 'psicología', 'mental']);
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'psicología', 'salud']);
 
     $unreadCount = \App\Models\salud\Notification::obtenerConteoNoLeidas(auth()->id());
     $allNotifications = \App\Models\salud\Notification::obtenerNotificacionesRecientes(auth()->id());

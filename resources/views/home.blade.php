@@ -1,6 +1,6 @@
 @php
     $moduloActivo = session('modulo_activo', 'general');
-    $esPsicologia = in_array($moduloActivo, ['psicologia', 'mental']);
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'salud']);
     $headerGradient = $esPsicologia
         ? 'from-blue-600 via-indigo-700 to-slate-900'
         : 'from-[var(--color-primary,#c52222)] to-[var(--color-tertiary,#800000)]';

@@ -1,6 +1,6 @@
 @php
     $moduloActivo = session('modulo_activo', 'general');
-    $esPsicologia = in_array($moduloActivo, ['psicologia', 'mental']);
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'salud']);
 
     $headerGradient = $esPsicologia
         ? 'from-blue-600 via-indigo-700 to-slate-900'
@@ -23,7 +23,7 @@
         'comedor'        => ['icon' => 'fas fa-utensils'],
         'salud'          => ['icon' => 'fas fa-heartbeat'],
         'psicologia'     => ['icon' => 'fas fa-brain'],
-        'mental'         => ['icon' => 'fas fa-brain'],
+        'salud'         => ['icon' => 'fas fa-brain'],
         'beca'           => ['icon' => 'fas fa-graduation-cap'],
         'transporte'     => ['icon' => 'fas fa-bus'],
     ];

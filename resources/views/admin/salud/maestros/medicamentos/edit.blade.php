@@ -1,35 +1,39 @@
-@extends('adminlte::page')
+<x-app-layout>
+    <div class="pt-6 pb-12 min-h-[calc(100vh-4rem)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-@section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Editar Medicamento</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
-            </p>
-        </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
-            <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
-                <span style="font-weight:600; font-size:0.95rem;">
-                    {{ \Carbon\Carbon::now()->format('d/m/Y') }}
-                </span>
-            </div>
-            <div
-                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
-                    style="width:100%; height:100%; object-fit:cover;">
-            </div>
-        </div>
-    </div>
-@stop
+            @include('components.alert')
 
-@section('content')
-    <div class="row">
-        <div class="col-md-12 m-auto">
-            <x-producto-formulario titulo="Editar medicamento: {{ $medicamento->nombre }}" :action="route('admin.salud.maestros.medicamentos.update', $medicamento->id)" metodo="PUT"
-                :rutaVolver="route('admin.salud.maestros.medicamentos.index')" :categorias="$categorias" :unidades="$unidades" :envases="$envases" :es-medicamento="true"
+            {{-- Encabezado de la página --}}
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
+                        Editar Medicamento
+                    </h1>
+                    <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Bienvenido <span class="font-bold">{{ auth()->user()->persona->nombre_persona }}</span> ·
+                        {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                    </p>
+                </div>
+                <a href="{{ route('admin.salud.maestros.medicamentos.index') }}"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                    style="border-color: var(--border-color); color: var(--text-main);">
+                    <i class="fas fa-arrow-left text-[10px]"></i> Volver
+                </a>
+            </div>
+
+            {{-- Formulario --}}
+            <x-producto-formulario 
+                titulo="Editar medicamento: {{ $medicamento->nombre }}" 
+                :action="route('admin.salud.maestros.medicamentos.update', $medicamento->id)" 
+                metodo="PUT"
+                :rutaVolver="route('admin.salud.maestros.medicamentos.index')" 
+                :categorias="$categorias" 
+                :unidades="$unidades" 
+                :envases="$envases" 
+                :es-medicamento="true"
                 :modelo="$medicamento" />
+
         </div>
     </div>
-@stop
+</x-app-layout>

@@ -1,13 +1,11 @@
-@extends('adminlte::page')
-
-@section('content_header')
+<x-app-layout>
     <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.06);
             border: 1px solid #e5e7eb;
-         ">
+        ">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">
                 Categorias
@@ -23,8 +21,6 @@
         </div>
 
     </div>
-@stop
-@section('content')
     @include('components.alert')
     <div class="rd-card rd-card-full">
         <div class="rd-card-body">
@@ -165,9 +161,7 @@
             </div>
         </div>
     </div>
-@stop
 
-@push('js')
     <script>
         document.getElementById('estadoToggle').addEventListener('change', function() {
             if (this.checked) {
@@ -177,4 +171,4 @@
             }
         });
     </script>
-@endpush
+</x-app-layout>
