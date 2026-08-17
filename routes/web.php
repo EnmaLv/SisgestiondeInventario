@@ -302,8 +302,8 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         //Categorias de medicamentos
         Route::get('/salud/maestros/categorias', [CategoriaMedicamentoController::class, 'index'])->name('admin.salud.maestros.categorias.index');
-        Route::get('/salud/maestros/categorias/create', [CategoriaMedicamentoController::class, 'create'])->name('admin.salud.maestros.categorias.create');
         Route::post('/salud/maestros/categorias/store', [CategoriaMedicamentoController::class, 'store'])->name('admin.salud.maestros.categorias.store');
+        Route::put('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'update'])->name('admin.salud.maestros.categorias.update');
         Route::delete('/salud/maestros/categorias/{categoria}', [CategoriaMedicamentoController::class, 'destroy'])->name('admin.salud.maestros.categorias.destroy');
         Route::put('/salud/maestros/categorias/{categoria}/activar', [CategoriaMedicamentoController::class, 'activar'])->name('admin.salud.maestros.categorias.activar');
 

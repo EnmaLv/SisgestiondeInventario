@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ConvierteAMayusculasNoEloquent;
+use Illuminate\Database\Eloquent\Builder;
 
 class Categoria extends Model
 {
@@ -21,15 +22,25 @@ class Categoria extends Model
         'activo',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordenAlfabetico', function (Builder $builder) {
+            $builder->orderBy('nombre', 'asc');
+        });
+    }
+
     public function productos()
     {
         return $this->hasMany(Producto::class, 'categoria_id');
     }
 
-    public static function listarCategorias($buscar = null, $activo = null, $tipoProductoId = null)
+    public static function listarCategorias($buscar = null, $activo = 1, $tipoProductoId = null)
     {
-        $query = DB::table('categorias')
-            ->select('categorias.*');
+        $query = self::query();
+
+        if ($tipoProductoId !== null) {
+            $query->where('tipo_producto_id', $tipoProductoId);
+        }
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
@@ -39,11 +50,9 @@ class Categoria extends Model
             $query->where('activo', (int)$activo);
         }
 
-        if ($tipoProductoId !== null) {
-            $query->where('tipo_producto_id', $tipoProductoId);
-        }
-
-        return $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+        return $query->orderBy('nombre', 'asc')
+            ->paginate(10)
+            ->withQueryString();
     }
 
     public static function crearCategoria(array $data, int $tipoProductoId)
@@ -58,7 +67,7 @@ class Categoria extends Model
             'tipo_producto_id' => $tipoProductoId,
             'activo'      => true,
             'created_at'  => now(),
-            'updated_at'  => now(), 
+            'updated_at'  => now(),
         ]);
     }
 

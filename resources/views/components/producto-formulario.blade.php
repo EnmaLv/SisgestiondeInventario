@@ -335,7 +335,7 @@
 
             <button type="submit"
                 class="rd-submit-btn inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-md active:scale-95 transition-all 
-                {{ $esMedicamento ? 'bg-sky-500 hover:bg-sky-700' : 'bg-rose-700 hover:bg-rose-800' }}">
+                {{ $esMedicamento ? 'bg-sky-500 hover:bg-sky-700' : 'bg-red-800 hover:bg-red-900' }}">
                 <i class="fas fa-save text-xs"></i> {{ $modelo ? 'Actualizar' : 'Guardar' }}
             </button>
         </div>

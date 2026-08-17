@@ -9,91 +9,64 @@ use Illuminate\Validation\Rule;
 
 class CategoriaController extends Controller
 {
+    private const TIPO_PRODUCTO_ID = 1;
+
     public function index(Request $request)
     {
         $categorias = Categoria::listarCategorias(
             $request->input('buscar'),
-            $request->input('activo', 1), 1 
+            $request->input('activo', 1),
+            self::TIPO_PRODUCTO_ID
         );
 
         return view('admin.maestros.categorias.index', compact('categorias'));
     }
 
-    public function create()
-    {
-        return view('admin.maestros.categorias.create');
-    }
-
-    public function store(CategoriaRequest $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'nombre' => [
                 'required',
                 'string',
-                'max:255',
-                'unique:categorias,nombre'
+                'max:100',
+                Rule::unique('categorias', 'nombre')->where(function ($query) {
+                    return $query->where('tipo_producto_id', self::TIPO_PRODUCTO_ID);
+                }),
             ],
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:255',
         ], [
-            'nombre.unique' => 'Ya existe una categoria con este nombre',
+            'nombre.unique' => 'Ya existe una categoría con este nombre en Comedor.',
         ]);
-        $fromidreuse = Categoria::crearCategoria($validated, 1);
 
-        $from = $request->input('from');
+        Categoria::crearCategoria(
+            $validated,
+            self::TIPO_PRODUCTO_ID
+        );
 
-        if ($from) {
-            return redirect($from . '?categoria_id=' . $fromidreuse)
-                ->with('success', 'Categoría creada exitosamente.');
-        } else {
-            return redirect()->route('admin.maestros.categorias.index')
-                ->with('success', 'Categoría creada exitosamente.');
-        }
+        return redirect()->to($request->input('from', route('admin.maestros.categorias.index')))
+            ->with('exito', 'Categoría registrada correctamente.');
     }
 
-    public function show($id)
-    {
-        $categoria = Categoria::obtenerCategoriaConProductos($id);
-
-        if (!$categoria) {
-            return redirect()
-                ->route('admin.maestros.categorias.index')
-                ->with('mensaje', 'Categoría no encontrada.')
-                ->with('icono', 'error');
-        }
-
-        return view('admin.maestros.categorias.show', compact('categoria'));
-    }
-
-    public function edit($id)
-    {
-        $categoria = Categoria::obtenerCategoria($id);
-
-        if (!$categoria) {
-            return redirect()
-                ->route('admin.maestros.categorias.index')
-                ->with('mensaje', 'Categoría no encontrada.')
-                ->with('icono', 'error');
-        }
-
-        return view('admin.maestros.categorias.edit', compact('categoria'));
-    }
-    public function update(CategoriaRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'nombre' => [
                 'required',
                 'string',
-                'max:255',
-                Rule::unique('categorias', 'nombre')->ignore($id),
+                'max:100',
+                Rule::unique('categorias', 'nombre')
+                    ->where('tipo_producto_id', self::TIPO_PRODUCTO_ID)
+                    ->ignore($id),
             ],
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:255',
         ], [
-            'nombre.unique' => 'Ya existe una categoria con este nombre',
+            'nombre.unique' => 'Ya existe una categoría con este nombre en Comedor.',
         ]);
+
         Categoria::actualizarCategoria($id, $validated);
 
-        return redirect()
-            ->route('admin.maestros.categorias.index')->with('success', 'Categoría actualizada exitosamente.');
+        return redirect()->to($request->input('from', route('admin.maestros.categorias.index')))
+            ->with('exito', 'Categoría actualizada exitosamente.');
     }
 
     public function destroy($id)

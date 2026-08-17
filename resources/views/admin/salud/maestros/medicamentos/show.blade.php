@@ -1,68 +1,30 @@
-@extends('adminlte::page')
+<x-app-layout>
+    <div class="pt-6 pb-12 min-h-[calc(100vh-4rem)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-@section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Ver Medicamento</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
-            </p>
-        </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
-            <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
-                <span style="font-weight:600; font-size:0.95rem;">
-                    {{ \Carbon\Carbon::now()->format('d/m/Y') }}
-                </span>
+            @include('components.alert')
+
+            {{-- Encabezado de la página --}}
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
+                        Informacion del Medicamento
+                    </h1>
+                    <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Bienvenido <span class="font-bold">{{ auth()->user()->persona->nombre_persona }}</span> ·
+                        {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                    </p>
+                </div>
+                <a href="{{ route('admin.salud.maestros.medicamentos.index') }}"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                    style="border-color: var(--border-color); color: var(--text-main);">
+                    <i class="fas fa-arrow-left text-[10px]"></i> Volver
+                </a>
             </div>
-            <div
-                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
-                    style="width:100%; height:100%; object-fit:cover;">
-            </div>
+
+            <x-producto-show :producto="$medicamento" ruta-volver="{{ route('admin.salud.maestros.medicamentos.index') }}"
+                :es-medicamento="true" />
+
         </div>
     </div>
-@stop
-
-@section('content')
-    <x-producto-show 
-        :producto="$medicamento" 
-        ruta-volver="{{ route('admin.salud.maestros.medicamentos.index') }}" 
-        :es-medicamento="true" 
-    />
-@stop
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-@stop
-
-
-@section('js')
-    <script>
-        ClassicEditor
-            .create(document.querySelector('#descripcion'), {
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', 'strikethrough', 'subscript', '|',
-                        'link', 'bulletedList', 'numberedList', '|',
-                        'outdent', 'indent', '|',
-                        'blockQuote', 'insertTable', 'mediaEmbed', '|',
-                        'undo', 'redo', '|',
-                        'footBackgroundColor', 'fontColor', 'fontSize', 'fontFamily', '|',
-                        'code', 'codeBlock', 'htmlEmbed', '|',
-                        'sourceEditing'
-                    ],
-                    shouldNotGroupWhenFull: true
-                },
-                language: 'es'
-            })
-            .then(editor => {
-                const editorEl = editor.ui.view.element;
-                editorEl.style.width = '100%';
-                editorEl.querySelector('.ck-editor__editable').style.width = '100%';
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    </script>
-@stop
+</x-app-layout>
