@@ -293,9 +293,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
 
         // Envases Primarios
         Route::get('/salud/maestros/envases_primarios', [EnvasePrimarioController::class, 'index'])->name('admin.salud.maestros.envases_primarios.index');
-        Route::get('/salud/maestros/envases_primarios/create', [EnvasePrimarioController::class, 'create'])->name('admin.salud.maestros.envases_primarios.create');
         Route::post('/salud/maestros/envases_primarios/store', [EnvasePrimarioController::class, 'store'])->name('admin.salud.maestros.envases_primarios.store');
-        Route::get('/salud/maestros/envases_primarios/{envase}/edit', [EnvasePrimarioController::class, 'edit'])->name('admin.salud.maestros.envases_primarios.edit');
         Route::put('/salud/maestros/envases_primarios/{envase}', [EnvasePrimarioController::class, 'update'])->name('admin.salud.maestros.envases_primarios.update');
         Route::delete('/salud/maestros/envases_primarios/{envase}', [EnvasePrimarioController::class, 'destroy'])->name('admin.salud.maestros.envases_primarios.destroy');
         Route::put('/salud/maestros/envases_primarios/{envase}/activar', [EnvasePrimarioController::class, 'activar'])->name('admin.salud.maestros.envases_primarios.activar');

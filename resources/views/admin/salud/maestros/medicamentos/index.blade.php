@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="pt-6 pb-12 min-h-[calc(100vh-4rem)]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @include('components.alert')
 
@@ -80,7 +80,8 @@
                         </label>
                         <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 {{ $focusRingClass ?? 'focus-within:ring-sky-500' }} transition-all"
                             style="border-color: var(--border-color);">
-                            <span class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
+                            <span
+                                class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
                                 style="border-color: var(--border-color);">
                             </span>
                             <select name="categoria"
@@ -88,7 +89,8 @@
                                 class="w-full px-3 py-2 text-sm font-medium border-none focus:ring-0 focus:outline-none transition-all">
                                 <option value="">Todas</option>
                                 @foreach ($categorias as $categoria)
-                                    <option value="{{ $categoria->id }}" @if (request('categoria') == $categoria->id) selected @endif>
+                                    <option value="{{ $categoria->id }}"
+                                        @if (request('categoria') == $categoria->id) selected @endif>
                                         {{ $categoria->nombre }}
                                     </option>
                                 @endforeach
@@ -110,6 +112,44 @@
                 </form>
             </div>
 
+            {{-- Barra de acciones --}}
+            <div id="accionesBar" style="background-color: var(--bg-card); border-color: var(--border-color);"
+                class="p-2.5 rounded-2xl border shadow-sm mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
+
+                {{-- Texto e indicador de selección --}}
+                <div class="flex items-center gap-2.5 text-[12px] font-black tracking-wider px-1 shrink-0">
+                    <i class="fas fa-hand-pointer text-sky-500 shrink-0"></i>
+                    <span id="accionesEstadoTexto">Selecciona un medicamento</span>
+                </div>
+
+                {{-- Separador vertical --}}
+                <div class="hidden sm:block w-px self-stretch shrink-0" style="background-color: var(--border-color);">
+                </div>
+
+                {{-- Botones de acción tipo icono con realce semántico --}}
+                <div class="flex items-center gap-2 shrink-0 justify-end">
+                    {{-- Ver detalles --}}
+                    <a id="btnVer" href="#" title="Ver detalles"
+                        class="acciones-bar-btn pointer-events-none opacity-40 text-gray-400 w-9 h-9 inline-flex items-center justify-center rounded-xl border border-transparent transition-all duration-200">
+                        <i class="fas fa-eye text-sm"></i>
+                    </a>
+
+                    {{-- Editar --}}
+                    <a id="btnEditar" href="#" title="Editar"
+                        class="acciones-bar-btn pointer-events-none opacity-40 text-gray-400 w-9 h-9 inline-flex items-center justify-center rounded-xl border border-transparent transition-all duration-200">
+                        <i class="fas fa-edit text-sm"></i>
+                    </a>
+
+                    {{-- Inactivar / Activar --}}
+                    <button type="button" id="btnToggleEstado" disabled onclick="confirmToggleEstadoSeleccionado()"
+                        title="Inactivar / Activar"
+                        class="acciones-bar-btn opacity-40 cursor-not-allowed text-gray-400 w-9 h-9 inline-flex items-center justify-center rounded-xl border border-transparent transition-all duration-200">
+                        <i class="fas fa-trash-alt text-sm" id="btnToggleIcon"></i>
+                        <span id="btnToggleLabel" class="sr-only">Inactivar</span>
+                    </button>
+                </div>
+            </div>
+
             {{-- Card de la Tabla --}}
             <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                 class="rounded-2xl border shadow-sm overflow-hidden">
@@ -129,7 +169,12 @@
                         <tbody class="text-xs font-medium">
                             @forelse($productos as $producto)
                                 <tr class="fila-medicamento cursor-pointer hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors border-b border-gray-100 dark:border-gray-800/60"
-                                    onclick="toggleAcciones(event, {{ $producto->id }})" title="Click para ver acciones">
+                                    onclick="seleccionarFila(event, this)" title="Click para seleccionar"
+                                    data-id="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}"
+                                    data-ver-url="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}"
+                                    data-editar-url="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/edit') }}"
+                                    data-estado="{{ $producto->estado ? 1 : 0 }}"
+                                    data-toggle-form="form-toggle-{{ $producto->id }}">
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         <span
                                             class="inline-flex items-center px-3 py-1 text-[12px] font-black rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
@@ -140,7 +185,8 @@
                                         style="color: var(--text-main);">
                                         {{ $producto->nombre }}
                                     </td>
-                                    <td class="px-6 py-4 text-center whitespace-nowrap text-gray-500 dark:text-gray-400">
+                                    <td
+                                        class="px-6 py-4 text-center whitespace-nowrap text-gray-500 dark:text-gray-400">
                                         {{ $producto->categoria->nombre }}
                                     </td>
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
@@ -161,60 +207,17 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-center whitespace-nowrap text-gray-500 dark:text-gray-400">
+                                    <td
+                                        class="px-6 py-4 text-center whitespace-nowrap text-gray-500 dark:text-gray-400">
                                         {{ $producto->unidad->nombre }}
-                                    </td>
-                                </tr>
-
-                                {{-- Franja de acciones: se despliega debajo de la fila al hacer click --}}
-                                <tr class="fila-acciones border-b border-gray-100 dark:border-gray-800/60">
-                                    <td colspan="5" class="p-0">
-                                        <div id="panel-{{ $producto->id }}" class="acciones-panel">
-                                            <div
-                                                class="flex items-center justify-center gap-6 py-3 bg-sky-50/50 dark:bg-sky-950/10">
-                                                <a href="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}"
-                                                    class="inline-flex items-center gap-2 text-gray-500 hover:text-sky-500 font-bold text-xs transition-colors">
-                                                    <i class="fas fa-eye"></i> Ver detalles
-                                                </a>
-                                                <a href="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/edit') }}"
-                                                    class="inline-flex items-center gap-2 text-gray-500 hover:text-yellow-500 font-bold text-xs transition-colors">
-                                                    <i class="fas fa-edit"></i> Editar
-                                                </a>
-
-                                                @if ($producto->estado == true)
-                                                    <form id="form-toggle-{{ $producto->id }}"
-                                                        action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}"
-                                                        method="POST" class="inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="button"
-                                                            onclick="confirmToggleEstado({{ $producto->id }}, 'inactivar')"
-                                                            class="inline-flex items-center gap-2 text-gray-500 hover:text-rose-500 font-bold text-xs transition-colors">
-                                                            <i class="fas fa-trash-alt"></i> Inactivar
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <form id="form-toggle-{{ $producto->id }}"
-                                                        action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/activar') }}"
-                                                        method="POST" class="inline">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <button type="button"
-                                                            onclick="confirmToggleEstado({{ $producto->id }}, 'activar')"
-                                                            class="inline-flex items-center gap-2 text-gray-500 hover:text-emerald-500 font-bold text-xs transition-colors">
-                                                            <i class="fas fa-check"></i> Activar
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
                                     <td colspan="5"
                                         class="px-6 py-12 text-center text-gray-400 dark:text-gray-500 font-bold text-xs uppercase tracking-wider">
-                                        <i class="fas fa-box-open text-3xl mb-3 block text-gray-300 dark:text-gray-700"></i>
+                                        <i
+                                            class="fas fa-box-open text-3xl mb-3 block text-gray-300 dark:text-gray-700"></i>
                                         No hay medicamentos registrados
                                     </td>
                                 </tr>
@@ -230,57 +233,167 @@
                 @endif
             </div>
 
+            {{-- Formularios ocultos de activar/inactivar (uno por medicamento) --}}
+            <div class="hidden">
+                @foreach ($productos as $producto)
+                    @if ($producto->estado == true)
+                        <form id="form-toggle-{{ $producto->id }}"
+                            action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                    @else
+                        <form id="form-toggle-{{ $producto->id }}"
+                            action="{{ url('admin/salud/maestros/medicamentos/' . $producto->id . '/activar') }}"
+                            method="POST">
+                            @csrf
+                            @method('PUT')
+                        </form>
+                    @endif
+                @endforeach
+            </div>
+
         </div>
     </div>
 
     <style>
-        /* Franja de acciones colapsable debajo de cada fila */
-        .acciones-panel {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: max-height .25s ease, opacity .2s ease;
+        /* Fila seleccionada */
+        .fila-medicamento.is-selected {
+            background-color: rgba(2, 132, 199, 0.08);
+            box-shadow: inset 4px 0 0 0 #0284c7;
         }
 
-        .fila-medicamento.is-open+.fila-acciones .acciones-panel {
-            max-height: 60px;
+        .fila-medicamento.is-selected:hover {
+            background-color: rgba(2, 132, 199, 0.1);
+        }
+
+        /* Estado habilitado de los botones de la barra de acciones */
+        .acciones-bar-btn.is-ready {
             opacity: 1;
-        }
-
-        .fila-medicamento.is-open {
-            background-color: rgba(2, 132, 199, 0.05);
+            pointer-events: auto;
+            cursor: pointer;
         }
     </style>
 
     <script>
-        let filaAccionesAbierta = null;
+        let filaSeleccionada = null;
 
-        function toggleAcciones(event, id) {
-            const filaClickeada = event.currentTarget;
-            const yaEstabaAbierta = filaClickeada.classList.contains('is-open');
-
-            if (filaAccionesAbierta && filaAccionesAbierta !== filaClickeada) {
-                filaAccionesAbierta.classList.remove('is-open');
+        function seleccionarFila(event, tr) {
+            if (filaSeleccionada === tr) {
+                deseleccionarFila();
+                return;
             }
 
-            if (yaEstabaAbierta) {
-                filaClickeada.classList.remove('is-open');
-                filaAccionesAbierta = null;
+            if (filaSeleccionada) {
+                filaSeleccionada.classList.remove('is-selected');
+            }
+
+            tr.classList.add('is-selected');
+            filaSeleccionada = tr;
+
+            const verUrl = tr.dataset.verUrl;
+            const editarUrl = tr.dataset.editarUrl;
+            const estaActivo = tr.dataset.estado === '1';
+            const toggleForm = tr.dataset.toggleForm;
+            const nombre = tr.dataset.nombre;
+
+            const btnVer = document.getElementById('btnVer');
+            const btnEditar = document.getElementById('btnEditar');
+            const btnToggle = document.getElementById('btnToggleEstado');
+            const btnToggleIcon = document.getElementById('btnToggleIcon');
+            const btnToggleLabel = document.getElementById('btnToggleLabel');
+
+            // Habilitar "Ver detalles" con realce Sky
+            btnVer.href = verUrl;
+            btnVer.classList.remove('pointer-events-none', 'opacity-50', 'text-gray-400');
+            btnVer.classList.add('is-ready', 'bg-sky-50', 'text-sky-600', 'border', 'border-sky-200',
+                'hover:bg-sky-100', 'hover:scale-105', 'shadow-sm',
+                'dark:bg-sky-950/50', 'dark:text-sky-400', 'dark:border-sky-800/60');
+
+            // Habilitar "Editar" con realce Amber (Amarillo)
+            btnEditar.href = editarUrl;
+            btnEditar.classList.remove('pointer-events-none', 'opacity-50', 'text-gray-400');
+            btnEditar.classList.add('is-ready', 'bg-amber-50', 'text-amber-600', 'border', 'border-amber-200',
+                'hover:bg-amber-100', 'hover:scale-105', 'shadow-sm',
+                'dark:bg-amber-950/50', 'dark:text-amber-400', 'dark:border-amber-800/60');
+
+            // Habilitar Activar/Inactivar base
+            btnToggle.disabled = false;
+            btnToggle.dataset.formId = toggleForm;
+            btnToggle.dataset.action = estaActivo ? 'inactivar' : 'activar';
+            btnToggle.classList.remove('opacity-50', 'cursor-not-allowed', 'text-gray-400');
+
+            // Limpiar clases previas de color del toggle
+            btnToggle.classList.remove(
+                'bg-rose-50', 'text-rose-600', 'border-rose-200', 'hover:bg-rose-100',
+                'dark:bg-rose-950/50', 'dark:text-rose-400', 'dark:border-rose-800/60',
+                'bg-emerald-50', 'text-emerald-600', 'border-emerald-200', 'hover:bg-emerald-100',
+                'dark:bg-emerald-950/50', 'dark:text-emerald-400', 'dark:border-emerald-800/60'
+            );
+
+            if (estaActivo) {
+                btnToggleIcon.className = 'fas fa-trash-alt';
+                btnToggleLabel.textContent = 'Inactivar';
+                // Realce Rose (Rojo) para Inactivar
+                btnToggle.classList.add('is-ready', 'bg-rose-50', 'text-rose-600', 'border', 'border-rose-200',
+                    'hover:bg-rose-100', 'hover:scale-105', 'shadow-sm',
+                    'dark:bg-rose-950/50', 'dark:text-rose-400', 'dark:border-rose-800/60');
             } else {
-                filaClickeada.classList.add('is-open');
-                filaAccionesAbierta = filaClickeada;
+                btnToggleIcon.className = 'fas fa-check';
+                btnToggleLabel.textContent = 'Activar';
+                // Realce Emerald (Verde) para Activar
+                btnToggle.classList.add('is-ready', 'bg-emerald-50', 'text-emerald-600', 'border', 'border-emerald-200',
+                    'hover:bg-emerald-100', 'hover:scale-105', 'shadow-sm',
+                    'dark:bg-emerald-950/50', 'dark:text-emerald-400', 'dark:border-emerald-800/60');
             }
+
+            document.getElementById('accionesEstadoTexto').textContent = nombre;
         }
 
-        // Cierra la franja de acciones abierta si se hace click fuera de la tabla
+        function deseleccionarFila() {
+            if (!filaSeleccionada) return;
+
+            filaSeleccionada.classList.remove('is-selected');
+            filaSeleccionada = null;
+
+            const btnVer = document.getElementById('btnVer');
+            const btnEditar = document.getElementById('btnEditar');
+            const btnToggle = document.getElementById('btnToggleEstado');
+
+            // Resetear "Ver"
+            btnVer.removeAttribute('href');
+            btnVer.classList.add('pointer-events-none', 'opacity-50', 'text-gray-400');
+            btnVer.classList.remove('is-ready', 'bg-sky-50', 'text-sky-600', 'border', 'border-sky-200',
+                'hover:bg-sky-100', 'hover:scale-105', 'shadow-sm',
+                'dark:bg-sky-950/50', 'dark:text-sky-400', 'dark:border-sky-800/60');
+
+            // Resetear "Editar"
+            btnEditar.removeAttribute('href');
+            btnEditar.classList.add('pointer-events-none', 'opacity-50', 'text-gray-400');
+            btnEditar.classList.remove('is-ready', 'bg-amber-50', 'text-amber-600', 'border', 'border-amber-200',
+                'hover:bg-amber-100', 'hover:scale-105', 'shadow-sm',
+                'dark:bg-amber-950/50', 'dark:text-amber-400', 'dark:border-amber-800/60');
+
+            // Resetear "Inactivar/Activar"
+            btnToggle.disabled = true;
+            btnToggle.classList.add('opacity-50', 'cursor-not-allowed', 'text-gray-400');
+            btnToggle.classList.remove('is-ready', 'bg-rose-50', 'text-rose-600', 'border', 'border-rose-200',
+                'hover:bg-rose-100', 'hover:scale-105', 'shadow-sm',
+                'dark:bg-rose-950/50', 'dark:text-rose-400', 'dark:border-rose-800/60',
+                'bg-emerald-50', 'text-emerald-600', 'border-emerald-200', 'hover:bg-emerald-100',
+                'dark:bg-emerald-950/50', 'dark:text-emerald-400', 'dark:border-emerald-800/60');
+
+            document.getElementById('accionesEstadoTexto').textContent = 'Selecciona un medicamento';
+        }
+
+        // Deseleccionar al hacer click fuera de la tabla y de la barra de acciones
         document.addEventListener('click', function(event) {
-            if (filaAccionesAbierta && !event.target.closest('#printArea')) {
-                filaAccionesAbierta.classList.remove('is-open');
-                filaAccionesAbierta = null;
+            if (filaSeleccionada && !event.target.closest('#printArea') && !event.target.closest('#accionesBar')) {
+                deseleccionarFila();
             }
         });
 
-        // Toggle de estado (activo/inactivo)
+        // Toggle de estado (activo/inactivo) del filtro superior
         document.getElementById('estadoToggle').addEventListener('change', function() {
             const params = new URLSearchParams(window.location.search);
             params.set('activo', this.checked ? 1 : 0);
@@ -292,9 +405,15 @@
             document.getElementById('filters').classList.toggle('hidden');
         });
 
-        // Confirmación unificada para activar/inactivar
-        function confirmToggleEstado(id, action) {
+        // Confirmación unificada para activar/inactivar el medicamento seleccionado
+        function confirmToggleEstadoSeleccionado() {
+            const btnToggle = document.getElementById('btnToggleEstado');
+            if (btnToggle.disabled) return;
+
+            const action = btnToggle.dataset.action;
+            const formId = btnToggle.dataset.formId;
             const isActivate = action === 'activar';
+
             const title = isActivate ? '¿Activar medicamento?' : '¿Inactivar medicamento?';
             const text = isActivate ?
                 'El medicamento volverá a estar disponible en el sistema.' :
@@ -305,7 +424,7 @@
                 btnText: isActivate ? 'Sí, activar' : 'Sí, inactivar',
                 intent: isActivate ? 'success' : 'danger'
             }).then(result => {
-                if (result) document.getElementById('form-toggle-' + id).submit();
+                if (result) document.getElementById(formId).submit();
             });
         }
     </script>
