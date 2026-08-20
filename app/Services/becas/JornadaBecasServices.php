@@ -25,15 +25,8 @@ class JornadaBecasServices
         $hoy = now()->toDateString();
 
         // Buscamos si hay jornadas marcadas como activas pero que ya vencieron en fecha
-        $jornadasExpiradas = JornadaBeca::where('activa', 1)
-            ->whereDate('fecha_fin_solicitud', '<', $hoy);
-
-
-        // Si encuentra al menos una jornada que ya pasó su lapso...
-        if ($jornadasExpiradas->exists()) {
-            $jornadasExpiradas->update(['activa' => 0]);
-            $this->limpiarCacheJornada();
-        }
+        $this->desactivarJornadasExpiradas();
+        
 
         // Si ya está en la memoria RAM (caché), la devuelve. Si no, va a la BD una sola vez.
         return Cache::remember(self::CACHE_KEY_ACTIVA, now()->addHours(12), function () use ($hoy) {
@@ -54,25 +47,17 @@ class JornadaBecasServices
         // Usamos una transacción por seguridad
         DB::beginTransaction();
         try {
+            // Normalizar nombre de la jornada agregando el lapso si no está presente
+            $validated['nombre_jornada'] = $this->normalizarNombreConLapso($validated['nombre_jornada'], $validated['lapsos_id']);
             
-            
-            //Revisamos si en el nombre de la jornada puso el lapso(2026-I, 2026-II, etc)
-            $lapsoElegido = Lapso::find($validated['lapsos_id'])->codigo;
-            //Verificamos si el string el usuario introdujo el lapso para identificar la jornada
-            if(!str_contains($validated['nombre_jornada'], $lapsoElegido)){
-                //Insertamos el lapso al string
-                $validated['nombre_jornada'] .= ' ' . $lapsoElegido;
-            }
-            
-            //Inicializamos los cupos asignados
+            // Inicializamos los cupos asignados
+            $validated['cupos_assigned'] = 0; // Nota: en BD el campo es cupos_asignados
             $validated['cupos_asignados'] = 0;
             
-            //1.Validacion: Validar que el beneficio seleccionado, tenga los cupos necesario para hacer la jornada
-            $beneficio = Beneficio::findOrFail($validated['beneficio_id']);
-            if ($beneficio->cupones_disponibles < $validated['cupos_maximos']) {
-                throw new \Exception('El número de cupos máximos excede los cupos disponibles del beneficio.');
-            }
-            //Guardamos la Jornada como paso final
+            // Validar cupos disponibles
+            $this->validarCuposDisponibles($validated['beneficio_id'], $validated['cupos_maximos']);
+
+            // Guardamos la Jornada como paso final
             $jornada = JornadaBeca::create($validated);
             
             // IMPORTANTE: Al crear una nueva, invalidamos la caché anterior
@@ -81,7 +66,7 @@ class JornadaBecasServices
             DB::commit();
 
             return $jornada;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
@@ -120,6 +105,31 @@ class JornadaBecasServices
     {
         return DB::transaction(function () use ($id, $datos) {
             $jornada = JornadaBeca::findOrFail($id);
+
+            // 1. Si la jornada ya expiró, no se permite ninguna modificación
+            if ($jornada->fecha_fin_solicitud && $jornada->fecha_fin_solicitud->isPast()) {
+                throw new Exception('No se puede actualizar una jornada que ya ha expirado.');
+            }
+
+            // 2. Si la jornada ya inició, no se permite modificar campos críticos
+            if ($jornada->fecha_inicio_solicitud && $jornada->fecha_inicio_solicitud->isPast()) {
+                $inicioFormateadoOriginal = $jornada->fecha_inicio_solicitud->format('Y-m-d');
+                $nuevoInicio = isset($datos['fecha_inicio_solicitud']) ? date('Y-m-d', strtotime($datos['fecha_inicio_solicitud'])) : '';
+                
+                if ($jornada->beneficio_id != $datos['beneficio_id'] || 
+                    $jornada->lapsos_id != $datos['lapsos_id'] || 
+                    $inicioFormateadoOriginal !== $nuevoInicio ||
+                    $jornada->activa != ($datos['activa'] ?? 0)) {
+                    throw new Exception('No se pueden modificar campos críticos (beneficio, lapso, fecha de inicio o estado activa/inactiva) en una jornada que ya ha iniciado.');
+                }
+            }
+
+            // Validar cupos disponibles
+            $this->validarCuposDisponibles($datos['beneficio_id'], $datos['cupos_maximos']);
+
+            // Normalizar nombre de la jornada agregando el lapso si no está presente
+            $datos['nombre_jornada'] = $this->normalizarNombreConLapso($datos['nombre_jornada'], $datos['lapsos_id']);
+
             $jornada->update($datos);
 
             $this->limpiarCacheJornada();
@@ -133,6 +143,9 @@ class JornadaBecasServices
      */
     public function index()
     {
+        //Desactivamos jornadas expiradas
+        $this->desactivarJornadasExpiradas();
+
         $buscar = request('buscar');
 
         $query = JornadaBeca::with('beneficio');
@@ -153,5 +166,50 @@ class JornadaBecasServices
     public function limpiarCacheJornada(): void
     {
         Cache::forget(self::CACHE_KEY_ACTIVA);
+    }
+
+    /**
+     * Valida que el beneficio tenga cupos disponibles suficientes para la jornada.
+     * @throws Exception
+     */
+    private function validarCuposDisponibles(int $beneficioId, int $cuposMaximos): void
+    {
+        $beneficio = Beneficio::findOrFail($beneficioId);
+        if ($beneficio->cupones_disponibles < $cuposMaximos) {
+            throw new Exception('El número de cupos máximos excede los cupos disponibles del beneficio.');
+        }
+    }
+
+    /**
+     * Asegura que el nombre de la jornada contenga el código del lapso académico.
+     */
+    private function normalizarNombreConLapso(string $nombreJornada, int $lapsoId): string
+    {
+        $lapsoElegido = Lapso::findOrFail($lapsoId)->codigo;
+        if (!str_contains($nombreJornada, $lapsoElegido)) {
+            $nombreJornada .= ' ' . $lapsoElegido;
+        }
+        return $nombreJornada;
+    }
+
+    /**
+     * Helpper para desactivar jornadas expiradas automaticamente 
+     */
+    private function desactivarJornadasExpiradas()
+    {
+        //Tomamos el dia de hoy
+        $hoy = now()->toDateString();
+
+        //Buscamos las jornadas que esten activas
+        $jornadasExpiradas = JornadaBeca::where('activa', 1)
+            ->whereDate('fecha_fin_solicitud', '<', $hoy);
+        
+        //Si hay jornadas expiradas
+        if ($jornadasExpiradas->exists()) {
+            //Las desactivamos
+            $jornadasExpiradas->update(['activa' => 0]);
+            //Limpiamos la cache
+            $this->limpiarCacheJornada();
+        }
     }
 }

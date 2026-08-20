@@ -15,7 +15,7 @@
     <title>{{ config('app.name', 'Bienestar Estudiantil') }}</title>
 
     <script>
-        (function() {
+        (function () {
             const getStoredTheme = () => localStorage.getItem('theme');
             const getSystemTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
@@ -172,6 +172,34 @@
             box-shadow: 0 0 0 2px var(--color-primary-alpha) !important;
         }
 
+        /* Inputs Deshabilitados (Disabled) */
+        input:not([type="radio"]):not([type="checkbox"]):not([type="file"]):disabled,
+        select:disabled,
+        textarea:disabled {
+            background-color: #f1f5f9 !important;
+            /* gray-100 */
+            border-color: #e2e8f0 !important;
+            /* gray-200 */
+            color: #94a3b8 !important;
+            /* gray-400 */
+            cursor: not-allowed !important;
+            opacity: 0.75 !important;
+        }
+
+        html.dark input:not([type="radio"]):not([type="checkbox"]):not([type="file"]):disabled,
+        html.dark select:disabled,
+        html.dark textarea:disabled {
+            background-color: #12090b !important;
+            /* fondo oscuro opaco */
+            border-color: #271418 !important;
+            /* borde oscuro */
+            color: #4b5563 !important;
+            /* gris oscuro / slate-500 */
+            cursor: not-allowed !important;
+            opacity: 0.75 !important;
+        }
+
+        /* Sidebar Colapsable */
         html.sidebar-collapsed #main-sidebar {
             width: 4rem !important;
         }
@@ -268,7 +296,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const primaryColor = '{{ $primaryColorHex }}';
 
             window.Toast = Swal.mixin({
@@ -287,7 +315,7 @@
             });
 
             window.AppModal = {
-                show: function(title, text, options = {}) {
+                show: function (title, text, options = {}) {
                     const isDark = document.documentElement.classList.contains('dark');
                     return Swal.fire({
                         title: title || 'Aviso',
@@ -306,13 +334,13 @@
                         buttonsStyling: true
                     }).then((result) => result.isConfirmed);
                 },
-                confirm: function(title, text) {
+                confirm: function (title, text) {
                     return this.show(title, text, {
                         type: 'confirm',
                         icon: 'warning'
                     });
                 },
-                alert: function(title, text) {
+                alert: function (title, text) {
                     return this.show(title, text, {
                         type: 'alert',
                         icon: 'info'
@@ -411,7 +439,7 @@
                         }
                     });
                 @endif
-            });
+                });
         </script>
     @endif
 </body>

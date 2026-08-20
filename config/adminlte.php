@@ -633,6 +633,22 @@ return [
             'icon' => 'fas fa-file-alt',
             'active' => ['admin/becas/solicitudes*'],
         ],
+        [
+            'text' => 'Beneficios',
+            'key' => 'beneficios',
+            'module' => 'beca',
+            'url' => 'admin/becas/beneficios',
+            'icon' => 'fas fa-file-alt',
+            'active' => ['admin/becas/beneficios*'],
+        ],
+        [
+            'text' => 'Jornada',
+            'key' => 'jornada_becas',
+            'module' => 'beca',
+            'url' => 'admin/becas/jornada',
+            'icon' => 'fas fa-user-clock',
+            'active' => ['admin/becas/jornada*'],
+        ],
 
         /* ---------------------------------------------------
         | GESTIÓN DE TRANSPORTE
@@ -700,15 +716,6 @@ return [
             'key'    => 'transporte_viajes',
             'url'    => 'admin/transporte/maestros/bus_viajes',
             'active' => ['admin/transporte/maestros/bus_viajes*'],
-        ],
-
-        [
-            'text' => 'Jornada',
-            'key' => 'jornada_becas',
-            'module' => 'beca',
-            'url' => 'admin/becas/jornada',
-            'icon' => 'fas fa-user-clock',
-            'active' => ['admin/becas/jornada*'],
         ]
 
     ],

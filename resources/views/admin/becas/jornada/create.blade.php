@@ -1,224 +1,284 @@
-@extends('adminlte::page')
+<x-app-layout>
+    @push('css')
+        <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+    @endpush
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
-@stop
+    <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-@section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Crear Nueva Jornada de Beca</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
-            </p>
-        </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
-            <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
-                <span style="font-weight:600; font-size:0.95rem;">
-                    {{ \Carbon\Carbon::now()->format('d/m/Y') }}
-                </span>
-            </div>
-            <div
-                style="width:46px;height:46px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.08);">
-                <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
-                    style="width:100%; height:100%; object-fit:cover;">
-            </div>
-        </div>
-    </div>
-@stop
-
-@section('content')
-    <div class="row">
-        <div class="col-md-10 m-auto">
-            <div class="rd-card p-4">
-                <div class="rd-card-header mb-4">
-                    <div>
-                        <h3 class="rd-title-sm">Registrar Nueva Jornada</h3>
-                        <p class="text-muted mb-0" style="font-size: 0.9rem;">
-                            Permite crear un nuevo período o proceso de postulación (jornada) para que los estudiantes soliciten los beneficios de beca disponibles.
-                        </p>
-                    </div>
-                    <div>
-                        <a href="{{ url('admin/becas/jornada') }}" class="rd-btn rd-btn-default">
-                            <i class="fas fa-arrow-left"></i> Volver
-                        </a>
-                    </div>
+            {{-- CABECERA UNIFICADA --}}
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
+                        Crear Nueva Jornada de Beca
+                    </h1>
+                    <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
+                    </p>
                 </div>
 
+                <div class="flex items-center gap-3">
+                    <a href="{{ url('admin/becas/jornada') }}"
+                        class="inline-flex shrink-0 whitespace-nowrap items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-slate-200 text-sm font-bold rounded-2xl transition-all shadow-sm border border-gray-200 dark:border-gray-700">
+                        <i class="fas fa-arrow-left text-xs mr-2"></i>
+                        <span>Volver</span>
+                    </a>
+                </div>
+            </div>
 
-                @if (session('error'))
-                    <div class="rd-alert rd-alert-danger mb-3">
-                        <div class="rd-alert-icon">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="rd-alert-content">
-                            <h6 class="rd-alert-title">Ocurrió un error</h6>
-                            <p class="rd-alert-text">{{ session('error') }}</p>
-                        </div>
-                    </div>
-                @endif
+            {{-- CONTENEDOR PRINCIPAL CON EL ESTILO UNIFICADO DE MEDICINA/PSICOLOGIA --}}
+            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-3xl border-l-8 border-red-700 overflow-hidden">
+                <div class="p-8 text-gray-900 dark:text-gray-100">
 
-                @if ($errors->any())
-                    <div class="rd-alert rd-alert-danger mb-3">
-                        <div class="rd-alert-icon">
-                            <i class="fas fa-times-circle"></i>
+                    <h3
+                        class="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight text-left mb-6 border-b pb-4 dark:border-gray-700">
+                        Registrar Nueva Jornada
+                    </h3>
+                    @if (session('error'))
+                        <div class="rd-alert rd-alert-danger mb-4">
+                            <div class="rd-alert-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="rd-alert-content">
+                                <h6 class="rd-alert-title">Ocurrió un error</h6>
+                                <p class="rd-alert-text">{{ session('error') }}</p>
+                            </div>
                         </div>
-                        <div class="rd-alert-content">
-                            <h6 class="rd-alert-title">Por favor corrige los siguientes errores:</h6>
-                            <ul class="rd-alert-list">
-                                @foreach ($errors->all() as $error)
-                                    <li><i class="fas fa-dot-circle"></i> {{ $error }}</li>
-                                @endforeach
-                            </ul>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="rd-alert rd-alert-danger mb-4">
+                            <div class="rd-alert-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="rd-alert-content">
+                                <h6 class="rd-alert-title">Por favor corrige los siguientes errores:</h6>
+                                <ul class="rd-alert-list">
+                                    @foreach ($errors->all() as $error)
+                                        <li><i class="fas fa-dot-circle"></i> {{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
 
-                <form action="{{ route('admin.becas.jornada.store') }}" method="POST" class="rd-prevent-double-submit">
-                    @csrf
+                    <form action="{{ route('admin.becas.jornada.store') }}" method="POST"
+                        class="space-y-6 rd-prevent-double-submit">
+                        @csrf
 
-                    <div class="row">
-                        <div class="col-md-12 form-group mb-3">
-                            <label class="font-weight-bold">Nombre de la Jornada <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-signature"></i></span>
-                                <input type="text" class="form-control rd-filter-input @error('nombre_jornada') is-invalid @enderror"
-                                    name="nombre_jornada" value="{{ old('nombre_jornada') }}"
+                        {{-- Nombre de la Jornada --}}
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                                Nombre de la Jornada <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div
+                                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fas fa-signature text-sm"></i>
+                                </div>
+                                <input type="text" name="nombre_jornada" value="{{ old('nombre_jornada') }}"
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-50/50 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none"
                                     placeholder="Ej. Convocatoria Comedor Universitario 2026-1" required>
                             </div>
                             @error('nombre_jornada')
-                                <div class="text-danger mt-1"><b>{{ $message }}</b></div>
+                                <p class="text-rose-500 text-xs mt-1 font-bold">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 form-group mb-3">
-                            <label class="font-weight-bold">Beneficio <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-award"></i></span>
-                                <select class="form-control rd-filter-input @error('beneficio_id') is-invalid @enderror"
-                                    name="beneficio_id" required>
-                                    <option value="" disabled selected>Seleccione el beneficio a ofrecer</option>
-                                    @foreach ($beneficios as $beneficio)
-                                        <option value="{{ $beneficio->id }}" {{ old('beneficio_id') == $beneficio->id ? 'selected' : '' }}>
-                                            {{ $beneficio->nombre_beneficio }} (Disponibles: {{ $beneficio->cupones_disponibles }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {{-- Beneficio --}}
+                            <div class="space-y-2">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                                    Beneficio <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-award text-sm"></i>
+                                    </div>
+                                    <select name="beneficio_id"
+                                        class="w-full pl-10 pr-4 py-3 bg-slate-50/50 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none"
+                                        required>
+                                        <option value="" disabled selected>Seleccione el beneficio a ofrecer</option>
+                                        @foreach ($beneficios as $beneficio)
+                                            <option value="{{ $beneficio->id }}" {{ old('beneficio_id') == $beneficio->id ? 'selected' : '' }}>
+                                                {{ $beneficio->nombre_beneficio }} (Disponibles:
+                                                {{ $beneficio->cupones_disponibles }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('beneficio_id')
+                                    <p class="text-rose-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                @enderror
                             </div>
-                            @error('beneficio_id')
-                                <div class="text-danger mt-1"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
 
-                        <div class="col-md-6 form-group mb-3">
-                            <label class="font-weight-bold">Lapso Académico <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                                <select class="form-control rd-filter-input @error('lapsos_id') is-invalid @enderror"
-                                    name="lapsos_id" required>
-                                    <option value="" disabled selected>Seleccione el lapso académico</option>
-                                    @foreach ($lapsos as $lapso)
-                                        <option value="{{ $lapso->id }}" {{ old('lapsos_id') == $lapso->id ? 'selected' : '' }}>
-                                            {{ $lapso->codigo }} {{ $lapso->es_actual ? '(Actual)' : '' }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            {{-- Lapso Académico --}}
+                            <div class="space-y-2">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                                    Lapso Académico <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-calendar-alt text-sm"></i>
+                                    </div>
+                                    <select name="lapsos_id"
+                                        class="w-full pl-10 pr-4 py-3 bg-slate-50/50 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none"
+                                        required>
+                                        <option value="" disabled selected>Seleccione el lapso académico</option>
+                                        @foreach ($lapsos as $lapso)
+                                            <option value="{{ $lapso->id }}" {{ old('lapsos_id') == $lapso->id ? 'selected' : '' }}>
+                                                {{ $lapso->codigo }} {{ $lapso->es_actual ? '(Actual)' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('lapsos_id')
+                                    <p class="text-rose-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                @enderror
                             </div>
-                            @error('lapsos_id')
-                                <div class="text-danger mt-1"><b>{{ $message }}</b></div>
-                            @enderror
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 form-group mb-3">
-                            <label class="font-weight-bold">Fecha de Inicio de Solicitudes <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
-                                <input type="date" class="form-control rd-filter-input @error('fecha_inicio_solicitud') is-invalid @enderror"
-                                    name="fecha_inicio_solicitud" value="{{ old('fecha_inicio_solicitud') ?: date('Y-m-d') }}" required min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {{-- Fecha de Inicio --}}
+                            <div class="space-y-2">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                                    Fecha de Inicio de Solicitudes <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-calendar-day text-sm"></i>
+                                    </div>
+                                    <input type="date" name="fecha_inicio_solicitud"
+                                        value="{{ old('fecha_inicio_solicitud') ?: date('Y-m-d') }}"
+                                        min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
+                                        class="w-full pl-10 pr-4 py-3 bg-slate-50/50 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none"
+                                        required>
+                                </div>
+                                @error('fecha_inicio_solicitud')
+                                    <p class="text-rose-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                @enderror
                             </div>
-                            @error('fecha_inicio_solicitud')
-                                <div class="text-danger mt-1"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
 
-                        <div class="col-md-6 form-group mb-3">
-                            <label class="font-weight-bold">Fecha de Fin de Solicitudes <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
-                                <input type="date" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" class="form-control rd-filter-input @error('fecha_fin_solicitud') is-invalid @enderror"
-                                    name="fecha_fin_solicitud" value="{{ old('fecha_fin_solicitud') }}" required >
+                            {{-- Fecha de Fin --}}
+                            <div class="space-y-2">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                                    Fecha de Fin de Solicitudes <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-calendar-check text-sm"></i>
+                                    </div>
+                                    <input type="date" name="fecha_fin_solicitud"
+                                        value="{{ old('fecha_fin_solicitud') }}"
+                                        min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
+                                        class="w-full pl-10 pr-4 py-3 bg-slate-50/50 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none"
+                                        required>
+                                </div>
+                                @error('fecha_fin_solicitud')
+                                    <p class="text-rose-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                @enderror
                             </div>
-                            @error('fecha_fin_solicitud')
-                                <div class="text-danger mt-1"><b>{{ $message }}</b></div>
-                            @enderror
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 form-group mb-3">
-                            <label class="font-weight-bold">
-                                Cupos Máximos <span class="text-danger">*</span>
-                                <span class="ml-1" data-toggle="tooltip" data-placement="top" 
-                                    title="El número de cupos máximos de la jornada no puede superar los cupos disponibles del beneficio seleccionado.">
-                                    <i class="fas fa-info-circle" style="cursor: help;"></i>
-                                </span>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {{-- Cupos Máximos --}}
+                            <div class="space-y-2">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                                    Cupos Máximos <span class="text-rose-500">*</span>
+                                    <span class="ml-1" data-toggle="tooltip" data-placement="top"
+                                        title="El número de cupos máximos de la jornada no puede superar los cupos disponibles del beneficio seleccionado.">
+                                        <i class="fas fa-info-circle text-gray-400" style="cursor: help;"></i>
+                                    </span>
+                                </label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-users text-sm"></i>
+                                    </div>
+                                    <input type="number" name="cupos_maximos" value="{{ old('cupos_maximos') }}" min="1"
+                                        placeholder="Ej. 100"
+                                        class="w-full pl-10 pr-4 py-3 bg-slate-50/50 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 text-sm rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none"
+                                        required>
+                                </div>
+                                @error('cupos_maximos')
+                                    <p class="text-rose-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Estado Activo (Toggle Switch) --}}
+                            <div class="flex items-center pt-8">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="activa" value="1" class="sr-only peer" id="activa" {{ old('activa', 1) ? 'checked' : '' }}>
+                                    <div
+                                        class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600">
+                                    </div>
+                                    <div class="ms-3">
+                                        <span class="block text-sm font-bold text-slate-700 dark:text-slate-200">Jornada
+                                            Activa</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Las jornadas
+                                            inactivas no permiten a los estudiantes postularse.</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Descripción --}}
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                                Descripción de la Jornada
                             </label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-users"></i></span>
-                                <input type="number" min="1" class="form-control rd-filter-input @error('cupos_maximos') is-invalid @enderror"
-                                    name="cupos_maximos" value="{{ old('cupos_maximos') }}" placeholder="Ej. 100" required>
-                            </div>
-                            @error('cupos_maximos')
-                                <div class="text-danger mt-1"><b>{{ $message }}</b></div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3 d-flex align-items-center">
-                            <div class="custom-control custom-switch mt-4">
-                                <input type="checkbox" class="custom-control-input" id="activa" name="activa" value="1" {{ old('activa', 1) ? 'checked' : '' }}>
-                                <label class="custom-control-label font-weight-bold" for="activa">Jornada Activa</label>
-                                <small class="d-block text-muted">Las jornadas inactivas no permiten a los estudiantes postularse.</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12 form-group mb-3">
-                            <label class="font-weight-bold">Descripción de la Jornada</label>
-                            <textarea class="form-control rd-filter-input @error('descripcion_jornada') is-invalid @enderror"
-                                name="descripcion_jornada" rows="4" placeholder="Ingrese detalles o requisitos de esta jornada..."
+                            <textarea name="descripcion_jornada" rows="4"
+                                placeholder="Ingrese detalles o requisitos de esta jornada..."
+                                class="w-full bg-slate-50/50 dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 text-sm px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none resize-none"
                                 style="resize: none;">{{ old('descripcion_jornada') }}</textarea>
                             @error('descripcion_jornada')
-                                <div class="text-danger mt-1"><b>{{ $message }}</b></div>
+                                <p class="text-rose-500 text-xs mt-1 font-bold">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
 
-                    <hr class="my-4" style="border-top: 1px solid #e5e7eb;">
-
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ url('admin/becas/jornada') }}" class="rd-btn rd-btn-default mr-2">
-                            Cancelar
-                        </a>
-                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
-                            <i class="fas fa-save"></i> Guardar Jornada
-                        </button>
-                    </div>
-                </form>
+                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+                            <a href="{{ url('admin/becas/jornada') }}"
+                                class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold text-sm transition">
+                                Cancelar
+                            </a>
+                            <button type="submit"
+                                class="px-6 py-2.5 bg-red-700 hover:bg-red-600 text-white rounded-xl font-bold text-sm transition shadow-lg shadow-red-500/20">
+                                <i class="fas fa-save mr-2"></i> Guardar Jornada
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
+
         </div>
     </div>
-@stop
 
-@section('js')
-<script>
-    $(document).ready(function() {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
-@stop
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+
+                const fechaInicio = $('input[name="fecha_inicio_solicitud"]');
+                const fechaFin = $('input[name="fecha_fin_solicitud"]');
+
+                function actualizarMinFechaFin() {
+                    const val = fechaInicio.val();
+                    if (val) {
+                        fechaFin.attr('min', val);
+                        if (fechaFin.val() && fechaFin.val() < val) {
+                            fechaFin.val(val);
+                        }
+                    }
+                }
+
+                // Inicializar y vincular eventos
+                actualizarMinFechaFin();
+                fechaInicio.on('change', actualizarMinFechaFin);
+            });
+        </script>
+    @endpush
+</x-app-layout>

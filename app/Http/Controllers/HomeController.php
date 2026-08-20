@@ -12,6 +12,8 @@ use App\Models\Lote;
 use App\Models\ExchangeRates;
 use App\Models\Rol;
 use App\Models\salud\EnvasePrimario;
+use App\Models\Becas\JornadaBeca;
+use App\Models\Becas\Beneficio;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\BusMarca;
@@ -70,6 +72,8 @@ class HomeController extends Controller
         $total_productos         = Producto::count();
         $total_proveedores       = Proveedor::count();
         $total_compras           = Compra::count();
+        $total_jornadas_becas    = JornadaBeca::count();
+        $total_beneficios        = Beneficio::count();
 
         $total_lotes_vencidos = Lote::whereDate('fecha_vencimiento', '<=', $hoy)
             ->where('estado', 1)
@@ -139,6 +143,9 @@ class HomeController extends Controller
             'bus_vehiculos'         => 'admin/transporte/maestros/bus_vehiculos',
             'bus_rutas'             => 'admin/transporte/maestros/bus_rutas',
             'bus_paradas'           => 'admin/transporte/maestros/bus_paradas',
+            // ── Becas ──────────────────────────────────────────
+            'jornada_becas'         => 'admin/becas/jornada',
+            'beneficios'            => 'admin/becas/beneficios',
         ];
 
         $visibleModules = [];
@@ -168,7 +175,10 @@ class HomeController extends Controller
             'total_bus_tipo_combustibles',
             'total_bus_vehiculos',
             'total_bus_rutas',
-            'total_bus_paradas'
+            'total_bus_paradas',
+            // ── Becas ──────────────────────────────────────────
+            'total_jornadas_becas',
+            'total_beneficios'
         ));
     }
 }
