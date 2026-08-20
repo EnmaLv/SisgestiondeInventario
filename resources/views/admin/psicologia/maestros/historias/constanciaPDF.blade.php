@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Constancia de Asistencia - {{ $paciente->name }}</title>
+    <title>Constancia de Asistencia - {{ $paciente->persona->nombre_persona }}</title>
     <style>
         @page { margin: 100px 60px 65px 60px; }
         header { position: fixed; top: -60px; left: 0px; right: 0px; height: 50px; text-align: center; }
@@ -108,7 +108,7 @@
                 </td>
                 <td style="width: 50%;" class="doc-info">
                     <div class="doc-title">Constancia de Asistencia</div>
-                    <div class="doc-subtitle">Psic. {{ strtoupper($psicologo->nombres . ' ' . $psicologo->apellidos) }}</div>
+                    <div class="doc-subtitle">Psic. {{ strtoupper($psicologo->persona->nombre_persona . ' ' . $psicologo->persona->apellido_persona) }}</div>
                 </td>
             </tr>
         </table>
@@ -118,15 +118,15 @@
 
             <div class="text-paragraph">
                 Por medio de la presente se hace constar formalmente que el/la ciudadano(a) 
-                <strong>{{ $paciente->nombres }} {{ $paciente->apellidos }}</strong>, 
+                <strong>{{ $paciente->persona->nombre_persona }} {{ $paciente->persona->apellido_persona }}</strong>, 
                 titular de la cédula de identidad 
-                <strong>{{ $paciente->cedula ?? 'No registrada' }}</strong>, 
+                <strong>{{ $paciente->persona->cedula_persona ?? 'No registrada' }}</strong>, 
                 asistió a la consulta psicológica en el día 
                 <strong>{{ $cita->fecha ? $cita->fecha->translatedFormat('d \d\e F \d\e Y') : 'No registrada' }}</strong> 
                 a las 
                 <strong>{{ $cita->hora ? \Carbon\Carbon::parse($cita->hora)->format('g:i A') : 'No registrada' }}</strong>, 
                 siendo atendido(a) en el área correspondiente por el/la profesional de la psicología 
-                <strong>Psic. {{ $psicologo->nombres }} {{ $psicologo->apellidos }}</strong>.
+                <strong>Psic. {{ $psicologo->persona->nombre_persona }} {{ $psicologo->persona->apellido_persona }}</strong>.
             </div>
 
             <div class="text-paragraph">
@@ -143,7 +143,7 @@
 
         <div class="footer-sign">
             <div class="signature-line"></div>
-            <div class="signature-text">Psic. {{ $psicologo->nombres }} {{ $psicologo->apellidos }}</div>
+            <div class="signature-text">Psic. {{ $psicologo->persona->nombre_persona }} {{ $psicologo->persona->nombre_persona }}</div>
             <div class="date-text">Firma y Sello del Psicólogo</div>
         </div>
     </main>

@@ -14,24 +14,26 @@ use App\Models\Rol;
 use App\Models\salud\EnvasePrimario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
-// MÓDULO TRANSPORTE — Abdias
 use App\Models\BusMarca;
 use App\Models\BusModelo;
 use App\Models\BusTipoCombustible;
 use App\Models\BusVehiculo;
 use App\Models\BusRuta;
 use App\Models\BusParada;
+use App\Services\Salud\PsicologiaHomeService;
 
 class HomeController extends Controller
 {
-    public function __construct()
+    protected $psicologiaService;
+    public function __construct(PsicologiaHomeService $psicologiaService)
     {
         $this->middleware('auth');
+        $this->psicologiaService = $psicologiaService;
     }
 
     public function index()
     {
+        $psicologiaData = $this->psicologiaService->getPacienteData();
         $hoy = Carbon::now();
         $limite = Carbon::now()->addDays(7);
         $sedeId = Auth::user()->persona?->sede_id ?? 1;
@@ -62,8 +64,6 @@ class HomeController extends Controller
         $menuPermissions = $rol?->menu_permissions ?? [];
         $isAdministrator = $roleName && strtolower($roleName) === 'administrador';
         $isSecretaria = $roleName && strtolower($roleName) === 'secretaria de bienestar';
-
-        // ── Conteos generales ──────────────────────────────────────────
         $total_envases_primarios = EnvasePrimario::count();
         $total_sedes             = Sede::count();
         $total_categorias        = Categoria::count();
@@ -101,8 +101,6 @@ class HomeController extends Controller
             ->get();
 
         $total_productos_stock_minimo = $productos_stock_minimo->count();
-
-        // MÓDULO TRANSPORTE — Abdias
         $total_bus_marcas            = BusMarca::count();
         $total_bus_modelos           = BusModelo::count();
         $total_bus_tipo_combustibles = BusTipoCombustible::count();
@@ -126,9 +124,7 @@ class HomeController extends Controller
         };
 
         $modules = [
-            // ── Salud ──────────────────────────────────────────────────
             'envases_primarios' => 'admin/salud/maestros/envases_primarios',
-            // ── Comedor ────────────────────────────────────────────────
             'sedes'             => 'admin/maestros/sedes',
             'categorias'        => 'admin/maestros/categorias',
             'productos'         => 'admin/maestros/productos',
@@ -137,7 +133,6 @@ class HomeController extends Controller
             'comidas'           => 'admin/maestros/recetas',
             'por_vencer'        => 'admin/movimientos/lotes',
             'registro_comida'   => 'admin/movimientos/registro_comida',
-            // ── Transporte — Abdias ───────────────────────────
             'bus_marcas'            => 'admin/transporte/maestros/bus_marcas',
             'bus_modelos'           => 'admin/transporte/maestros/bus_modelos',
             'bus_tipo_combustibles' => 'admin/transporte/maestros/bus_tipo_combustibles',
@@ -153,11 +148,11 @@ class HomeController extends Controller
             $visibleModules[$key] = $visible;
         }
 
-        return view('home', [
+        return view('home', array_merge([
             'variacion_dolar' => $ultimaTasa?->variacion,
             'tasa_actual'     => $ultimaTasa?->tasa,
             'visibleModules'  => $visibleModules,
-        ], compact(
+        ], $psicologiaData), compact(
             'total_sedes',
             'total_categorias',
             'total_productos',
@@ -168,7 +163,6 @@ class HomeController extends Controller
             'productos_stock_minimo',
             'total_productos_stock_minimo',
             'total_envases_primarios',
-            // ── Transporte — Abdias ────────────────────────────
             'total_bus_marcas',
             'total_bus_modelos',
             'total_bus_tipo_combustibles',

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Informe de Evolución - {{ $paciente->name }}</title>
+    <title>Informe de Evolución - {{ $paciente->persona->nombre_persona }}</title>
     <style>
         @page { margin: 100px 60px 65px 60px;  }
         header { position: fixed; top: -60px; left: 0px; right: 0px; height: 50px; text-align: center; }
@@ -212,13 +212,13 @@
             </td>
             <td style="width: 50%;" class="doc-info">
                 <div class="doc-title">INFORME CLINICO DE EVOLUCION</div>
-                <div class="doc-subtitle">DR. {{ strtoupper(Auth::user()->nombres . ' ' . Auth::user()->apellidos) }} | PSICOLOGO</div>
+                <div class="doc-subtitle">DR. {{ strtoupper(Auth::user()->persona->nombre_persona . ' ' . Auth::user()->persona->apellido_persona) }} | PSICOLOGO</div>
             </td>
         </tr>
     </table>
 
     <div class="patient-card">
-        <div class="patient-name">{{ $paciente->name }}</div>
+        <div class="patient-name">{{ $paciente->persona->nombre_persona }} {{ $paciente->persona->apellido_persona }}</div>
         <div class="patient-meta">
             <span>Sesiones: {{ $stats['realizadas'] }}</span>
             <span>N Expediente: {{ $historia->id }}</span>
@@ -249,7 +249,7 @@
             <div class="timeline-body">
                 @if($notasData && is_array($notasData))
                     @php
-                        $camposDinamicos = \App\Models\CitaNotaEvolucion::obtenerPorCita($cita->id);
+                        $camposDinamicos = \App\Models\salud\CitaNotaEvolucion::obtenerPorCita($cita->id);
                     @endphp
                     
                     @foreach($camposDinamicos as $campo)

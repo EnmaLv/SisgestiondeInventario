@@ -6,7 +6,6 @@
         ? 'from-blue-600 via-indigo-700 to-slate-900'
         : 'from-[var(--color-primary,#c52222)] to-[var(--color-tertiary,#800000)]';
 
-    // Estilos visuales globales de todas las tarjetas segun la vista actual
     $primaryColor = $esPsicologia ? '#2563eb' : 'var(--color-primary, #dc2626)';
     $badgeBg      = $esPsicologia ? 'bg-blue-600' : 'bg-red-600';
     $iconBg       = $esPsicologia
@@ -23,7 +22,6 @@
         'comedor'        => ['icon' => 'fas fa-utensils'],
         'salud'          => ['icon' => 'fas fa-heartbeat'],
         'psicologia'     => ['icon' => 'fas fa-brain'],
-        'mental'         => ['icon' => 'fas fa-brain'],
         'beca'           => ['icon' => 'fas fa-graduation-cap'],
         'transporte'     => ['icon' => 'fas fa-bus'],
     ];
@@ -33,8 +31,6 @@
 <x-app-layout>
     <x-slot name="header">
         @include('components.alert')
-
-        {{-- CABECERA UNIFICADA DE MODULOS --}}
         <div
             class="dashboard-header bg-gradient-to-r {{ $headerGradient }} rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
             <div class="absolute -top-1/2 -right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none">
@@ -72,7 +68,6 @@
         </div>
     </x-slot>
 
-    {{-- GRID DE SELECCIÓN DE MÓDULOS --}}
     <form action="{{ route('admin.modulos.cambiar') }}" method="POST">
         @csrf
 
@@ -90,7 +85,6 @@
                     style="background-color: var(--bg-card); border-color: {{ $activeBorderColor }}; color: var(--text-main);"
                     class="relative p-6 rounded-2xl border shadow-sm hover:shadow-lg {{ $hoverBorder }} transition-all text-center flex flex-col items-center justify-center gap-3 group w-full cursor-pointer {{ $ringClass }}">
 
-                    {{-- Badge para módulo activo --}}
                     @if ($esActivo)
                         <span
                             class="absolute top-3 right-3 px-2.5 py-0.5 text-[11px] font-bold rounded-full {{ $badgeBg }} text-white flex items-center gap-1 shadow-sm">
@@ -98,13 +92,11 @@
                         </span>
                     @endif
 
-                    {{-- Ícono del Módulo --}}
                     <div
                         class="w-16 h-16 rounded-2xl {{ $iconBg }} flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
                         <i class="{{ $conf['icon'] }}"></i>
                     </div>
 
-                    {{-- Texto e Indicador --}}
                     <div>
                         <h5 class="font-bold text-base mb-1" style="color: var(--text-main);">
                             {{ $m->nombre }}

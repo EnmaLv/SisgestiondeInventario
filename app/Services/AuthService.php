@@ -17,11 +17,9 @@ class AuthService
             $estatusId = $this->ensureEstatus();
             $sedeId = $this->ensureSede(); 
 
-            // 1. Verificar si es el primer usuario del sistema
             $isFirstUser = Usuario::count() === 0;
             $perfilNombre = $isFirstUser ? 'Administrador' : 'Usuario';
 
-            // 2. Asegurar que el perfil correcto exista
             $perfilObj = $this->ensurePerfil($perfilNombre, $estatusId);
             $perfilId = $perfilObj->id_perfil;
 
@@ -35,7 +33,6 @@ class AuthService
 
             $persona = Persona::create($personaData);
 
-            // 3. Crear el usuario
             $usuario = Usuario::create([
                 'id_persona' => $persona->id_persona,
                 'id_perfil'  => $perfilId,
@@ -44,7 +41,6 @@ class AuthService
                 'master_key' => $isFirstUser ? bcrypt('admin123') : null,
             ]);
 
-            // 4. Asignar ROL
             $this->assignRol($usuario->id_usuario, $perfilNombre);
 
             return $usuario;

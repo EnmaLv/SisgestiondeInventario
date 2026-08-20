@@ -9,69 +9,90 @@
 <x-app-layout>
     <x-slot name="header">
         @include('components.alert')
-
-        <div
-            class="dashboard-header bg-gradient-to-r {{ $headerGradient }} rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
-            <div class="absolute -top-1/2 -right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none">
-            </div>
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight flex items-center gap-2 m-0">
-                        🏠 Panel de Control
-                    </h1>
-                    <p class="mt-2 mb-0 text-base opacity-95">
-                        Bienvenido de nuevo,
-                        <strong>{{ auth()->user()->persona?->nombre_persona ?? auth()->user()->name }}</strong>
-                    </p>
-                    <p class="mb-0 text-sm opacity-80">
-                        Gestiona tu inventario de manera eficiente
-                    </p>
+        @if (!auth()->user()->tieneRol('estudiante'))
+            <div
+                class="dashboard-header bg-gradient-to-r {{ $headerGradient }} rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
+                <div class="absolute -top-1/2 -right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none">
                 </div>
 
-                <div class="hidden md:flex items-center gap-6">
-                    <div class="text-right">
-                        <div class="text-xs opacity-90 mb-1">
-                            📅 Hoy es
-                        </div>
-                        <div class="font-bold text-xl">
-                            {{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}
-                        </div>
-                        <div class="text-xs opacity-80 capitalize">
-                            {{ \Carbon\Carbon::now()->translatedFormat('l') }}
-                        </div>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight flex items-center gap-2 m-0">
+                            🏠 Panel de Control
+                        </h1>
+                        <p class="mt-2 mb-0 text-base opacity-95">
+                            Bienvenido de nuevo,
+                            <strong>{{ auth()->user()->persona?->nombre_persona ?? auth()->user()->name }}</strong>
+                        </p>
+                        <p class="mb-0 text-sm opacity-80">
+                            Gestiona tu inventario de manera eficiente
+                        </p>
                     </div>
 
-                    <div
-                        class="w-16 h-16 rounded-full overflow-hidden border-4 border-white/30 shadow-lg bg-white flex-shrink-0">
-                        <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
-                            class="w-full h-full object-cover">
+                    <div class="hidden md:flex items-center gap-6">
+                        <div class="text-right">
+                            <div class="text-xs opacity-90 mb-1">
+                                📅 Hoy es
+                            </div>
+                            <div class="font-bold text-xl">
+                                {{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}
+                            </div>
+                            <div class="text-xs opacity-80 capitalize">
+                                {{ \Carbon\Carbon::now()->translatedFormat('l') }}
+                            </div>
+                        </div>
+
+                        <div
+                            class="w-16 h-16 rounded-full overflow-hidden border-4 border-white/30 shadow-lg bg-white flex-shrink-0">
+                            <img src="{{ asset('img/usuario-verificado.webp') }}" alt="Usuario"
+                                class="w-full h-full object-cover">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </x-slot>
 
     <div>
         @switch($moduloActivo)
             @case('comedor')
-                @include('components.comedor-home')
+                @if (auth()->user()->tieneRol('estudiante'))
+                    @include('components.estudiante.comedor-home')
+                @else
+                    @include('components.comedor-home')
+                @endif
             @break
 
             @case('salud')
-                @include('components.salud-home')
+                @if (auth()->user()->tieneRol('estudiante'))
+                    @include('components.estudiante.salud-home')
+                @else
+                    @include('components.salud-home')
+                @endif
             @break
 
             @case('psicologia')
-                @include('components.psicologia-home')
+                @if (auth()->user()->tieneRol('estudiante'))
+                    @include('components.estudiante.psicologia-home')
+                @else
+                    @include('components.psicologia-home')
+                @endif
             @break
 
             @case('becas')
-                {{-- @include('admin.dashboard.modules.becas') --}}
+                @if (auth()->user()->tieneRol('estudiante'))
+                    @include('components.estudiante.becas-home')
+                @else
+                    @include('components.becas-home')
+                @endif
             @break
 
             @case('transporte')
-                @include('components.transporte-home')
+                @if (auth()->user()->tieneRol('estudiante'))
+                    @include('components.estudiante.transporte-home')
+                @else
+                    @include('components.transporte-home')
+                @endif
             @break
 
             @default

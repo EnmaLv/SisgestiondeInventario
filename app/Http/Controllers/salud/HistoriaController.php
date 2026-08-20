@@ -112,10 +112,12 @@ class HistoriaController extends Controller
 
     public function show($pacienteId)
     {
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
-        $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
+        $paciente->name = trim(($paciente->nombre_persona ?? '') . ' ' . ($paciente->apellido_persona ?? ''));
         $paciente->primera_cita = Cita::obtenerFechaPrimeraCita($paciente->id);
 
         $historia = HistoriaClinica::iniciarHistoria($paciente->id, Auth::id());
@@ -191,7 +193,9 @@ class HistoriaController extends Controller
 
     public function update(Request $request, $pacienteId)
     {
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
         $historia = HistoriaClinica::obtenerPorPaciente($paciente->id);
         abort_if(!$historia, 404);
@@ -270,13 +274,15 @@ class HistoriaController extends Controller
 
         $cita = Cita::crearNotaManual($pacienteId, Auth::id());
 
-        return redirect()->route('citas.edit.note', $cita->id);
+        return redirect()->route('admin.psicologia.maestros.citas.edit.note', $cita->id);
     }
 
     public function downloadZip($pacienteId)
     {
         $userId = Auth::id();
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
         $historia = HistoriaClinica::verificarAcceso($paciente->id, $userId);
@@ -317,7 +323,9 @@ class HistoriaController extends Controller
     {
         ini_set('memory_limit', '512M');
         $userId = Auth::id();
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
         $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
@@ -341,7 +349,9 @@ class HistoriaController extends Controller
     public function reporteWord($pacienteId)
     {
         $userId = Auth::id();
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
         $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
@@ -363,7 +373,9 @@ class HistoriaController extends Controller
     {
         ini_set('memory_limit', '512M');
         $userId = Auth::id();
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
         $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
@@ -388,7 +400,9 @@ class HistoriaController extends Controller
     public function expedienteCompletoWord($pacienteId)
     {
         $userId = Auth::id();
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
         $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
@@ -403,7 +417,7 @@ class HistoriaController extends Controller
         $citasSeleccionadas = Cita::obtenerCitasRealizadas($paciente->id, $userId);
         $stats = Cita::obtenerEstadisticasPaciente($paciente->id, $userId);
 
-        $psicologo = $this->obtenerUsuario($userId);
+        $psicologo = $user->obtenerUsuarioPorId($userId);
         $psicologoName = trim(($psicologo->nombres ?? '') . ' ' . ($psicologo->apellidos ?? ''));
 
         $tempFile = \App\Exports\Historias\WordExport::generateExpedienteCompleto($paciente, $historia, $seccionesPersonalizadas, $enfermedadesVinculadas, $citasSeleccionadas, $stats, $psicologoName);
@@ -416,7 +430,9 @@ class HistoriaController extends Controller
         ini_set('memory_limit', '512M');
         $request = request();
         $userId = Auth::id();
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
         $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
@@ -471,7 +487,9 @@ class HistoriaController extends Controller
     {
         $request = request();
         $userId = Auth::id();
-        $paciente = $this->obtenerUsuario($pacienteId);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
 
         $paciente->name = trim(($paciente->nombres ?? '') . ' ' . ($paciente->apellidos ?? ''));
@@ -489,7 +507,8 @@ class HistoriaController extends Controller
             : $todasLasCitas;
 
         $stats = Cita::obtenerEstadisticasPaciente($paciente->id, $userId);
-        $psicologo = $this->obtenerUsuario($userId);
+
+        $psicologo = $user->obtenerUsuarioPorId($userId);
         $psicologoName = trim(($psicologo->nombres ?? '') . ' ' . ($psicologo->apellidos ?? ''));
 
         $modoDescarga = $request->input('modo_descarga', 'unificado');
@@ -595,8 +614,10 @@ class HistoriaController extends Controller
 
     private function generateSesionPdfContent($cita): string
     {
-        $paciente = $this->obtenerUsuario($cita->user_id);
-        $psicologo = $this->obtenerUsuario($cita->psicologo_id);
+        /** @var Usuario $user */
+        $user = Auth::user();
+        $paciente = $user->obtenerUsuarioPorId($cita->user_id);
+        $psicologo = $user->obtenerUsuarioPorId($cita->psicologo_id);
         $pacienteName = $paciente ? $paciente->name : 'Desconocido';
         $psicologoName = $psicologo ? $psicologo->name : 'Desconocido';
 

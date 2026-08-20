@@ -10,17 +10,11 @@ use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         View::composer(['admin.psicologia.*', 'admin.enfermedades.*'], function ($view) {
@@ -30,8 +24,8 @@ class AppServiceProvider extends ServiceProvider
             // CAMBIO AQUÍ: Se reemplaza 'psicologia' por 'general' en el fallback de la sesión
             $tipoVal = $data['tipo'] ?? request('tipo') ?? session('modulo_activo', 'general');
 
-            $esPsicologia = in_array(strtolower($categoriaVal), ['mental', 'psicologia', 'psicología'])
-                || in_array(strtolower($tipoVal), ['mental', 'psicologia', 'psicología']);
+            $esPsicologia = in_array(strtolower($categoriaVal), ['salud', 'psicologia', 'psicología'])
+                || in_array(strtolower($tipoVal), ['salud', 'psicologia', 'psicología']);
 
             $themeColor = $esPsicologia ? 'indigo' : 'blue';
 

@@ -230,16 +230,16 @@
                 style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
                 class="w-full rounded-xl border text-xs font-medium focus:outline-none focus:ring-2 {{ $focusRingClass }} transition-all px-3 py-2">
                 <option value="">Todos</option>
-                <option value="Administracion">Administración</option>
-                <option value="Mecanica">Mecánica</option>
-                <option value="Mantenimiento">Mantenimiento</option>
-                <option value="Electricidad">Electricidad</option>
-                <option value="Veterinaria">Veterinaria</option>
-                <option value="Informatica">Informática</option>
-                <option value="PDA">PDA</option>
-                <option value="Distribucion_Logistica">Distribución y Logística</option>
-                <option value="Agroalimentacion">Agroalimentación</option>
-                <option value="Seguridad_Alimentaria_Nutricional">Seguridad alimentaria y Cultura Nutricional</option>
+                <option value="ADMINISTRACION">Administración</option>
+                <option value="MECANICA">Mecánica</option>
+                <option value="MANTENIMIENTO">Mantenimiento</option>
+                <option value="ELECTRICIDAD">Electricidad</option>
+                <option value="VETERINARIA">Veterinaria</option>
+                <option value="INFORMATICA">Informática</option>
+                <option value="PROC_Y_DIST_DE_ALIMENTOS">PDA</option>
+                <option value="DISTRIBUCIÓN_LOGÍSTICA">Distribución y Logística</option>
+                <option value="AGROALIMENTACION">Agroalimentación</option>
+                <option value="SEGURIDAD_ALIMENTARIA">Seguridad alimentaria y Cultura Nutricional</option>
             </select>
         </div>
     </div>
@@ -405,9 +405,7 @@
         </div>
     </div>
 
-    <script
-        src="[https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js](https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js)">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
     <script>
         window.dashboardApp = (function() {
@@ -418,38 +416,16 @@
             let charts = {};
 
             const COLORS = {
-                sky: {
-                    bg: 'rgba(14,165,233,0.15)',
-                    border: '#0ea5e9'
-                },
-                emerald: {
-                    bg: 'rgba(16,185,129,0.15)',
-                    border: '#10b981'
-                },
-                amber: {
-                    bg: 'rgba(245,158,11,0.15)',
-                    border: '#f59e0b'
-                },
-                rose: {
-                    bg: 'rgba(244,63,94,0.15)',
-                    border: '#f43f5e'
-                },
-                violet: {
-                    bg: 'rgba(139,92,246,0.15)',
-                    border: '#8b5cf6'
-                },
-                indigo: {
-                    bg: 'rgba(99,102,241,0.15)',
-                    border: '#6366f1'
-                },
-                cyan: {
-                    bg: 'rgba(6,182,212,0.15)',
-                    border: '#06b6d4'
-                },
+                sky:     { bg: 'rgba(14,165,233,0.15)', border: '#0ea5e9' },
+                emerald: { bg: 'rgba(16,185,129,0.15)', border: '#10b981' },
+                amber:   { bg: 'rgba(245,158,11,0.15)', border: '#f59e0b' },
+                rose:    { bg: 'rgba(244,63,94,0.15)',   border: '#f43f5e' },
+                violet:  { bg: 'rgba(139,92,246,0.15)',  border: '#8b5cf6' },
+                indigo:  { bg: 'rgba(99,102,241,0.15)',  border: '#6366f1' },
+                cyan:    { bg: 'rgba(6,182,212,0.15)',   border: '#06b6d4' },
             };
 
-            const PALETTE = ['#0ea5e9', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#6366f1', '#06b6d4',
-            '#ec4899'];
+            const PALETTE = ['#0ea5e9','#10b981','#f59e0b','#f43f5e','#8b5cf6','#6366f1','#06b6d4','#ec4899'];
 
             function getFilterParams() {
                 const estado = document.getElementById('filterEstado')?.value || '';
@@ -470,36 +446,18 @@
 
             function formatDateDisplay(dateStr) {
                 const d = new Date(dateStr + 'T00:00:00');
-                return d.toLocaleDateString('es-VE', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
+                return d.toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: 'numeric' });
             }
 
             function calcularFechas(tipo) {
                 const hoy = new Date();
                 let inicio;
-                switch (tipo) {
-                    case 'semanal':
-                        inicio = new Date(hoy);
-                        inicio.setDate(hoy.getDate() - 7);
-                        break;
-                    case 'mensual':
-                        inicio = new Date(hoy);
-                        inicio.setDate(hoy.getDate() - 30);
-                        break;
-                    case 'semestral':
-                        inicio = new Date(hoy);
-                        inicio.setMonth(hoy.getMonth() - 6);
-                        break;
-                    case 'anual':
-                        inicio = new Date(hoy);
-                        inicio.setFullYear(hoy.getFullYear() - 1);
-                        break;
-                    default:
-                        inicio = new Date(hoy);
-                        inicio.setDate(hoy.getDate() - 30);
+                switch(tipo) {
+                    case 'semanal':   inicio = new Date(hoy); inicio.setDate(hoy.getDate() - 7); break;
+                    case 'mensual':   inicio = new Date(hoy); inicio.setDate(hoy.getDate() - 30); break;
+                    case 'semestral': inicio = new Date(hoy); inicio.setMonth(hoy.getMonth() - 6); break;
+                    case 'anual':     inicio = new Date(hoy); inicio.setFullYear(hoy.getFullYear() - 1); break;
+                    default:          inicio = new Date(hoy); inicio.setDate(hoy.getDate() - 30);
                 }
                 return {
                     start: inicio.toISOString().split('T')[0],
@@ -510,14 +468,8 @@
             async function fetchData(startDate, endDate) {
                 document.getElementById('loadingSpinner').style.display = 'block';
                 try {
-                    const url =
-                        `{{ route('admin.psicologia.maestros.agenda.estadisticas') }}?format=json&psicologo_id=${psicologoId}&start_date=${startDate}&end_date=${endDate}${getFilterParams()}`;
-                    const resp = await fetch(url, {
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
+                    const url = `{{ route('admin.psicologia.maestros.agenda.estadisticas') }}?format=json&psicologo_id=${psicologoId}&start_date=${startDate}&end_date=${endDate}${getFilterParams()}`;
+                    const resp = await fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }});
                     if (!resp.ok) throw new Error('Error al obtener datos');
                     return await resp.json();
                 } finally {
@@ -535,22 +487,13 @@
                 const comp = document.getElementById('kpiComparativa');
                 const val = resumen.comparativa_pacientes;
                 comp.textContent = (val > 0 ? '+' : '') + val + '%';
-                comp.className = 'text-2xl font-black ' + (val > 0 ? 'text-emerald-600 dark:text-emerald-400' : (
-                    val < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-gray-400'));
+                comp.className = 'text-2xl font-black ' + (val > 0 ? 'text-emerald-600' : (val < 0 ? 'text-rose-600' : 'text-slate-400'));
             }
 
             function updatePeriodoTexto(startDate, endDate) {
-                document.getElementById('periodoTexto').textContent = formatDateDisplay(startDate) + ' — ' +
-                    formatDateDisplay(endDate);
-                const periodNames = {
-                    semanal: 'Semanal',
-                    mensual: 'Mensual',
-                    semestral: 'Semestral',
-                    anual: 'Anual',
-                    personalizado: 'Personalizado'
-                };
-                document.getElementById('periodoLabel').textContent = 'Mostrando datos del período (' + (
-                    periodNames[currentSelected] || 'Personalizado') + ')';
+                document.getElementById('periodoTexto').textContent = formatDateDisplay(startDate) + ' — ' + formatDateDisplay(endDate);
+                const periodNames = { semanal: 'Semanal', mensual: 'Mensual', semestral: 'Semestral', anual: 'Anual', personalizado: 'Personalizado' };
+                document.getElementById('periodoLabel').textContent = 'Mostrando datos del período (' + (periodNames[currentSelected] || 'Personalizado') + ')';
             }
 
             function updateMetricsTable(resumen) {
@@ -566,34 +509,28 @@
                     ['Volumen Promedio Semanal', (resumen.promedio_semanal || 0) + ' citas/semana'],
                     ['Tasa de Asistencia', (resumen.tasa_asistencia || 0) + '%'],
                     ['Tiempo de Espera Promedio', (resumen.tiempo_espera_promedio || 0) + ' días'],
-                    ['Comparativa vs. Período Anterior', (resumen.comparativa_pacientes > 0 ? '+' : '') + (
-                        resumen.comparativa_pacientes || 0) + '%'],
+                    ['Comparativa vs. Período Anterior', (resumen.comparativa_pacientes > 0 ? '+' : '') + (resumen.comparativa_pacientes || 0) + '%'],
                 ];
 
-                rows.push(['<strong class="uppercase text-[10px] tracking-wider text-gray-400">Roles Institucionales</strong>',
-                    ''
-                ]);
+                rows.push(['<strong>ROLES INSTITUCIONALES</strong>', '']);
                 if (resumen.perfil_academico) {
                     Object.entries(resumen.perfil_academico).forEach(([rol, cant]) => {
                         rows.push([rol, cant]);
                     });
                 }
-
-                rows.push(['<strong class="uppercase text-[10px] tracking-wider text-gray-400">Pacientes por PNF / Carrera</strong>',
-                    ''
-                ]);
+                rows.push(['<strong>PACIENTES POR PNF / CARRERA</strong>', '']);
                 if (resumen.pnf) {
                     const pnfLabels = {
-                        Administracion: 'Administración',
-                        Mecanica: 'Mecánica',
-                        Mantenimiento: 'Mantenimiento',
-                        Electricidad: 'Electricidad',
-                        Veterinaria: 'Veterinaria',
-                        Informatica: 'Informática',
-                        PDA: 'PDA',
-                        Distribucion_Logistica: 'Distribución y Logística',
-                        Agroalimentacion: 'Agroalimentación',
-                        Seguridad_Alimentaria_Nutricional: 'Seguridad alimentaria y Cultura Nutricional',
+                        ADMINISTRACION: 'ADMINISTRACION',
+                        MECANICA: 'MECANICA',
+                        MANTENIMIENTO: 'MANTENIMIENTO',
+                        ELECTRICIDAD: 'ELECTRICIDAD',
+                        VETERINARIA: 'VETERINARIA',
+                        INFORMATICA: 'INFORMATICA',
+                        PROC_Y_DIST_DE_ALIMENTOS: 'PROC. Y DIST. DE ALIMENTOS',
+                        DISTRIBUCIÓN_LOGÍSTICA: 'DISTRIBUCIÓN LOGÍSTICA',
+                        AGROALIMENTACION: 'AGROALIMENTACION',
+                        SEGURIDAD_ALIMENTARIA: 'SEGURIDAD ALIMENTARIA',
                         'No especificado': 'No especificado',
                         'No aplica': 'No aplica'
                     };
@@ -604,18 +541,15 @@
 
                 const tbody = document.getElementById('tablaMetricasBody');
                 tbody.innerHTML = rows.map(([label, val]) => `
-                <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
-                    <td class="py-2.5 text-xs font-medium" style="color: var(--text-main);">${label}</td>
-                    <td class="py-2.5 text-xs font-bold text-right" style="color: var(--text-main);">${val}</td>
-                </tr>
-            `).join('');
+                    <tr class="hover:bg-slate-50/50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td class="py-3 text-sm font-medium text-slate-600 dark:text-gray-300">${label}</td>
+                        <td class="py-3 text-sm font-bold text-slate-800 dark:text-white text-right">${val}</td>
+                    </tr>
+                `).join('');
             }
 
             function destroyChart(name) {
-                if (charts[name]) {
-                    charts[name].destroy();
-                    charts[name] = null;
-                }
+                if (charts[name]) { charts[name].destroy(); charts[name] = null; }
             }
 
             function buildCharts(resumen) {
@@ -646,39 +580,11 @@
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
                         scales: {
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    color: tickColor,
-                                    font: {
-                                        weight: 'bold',
-                                        size: 11
-                                    }
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: gridColor
-                                },
-                                ticks: {
-                                    color: tickColor,
-                                    stepSize: 1,
-                                    font: {
-                                        weight: 'bold'
-                                    }
-                                }
-                            }
+                            x: { grid: { display: false }, ticks: { color: tickColor, font: { weight: 'bold', size: 11 } } },
+                            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 1, font: { weight: 'bold' } } }
                         }
                     }
                 });
@@ -702,41 +608,11 @@
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
                         scales: {
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    color: tickColor,
-                                    font: {
-                                        weight: 'bold',
-                                        size: 10
-                                    },
-                                    maxRotation: 0,
-                                    autoSkip: false
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: gridColor
-                                },
-                                ticks: {
-                                    color: tickColor,
-                                    stepSize: 1,
-                                    font: {
-                                        weight: 'bold'
-                                    }
-                                }
-                            }
+                            x: { grid: { display: false }, ticks: { color: tickColor, font: { weight: 'bold', size: 10 }, maxRotation: 0, autoSkip: false } },
+                            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 1, font: { weight: 'bold' } } }
                         }
                     }
                 });
@@ -761,39 +637,11 @@
                     },
                     options: {
                         indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
                         scales: {
-                            x: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: gridColor
-                                },
-                                ticks: {
-                                    color: tickColor,
-                                    stepSize: 1,
-                                    font: {
-                                        weight: 'bold'
-                                    }
-                                }
-                            },
-                            y: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    color: tickColor,
-                                    font: {
-                                        weight: 'bold',
-                                        size: 12
-                                    }
-                                }
-                            }
+                            x: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, stepSize: 1, font: { weight: 'bold' } } },
+                            y: { grid: { display: false }, ticks: { color: tickColor, font: { weight: 'bold', size: 12 } } }
                         }
                     }
                 });
@@ -804,34 +652,17 @@
                     data: {
                         labels: ['Hombres', 'Mujeres', 'Otro'],
                         datasets: [{
-                            data: [resumen.genero?.masculino || 0, resumen.genero?.femenino || 0,
-                                resumen.genero?.otro || 0
-                            ],
-                            backgroundColor: [COLORS.sky.border, COLORS.rose.border, COLORS.amber
-                                .border
-                            ],
+                            data: [resumen.genero?.masculino || 0, resumen.genero?.femenino || 0, resumen.genero?.otro || 0],
+                            backgroundColor: [COLORS.sky.border, COLORS.rose.border, COLORS.amber.border],
                             borderWidth: 0,
                             hoverOffset: 8
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         cutout: '65%',
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 12,
-                                    usePointStyle: true,
-                                    pointStyle: 'circle',
-                                    font: {
-                                        weight: 'bold',
-                                        size: 11
-                                    },
-                                    color: tickColor
-                                }
-                            }
+                            legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { weight: 'bold', size: 11 }, color: tickColor } }
                         }
                     }
                 });
@@ -851,23 +682,10 @@
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         cutout: '65%',
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 10,
-                                    usePointStyle: true,
-                                    pointStyle: 'circle',
-                                    font: {
-                                        weight: 'bold',
-                                        size: 10
-                                    },
-                                    color: tickColor
-                                }
-                            }
+                            legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, pointStyle: 'circle', font: { weight: 'bold', size: 10 }, color: tickColor } }
                         }
                     }
                 });
@@ -887,23 +705,10 @@
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         cutout: '65%',
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 10,
-                                    usePointStyle: true,
-                                    pointStyle: 'circle',
-                                    font: {
-                                        weight: 'bold',
-                                        size: 10
-                                    },
-                                    color: tickColor
-                                }
-                            }
+                            legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, pointStyle: 'circle', font: { weight: 'bold', size: 10 }, color: tickColor } }
                         }
                     }
                 });
@@ -923,23 +728,10 @@
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         cutout: '65%',
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 10,
-                                    usePointStyle: true,
-                                    pointStyle: 'circle',
-                                    font: {
-                                        weight: 'bold',
-                                        size: 10
-                                    },
-                                    color: tickColor
-                                }
-                            }
+                            legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, pointStyle: 'circle', font: { weight: 'bold', size: 10 }, color: tickColor } }
                         }
                     }
                 });
@@ -954,17 +746,14 @@
                     updateKPIs(data.resumen);
                     updateMetricsTable(data.resumen);
                     buildCharts(data.resumen);
-                } catch (err) {
+                } catch(err) {
                     console.error('Error cargando dashboard:', err);
                 }
             }
 
             function cambiarFiltro(tipo) {
                 currentSelected = tipo;
-                const {
-                    start,
-                    end
-                } = calcularFechas(tipo);
+                const { start, end } = calcularFechas(tipo);
                 loadDashboard(start, end);
             }
 
@@ -982,8 +771,7 @@
             }
 
             function exportar(formato, reportType = 'completo') {
-                const url =
-                    `{{ route('admin.psicologia.maestros.agenda.estadisticas') }}?format=${formato}&report_type=${reportType}&psicologo_id=${psicologoId}&start_date=${currentStartDate}&end_date=${currentEndDate}&periodo=${currentSelected}${getFilterParams()}`;
+                const url = `{{ route('admin.psicologia.maestros.agenda.estadisticas') }}?format=${formato}&report_type=${reportType}&psicologo_id=${psicologoId}&start_date=${currentStartDate}&end_date=${currentEndDate}&periodo=${currentSelected}${getFilterParams()}`;
                 if (formato === 'pdf') {
                     window.open(url, '_blank');
                 } else {
@@ -995,12 +783,7 @@
                 loadDashboard(currentStartDate, currentEndDate);
             });
 
-            return {
-                cambiarFiltro,
-                aplicarPersonalizado,
-                exportar,
-                recargar
-            };
+            return { cambiarFiltro, aplicarPersonalizado, exportar, recargar };
         })();
     </script>
 </x-app-layout>

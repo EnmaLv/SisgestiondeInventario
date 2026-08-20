@@ -1,6 +1,8 @@
 @php
     $agendaKeys = ['agenda', 'agenda_historial', 'agenda_estadisticas', 'agenda_prioridades'];
     $horariosKeys = ['horarios', 'horarios_crear', 'grupo_horarios'];
+    $citaKeys = ['citas', 'citas_historial', 'citas_crear'];
+    $muralKeys = ['mural'];
     $historiasKeys = [
         'historias',
         'plantillas_globales',
@@ -13,6 +15,58 @@
     $publicacionesKeys = ['publicaciones', 'publicaciones_crear'];
     $adminKeys = ['admin_users'];
 @endphp
+
+@if (auth()->user()->tieneRol('paciente'))
+    @canMenu($citaKeys)
+    <div x-data="{ open: {{ request()->routeIs('citas.*') ? 'true' : 'false' }} }" class="w-full space-y-1">
+        <button @click="open = !open"
+            class="w-full flex items-center justify-between h-10 rounded-lg px-3 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
+            :class="sidebarOpen ? 'px-3' : 'justify-center px-0'" title="Citas">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <i class="fa-solid fa-calendar-days text-base w-5 text-center flex-shrink-0 text-white"></i>
+                <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                    Mis Citas
+                </span>
+            </div>
+            <i class="fas fa-chevron-down text-xs text-white/70 transition-transform duration-200"
+                :class="{ 'rotate-180': open, 'hidden': !sidebarOpen }"></i>
+        </button>
+
+        <div x-show="open && sidebarOpen" x-collapse class="pl-7 space-y-1">
+            <a href="{{ route('admin.psicologia.maestros.citas.index') }}"
+                class="flex items-center gap-2.5 h-8 rounded-lg px-3 text-xs font-medium transition-all {{ request()->routeIs('admin.psicologia.maestros.citas.index') ? 'bg-[#623739] text-white font-semibold' : 'text-white/80 hover:bg-[#623739]/60 hover:text-white' }}">
+                <i class="fa-solid fa-calendar-days text-xs w-4 text-center flex-shrink-0"></i>
+                <span class="truncate">Mis Citas Activas</span>
+            </a>
+            <a href="{{ route('admin.psicologia.maestros.citas.index') . '#historial' }}"
+                class="flex items-center gap-2.5 h-8 rounded-lg px-3 text-xs font-medium transition-all {{ request()->query('view') === 'list' ? 'bg-[#623739] text-white font-semibold' : 'text-white/80 hover:bg-[#623739]/60 hover:text-white' }}">
+                <i class="fa-solid fa-clock-rotate-left text-xs w-4 text-center flex-shrink-0"></i>
+                <span class="truncate">Historial de Citas</span>
+            </a>
+            <a href="{{ route('admin.psicologia.maestros.citas.create') }}"
+                class="flex items-center gap-2.5 h-8 rounded-lg px-3 text-xs font-medium transition-all {{ request()->routeIs('admin.psicologia.maestros.agenda.estadisticas') ? 'bg-[#623739] text-white font-semibold' : 'text-white/80 hover:bg-[#623739]/60 hover:text-white' }}">
+                <i class="fa-solid fa-calendar-plus text-xs w-4 text-center flex-shrink-0"></i>
+                <span class="truncate">Solicitar Cita</span>
+            </a>
+        </div>
+    </div>
+    @endcanMenu
+@endif
+
+@if (auth()->user()->tieneRol('paciente'))
+    @canMenu($muralKeys)
+    @canMenu('mural')
+    <a href="{{ url('admin/psicologia/maestros/mural') }}"
+        class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
+        :class="sidebarOpen ? 'px-3' : 'justify-center px-0'" title="Mural de Avisos">
+        <i class="fas fa-newspaper text-base w-5 text-center flex-shrink-0 text-white"></i>
+        <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+            Mural de Avisos
+        </span>
+    </a>
+    @endcanMenu
+    @endcanMenu
+@endif
 
 @canMenu($agendaKeys)
 <div x-data="{ open: {{ request()->routeIs('agenda.*') ? 'true' : 'false' }} }" class="w-full space-y-1">
@@ -53,6 +107,8 @@
     </div>
 </div>
 @endcanMenu
+
+
 
 @canMenu($horariosKeys)
 <div x-data="{ open: {{ request()->routeIs('horarios.*') || request()->routeIs('grupos_horarios.*') ? 'true' : 'false' }} }" class="w-full space-y-1">
