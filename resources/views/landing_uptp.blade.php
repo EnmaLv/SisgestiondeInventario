@@ -784,7 +784,7 @@
                 <div class="feature" data-aos="fade-up" data-aos-delay="50">
                     <div class="icon"><i class="fas fa-user-md"></i></div>
                     <h4>Apoyo Psicológico</h4>
-                    <p>Atención profesional, confidencial y accesible para manejar estrés y mejorar tu bienestar mental.
+                    <p>Atención profesional, confidencial y accesible para manejar estrés y mejorar tu bienestar salud.
                     </p>
                 </div>
                 <div class="feature" data-aos="fade-up" data-aos-delay="100">
@@ -844,7 +844,7 @@
             <div class="cta-grid">
                 <a class="cta-card" href="#sobre-nosotros">
                     <div class="cta-icon"><i class="fas fa-brain"></i></div>
-                    <h4>Talleres de Salud Mental</h4>
+                    <h4>Talleres de Salud salud</h4>
                     <p>Sesiones grupales e individuales, charlas y talleres prácticos para promover el bienestar
                         emocional y la resiliencia estudiantil.</p>
                 </a>

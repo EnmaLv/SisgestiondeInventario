@@ -1,6 +1,6 @@
 @php
     $moduloActivo = strtolower(session('modulo_activo', 'general'));
-    $isPsico = in_array($moduloActivo, ['psicologia', 'psicología', 'mental']);
+    $isPsico = in_array($moduloActivo, ['psicologia', 'psicología', 'salud']);
 
     $hoverClass = $isPsico
         ? 'hover:bg-indigo-600/30 focus:bg-indigo-600/30'

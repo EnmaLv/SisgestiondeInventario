@@ -36,7 +36,10 @@ class MedicamentoController extends Controller
     {
         $datos = Producto::getDatosFormulario(2);
 
-        $datos['envases'] = DB::table('envase_primarios')->select('id', 'nombre')->get();
+        $datos['envases'] = DB::table('envase_primarios')
+            ->select('id', 'nombre')
+            ->orderBy('nombre', 'asc')
+            ->get();
 
         return view('admin.salud.maestros.medicamentos.create', $datos);
     }
@@ -180,7 +183,10 @@ class MedicamentoController extends Controller
 
         $datos = Producto::getDatosFormulario(2);
 
-        $datos['envases'] = DB::table('envase_primarios')->select('id', 'nombre')->get();
+        $datos['envases'] = DB::table('envase_primarios')
+            ->select('id', 'nombre')
+            ->orderBy('nombre', 'asc')
+            ->get();
 
         return view('admin.salud.maestros.medicamentos.edit', array_merge($datos, [
             'medicamento' => $medicamento

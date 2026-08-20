@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             EstadoAnimoSeeder::class,
             PlantillaGlobalSeeder::class,
             PrioridadesSeeder::class,
+            MedicamentoSeeder::class,
         ]);
         \App\Models\Proveedor::factory(1)->create();
     }

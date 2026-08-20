@@ -138,15 +138,19 @@ class Producto extends Model
 
     public static function getDatosFormulario(?int $tipoProductoId = null)
     {
-        $query = DB::table('categorias')->select('id', 'nombre')->where('activo', 1);
+        $query = DB::table('categorias')
+            ->select('id', 'nombre')
+            ->where('activo', 1)
+            ->orderBy('nombre', 'asc');
 
         if ($tipoProductoId !== null) {
             $query->where('tipo_producto_id', $tipoProductoId);
         }
+
         return [
-            'categorias' =>  $query->get(),
-            'unidades'   => DB::table('unidades')->select('id', 'nombre', 'abreviatura')->get(),
-            'envases'   => DB::table('envase_primarios')->select('id', 'nombre')->get(),
+            'categorias' => $query->get(),
+            'unidades'   => DB::table('unidades')->select('id', 'nombre', 'abreviatura')->orderBy('nombre', 'asc')->get(),
+            'envases'    => DB::table('envase_primarios')->select('id', 'nombre')->orderBy('nombre', 'asc')->get(),
         ];
     }
 
@@ -298,6 +302,7 @@ class Producto extends Model
 
         return DB::table('productos')->where('id', $id)->update($update);
     }
+
     public static function eliminarProducto($id)
     {
         return DB::table('productos')

@@ -1,6 +1,6 @@
 @php
     $moduloActivo = session('modulo_activo', 'general');
-    $isPsico = $esPsicologia ?? in_array($moduloActivo, ['psicologia', 'mental']);
+    $isPsico = $esPsicologia ?? in_array($moduloActivo, ['psicologia', 'salud']);
     $sidebarHover = $isPsico ? 'hover:bg-indigo-600/30' : 'hover:bg-[#623739]';
     $btnSelectBg = $isPsico
         ? 'bg-indigo-600/20 hover:bg-indigo-600/40 border-indigo-500/30'

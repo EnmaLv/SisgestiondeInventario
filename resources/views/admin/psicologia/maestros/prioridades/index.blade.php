@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout> 
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @include('components.alert')

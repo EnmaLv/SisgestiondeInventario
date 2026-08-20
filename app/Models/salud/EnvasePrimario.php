@@ -18,6 +18,7 @@ class EnvasePrimario extends Model
         'nombre',
         'estado',
     ];
+    
 
     public static function listar($buscar = null, $estado = null)
     {
@@ -32,7 +33,7 @@ class EnvasePrimario extends Model
             $query->where('estado', (int)$estado);
         }
 
-        return $query->orderBy('id', 'desc')->paginate(10);
+        return $query->orderBy('nombre', 'asc')->paginate(10);
     }
 
     public static function crear(array $data)

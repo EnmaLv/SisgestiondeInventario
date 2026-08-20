@@ -1,6 +1,6 @@
 @php
     $moduloActivo = session('modulo_activo', 'general');
-    $esPsicologia = in_array($moduloActivo, ['psicologia', 'mental']);
+    $esPsicologia = in_array($moduloActivo, ['psicologia', 'salud']);
     $primaryColorHex = $esPsicologia ? '#2563eb' : '#dc2626';
 @endphp
 <!DOCTYPE html>
@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -65,6 +66,38 @@
             --trans-default: all 0.2s ease;
         }
 
+        /* Variables de CKEditor para el Modo Oscuro */
+        .dark {
+            /* Color de fondo del área de texto y paneles */
+            --ck-color-base-background: #1f2937;
+            /* Color del texto */
+            --ck-color-base-text: #f3f4f6;
+            /* Color de los bordes generales */
+            --ck-color-base-border: #374151;
+
+            /* Barra de herramientas (Toolbar) */
+            --ck-color-toolbar-background: #111827;
+            --ck-color-toolbar-border: #374151;
+
+            /* Botones de la barra de herramientas */
+            --ck-color-button-default-background: transparent;
+            --ck-color-button-default-hover-background: #374151;
+            --ck-color-button-default-active-background: #4b5563;
+            --ck-color-button-on-background: #374151;
+            --ck-color-button-on-color: #ffffff;
+
+            /* Menús desplegables (Listas) */
+            --ck-color-list-background: #1f2937;
+            --ck-color-list-button-hover-background: #374151;
+
+            /* Paneles emergentes (como el de insertar enlace) */
+            --ck-color-panel-background: #1f2937;
+            --ck-color-panel-border: #374151;
+        }
+        .dark .ck-placeholder::before {
+            color: #9ca3af !important;
+        }
+
         html.dark {
             --header-sidebar-bg: #352728;
             --header-sidebar-border: #5c2028;
@@ -79,7 +112,7 @@
         }
 
         html[data-modulo="psicologia"],
-        html[data-modulo="mental"] {
+        html[data-modulo="salud"] {
             --color-primary: #2563eb;
             --color-primary-alpha: rgba(37, 99, 235, 0.25);
             --header-sidebar-bg: #0f172a;
@@ -88,7 +121,7 @@
         }
 
         html.dark[data-modulo="psicologia"],
-        html.dark[data-modulo="mental"] {
+        html.dark[data-modulo="salud"] {
             --header-sidebar-bg: #0b0f19;
             --header-sidebar-border: #1e293b;
             --sidebar-active-bg: #1e3a8a;

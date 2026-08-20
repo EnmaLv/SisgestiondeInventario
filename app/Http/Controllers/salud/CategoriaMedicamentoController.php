@@ -11,21 +11,18 @@ use Illuminate\Validation\Rule;
 class CategoriaMedicamentoController extends Controller
 {
 
+    private const TIPO_PRODUCTO_ID = 2;
+
     public function index(Request $request)
     {
         $categorias = Categoria::listarCategorias(
-            $request->input('buscar'), 
-            $request->input('activo', 1), 2
+            $request->input('buscar'),
+            $request->input('activo', 1),
+            self::TIPO_PRODUCTO_ID
         );
+
         return view('admin.salud.maestros.categorias.index', compact('categorias'));
     }
-
-
-    public function create()
-    {
-        return view('admin.salud.maestros.categorias.create');
-    }
-
 
     public function store(Request $request)
     {
@@ -40,53 +37,29 @@ class CategoriaMedicamentoController extends Controller
         ], [
             'nombre.unique' => 'Ya existe una categoria con este nombre',
         ]);
-        $fromidreuse = Categoria::crearCategoria($validated, 2);
 
-        $from = $request->input('from');
+        Categoria::crearCategoria(
+            $validated,
+            self::TIPO_PRODUCTO_ID
+        );
 
-        if ($from) {
-            return redirect($from . '?categoria_id=' . $fromidreuse)
-                ->with('success', 'Categoría creada exitosamente.');
-        } else {
-            return redirect()->route('admin.salud.maestros.categorias.index')
-                ->with('success', 'Categoría creada exitosamente.');
-        }
+        return redirect()->to($request->input('from', route('admin.salud.maestros.categorias.index')))
+            ->with('exito', 'Categoría registrada correctamente.');
     }
-
-
-    public function edit($id)
-    {
-        $categoria = Categoria::obtenerCategoria($id);
-
-        if (!$categoria) {
-            return redirect()
-                ->route('admin.salud.maestros.categorias.index')
-                ->with('mensaje', 'Categoría no encontrada.')
-                ->with('icono', 'error');
-        }
-
-        return view('admin.salud.maestros.categorias.edit', compact('categoria'));
-    }
-
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'nombre' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('categorias', 'nombre')->ignore($id),
-            ],
-            'descripcion' => 'nullable|string',
-        ], [
-            'nombre.unique' => 'Ya existe una categoria con este nombre',
+        $request->validate([
+            'nombre' => 'required|string|max:100',
+            'descripcion' => 'nullable|string|max:255',
         ]);
-        Categoria::actualizarCategoria($id, $validated);
 
-        return redirect()
-            ->route('admin.salud.maestros.categorias.index')->with('success', 'Categoría actualizada exitosamente.');
+        Categoria::actualizarCategoria($id, $request->only(['nombre', 'descripcion']));
+
+        return redirect()->to($request->input('from', route('admin.salud.maestros.categorias.index')))
+            ->with('exito', 'Categoría actualizada correctamente.');
     }
+
 
 
     public function destroy($id)
