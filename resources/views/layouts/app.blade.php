@@ -285,10 +285,19 @@
 <body
     class="preload font-sans antialiased overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
     <div class="w-full flex flex-col overflow-hidden" style="height: 100dvh;"
-        x-data="{ isChatOpen: false, sidebarOpen: localStorage.getItem('sidebarOpen') !== 'false' }" x-init="$watch('sidebarOpen', val => {
+        @toggle-chat.window="isChatOpen = !isChatOpen" x-data="{
+            isChatOpen: false,
+            open: false,
+            sidebarOpen: localStorage.getItem('sidebarOpen') !== 'false'
+        }" x-init="$watch('sidebarOpen', val => {
             localStorage.setItem('sidebarOpen', val);
-            document.documentElement.classList.toggle('sidebar-expanded', val);
-            document.documentElement.classList.toggle('sidebar-collapsed', !val);
+            if (val) {
+                document.documentElement.classList.remove('sidebar-collapsed');
+                document.documentElement.classList.add('sidebar-expanded');
+            } else {
+                document.documentElement.classList.remove('sidebar-expanded');
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
         })">
 
         <header

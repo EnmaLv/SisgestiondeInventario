@@ -85,5 +85,33 @@
                 </a>
             </div>
         @endif
+
+        @if (auth()->user()->tieneRol(['administrador', 'psicologo']))
+            <div class="mt-auto px-2 pt-3 border-t border-gray-100 dark:border-gray-700">
+                <button type="button" @if (!request()->routeIs('chat.*')) @click="$dispatch('toggle-chat')" @endif
+                    class="group flex items-center gap-3 h-11 w-full rounded-xl transition-all duration-200 relative"
+                    :class="[
+                        (isChatOpen || {{ request()->routeIs('chat.*') ? 'true' : 'false' }}) ?
+                        'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 shadow-sm' :
+                        'text-gray-500 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:text-blue-600 dark:hover:text-blue-300',
+                        sidebarOpen ? 'px-3' : 'justify-center px-0'
+                    ]"
+                    title="Mensajes">
+                    <svg class="h-5 w-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span
+                        class="sidebar-text text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-300"
+                        :class="sidebarOpen ? 'opacity-100 max-w-[160px]' : 'opacity-0 max-w-0'">Mensajes</span>
+                    @php $unreadMsgs = \App\Models\Usuario::contarMensajesNoLeidos(auth()->id()); @endphp
+                    <span
+                        class="chat-badge absolute -top-0.5 min-w-[18px] h-[18px] px-0.5 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold border-2 border-white dark:border-gray-800 shadow"
+                        data-count="{{ $unreadMsgs }}" style="{{ $unreadMsgs > 0 ? '' : 'display: none;' }}">
+                        {{ $unreadMsgs > 99 ? '99+' : $unreadMsgs }}
+                    </span>
+                </button>
+            </div>
+        @endif
     </nav>
 </aside>

@@ -192,8 +192,19 @@ class Persona extends Model
             return [false, $e->getMessage()];
         }
     }
+
+    public function perfil()
+    {
+        return $this->belongsTo(Perfil::class, 'id_perfil', 'id_perfil');
+    }
+
     public function usuarios()
     {
         return $this->hasMany(Usuario::class, 'id_persona', 'id_persona');
+    }
+
+    public function personaPnf()
+    {
+        return $this->hasMany(PersonaPnf::class, 'id_persona', 'id_persona');
     }
 }

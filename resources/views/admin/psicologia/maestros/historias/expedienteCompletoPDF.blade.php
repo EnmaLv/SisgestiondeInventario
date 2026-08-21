@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Expediente Completo - {{ $paciente->name }}</title>
+    <title>Expediente Completo - {{ $paciente->persona->nombre_persona }}</title>
     <style>
         @page { margin: 80px 18mm 80px 18mm; }
         header { position: fixed; top: -60px; left: 0px; right: 0px; height: 50px; text-align: center; }
@@ -15,7 +15,6 @@
             font-size: 11px;
         }
 
-        /* ── HEADER MEMBRETE ── */
         .membrete {
             width: 100%;
             border-bottom: 3px solid #374151;
@@ -49,7 +48,6 @@
             margin-top: 4px;
         }
 
-        /* ── PATIENT CARD ── */
         .patient-card {
             border: none;
             border-radius: 10px;
@@ -78,7 +76,6 @@
             display: inline-block;
         }
 
-        /* ── SECTION TITLES ── */
         .section-title {
             font-size: 13px;
             font-weight: bold;
@@ -96,7 +93,6 @@
             margin-bottom: 16px;
         }
 
-        /* ── INFO GRID ── */
         .info-grid {
             width: 100%;
             margin-bottom: 18px;
@@ -121,7 +117,6 @@
             font-weight: normal;
         }
 
-        /* ── SEGMENTS ── */
         .segment-title {
             font-size: 10px;
             font-weight: bold;
@@ -157,7 +152,6 @@
             margin-top: 6px;
         }
 
-        /* ── TIMELINE (EVOLUTION) ── */
         .timeline-item {
             margin-bottom: 16px;
             page-break-inside: avoid;
@@ -191,7 +185,6 @@
             line-height: 1.6;
         }
 
-        /* ── FOOTER FIRMA ── */
         .footer {
             margin-top: 45px;
             text-align: center;
@@ -226,7 +219,6 @@
     </footer>
 
     <main>
-    {{-- ── PARTE 1: EXPEDIENTE GENERAL ── --}}
     <table class="membrete">
         <tr>
             <td style="width: 50%;">
@@ -235,14 +227,14 @@
             </td>
             <td style="width: 50%;" class="doc-info">
                 <div class="doc-title">Expediente Clínico General</div>
-                <div class="doc-subtitle">DR. {{ strtoupper(Auth::user()->nombres . ' ' . Auth::user()->apellidos) }} | PSICÓLOGO</div>
+                <div class="doc-subtitle">DR. {{ strtoupper(Auth::user()->persona->nombre_persona . ' ' . Auth::user()->persona->apellido_persona) }} | PSICÓLOGO</div>
                 <div class="doc-subtitle">Fecha: {{ date('d/m/Y') }}</div>
             </td>
         </tr>
     </table>
 
     <div class="patient-card">
-        <div class="patient-name">{{ $paciente->name }}</div>
+        <div class="patient-name">{{ $paciente->persona->nombre_persona }} {{ $paciente->persona->apellido_persona }}</div>
         <div class="patient-meta">
             <span>Sesiones Totales: {{ $stats['realizadas'] }}</span>
             <span>N° Expediente: {{ $historia->id }}</span>
@@ -253,10 +245,10 @@
     <table class="info-grid">
         <tr>
             <td>
-                <div class="info-label">Cédula: {{ $paciente->cedula ?? 'No registrada' }}</div>
+                <div class="info-label">Cédula: {{ $paciente->persona->cedula_persona ?? 'No registrada' }}</div>
             </td>
             <td>
-                <div class="info-label">Teléfono: {{ $paciente->telefono ?? 'No registrado' }}</div>
+                <div class="info-label">Teléfono: {{ $paciente->persona->telefono_persona ?? 'No registrado' }}</div>
             </td>
         </tr>
         <tr>
@@ -264,10 +256,10 @@
                 @php
                     $edad = 'No registrada';
                     if(!empty($paciente->fecha_nacimiento)) {
-                        $edad = \Carbon\Carbon::parse($paciente->fecha_nacimiento)->age . ' años';
+                        $edad = \Carbon\Carbon::parse($paciente->persona->fecha_nacimiento_persona)->age . ' años';
                     }
                 @endphp
-                <div class="info-label">Edad y Nacimiento: {{ $edad }} ({{ !empty($paciente->fecha_nacimiento) ? \Carbon\Carbon::parse($paciente->fecha_nacimiento)->format('d/m/Y') : 'N/A' }})</div>
+                <div class="info-label">Edad y Nacimiento: {{ $edad }} ({{ !empty($paciente->persona->fecha_nacimiento_persona) ? \Carbon\Carbon::parse($paciente->persona->fecha_nacimiento_persona)->format('d/m/Y') : 'N/A' }})</div>
             </td>
             <td>
                 <div class="info-label">Perfil Académico / PNF: {{ $paciente->perfil_academico ?? 'No registrado' }}
@@ -279,7 +271,7 @@
         </tr>
         <tr>
             <td>
-                <div class="info-label">Género / Estado Civil: {{ $paciente->genero ?? 'N/A' }} / {{ $paciente->estado_civil ?? 'N/A' }}</div>
+                <div class="info-label">Género / Estado Civil: {{ $paciente->persona->genero_persona ?? 'N/A' }} / {{ $paciente->estado_civil ?? 'N/A' }}</div>
             </td>
             <td>
                 <div class="info-label">Discapacidad: {{ ($paciente->discapacidad ?? 'No') == 'Si' ? 'Sí — ' . ($paciente->tipo_discapacidad ?? '') : 'Ninguna' }}</div>
@@ -287,8 +279,6 @@
         </tr>
     </table>
 
-
-    {{-- Secciones personalizadas --}}
     @foreach($seccionesPersonalizadas as $seccion)
         <div class="section-title">{{ $seccion->titulo }}</div>
         @if($seccion->descripcion_general)
@@ -316,10 +306,7 @@
         @endforeach
     @endforeach
 
-    {{-- ── SEPARADOR DE PÁGINA ── --}}
     <div class="page-break"></div>
-
-    {{-- ── PARTE 2: NOTAS DE EVOLUCIÓN ── --}}
     <table class="membrete">
         <tr>
             <td style="width: 50%;">
@@ -328,13 +315,11 @@
             </td>
             <td style="width: 50%;" class="doc-info">
                 <div class="doc-title">Notas de Evolución</div>
-                <div class="doc-subtitle">DR. {{ strtoupper(Auth::user()->nombres . ' ' . Auth::user()->apellidos) }} | PSICÓLOGO</div>
+                <div class="doc-subtitle">DR. {{ strtoupper(Auth::user()->persona->nombre_persona . ' ' . Auth::user()->persona->apellido_persona) }} | PSICÓLOGO</div>
                 <div class="doc-subtitle">Fecha: {{ date('d/m/Y') }}</div>
             </td>
         </tr>
     </table>
-
-
 
     <div class="section-title">Cronología de Sesiones</div>
 
@@ -361,7 +346,7 @@
                 <div class="timeline-body">
                     @if($notasData && is_array($notasData))
                         @php
-                            $camposDinamicos = \App\Models\CitaNotaEvolucion::obtenerPorCita($cita->id);
+                            $camposDinamicos = \App\Models\salud\CitaNotaEvolucion::obtenerPorCita($cita->id);
                         @endphp
                         
                         @foreach($camposDinamicos as $campo)

@@ -16,7 +16,6 @@ class CheckMenuPermission
             return $next($request);
         }
 
-        // Bypassear validación para Administrador y Secretaria de Bienestar (super-admins)
         foreach ($user->roles ?? [] as $r) {
             if (isset($r->nombre) && in_array(mb_strtolower($r->nombre), ['administrador', 'secretaria de bienestar'])) {
                 return $next($request);
@@ -80,7 +79,6 @@ class CheckMenuPermission
         $userAllow = $extra['allow'] ?? [];
         $userDeny = $extra['deny'] ?? [];
 
-        // Expand user allow/deny entries to concrete patterns using keyToPatterns
         $expandUser = function ($arr) use ($keyToPatterns) {
             $out = [];
             foreach ($arr as $p) {
@@ -113,17 +111,14 @@ class CheckMenuPermission
 
         if (! empty($rolePatterns)) {
             foreach ($rolePatterns as $p) {
-                // Exact match
                 if (Str::is($p, $path) || ($routeName && Str::is($p, $routeName))) {
                     return $next($request);
                 }
 
-                // Allow wildcarded patterns stored without trailing star
                 if (Str::is($p . '*', $path) || ($routeName && Str::is($p . '*', $routeName))) {
                     return $next($request);
                 }
 
-                // Also allow simple substring matches for menu keys (e.g. 'sedes' matching 'admin/maestros/sedes/create')
                 if (Str::contains($path, $p) || ($routeName && Str::contains($routeName, $p))) {
                     return $next($request);
                 }

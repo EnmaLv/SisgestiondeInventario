@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\salud;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Http\Controllers\Controller;
 use App\Models\salud\Cita;
 use App\Models\Usuario;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class CitaController extends Controller
 {
@@ -34,14 +36,16 @@ class CitaController extends Controller
         }
 
         if ($user->tieneRol('paciente')) {
-            $user->unreadNotifications()
+            \Illuminate\Support\Facades\DB::table('notifications')
+                ->where('notifiable_id', $user->id)
+                ->where('notifiable_type', 'App\Models\Usuario')
+                ->whereNull('read_at')
                 ->whereIn('type', [
                     'App\Notifications\CitaConfirmedNotification',
                     'App\Notifications\CitaRechazadaNotification',
                     'App\Notifications\CitaCancelledNotification'
                 ])
-                ->get()
-                ->each(fn($notification) => $notification->markAsRead());
+                ->update(['read_at' => now()]);
 
             $citas = Cita::obtenerPorPaciente($user->id_usuario);
             $prioridades = Prioridad::obtenerParaPsicologo();
@@ -59,7 +63,7 @@ class CitaController extends Controller
         abort_if(!$user || !$user->tieneRol('paciente'), 403);
 
         $tieneCitaPendiente = Cita::tieneCitaActiva($user->id_usuario);
-        $psicologos = $tieneCitaPendiente ? collect() : $this->obtenerPsicologosDisponibles();
+        $psicologos = $tieneCitaPendiente ? collect() : $user->obtenerPsicologosDisponibles();
 
         return view('admin.psicologia.maestros.citas.create', compact('psicologos', 'tieneCitaPendiente'));
     }
@@ -75,7 +79,8 @@ class CitaController extends Controller
             return response()->json(['disponibilidad' => []]);
         }
 
-        $horarios = Horario::where('grupo_horario_id', $grupoActivo->id)
+        $horarios = \Illuminate\Support\Facades\DB::table('horarios')
+            ->where('grupo_horario_id', $grupoActivo->id)
             ->whereIn('activo', [1, 2])
             ->get();
 
@@ -187,8 +192,8 @@ class CitaController extends Controller
         $user = Auth::user();
         abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
-        $avances = AvanceSesion::orderBy('nombre', 'asc')->get();
-        $estadosAnimo = EstadoAnimo::orderBy('valor', 'asc')->get();
+        $avances = \Illuminate\Support\Facades\DB::table('avances_sesion')->orderBy('nombre', 'asc')->get();
+        $estadosAnimo = \Illuminate\Support\Facades\DB::table('estado_animos')->orderBy('valor', 'asc')->get();
 
         $camposGuardadosRaw = CitaNotaEvolucion::obtenerPorCita($citaId);
 
@@ -218,9 +223,6 @@ class CitaController extends Controller
         return view('admin.psicologia.maestros.citas.edit_note', compact('cita', 'avances', 'estadosAnimo', 'camposGuardados', 'camposDisponibles'));
     }
 
-    /**
-     * Descarga el PDF de la nota de evolución.
-     */
     public function downloadPdf($citaId)
     {
         $cita = Cita::obtenerDetalle($citaId);
@@ -285,7 +287,7 @@ class CitaController extends Controller
                     $noteLines[] = 'AVANCES DE SESIÓN:';
                     $avanceNombreDisplay = 'N/A';
                     if (!empty($data['avance_estado'])) {
-                        $avanceRecord = AvanceSesion::find($data['avance_estado']);
+                        $avanceRecord = DB::table('avances_sesion')->where('id', $data['avance_estado'])->first();
                         $avanceNombreDisplay = $avanceRecord ? $avanceRecord->nombre : 'ID: ' . $data['avance_estado'];
                     }
                     $noteLines[] = 'Estado: ' . $avanceNombreDisplay;
@@ -459,7 +461,6 @@ class CitaController extends Controller
             'prioridad' => 'required|string|max:50',
         ]);
 
-        // Llamar al método de actualización y capturar el resultado
         list($success, $message) = Cita::actualizarPrioridad($cita, $validated['prioridad']);
 
         if (!$success) {
@@ -469,7 +470,6 @@ class CitaController extends Controller
             return back()->withErrors(['prioridad' => $message])->withInput();
         }
 
-        // Refrescar la cita para obtener los datos actualizados
         $cita->refresh();
 
         if ($request->wantsJson()) {
@@ -602,7 +602,7 @@ class CitaController extends Controller
             ? 'La cita se ha completado con éxito y la nota de evolución ha sido registrada.'
             : 'Nota de sesión actualizada correctamente.';
 
-        return redirect()->route('historias.show', ['paciente' => $cita->user_id, 'tab' => 'evolucion'])->with('success', $msg);
+        return redirect()->route('admin.psicologia.maestros.historias.show', ['paciente' => $cita->user_id, 'tab' => 'evolucion'])->with('success', $msg);
     }
 
     public function storeCampoAjax(Request $request)
@@ -951,7 +951,7 @@ class CitaController extends Controller
             $psicologo->name = $psicologo->persona->nombre_persona ?? 'Psicólogo';
         }
 
-        $pdf = Pdf::loadView('historias.constanciaPDF', compact('cita', 'paciente', 'psicologo'))
+        $pdf = Pdf::loadView('admin.psicologia.maestros.historias.constanciaPDF', compact('cita', 'paciente', 'psicologo'))
             ->setPaper('a4', 'portrait');
 
         $slugPaciente = $paciente ? Str::slug($paciente->name) : 'paciente';
@@ -971,7 +971,7 @@ class CitaController extends Controller
 
         $cita->update(['status' => 0]);
 
-        return redirect()->route('historias.show', $cita->user_id)->with('success', 'Nota de evolución manual eliminada correctamente.');
+        return redirect()->route('admin.psicologia.maestros.historias.show', $cita->user_id)->with('success', 'Nota de evolución manual eliminada correctamente.');
     }
 
     public function dismissCancelMessage(Request $request, $citaId)

@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
-use App\Models\Cita;
+use App\Models\Usuario;
+use App\Models\salud\Cita;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;

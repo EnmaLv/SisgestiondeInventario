@@ -8,6 +8,7 @@ use App\Http\Controllers\salud\CitaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\salud\EnfermedadController;
 use App\Http\Controllers\salud\EstadoAnimoController;
+use App\Http\Controllers\salud\EstadoAnimoDiarioController;
 use App\Http\Controllers\salud\GrupoHorarioController;
 use App\Http\Controllers\salud\HistoriaController;
 use App\Http\Controllers\salud\NotaEvolucionCampoController;
@@ -32,7 +33,7 @@ Route::post('/psicologia/maestros/estado_animos/store', [EstadoAnimoController::
 Route::get('/psicologia/maestros/estado_animos/{estado_animo}/edit', [EstadoAnimoController::class, 'edit'])->name('admin.psicologia.maestros.estado_animos.edit');
 Route::put('/psicologia/maestros/estado_animos/{estado_animo}', [EstadoAnimoController::class, 'update'])->name('admin.psicologia.maestros.estado_animos.update');
 Route::delete('/psicologia/maestros/estado_animos/{estado_animo}', [EstadoAnimoController::class, 'destroy'])->name('admin.psicologia.maestros.estado_animos.destroy');
-
+Route::post('/psicologia/maestros/estado_animo_diario', [EstadoAnimoDiarioController::class, 'store'])->name('admin.psicologia.maestros.estado_animo_diario.store');
 
 Route::get('/psicologia/maestros/avances_sesion', [AvanceSesionController::class, 'index'])->name('admin.psicologia.maestros.avances_sesion.index');
 Route::get('/psicologia/maestros/avances_sesion/create', [AvanceSesionController::class, 'create'])->name('admin.psicologia.maestros.avances_sesion.create');
@@ -122,7 +123,7 @@ Route::put('/psicologia/maestros/citas/{id}', [CitaController::class, 'update'])
 Route::get('/psicologia/maestros/citas/{cita}/constancia-pdf', [CitaController::class, 'descargarConstanciaPdf'])->name('admin.psicologia.maestros.citas.constancia.pdf');
 Route::delete('/psicologia/maestros/citas/{cita}', [CitaController::class, 'destroy'])->name('admin.psicologia.maestros.citas.destroy');
 Route::patch('/psicologia/maestros/citas/{cita}/cancelar-psicologo', [CitaController::class, 'cancelConfirmedByPsicologo'])->name('admin.psicologia.maestros.citas.cancel.psicologo');
-Route::get('/psicologia/maestros/citas/available-slots', [CitaController::class, 'getAvailableSlots'])->name('admin.psicologia.maestros.citas.available_slots');
+Route::get('/psicologia/maestros/citas/available_slots', [CitaController::class, 'getAvailableSlots'])->name('admin.psicologia.maestros.citas.available_slots');
 Route::get('/psicologia/maestros/citas/historial-json', [CitaController::class, 'historyJson'])->name('admin.psicologia.maestros.citas.history.json');
 Route::patch('/psicologia/maestros/citas/{cita}/cancel', [CitaController::class, 'cancel'])->name('admin.psicologia.maestros.citas.cancel');
 Route::patch('/psicologia/maestros/citas/{cita}/rechazar', [CitaController::class, 'reject'])->name('admin.psicologia.maestros.citas.reject');

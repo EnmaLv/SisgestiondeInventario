@@ -1,69 +1,53 @@
 <x-app-layout>
-    <style>
-        /* Forzar contraste notorio entre fondo y contenedores en modo oscuro */
-        html.dark .en-bg { background-color: #020617 !important; }
-        html.dark .en-header { background-color: #1e293b !important; border-bottom-color: #334155 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important; }
-        html.dark .en-card { background-color: #0f172a !important; border-color: #1e293b !important; }
-    </style>
-    <div class="min-h-screen bg-[#f8fafc] en-bg pb-20" x-data="clinicalNoteEditor()">
-        {{-- Cabecera Contextual --}}
-        <div class="bg-white en-header border-b border-slate-100 mb-8 shadow-sm">
-            <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8" x-data="clinicalNoteEditor()">
+        <div>
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
                         @php
                             $paciente = $cita->paciente;
-                            $nombreCompleto = $paciente->name ?? '';
+                            $nombreCompleto = implode(' ', [$paciente->persona->nombre_persona ?? '', $paciente->persona->apellido_persona ?? '']) ?? '';
                             $partes = explode(' ', trim($nombreCompleto));
                             $primerNombre = $partes[0] ?? '';
                             $primerApellido = $partes[1] ?? '';
                             $iniciales = strtoupper(substr($primerNombre, 0, 1) . substr($primerApellido, 0, 1));
-                            
                             $isManual = ($cita->motivo === 'Nota de Evolución (Manual)');
-
-                            // Datos para el modal
-                            $fechaCita = ($paciente->primera_cita ?? null) ? \Carbon\Carbon::parse($paciente->primera_cita)->format('d/m/Y') : 'No disponible';
-                            $edad = ($paciente->fecha_nacimiento ?? null) ? \Carbon\Carbon::parse($paciente->fecha_nacimiento)->age : 'No disponible';
-                            $nacimiento = ($paciente->fecha_nacimiento ?? null) ? \Carbon\Carbon::parse($paciente->fecha_nacimiento)->format('d/m/Y') : 'No disponible';
+                            $fechaCita = ($cita->confirmado_en ?? null) ? \Carbon\Carbon::parse($cita->confirmado_en)->format('d/m/Y') : 'No disponible';
+                            $edad = ($paciente->persona->fecha_nacimiento_persona ?? null) ? \Carbon\Carbon::parse($paciente->persona->fecha_nacimiento_persona)->age : 'No disponible';
+                            $nacimiento = ($paciente->persona->fecha_nacimiento_persona ?? null) ? \Carbon\Carbon::parse($paciente->persona->fecha_nacimiento_persona)->format('d/m/Y') : 'No disponible';
                         @endphp
                         
                         <button type="button" 
-                                class="open-patient-modal shrink-0 w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                class="open-patient-modal shrink-0 w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-md shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
                                 data-patient-type="user"
-                                data-patient-name="{{ $paciente->name }}" 
-                                data-patient-email="{{ $paciente->email ?? 'No disponible' }}" 
-                                data-patient-phone="{{ $paciente->telefono ?? 'No disponible' }}" 
+                                data-patient-name="{{ $nombreCompleto }}"
+                                data-patient-email="{{ $paciente->persona->email_persona ?? 'No disponible' }}" 
+                                data-patient-phone="{{ $paciente->persona->telefono_persona ?? 'No disponible' }}" 
                                 data-patient-created="{{ $fechaCita }}"
-                                data-patient-cedula="{{ $paciente->cedula ?? 'No disponible' }}"
-                                data-patient-genero="{{ $paciente->genero ?? 'No disponible' }}"
+                                data-patient-cedula="{{ $paciente->persona->cedula_persona ?? 'No disponible' }}"
+                                data-patient-genero="{{ $paciente->persona->genero_persona ?? 'No disponible' }}"
                                 data-patient-nacimiento="{{ $nacimiento }}"
-                                data-patient-ubicacion="{{ $paciente->ubicacion ?? 'No disponible' }}"
-                                data-patient-discapacidad="{{ ($paciente->discapacidad ?? 'No') == 'Si' ? ($paciente->tipo_discapacidad ?? '') : 'Ninguna' }}"
-                                data-patient-hijos="{{ ($paciente->tiene_hijos ?? 'No') == 'Si' ? ($paciente->numero_hijos ?? 0) : 'Ninguno' }}"
-                                data-patient-civil="{{ $paciente->estado_civil ?? 'No disponible' }}"
-                                data-patient-perfil-academico="{{ $paciente->perfil_academico ?? 'Sin definir' }}"
-                                data-patient-pnf="{{ $paciente->pnf ?? 'No aplica' }}"
-                                data-patient-semestre="{{ ($paciente->semestre ?? null) ? $paciente->semestre . '° Semestre' : 'No aplica' }}"
+                                data-patient-semestre="{{ ($paciente->persona->semestre_persona ?? null) ? $paciente->persona->semestre . '° Semestre' : 'No aplica' }}"
                                 data-patient-edad="{{ $edad }}"
                                 title="Ver perfil del paciente">
-                            <span class="text-xl font-black">{{ $iniciales }}</span>
+                            <span class="text-lg font-black tracking-wider">{{ $iniciales }}</span>
                         </button>
 
                         <div class="flex-1 min-w-0">
-                            <h2 class="text-base md:text-lg font-black text-slate-900 tracking-tight flex flex-wrap items-center gap-2 leading-tight mb-1">
-                                <span class="text-slate-900 dark:text-white">Nota de Sesión: {{ $cita->paciente->name }}</span>
-                            </h2>
-                            <p class="text-[10px] font-bold text-slate-400 dark:text-gray-400 uppercase tracking-[0.2em]">
+                            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white flex flex-wrap items-center gap-2 leading-tight">
+                                Nota de Sesión: {{ $cita->paciente->name }}
+                            </h1>
+                            <p class="mt-0.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ $cita->fecha?->translatedFormat('d M, Y') ?? 'S/F' }} ({{ $cita->hora ? \Carbon\Carbon::parse($cita->hora)->format('g:i A') : 'S/H' }})
                             </p>
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-3">
-                        <a href="{{ route('historias.show', $cita->user_id) }}" 
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-white en-header hover:bg-slate-50 text-slate-600 dark:text-gray-300 rounded-xl text-xs font-bold border border-slate-200 transition-all active:scale-95">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                            Volver al Historial
+                        <a href="{{ route('admin.psicologia.maestros.historias.show', $cita->user_id) }}" 
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-bold border border-gray-200 dark:border-gray-700 shadow-sm transition-all active:scale-95 group">
+                            <i class="fas fa-arrow-left text-xs transition-transform group-hover:-translate-x-1"></i>
+                            <span>Volver al Historial</span>
                         </a>
                     </div>
                 </div>
@@ -72,16 +56,17 @@
 
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
             @if ($errors->any())
-                <div class="bg-rose-50 border border-rose-100 rounded-3xl p-5 mb-8 flex gap-4 items-start shadow-sm animate-in fade-in slide-in-from-top-4 duration-200">
-                    <div class="w-10 h-10 bg-rose-500 rounded-2xl flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-rose-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div class="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/60 rounded-2xl p-5 mb-8 flex gap-4 items-start shadow-sm animate-in fade-in slide-in-from-top-4 duration-200">
+                    <div class="w-10 h-10 bg-rose-500 rounded-xl flex items-center justify-center text-white flex-shrink-0 shadow-sm">
+                        <i class="fas fa-circle-exclamation text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-black text-rose-800 uppercase tracking-widest mb-1">Nota Clínica Obligatoria</h4>
-                        <p class="text-xs font-bold text-rose-600/90 leading-relaxed">{{ $errors->first() }}</p>
+                        <h4 class="text-xs font-black text-rose-800 dark:text-rose-300 uppercase tracking-widest mb-1">Nota Clínica Obligatoria</h4>
+                        <p class="text-xs font-semibold text-rose-600 dark:text-rose-400 leading-relaxed">{{ $errors->first() }}</p>
                     </div>
                 </div>
             @endif
+
             <form action="{{ route('admin.psicologia.maestros.citas.update.notas', $cita->id) }}" method="POST" id="form-notas-evolucion" class="relative">
                 @csrf
                 @method('PATCH')
@@ -90,52 +75,47 @@
                 <input type="hidden" name="titulo_manual" x-model="data.titulo_manual">
 
                 <div class="space-y-8">
-                    
-                    {{-- CAMPOS DINÁMICOS (Filas largas) --}}
-                    <div class="space-y-4 md:space-y-8" id="campos-dinamicos-container">
-                        
+                    <div class="space-y-6" id="campos-dinamicos-container">
                         @if($cita->motivo === 'Nota de Evolución (Manual)')
-                        {{-- Título Manual --}}
-                        <div class="bg-white dark:bg-gray-800 rounded-[24px] p-4 md:p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-                            <div class="flex items-center gap-2 mb-4 text-slate-800 dark:text-gray-200">
-                                <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                <h4 class="text-[11px] md:text-xs font-black uppercase tracking-widest">Título de la Nota (Opcional)</h4>
+                        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="rounded-2xl border shadow-sm p-6 sm:p-8">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fas fa-pen-to-square text-sky-500"></i>
+                                <label for="titulo_manual_input" class="text-[10px] font-black uppercase tracking-wider text-gray-400">Título de la Nota (Opcional)</label>
                             </div>
-                            <input type="text" name="titulo_manual" 
-                                   class="w-full border-slate-100 dark:border-gray-600 bg-slate-50/30 dark:bg-gray-700/50 rounded-xl p-3 md:p-4 text-sm text-slate-700 dark:text-white focus:ring-4 focus:ring-sky-500/5 focus:border-sky-500 transition-all font-medium"
+                            <input type="text" id="titulo_manual_input" name="titulo_manual" 
+                                   style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                   class="w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium transition-all"
                                    x-model="data.titulo_manual"
                                    placeholder="Ej: Seguimiento Mensual...">
                         </div>
                         @endif
 
-                        {{-- CAMPOS DINÁMICOS DE EVOLUCIÓN --}}
                         <template x-for="(campo, index) in data.campos_dinamicos" :key="campo.campo_id">
-                            <div class="bg-white en-card rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-6 md:p-8 relative overflow-hidden group">
-                                <div class="flex items-start justify-between gap-2 mb-3 md:mb-4 text-slate-800 dark:text-gray-200">
-                                    <!-- Icon and Title -->
-                                    <div class="flex items-start gap-2 flex-1 min-w-0 mt-1 md:mt-0 md:items-center">
-                                        <svg class="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                                        <h4 class="text-[11px] md:text-xs font-black uppercase tracking-widest leading-tight break-words">
-                                            <span x-text="index + 1"></span>. <span x-text="campo.titulo"></span> <span x-show="!isManual && campo.campo_id <= 3" class="text-rose-500">*</span>
+                            <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="en-card rounded-2xl border shadow-sm p-6 sm:p-8 relative overflow-hidden group">
+                                <div class="flex items-start justify-between gap-2 mb-3 sm:mb-4">
+                                    <div class="flex items-start gap-2 flex-1 min-w-0 mt-1 sm:mt-0 sm:items-center">
+                                        <i class="fas fa-align-left text-indigo-500 shrink-0 text-sm"></i>
+                                        <h4 class="text-[10px] font-black uppercase tracking-wider text-gray-400 leading-tight break-words">
+                                            <span x-text="index + 1"></span>. <span x-text="campo.titulo"></span> <span x-show="!isManual && campo.campo_id <= 3" class="text-red-500">*</span>
                                         </h4>
                                     </div>
-                                    <!-- Controles de campo (Arriba, Abajo, Eliminar) -->
-                                    <div class="shrink-0 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all">
-                                        <button type="button" @click="moveCampoUp(index)" x-show="index > 0" class="p-1 md:p-1.5 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 rounded-lg transition-colors" title="Subir campo">
-                                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+                                    <div class="shrink-0 flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all">
+                                        <button type="button" @click="moveCampoUp(index)" x-show="index > 0" class="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors" title="Subir campo">
+                                            <i class="fas fa-chevron-up text-xs"></i>
                                         </button>
-                                        <button type="button" @click="moveCampoDown(index)" x-show="index < data.campos_dinamicos.length - 1" class="p-1 md:p-1.5 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 rounded-lg transition-colors" title="Bajar campo">
-                                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                        <button type="button" @click="moveCampoDown(index)" x-show="index < data.campos_dinamicos.length - 1" class="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors" title="Bajar campo">
+                                            <i class="fas fa-chevron-down text-xs"></i>
                                         </button>
-                                        <div class="w-px h-4 bg-slate-200 mx-1"></div>
-                                        <button type="button" @click="removeCampoDinamico(index)" x-show="isManual || campo.campo_id > 3" class="p-1 md:p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Quitar campo">
-                                            <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        <div class="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-1"></div>
+                                        <button type="button" @click="removeCampoDinamico(index)" x-show="isManual || campo.campo_id > 3" class="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors" title="Quitar campo">
+                                            <i class="fas fa-trash-can text-xs"></i>
                                         </button>
                                     </div>
                                 </div>
                                 
                                 <textarea :name="'campos_dinamicos[' + campo.campo_id + ']'" rows="4" 
-                                          class="w-full border-slate-100 dark:border-gray-600 bg-slate-50/30 dark:bg-gray-700/50 rounded-xl p-3 md:p-4 text-sm text-slate-700 dark:text-white focus:ring-4 focus:ring-indigo-500/5 transition-all resize-none font-medium leading-relaxed"
+                                          style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                          class="w-full border rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none font-medium leading-relaxed"
                                           x-model="campo.contenido"
                                           :required="!isManual && campo.campo_id <= 3"
                                           placeholder="Escribe los detalles aquí..."></textarea>
@@ -143,71 +123,66 @@
                         </template>
                     </div>
 
-                    {{-- CAMPOS ESTRUCTURADOS / INTELIGENTES (Alineados abajo en 2 columnas) --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        {{-- Diagnósticos CIE-10 (Diseño homologado con Expediente General) --}}
-                        <div class="bg-white en-card dark:bg-gray-800 rounded-[24px] p-6 shadow-sm border border-slate-100 dark:border-gray-700">
+                        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="en-card rounded-2xl border shadow-sm p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-2 text-slate-800 dark:text-gray-200">
-                                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                    <h4 class="text-[11px] font-black uppercase tracking-widest">Diagnósticos Oficiales</h4>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-file-medical text-indigo-500"></i>
+                                    <h4 class="text-[10px] font-black uppercase tracking-wider text-gray-400">Diagnósticos Oficiales</h4>
                                 </div>
                             </div>
                             
-                            {{-- Etiquetas de Diagnóstico (Style: Expediente General) --}}
                             <div class="flex flex-wrap gap-2 mb-4">
                                 <template x-for="(diag, index) in data.diagnosticos" :key="index">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-full border border-indigo-100 group/tag">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold uppercase tracking-wider rounded-xl border border-indigo-100 dark:border-indigo-800/60">
                                         <span x-text="diag.nombre"></span>
-                                        <button type="button" @click="removeDiagnostico(index)" class="hover:text-rose-500 transition-colors">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        <button type="button" @click="removeDiagnostico(index)" class="hover:text-red-500 transition-colors ml-1">
+                                            <i class="fas fa-xmark text-xs"></i>
                                         </button>
                                     </span>
                                 </template>
                                 <template x-if="data.diagnosticos.length === 0">
-                                    <span class="text-[10px] font-bold text-slate-300 uppercase tracking-widest italic">Sin diagnósticos asociados</span>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Sin diagnósticos asociados</span>
                                 </template>
                             </div>
 
-                            {{-- Buscador (Style: Expediente General) --}}
                             <div class="relative" x-data="{ search: '', results: [], loading: false, open: false }">
-                                <div class="flex items-center px-4 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-full focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-400 transition-all shadow-sm">
-                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <div class="flex items-center px-4 border border-gray-200 dark:border-gray-700 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 transition-all shadow-sm">
+                                    <i class="fas fa-magnifying-glass text-gray-400 text-xs mr-2"></i>
                                     <input type="text" x-model="search" 
                                            @input.debounce.300ms="
                                                 if(search.length < 2) { results = []; open = false; return; }
                                                 loading = true;
-                                                fetch(`{{ route('enfermedades.api.search') }}?q=${encodeURIComponent(search)}`)
+                                                fetch(`{{ route('admin.enfermedades.api.search') }}?q=${encodeURIComponent(search)}`)
                                                     .then(r => r.json()).then(d => { results = d; loading = false; open = true; });
                                            "
-                                           class="w-full border-none bg-transparent text-xs font-bold text-slate-700 dark:text-white focus:ring-0 placeholder-slate-400 py-2.5" 
+                                           class="w-full border-none bg-transparent text-xs font-bold text-gray-700 dark:text-white focus:ring-0 placeholder-gray-400 py-3" 
                                            placeholder="Buscar diagnóstico o condición...">
                                 </div>
                                 
                                 <div x-show="open" @click.away="open = false" x-cloak
-                                     class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-gray-700 p-2">
-                                    <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                     class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-2">
+                                    <div class="max-h-48 overflow-y-auto">
                                         <template x-if="loading">
-                                            <div class="p-3 text-[10px] text-slate-400 text-center font-bold uppercase tracking-widest animate-pulse">Buscando...</div>
+                                            <div class="p-3 text-[10px] text-gray-400 text-center font-bold uppercase tracking-widest animate-pulse">Buscando...</div>
                                         </template>
                                         <template x-for="res in results" :key="res.id">
                                             <button type="button" @click="addDiagnostico(res); open = false; search = ''"
-                                                    class="w-full text-left px-4 py-2.5 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-xl border-b border-slate-50 dark:border-gray-700 last:border-none transition-colors group">
+                                                    class="w-full text-left px-4 py-2.5 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-xl border-b border-gray-50 dark:border-gray-700/50 last:border-none transition-colors group">
                                                 <div class="flex items-center gap-2">
-                                                    <div class="w-2 h-2 rounded-full bg-indigo-400 group-hover:scale-110 transition-transform"></div>
-                                                    <span class="text-[10px] font-bold text-slate-700 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" x-text="res.nombre"></span>
-                                                    <span class="text-[9px] font-black text-slate-300 dark:text-gray-500 ml-auto" x-text="res.codigo"></span>
+                                                    <div class="w-2 h-2 rounded-full bg-indigo-500 group-hover:scale-110 transition-transform"></div>
+                                                    <span class="text-[10px] font-bold text-gray-700 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" x-text="res.nombre"></span>
+                                                    <span class="text-[9px] font-mono text-gray-400 dark:text-gray-500 ml-auto" x-text="res.codigo"></span>
                                                 </div>
                                             </button>
                                         </template>
                                         <template x-if="results.length === 0 && !loading">
-                                            <div class="p-3 text-[10px] text-slate-400 text-center italic font-bold">No se encontraron resultados</div>
+                                            <div class="p-3 text-[10px] text-gray-400 text-center italic font-bold">No se encontraron resultados</div>
                                         </template>
                                     </div>
-                                    <div class="mt-2 pt-2 border-t border-slate-50">
-                                        <a href="{{ route('enfermedades.create', ['tipo' => 'mental', 'return_to' => $cita->user_id]) }}" 
-                                           class="block text-center text-[9px] font-black text-indigo-500 hover:text-indigo-700 uppercase tracking-widest py-1">
+                                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                        <a href="{{ route('admin.enfermedades.create', ['tipo' => 'mental', 'return_to' => $cita->user_id]) }}" 
+                                           class="block text-center text-[9px] font-black text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-widest py-1">
                                             ¿No aparece? Crear nueva condición
                                         </a>
                                     </div>
@@ -215,91 +190,93 @@
                             </div>
                         </div>
 
-                        {{-- [NUEVO] Avances de Sesión y Estado de Ánimo --}}
-                        <div class="bg-white en-card dark:bg-gray-800 rounded-[24px] p-6 shadow-sm border border-slate-100 dark:border-gray-700">
-                            <div class="flex items-center gap-2 mb-4 text-slate-800 dark:text-gray-200">
-                                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                                <h4 class="text-[11px] font-black uppercase tracking-widest">Avances y Estado del Paciente</h4>
+                        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="en-card rounded-2xl border shadow-sm p-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fas fa-chart-line text-emerald-500"></i>
+                                <h4 class="text-[10px] font-black uppercase tracking-wider text-gray-400">Avances y Estado del Paciente</h4>
                             </div>
                             
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Estado de Ánimo del Paciente @if(!$isManual)<span class="text-rose-500">*</span>@endif</label>
+                                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Estado de Ánimo del Paciente @if(!$isManual)<span class="text-red-500">*</span>@endif</label>
                                     <select name="estado_animo_id" x-model="data.estado_animo_id" @if(!$isManual) required @endif
-                                            class="w-full bg-slate-50 dark:bg-gray-700/50 border-slate-100 dark:border-gray-600 rounded-xl text-xs font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all cursor-pointer">
+                                            style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                            class="w-full border rounded-xl h-11 px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
                                         <option value="">Seleccionar estado de ánimo...</option>
                                         @foreach($estadosAnimo as $animo)
                                             <option value="{{ $animo->id }}">{{ $animo->nombre }}</option>
                                         @endforeach
                                     </select>
                                     <textarea name="estado_animo_detalle" rows="2" @if(!$isManual) required @endif
-                                              class="w-full mt-2 border-slate-100 dark:border-gray-600 bg-slate-50/30 dark:bg-gray-700/50 rounded-xl p-3 text-[11px] text-slate-600 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all resize-none font-medium"
+                                              style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                              class="w-full mt-2 border rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none font-medium"
                                               x-model="data.estado_animo_detalle"
                                               placeholder="Describe observaciones sobre su estado de ánimo..."></textarea>
                                 </div>
 
                                 <div>
-                                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Estado de Evolución @if(!$isManual)<span class="text-rose-500">*</span>@endif</label>
+                                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Estado de Evolución @if(!$isManual)<span class="text-red-500">*</span>@endif</label>
                                     <select name="avance_estado" x-model="data.avance_estado" @if(!$isManual) required @endif
-                                            class="w-full bg-slate-50 dark:bg-gray-700/50 border-slate-100 dark:border-gray-600 rounded-xl text-xs font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all cursor-pointer">
+                                            style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                            class="w-full border rounded-xl h-11 px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
                                         <option value="">Seleccionar estado de avance...</option>
                                         @foreach($avances as $avance)
                                             <option value="{{ $avance->id }}">{{ $avance->nombre }}</option>
                                         @endforeach
                                     </select>
                                     <textarea name="avance_detalle" rows="2" @if(!$isManual) required @endif
-                                              class="w-full mt-2 border-slate-100 dark:border-gray-600 bg-slate-50/30 dark:bg-gray-700/50 rounded-xl p-3 text-[11px] text-slate-600 dark:text-gray-300 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all resize-none font-medium"
+                                              style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                              class="w-full mt-2 border rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none font-medium"
                                               x-model="data.avance_detalle"
                                               placeholder="Describe los avances o retrocesos observados..."></textarea>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Plan de Tratamiento --}}
-                        <div class="bg-white en-card dark:bg-gray-800 rounded-[24px] p-5 shadow-sm border border-slate-100 dark:border-gray-700">
-                            <div class="flex items-center gap-2 mb-4 text-slate-800 dark:text-gray-200">
-                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <h4 class="text-[11px] font-black uppercase tracking-widest">Plan de Tratamiento</h4>
+                        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="en-card rounded-2xl border shadow-sm p-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fas fa-list-check text-indigo-500"></i>
+                                <h4 class="text-[10px] font-black uppercase tracking-wider text-gray-400">Plan de Tratamiento</h4>
                             </div>
                             <textarea name="plan_tratamiento" rows="4" 
-                                      class="w-full border-slate-100 dark:border-gray-600 bg-slate-50/20 dark:bg-gray-700/50 rounded-xl p-3 text-[12px] text-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500/10 transition-all resize-none font-medium"
+                                      style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                      class="w-full border rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none font-medium"
                                       x-model="data.plan_tratamiento"
                                       placeholder="Asignar tareas para la casa..."></textarea>
                         </div>
 
-                        {{-- Próxima Cita --}}
-                        <div class="bg-white en-card dark:bg-gray-800 rounded-[24px] p-5 shadow-sm border border-slate-100 dark:border-gray-700">
-                            <div class="flex items-center gap-2 mb-4 text-slate-800 dark:text-gray-200">
-                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <h4 class="text-[11px] font-black uppercase tracking-widest">Próxima Cita Recomendada</h4>
+                        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="en-card rounded-2xl border shadow-sm p-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fas fa-calendar-plus text-indigo-500"></i>
+                                <h4 class="text-[10px] font-black uppercase tracking-wider text-gray-400">Próxima Cita Recomendada</h4>
                             </div>
                             <input type="date" name="proxima_cita_fecha" 
-                                   class="w-full border-slate-100 dark:border-gray-600 bg-slate-50/20 dark:bg-gray-700/50 rounded-xl p-3 text-xs font-bold text-slate-700 dark:text-white mb-3"
+                                   style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                   class="w-full h-11 border rounded-xl p-3 text-xs font-bold mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                    x-model="data.proxima_cita_fecha">
                             <textarea name="proxima_cita_razon" rows="2" 
-                                      class="w-full border-slate-100 dark:border-gray-600 bg-slate-50/20 dark:bg-gray-700/50 rounded-xl p-3 text-[11px] text-slate-600 dark:text-gray-300 focus:ring-2 focus:ring-indigo-500/10 transition-all resize-none font-medium"
+                                      style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                      class="w-full border rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none font-medium"
                                       x-model="data.proxima_cita_razon"
                                       placeholder="Razón de la próxima cita..."></textarea>
                         </div>
-
                     </div>
                 </div>
 
-                {{-- FLOATING BUTTONS --}}
-                <div class="fixed bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:bottom-8 md:right-8 z-30 flex items-center gap-2 md:gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-2 md:p-3 rounded-full shadow-2xl border border-slate-100/80 dark:border-gray-700">
-                    <button type="button" @click="showModalCampos = true" title="Añadir Campo" class="w-12 h-12 md:w-14 md:h-14 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-600 dark:hover:bg-indigo-700 text-indigo-600 dark:text-indigo-400 hover:text-white rounded-full flex items-center justify-center transition-all shadow-lg border-2 border-white dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                        <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                    </button>
-                    <a href="{{ route('historias.show', $cita->user_id) }}" title="Cancelar" class="w-12 h-12 md:w-14 md:h-14 bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-600 dark:hover:bg-rose-700 text-rose-600 dark:text-rose-400 hover:text-white rounded-full flex items-center justify-center transition-all shadow-lg border-2 border-white dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20">
-                        <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <div class="fixed bottom-6 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:bottom-8 sm:right-8 z-30 flex items-center gap-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-2.5 rounded-full shadow-2xl border border-gray-200 dark:border-gray-700">
+                    <a href="{{ route('admin.psicologia.maestros.historias.show', $cita->user_id) }}" title="Volver" class="w-12 h-12 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center transition-all active:scale-95 border border-gray-100 dark:border-gray-700">
+                        <i class="fas fa-arrow-left text-lg"></i>
                     </a>
-                    <button type="submit" @click="syncStructured()" title="Guardar Nota" class="w-12 h-12 md:w-14 md:h-14 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-600 dark:hover:bg-indigo-700 text-indigo-600 dark:text-indigo-400 hover:text-white rounded-full flex items-center justify-center transition-all shadow-lg border-2 border-white dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                        <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    
+                    <button type="button" @click="showModalCampos = true" title="Añadir Campo" class="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-600 hover:text-white text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center transition-all active:scale-95 border border-indigo-100 dark:border-indigo-800/50">
+                        <i class="fas fa-plus text-lg"></i>
                     </button>
-                </div>
+                    
+                    <button type="submit" @click="syncStructured($event)" title="Guardar Nota" class="w-12 h-12 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-600 hover:text-white text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center transition-all active:scale-95 border border-emerald-100 dark:border-emerald-800/50">
+                        <i class="fas fa-check text-lg"></i>
+                    </button>
                 </div>
 
-                {{-- Hidden input for diagnosticos array --}}
                 <template x-for="(diag, index) in data.diagnosticos" :key="'hidden-'+index">
                     <input type="hidden" :name="'diagnosticos['+index+'][id]'" :value="diag.id">
                 </template>
@@ -311,172 +288,189 @@
                 </template>
             </form>
 
-            {{-- Modal de advertencia de cambios no guardados --}}
-        <div x-show="showUnsavedModal" 
-             class="fixed inset-0 overflow-y-auto" 
-             style="z-index: 9999;"
-             x-cloak>
-            <div class="flex items-center justify-center min-h-screen px-4 text-center">
-                <div x-show="showUnsavedModal" 
-                     x-transition:enter="ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     class="fixed inset-0 transition-opacity bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm" 
-                     @click="showUnsavedModal = false"></div>
+            <div x-show="showUnsavedModal" 
+                class="fixed inset-0 overflow-y-auto" 
+                style="z-index: 9999;"
+                x-cloak>
+                <div class="flex items-center justify-center min-h-screen px-4 text-center">
+                    <div x-show="showUnsavedModal" 
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 transition-opacity bg-gray-900/60 dark:bg-black/70 backdrop-blur-sm" 
+                        @click="showUnsavedModal = false"></div>
 
-                <div x-show="showUnsavedModal" 
-                     x-transition:enter="ease-out duration-300"
-                     x-transition:enter-start="opacity-0 translate-y-4 scale-95"
-                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                     x-transition:leave="ease-in duration-200"
-                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                     x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-                     class="relative inline-block w-full max-w-sm p-8 overflow-hidden text-center transition-all transform bg-white dark:bg-gray-800 shadow-2xl rounded-[32px] border border-slate-100 dark:border-gray-700 z-10">
-                    
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-50 dark:bg-amber-900/30 mb-6 text-amber-500 dark:text-amber-400">
-                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    </div>
-                    
-                    <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">¿Estás seguro que deseas salir?</h3>
-                    <p class="text-sm text-slate-500 dark:text-gray-400 mb-8 font-medium">Hay información aún no guardada. Si sales ahora, perderás los cambios realizados.</p>
-                    
-                    <div class="flex justify-center gap-4">
-                        <button type="button" 
-                                @click="showUnsavedModal = false"
-                                class="px-6 py-3 bg-slate-50 dark:bg-gray-700 text-slate-600 dark:text-gray-300 font-bold text-sm rounded-xl hover:bg-slate-100 dark:hover:bg-gray-600 transition-colors uppercase tracking-widest w-full">
-                            Cancelar
-                        </button>
-                        <button type="button" 
-                                @click="confirmLeave()"
-                                class="px-6 py-3 bg-amber-500 dark:bg-amber-600 hover:bg-amber-600 dark:hover:bg-amber-700 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-amber-500/20 uppercase tracking-widest w-full">
-                            Salir
-                        </button>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+                    <div x-show="showUnsavedModal" 
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+                        class="inline-block border shadow-2xl rounded-2xl sm:my-8 sm:align-middle sm:max-w-md sm:w-full overflow-hidden text-center align-bottom transition-all transform p-6 sm:p-8">
+                        
+                        <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 mb-5 text-amber-500">
+                            <i class="fas fa-triangle-exclamation text-xl"></i>
+                        </div>
+                        
+                        <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight mb-2" style="color: var(--text-main);">
+                            ¿Estás seguro que deseas salir?
+                        </h3>
+                        <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 mb-6">
+                            Hay información aún no guardada. Si sales ahora, perderás los cambios realizados.
+                        </p>
+                        
+                        <div class="pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-3">
+                            <button type="button" 
+                                    @click="showUnsavedModal = false"
+                                    class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-gray-600 dark:text-gray-300 transition-all">
+                                Cancelar
+                            </button>
+                            <button type="button" 
+                                    @click="confirmLeave()"
+                                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-md active:scale-95 transition-all">
+                                <i class="fas fa-right-from-bracket text-xs"></i>
+                                <span>Salir</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Modal para añadir Campos (Réplica del modal de Expediente Clínico) --}}
-        <div x-show="showModalCampos" 
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 overflow-y-auto" 
-             style="z-index: 9999;"
-             x-cloak>
-            <div class="flex items-center justify-center min-h-screen px-4 text-center">
-                
-                <div x-show="showModalCampos"
-                     x-transition:enter="ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     class="fixed inset-0 transition-opacity bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm"
-                     @click="showModalCampos = false"></div>
+            <div x-show="showModalCampos" 
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 overflow-y-auto" 
+                style="z-index: 9999;"
+                x-cloak>
+                <div class="flex items-center justify-center min-h-screen px-4 text-center">
+                    <div x-show="showModalCampos"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 transition-opacity bg-gray-900/60 dark:bg-black/70 backdrop-blur-sm"
+                        @click="showModalCampos = false"></div>
 
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-                <div x-show="showModalCampos"
-                     x-transition:enter="ease-out duration-300"
-                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                     x-transition:leave="ease-in duration-200"
-                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                     class="inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white dark:bg-gray-800 shadow-2xl rounded-[32px] sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-8 border border-slate-100 dark:border-gray-700">
+                    <style>[x-cloak] { display: none !important; }</style>
+                    <div x-show="showModalCampos"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+                        class="inline-block border shadow-2xl rounded-2xl sm:my-8 sm:align-middle sm:max-w-xl sm:w-full overflow-hidden text-left align-bottom transition-all transform p-6 sm:p-8">
 
-                    {{-- Header --}}
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                            </div>
+                        <div class="flex items-start justify-between pb-6 mb-6 border-b border-gray-100 dark:border-gray-800 gap-4">
                             <div>
-                                <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Añadir Campo a la Sesión</h3>
-                                <p class="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-widest">Configuración de la Nota</p>
+                                <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
+                                    Añadir Campo a la Sesión
+                                </h3>
+                                <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    Configuración de la Nota
+                                </p>
                             </div>
+                            <button type="button" @click="showModalCampos = false" class="w-9 h-9 inline-flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-all active:scale-95 shrink-0" aria-label="Cerrar">
+                                <i class="fas fa-xmark text-sm"></i>
+                            </button>
                         </div>
-                        <button @click="showModalCampos = false" class="p-2 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-xl transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
 
-                    <form id="formNuevoCampo" action="{{ route('campos.store.ajax') }}" method="POST" @submit.prevent="submitNuevoCampo">
-                        @csrf
-                        <div class="space-y-6 px-2">
-                            {{-- Título del Campo --}}
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-2">Título del Campo</label>
-                                <input type="text" name="titulo" required
-                                       class="w-full border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-xl p-3 text-sm font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                                       placeholder="Ej: Antecedentes Familiares">
-                            </div>
+                        <form id="formNuevoCampo" action="{{ route('admin.psicologia.maestros.citas.campos.store.ajax') }}" method="POST" @submit.prevent="submitNuevoCampo">
+                            @csrf
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
+                                        Título del Campo <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="titulo" required
+                                        style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                                        class="w-full h-11 border rounded-xl px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                                        placeholder="Ej: Antecedentes Familiares">
+                                </div>
 
-                            <hr class="border-slate-100 dark:border-gray-700">
+                                <hr class="border-gray-100 dark:border-gray-800">
 
-                            {{-- Reutilizar Campos Existentes --}}
-                            <div>
-                                <h4 class="text-[9px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-3">Reutilizar campos existentes</h4>
-                                <div class="relative" x-data="{ openDropdownCampos: false }" @click.away="openDropdownCampos = false">
-                                    <div class="flex items-center px-4 bg-slate-50 dark:bg-gray-700/50 border border-slate-200 dark:border-gray-600 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
-                                        <svg class="w-5 h-5 text-slate-400 dark:text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                        <input type="text" x-model="searchCampo"
-                                               @focus="openDropdownCampos = true"
-                                               class="w-full border-none bg-transparent text-sm font-bold text-slate-700 dark:text-white focus:ring-0 placeholder-slate-400 dark:placeholder-gray-500 py-2.5" 
-                                               placeholder="Escriba para buscar o haga clic para ver disponibles...">
-                                    </div>
-                                    
-                                    <div x-show="openDropdownCampos"
-                                         class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl shadow-lg max-h-60 overflow-y-auto custom-scrollbar"
-                                         x-cloak>
-                                         
-                                         <div class="px-4 py-2 bg-slate-50 dark:bg-gray-900/50 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest border-b border-slate-100 dark:border-gray-700">
-                                            <span x-show="searchCampo === ''">Campos disponibles:</span>
-                                            <span x-show="searchCampo !== ''">Resultados encontrados:</span>
-                                         </div>
-                                         
-                                        <template x-if="camposFiltrados.length === 0">
-                                            <div class="p-4 text-xs font-bold text-red-500">No hay resultados encontrados.</div>
-                                        </template>
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
+                                        Reutilizar campos existentes
+                                    </label>
+                                    <div class="relative" x-data="{ openDropdownCampos: false }" @click.away="openDropdownCampos = false">
+                                        <div class="flex items-center px-4 border rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 transition-all"
+                                            style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);">
+                                            <i class="fas fa-magnifying-glass text-gray-400 text-xs mr-2 shrink-0"></i>
+                                            <input type="text" x-model="searchCampo"
+                                                @focus="openDropdownCampos = true"
+                                                class="w-full h-11 border-none bg-transparent text-sm font-medium focus:ring-0 placeholder-gray-400 p-0" 
+                                                style="color: var(--text-main);"
+                                                placeholder="Escriba para buscar o haga clic para ver disponibles...">
+                                        </div>
                                         
-                                        <template x-for="campo in camposFiltrados" :key="campo.id">
-                                            <button type="button" @click="
-                                                addCampoFromModal(campo.id, campo.titulo);
-                                                openDropdownCampos = false;
-                                                searchCampo = '';
-                                            " class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border-b border-slate-50 dark:border-gray-700/50 last:border-0 transition-colors flex items-center justify-between group">
-                                                <div class="flex flex-col gap-1">
-                                                    <span x-text="campo.titulo"></span>
-                                                    <span class="text-[9px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest" x-text="campo.psicologo_id ? 'Personalizado' : 'Sistema'"></span>
-                                                </div>
-                                                <svg class="w-5 h-5 text-slate-300 dark:text-gray-600 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                            </button>
-                                        </template>
+                                        <div x-show="openDropdownCampos"
+                                            style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+                                            class="absolute z-50 w-full mt-2 border rounded-2xl shadow-xl max-h-60 overflow-y-auto p-2"
+                                            x-cloak>
+                                            
+                                            <div class="px-3 py-2 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-800 mb-1">
+                                                <span x-show="searchCampo === ''">Campos disponibles:</span>
+                                                <span x-show="searchCampo !== ''">Resultados encontrados:</span>
+                                            </div>
+                                            
+                                            <template x-if="camposFiltrados.length === 0">
+                                                <div class="p-3 text-xs font-bold text-red-500">No hay resultados encontrados.</div>
+                                            </template>
+                                            
+                                            <template x-for="campo in camposFiltrados" :key="campo.id">
+                                                <button type="button" @click="
+                                                    addCampoFromModal(campo.id, campo.titulo);
+                                                    openDropdownCampos = false;
+                                                    searchCampo = '';
+                                                " class="w-full text-left px-3 py-2.5 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800/60 rounded-xl transition-colors flex items-center justify-between group" style="color: var(--text-main);">
+                                                    <div class="flex flex-col gap-0.5">
+                                                        <span x-text="campo.titulo"></span>
+                                                        <span class="text-[9px] font-black text-gray-400 uppercase tracking-wider" x-text="campo.psicologo_id ? 'Personalizado' : 'Sistema'"></span>
+                                                    </div>
+                                                    <i class="fas fa-plus text-xs text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 shrink-0"></i>
+                                                </button>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {{-- Botón Guardar y Añadir --}}
-                        <div class="pt-8 flex justify-end">
-                            <button type="submit" class="w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2 px-6 rounded-2xl shadow-lg shadow-indigo-100 dark:shadow-indigo-900/30 transition-all flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                Añadir
-                            </button>
-                        </div>
-                    </form>
+                            <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-3">
+                                <button type="button" @click="showModalCampos = false"
+                                    class="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-gray-600 dark:text-gray-300 transition-all">
+                                    Cancelar
+                                </button>
+                                <button type="submit"
+                                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md active:scale-95 transition-all">
+                                    <i class="fas fa-plus text-xs"></i>
+                                    <span>Añadir Campo</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         function clinicalNoteEditor() {
             let initialData = {
@@ -499,7 +493,6 @@
                     initialData = { ...initialData, ...parsed };
                 }
             } catch(e) {
-                // fall back si era texto plano no hace falta porque los nuevos son dinamicos
             }
 
             const initialSnapshot = JSON.stringify(initialData);
@@ -524,7 +517,7 @@
                     btn.disabled = true;
 
                     const formData = new FormData(form);
-                    
+
                     try {
                         const response = await fetch(form.action, {
                             method: 'POST',
@@ -534,26 +527,25 @@
                             },
                             body: formData
                         });
-                        
+
                         const data = await response.json();
-                        
+
                         if(data.success) {
-                            // Alpine natively tracks this update
                             this.camposDisponibles.push(data.campo);
                             this.addCampoFromModal(data.campo.id, data.campo.titulo);
-                            
+
                             form.reset();
                             this.showModalCampos = false;
 
                             let t = document.createElement('div');
                             t.innerHTML = `<div id="toast" class="fixed top-6 right-6 z-50">
-                                <div class="max-w-sm w-full bg-green-600 text-white shadow-lg rounded-2xl border border-green-700 px-4 py-3">
+                                <div class="max-w-sm w-full bg-emerald-600 text-white shadow-lg rounded-2xl border border-emerald-700 px-4 py-3">
                                     <div class="flex items-start justify-between gap-3">
                                         <div>
-                                            <p class="font-semibold">¡Listo!</p>
-                                            <p class="text-sm mt-1">Anexo guardado exitosamente.</p>
+                                            <p class="font-bold text-xs uppercase tracking-wider">¡Listo!</p>
+                                            <p class="text-xs mt-1 font-medium">Anexo guardado exitosamente.</p>
                                         </div>
-                                        <button onclick="document.getElementById('toast')?.remove()" class="text-white opacity-70 hover:opacity-100">✕</button>
+                                        <button onclick="document.getElementById('toast')?.remove()" class="text-white opacity-70 hover:opacity-100 font-black">✕</button>
                                     </div>
                                 </div>
                             </div>`;
@@ -564,7 +556,6 @@
                         }
                     } catch (error) {
                         AppModal.alert('Error', 'Error de conexión');
-                        console.error(error);
                     } finally {
                         btn.innerHTML = originalText;
                         btn.disabled = false;
@@ -577,12 +568,10 @@
                 },
 
                 init() {
-                    // Detectar cambios profundos en los datos del formulario
                     this.$watch('data', (value) => {
                         this.hasUnsavedChanges = !isRealizada || JSON.stringify(value) !== initialSnapshot;
                     });
 
-                    // Advertencia de navegador nativa al recargar o cerrar pestaña
                     window.addEventListener('beforeunload', (e) => {
                         if (this.hasUnsavedChanges && !this.isSubmitting) {
                             e.preventDefault();
@@ -590,13 +579,11 @@
                         }
                     });
 
-                    // Capturar clics en enlaces dentro de la aplicación para advertencia personalizada
                     document.addEventListener('click', (e) => {
                         let link = e.target.closest('a');
                         if (link && link.href && !link.href.includes('#') && link.target !== '_blank' && !link.hasAttribute('download')) {
-                            // Ignorar si hace click dentro del propio modal
                             if (e.target.closest('[x-show="showUnsavedModal"]')) return;
-                            
+
                             if (this.hasUnsavedChanges && !this.isSubmitting) {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -621,14 +608,12 @@
                 addDiagnostico(item) {
                     if (!this.data.diagnosticos.some(d => d.id === item.id)) {
                         this.data.diagnosticos.push(item);
-                        // Asegurar el disparo de cambios en el snapshot
                         this.hasUnsavedChanges = JSON.stringify(this.data) !== initialSnapshot;
                     }
                 },
 
                 removeDiagnostico(index) {
                     this.data.diagnosticos.splice(index, 1);
-                    // Asegurar el disparo de cambios en el snapshot
                     this.hasUnsavedChanges = JSON.stringify(this.data) !== initialSnapshot;
                 },
 
@@ -656,7 +641,6 @@
                 },
 
                 addCampoFromModal(campoId, titulo) {
-                    // Check if exists
                     const exists = this.data.campos_dinamicos.find(c => c.campo_id == campoId);
                     if(exists) {
                         AppModal.alert('Acción no permitida', 'Este campo ya está en la nota de evolución.');
@@ -671,7 +655,12 @@
                     this.showModalCampos = false;
                 },
 
-                syncStructured() {
+                syncStructured(e) {
+                    const evt = e || window.event;
+                    const form = evt && evt.target ? evt.target.closest('form') : null;
+                    if (form && !form.checkValidity()) {
+                        return;
+                    }
                     this.isSubmitting = true;
                     this.hasUnsavedChanges = false;
                 }
@@ -679,5 +668,4 @@
         }
     </script>
     @include('pacientes.partials.modal')
-
 </x-app-layout>

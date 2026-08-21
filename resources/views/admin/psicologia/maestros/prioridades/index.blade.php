@@ -1,10 +1,7 @@
 <x-app-layout> 
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
             @include('components.alert')
-
-            {{-- Encabezado de la página --}}
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
@@ -24,7 +21,6 @@
                 </div>
             </div>
 
-            {{-- Card de Buscador --}}
             <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                 class="p-4 rounded-2xl border shadow-sm mb-6 flex items-center justify-between gap-4">
 
@@ -40,7 +36,6 @@
                 </form>
             </div>
 
-            {{-- Card de la Tabla (Estructura idéntica a Enfermedades) --}}
             <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                 class="rounded-2xl border shadow-sm overflow-hidden">
 

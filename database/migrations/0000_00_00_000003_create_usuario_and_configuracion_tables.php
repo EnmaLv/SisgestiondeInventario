@@ -24,6 +24,7 @@ return new class extends Migration
             $table->json('extra_permissions')->nullable();
             $table->timestamp('ultima_actividad_chat')->nullable();
             $table->unsignedBigInteger('chat_activo_user_id')->nullable();
+            $table->timestamp('infracciones_reset_at')->nullable();
             $table->timestamps();
         });
 

@@ -59,9 +59,6 @@ class Publicacion extends Model
             ->join('usuario', 'publicaciones.psicologo_id', '=', 'usuario.id_usuario')
             ->select(
                 'publicaciones.*',
-                'usuario.nombres',
-                'usuario.apellidos',
-                'usuario.profile_photo_path'
             )
             ->latest('publicaciones.created_at')
             ->take(14)

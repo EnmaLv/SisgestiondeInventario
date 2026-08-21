@@ -32,11 +32,11 @@ class ChatController extends Controller
             }
 
             $unreadCount = $conversation
-                ? Message::where('conversation_id', $conversation->id)
-                ->where('sender_id', $contact->id)
-                ->whereNull('read_at')
-                ->count()
-                : 0;
+                ? DB::table('messages')->where('conversation_id', $conversation->id)
+                    ->where('sender_id', $contact->id)
+                    ->whereNull('read_at')
+                    ->count()
+                    : 0;
 
             return [
                 'id' => $contact->id,
@@ -119,7 +119,7 @@ class ChatController extends Controller
         $userId = Auth::id();
 
         if ($user && $user->tieneRol('paciente')) {
-            $hasConversation = Conversation::where(function ($q) use ($userId, $targetUserId) {
+            $hasConversation = DB::table('conversaciones')->where(function ($q) use ($userId, $targetUserId) {
                 $q->where('user_one_id', $userId)->where('user_two_id', $targetUserId);
             })->orWhere(function ($q) use ($userId, $targetUserId) {
                 $q->where('user_one_id', $targetUserId)->where('user_two_id', $userId);

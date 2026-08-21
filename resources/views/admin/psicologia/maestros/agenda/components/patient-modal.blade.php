@@ -1,8 +1,5 @@
-<!-- MODAL DE PERFIL DE PACIENTE -->
 <div id="patientModal" class="hidden fixed inset-0 z-[60] bg-slate-950/60 backdrop-blur-sm p-4 items-center justify-center transition-opacity">
     <div class="w-full max-w-3xl overflow-hidden rounded-3xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200/80 dark:border-slate-800 transform transition-all">
-        
-        <!-- Header con degradado sutil -->
         <div class="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 px-6 py-5 bg-slate-50/50 dark:bg-slate-900/50">
             <div class="space-y-1">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-100 dark:border-sky-900/50">
@@ -16,10 +13,7 @@
             </button>
         </div>
 
-        <!-- Contenido principal -->
         <div id="patientModalContent" class="max-h-[70vh] overflow-y-auto space-y-8 p-6 md:p-8 custom-scrollbar">
-            
-            <!-- Sección: Información Personal -->
             <section>
                 <div class="flex items-center gap-3 mb-5">
                     <div class="w-8 h-8 bg-sky-50 dark:bg-sky-950/60 border border-sky-200/60 dark:border-sky-900/50 rounded-xl flex items-center justify-center text-sky-600 dark:text-sky-400 shadow-sm">
@@ -72,7 +66,6 @@
                 </div>
             </section>
 
-            <!-- Sección: Información Académica -->
             <section id="patientModalAcademicSection" class="pt-6 border-t border-slate-100 dark:border-slate-800/80 hidden">
                 <div class="flex items-center gap-3 mb-5">
                     <div class="w-8 h-8 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900/50 rounded-xl flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm">
@@ -106,7 +99,6 @@
             </section>
         </div>
 
-        <!-- Footer -->
         <div class="border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-900/80 px-6 py-3.5 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
             <span>Primera cita: <span id="patientModalRegistered" class="font-medium text-slate-700 dark:text-slate-300"></span></span>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50">

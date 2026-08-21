@@ -591,6 +591,33 @@ return [
         ],
 
         [
+            'text' => 'Citas',
+            'key' => 'citas',
+            'module' => 'psicologia',
+            'url' => 'admin/psicologia/maestros/citas',
+            'icon' => 'fas fa-calendar-check',
+            'active' => ['admin/psicologia/maestros/citas*'],
+        ],
+
+        [
+            'text' => 'Agenda',
+            'key' => 'agenda',
+            'module' => 'psicologia',
+            'url' => 'admin/psicologia/maestros/agenda',
+            'icon' => 'fas fa-calendar-check',
+            'active' => ['admin/psicologia/maestros/agenda*'],
+        ],
+
+        [
+            'text' => 'Mural',
+            'key' => 'mural',
+            'module' => 'psicologia',
+            'url' => 'admin/psicologia/maestros/mural', 
+            'icon' => 'fas fa-calendar-check',
+            'active' => ['admin/psicologia/maestros/mural*'],
+        ],
+
+        [
             'text' => 'Modulos del Sistema',
             'url' => 'admin/modulos/seleccionar',
             'icon' => 'fas fa-th-large',

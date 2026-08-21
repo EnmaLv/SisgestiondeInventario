@@ -117,8 +117,19 @@ class Cita extends Model
             ->when($prioridad, fn($q) => $q->where('prioridad', $prioridad))
             ->when($perfilAcademico || $pnf, function ($q) use ($perfilAcademico, $pnf) {
                 $q->whereHas('paciente', function ($u) use ($perfilAcademico, $pnf) {
-                    if ($perfilAcademico) $u->where('perfil_academico', $perfilAcademico);
-                    if ($pnf) $u->where('pnf', $pnf);
+                    if ($perfilAcademico) {
+                        $u->whereHas('persona.perfil', function ($p) use ($perfilAcademico) {
+                            $p->where('nombre_perfil', $perfilAcademico);
+                        });
+                    }
+
+                    if ($pnf) {
+                        $u->whereHas('persona.personaPnf', function ($pp) use ($pnf) {
+                            $pp->whereHas('pnf', function ($p) use ($pnf) {
+                                $p->where('nombre_pnf', $pnf);
+                            });
+                        });
+                    }
                 });
             });
 
@@ -128,12 +139,22 @@ class Cita extends Model
         return $citas->map(function ($cita) {
             $paciente = $cita->paciente;
             if ($paciente) {
-                $cita->nombres = $paciente->nombres;
-                $cita->apellidos = $paciente->apellidos;
-                $cita->genero = $paciente->genero;
-                $cita->fecha_nacimiento = $paciente->fecha_nacimiento;
-                $cita->perfil_academico = $paciente->perfil_academico;
-                $cita->pnf = $paciente->pnf;
+                $cita->nombres = $paciente->persona->nombre_persona;
+                $cita->apellidos = $paciente->persona->apellido_persona;
+                $cita->genero = $paciente->persona->genero_persona;
+                $cita->fecha_nacimiento = $paciente->persona->fecha_nacimiento_persona;
+                $cita->perfil_academico = $paciente->persona->perfil->nombre_perfil;
+                $cita->pnf = 'No especificado';
+
+                $personaPnf = $cita->paciente->persona->personaPnf;
+
+                if ($personaPnf instanceof \Illuminate\Support\Collection) {
+                    $personaPnf = $personaPnf->first();
+                }
+
+                if ($personaPnf && $personaPnf->pnf) {
+                    $cita->pnf = $personaPnf->pnf->nombre_pnf ?? 'No especificado';
+                }
 
                 try {
                     if (strlen($cita->nombres) > 40) $cita->nombres = Crypt::decryptString($cita->nombres);
@@ -177,16 +198,16 @@ class Cita extends Model
                 'No especificado' => 0,
             ],
             'pnf' => [
-                'Administracion' => 0,
-                'Mecanica' => 0,
-                'Mantenimiento' => 0,
-                'Electricidad' => 0,
-                'Veterinaria' => 0,
-                'Informatica' => 0,
-                'PDA' => 0,
-                'Distribucion_Logistica' => 0,
-                'Agroalimentacion' => 0,
-                'Seguridad_Alimentaria_Nutricional' => 0,
+                'ADMINISTRACION' => 0,
+                'MECANICA' => 0,
+                'MANTENIMIENTO' => 0,
+                'ELECTRICIDAD' => 0,
+                'VETERINARIA' => 0,
+                'INFORMATICA' => 0,
+                'PROC. Y DIST. DE ALIMENTOS' => 0,
+                'DISTRIBUCIÓN LOGÍSTICA' => 0,
+                'AGROALIMENTACION' => 0,
+                'SEGURIDAD ALIMENTARIA' => 0,
                 'No especificado' => 0,
                 'No aplica' => 0,
             ],
@@ -257,7 +278,7 @@ class Cita extends Model
                 $pacientes[$cita->user_id] = true;
                 $resumen['total_pacientes']++;
 
-                $genero = strtolower(trim($cita->genero ?? ''));
+                $genero = strtolower(trim($cita->paciente->persona->genero_persona ?? ''));
                 if (in_array($genero, ['masculino', 'hombre', 'm'])) {
                     $resumen['genero']['masculino']++;
                 } elseif (in_array($genero, ['femenino', 'mujer', 'f'])) {
@@ -266,8 +287,8 @@ class Cita extends Model
                     $resumen['genero']['otro']++;
                 }
 
-                if ($cita->fecha_nacimiento) {
-                    $edad = Carbon::parse($cita->fecha_nacimiento)->age;
+                if ($cita->paciente->persona->fecha_nacimiento_persona) {
+                    $edad = Carbon::parse($cita->paciente->persona->fecha_nacimiento_persona)->age;
                     $edadesList[] = $edad;
 
                     if ($edad <= 17) $resumen['edades']['rangos']['0-17']++;
@@ -277,35 +298,45 @@ class Cita extends Model
                     else $resumen['edades']['rangos']['51+']++;
                 }
 
-                $perfil = $cita->perfil_academico ?? 'No especificado';
+                $perfil = $cita->paciente->persona->perfil->nombre_perfil ?? 'No especificado';
                 if (!in_array($perfil, ['Estudiante', 'Profesor', 'Obrero', 'Administrativo', 'Pre-escolar', 'Otros'])) {
                     $perfil = 'No especificado';
                 }
                 $resumen['perfil_academico'][$perfil]++;
 
-                $pnfVal = $cita->pnf ?? 'No especificado';
+                $pnfVal = 'No especificado';
+                $personaPnf = $cita->paciente->persona->personaPnf;
+
+                if ($personaPnf instanceof \Illuminate\Support\Collection) {
+                    $personaPnf = $personaPnf->first();
+                }
+
+                if ($personaPnf && $personaPnf->pnf) {
+                    $pnfVal = $personaPnf->pnf->nombre_pnf ?? 'No especificado';
+                }
+
                 if ($pnfVal === 'Agroalimentaria') $pnfVal = 'Agroalimentacion';
                 if ($pnfVal === 'Electrica') $pnfVal = 'Electricidad';
 
                 if (!in_array($pnfVal, [
-                    'Administracion',
-                    'Mecanica',
-                    'Mantenimiento',
-                    'Electricidad',
-                    'Veterinaria',
-                    'Informatica',
-                    'PDA',
-                    'Distribucion_Logistica',
-                    'Agroalimentacion',
-                    'Seguridad_Alimentaria_Nutricional'
+                    'ADMINISTRACION',
+                    'MECANICA',
+                    'MANTENIMIENTO',
+                    'ELECTRICIDAD',
+                    'VETERINARIA',
+                    'INFORMATICA',
+                    'PROC. Y DIST. DE ALIMENTOS',
+                    'DISTRIBUCIÓN LOGÍSTICA',
+                    'AGROALIMENTACION',
+                    'SEGURIDAD ALIMENTARIA'
                 ])) {
                     $pnfVal = ($perfil === 'Estudiante') ? 'No especificado' : 'No aplica';
                 }
                 $resumen['pnf'][$pnfVal] = ($resumen['pnf'][$pnfVal] ?? 0) + 1;
 
                 $avanceId = null;
-                if ($cita->notes) {
-                    $notas = is_string($cita->notes) ? json_decode($cita->notes, true) : $cita->notes;
+                if ($cita->notas) {
+                    $notas = is_string($cita->notas) ? json_decode($cita->notas, true) : $cita->notas;
                     if (json_last_error() === JSON_ERROR_NONE && is_array($notas) && isset($notas['avance_estado'])) {
                         $avanceId = $notas['avance_estado'];
                     }
@@ -313,22 +344,22 @@ class Cita extends Model
 
                 $keyAvance = ($avanceId && isset($avancesDb[$avanceId])) ? $avancesDb[$avanceId] : 'No especificado';
                 $resumen['avances'][$keyAvance]++;
-                if (!in_array($cita->paciente_nombre, $resumen['avances_pacientes'][$keyAvance])) {
-                    $resumen['avances_pacientes'][$keyAvance][] = $cita->paciente_nombre;
+                if (!in_array($cita->paciente->persona->nombre_persona, $resumen['avances_pacientes'][$keyAvance])) {
+                    $resumen['avances_pacientes'][$keyAvance][] = $cita->paciente->persona->nombre_persona;
                 }
 
                 $prioridad = ucfirst($cita->prioridad ?? 'No especificado');
                 if (!isset($resumen['prioridades'][$prioridad])) $prioridad = 'No especificado';
                 $resumen['prioridades'][$prioridad]++;
-                if (!in_array($cita->paciente_nombre, $resumen['prioridades_pacientes'][$prioridad])) {
-                    $resumen['prioridades_pacientes'][$prioridad][] = $cita->paciente_nombre;
+                if (!in_array($cita->paciente->persona->nombre_persona, $resumen['prioridades_pacientes'][$prioridad])) {
+                    $resumen['prioridades_pacientes'][$prioridad][] = $cita->paciente->persona->nombre_persona;
                 }
 
                 $estadoAnimoId = $cita->estado_animo_id;
                 $keyAnimo = ($estadoAnimoId && isset($estadosAnimoDb[$estadoAnimoId])) ? $estadosAnimoDb[$estadoAnimoId] : 'No especificado';
                 $resumen['estados_animo'][$keyAnimo]++;
-                if (!in_array($cita->paciente_nombre, $resumen['estados_animo_pacientes'][$keyAnimo])) {
-                    $resumen['estados_animo_pacientes'][$keyAnimo][] = $cita->paciente_nombre;
+                if (!in_array($cita->paciente->persona->nombre_persona, $resumen['estados_animo_pacientes'][$keyAnimo])) {
+                    $resumen['estados_animo_pacientes'][$keyAnimo][] = $cita->paciente->persona->nombre_persona;
                 }
             }
         }
@@ -401,9 +432,13 @@ class Cita extends Model
     public static function notificarUsuario($userId, $notification)
     {
         $user = Usuario::find($userId);
-        if ($user) {
-            $user->notify($notification);
+        if (!$user) return;
+        $notifiable = new \App\Models\salud\NotifiableUser();
+        foreach ((array) $user as $key => $value) {
+            $notifiable->{$key} = $value;
         }
+        $notifiable->name = trim($user->persona->nombre_persona . ' ' . $user->persona->apellido_persona);
+        $notifiable->notify($notification);
     }
 
     public static function obtenerCitasPorPsicologo($psicologoId, $estado = null, $cantidad = 10)
@@ -642,7 +677,7 @@ class Cita extends Model
                 'estado' => 'pendiente',
                 'prioridad' => $prioridad,
                 'motivo' => Crypt::encryptString($validated['motivo']),
-                'bloques_sugeridos' => !empty($validated['bloques_sugeridos']) ? Crypt::encryptString($validated['bloques_sugeridos']) : null,
+                'bloques_sugeridos' => !empty($validated['bloques_sugeridos']) ? $validated['bloques_sugeridos'] : null,
             ]);
 
             $citaModel = self::instanciarParaNotificacion($cita->id);
@@ -1242,7 +1277,7 @@ class Cita extends Model
         try {
             return DB::transaction(function () use ($cita, $prioridad) {
                 $id = is_object($cita) ? $cita->id : $cita;
-                
+
                 // Actualizar directamente en la base de datos para evitar guardar atributos dinámicos como paciente_short_name
                 $updated = self::where('id', $id)->update(['prioridad' => $prioridad]);
 

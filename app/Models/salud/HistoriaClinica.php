@@ -45,7 +45,8 @@ class HistoriaClinica extends Model
 
     public static function obtenerSeccionesPersonalizadas($historiaId)
     {
-        return SeccionPersonalizada::where('historia_clinica_id', $historiaId)
+        return DB::table('historia_secciones_personalizadas')
+            ->where('historia_clinica_id', $historiaId)
             ->orderBy('orden')
             ->get();
     }
@@ -58,54 +59,68 @@ class HistoriaClinica extends Model
     public static function iniciarHistoria($pacienteId, $psicologoId)
     {
         try {
-            return DB::transaction(function () use ($pacienteId, $psicologoId) {
-                $historia = self::firstOrCreate(
-                    ['user_id' => $pacienteId],
-                    ['psicologo_id' => $psicologoId]
-                );
+            DB::beginTransaction();
+            $historia = self::obtenerPorPaciente($pacienteId);
 
-                $seccionesActivas = SeccionPersonalizada::where('historia_clinica_id', $historia->id)
-                    ->where('status', 1)
-                    ->count();
+            if (!$historia) {
+                $id = \Illuminate\Support\Facades\DB::table('historia_clinicas')->insertGetId([
+                    'user_id' => $pacienteId,
+                    'psicologo_id' => $psicologoId,
+                    'created_at' => now(),
+                    'updated_at' => null
+                ]);
+                $historia = self::obtenerPorPaciente($pacienteId);
+            }
 
-                if ($seccionesActivas === 0) {
-                    $plantillaGlobal = DB::table('historia_plantillas_globales')
-                        ->where('psicologo_id', $psicologoId)
-                        ->orderBy('updated_at', 'desc')
-                        ->first();
+            $seccionesActivas = DB::table('historia_secciones_personalizadas')
+                ->where('historia_clinica_id', $historia->id)
+                ->where('status', 1)
+                ->count();
 
-                    if ($plantillaGlobal) {
-                        $secciones = json_decode($plantillaGlobal->secciones, true) ?? [];
-                        $maxOrden = 0;
+            if ($seccionesActivas === 0) {
+                // Obtener la última plantilla global del psicólogo usando Query Builder
+                $plantillaGlobal = DB::table('historia_plantillas_globales')
+                    ->where('psicologo_id', $psicologoId)
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
 
-                        foreach ($secciones as $seccionData) {
-                            $maxOrden++;
-                            $seccion = SeccionPersonalizada::create([
-                                'historia_clinica_id' => $historia->id,
-                                'titulo' => $seccionData['titulo'],
-                                'descripcion_general' => $seccionData['descripcion_general'] ?? null,
-                                'orden' => $maxOrden,
-                                'status' => 1,
-                            ]);
+                if ($plantillaGlobal) {
+                    $secciones = json_decode($plantillaGlobal->secciones, true) ?? [];
+                    $maxOrden = 0;
 
-                            $segmentos = $seccionData['segmentos'] ?? [];
-                            foreach ($segmentos as $indexSeg => $segmentoTitulo) {
-                                if (!empty(trim($segmentoTitulo))) {
-                                    SegmentoPersonalizado::create([
-                                        'seccion_id' => $seccion->id,
-                                        'titulo' => $segmentoTitulo,
-                                        'contenido' => null,
-                                        'orden' => $indexSeg + 1,
-                                    ]);
-                                }
+                    foreach ($secciones as $seccionData) {
+                        $maxOrden++;
+                        $seccionId = DB::table('historia_secciones_personalizadas')->insertGetId([
+                            'historia_clinica_id' => $historia->id,
+                            'titulo' => $seccionData['titulo'],
+                            'descripcion_general' => $seccionData['descripcion_general'] ?? null,
+                            'orden' => $maxOrden,
+                            'status' => 1,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+
+                        $segmentos = $seccionData['segmentos'] ?? [];
+                        foreach ($segmentos as $indexSeg => $segmentoTitulo) {
+                            if (!empty(trim($segmentoTitulo))) {
+                                DB::table('historia_segmentos_personalizados')->insert([
+                                    'seccion_id' => $seccionId,
+                                    'titulo' => $segmentoTitulo,
+                                    'contenido' => null,
+                                    'orden' => $indexSeg + 1,
+                                    'created_at' => now(),
+                                    'updated_at' => now(),
+                                ]);
                             }
                         }
                     }
                 }
+            }
 
-                return $historia;
-            });
-        } catch (Exception $e) {
+            DB::commit();
+            return $historia;
+        } catch (\Exception $e) {
+            DB::rollBack();
             throw $e;
         }
     }
@@ -272,16 +287,18 @@ class HistoriaClinica extends Model
 
             $diagnosticoText = 'Sin diagnóstico';
             if ($h) {
-                $diagSegment = SeccionPersonalizada::where('historia_clinica_id', $h->id)
-                    ->where('titulo', 'Diagnóstico')
-                    ->whereHas('segmentos', function ($q) {
-                        $q->where('titulo', 'Diagnóstico Inicial (Resumen)');
-                    })
+                $diagSegment = DB::table('historia_secciones_personalizadas')
+                    ->join('historia_segmentos_personalizados', 'historia_secciones_personalizadas.id', '=', 'historia_segmentos_personalizados.seccion_id')
+                    ->where('historia_secciones_personalizadas.historia_clinica_id', $h->id)
+                    ->where('historia_secciones_personalizadas.titulo', 'Diagnóstico')
+                    ->where('historia_segmentos_personalizados.titulo', 'Diagnóstico Inicial (Resumen)')
                     ->first();
 
                 if ($diagSegment) {
-                    $segmento = SegmentoPersonalizado::where('seccion_id', $diagSegment->id)
-                        ->where('titulo', 'Diagnóstico Inicial (Resumen)')
+                    $segmento = DB::table('historia_secciones_personalizadas')
+                        ->join('historia_segmentos_personalizados', 'historia_secciones_personalizadas.id', '=', 'historia_segmentos_personalizados.seccion_id')
+                        ->where('historia_segmentos_personalizados.id', $diagSegment->id)
+                        ->select('historia_segmentos_personalizados.*')
                         ->first();
 
                     if ($segmento && !empty($segmento->contenido)) {
@@ -313,12 +330,9 @@ class HistoriaClinica extends Model
                 $existe = null;
                 if (str_starts_with($contexto, 'seg_')) {
                     $segmentoId = str_replace('seg_', '', $contexto);
-                    $segmento = SegmentoPersonalizado::find($segmentoId);
+                    $segmento = DB::table('historia_segmentos_personalizados')->where('id', $segmentoId)->first();
                     if ($segmento) {
-                        $segmentosSeccion = SegmentoPersonalizado::where('seccion_id', $segmento->seccion_id)
-                            ->pluck('id')
-                            ->map(fn($id) => 'seg_' . $id)
-                            ->toArray();
+                        $segmentosSeccion = DB::table('historia_segmentos_personalizados')->where('seccion_id', $segmento->seccion_id)->pluck('id')->map(fn($id) => 'seg_' . $id)->toArray();
 
                         $existe = DB::table('historia_enfermedad')
                             ->where('historia_clinica_id', $historiaId)
@@ -342,7 +356,7 @@ class HistoriaClinica extends Model
                         'created_at' => now(),
                     ]);
                     
-                    $enfermedad = Enfermedad::find($enfermedadId);
+                    $enfermedad = DB::table('enfermedades')->where('id', $enfermedadId)->first();
                     return [
                         'success' => true,
                         'link_id' => $id,
@@ -410,13 +424,15 @@ class HistoriaClinica extends Model
 
     public static function obtenerSeccionesConSegmentos($historiaId)
     {
-        $secciones = SeccionPersonalizada::where('historia_clinica_id', $historiaId)
+        $secciones = DB::table('historia_secciones_personalizadas')
+            ->where('historia_clinica_id', $historiaId)
             ->where('status', 1)
             ->orderBy('orden')
             ->get();
 
         foreach ($secciones as $seccion) {
-            $seccion->segmentos = SegmentoPersonalizado::where('seccion_id', $seccion->id)
+            $seccion->segmentos = DB::table('historia_segmentos_personalizados')
+                ->where('seccion_id', $seccion->id)
                 ->get()
                 ->map(function ($segmento) {
                     if (!empty($segmento->contenido)) {
