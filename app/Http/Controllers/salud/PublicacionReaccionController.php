@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\salud;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Usuario;
 
 class PublicacionReaccionController extends Controller
 {
-    public function toggle(Request $request, $publicacionId)
+    public function toggle($publicacionId)
     {
-        $userId = auth()->id();
-        
+        /** @var Usuario $user */
+        $userId = Auth::user()->id_usuario ?? Auth::id();
+
         $publicacion = DB::table('publicaciones')->where('id', $publicacionId)->first();
         if (!$publicacion) {
             return response()->json(['error' => 'Publicación no encontrada'], 404);
@@ -59,8 +61,8 @@ class PublicacionReaccionController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->first();
                 
-            $ultimoUsuario = DB::table('users')->where('id', $ultimaReaccion->paciente_id)->first();
-            $nombreUltimo = $ultimoUsuario->nombres;
+            $ultimoUsuario = Usuario::with('persona')->where('id_usuario', $ultimaReaccion->paciente_id)->first();
+            $nombreUltimo = ($ultimoUsuario && $ultimoUsuario->persona) ? $ultimoUsuario->persona->nombre_persona : 'Un usuario';
 
             if ($totalLikes == 1) {
                 $mensaje = "{$nombreUltimo} le dio me gusta a tu aviso.";
@@ -77,7 +79,7 @@ class PublicacionReaccionController extends Controller
                 'data' => json_encode([
                     'type_id' => 'reaccion_aviso',
                     'body' => $mensaje,
-                    'url' => route('publicaciones.index'),
+                    'url' => route('admin.psicologia.maestros.publicaciones.index'),
                     'publicacion_id' => $publicacionId
                 ]),
                 'read_at' => null,

@@ -2,10 +2,12 @@
 
 namespace App\Services\Salud;
 
+use App\Models\salud\Cita;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\salud\EstadoAnimoDiario;
+use App\Models\salud\GrupoHorario;
 
 class PsicologiaHomeService
 {
@@ -38,7 +40,7 @@ class PsicologiaHomeService
             if ($fechaHoraP->isPast()) {
                 $proximaCita = null;
             } else {
-                $proximaCita->psicologo->persona->nombre_persona = $this->formatearNombre($proximaCita->psi_nombres, $proximaCita->psi_apellidos);
+                $proximaCita->psicologo_nombre = $this->formatearNombre($proximaCita->psi_nombres, $proximaCita->psi_apellidos);
             }
         }
 
@@ -52,7 +54,7 @@ class PsicologiaHomeService
             ->first();
 
         if ($citaPendiente) {
-            $citaPendiente->psicologo->persona->nombre_persona = $this->formatearNombre($citaPendiente->psi_nombres, $citaPendiente->psi_apellidos);
+            $citaPendiente->psicologo_nombre = $this->formatearNombre($citaPendiente->psi_nombres, $citaPendiente->psi_apellidos);
         }
 
         $publicaciones = DB::table('publicaciones')
@@ -95,7 +97,28 @@ class PsicologiaHomeService
             ];
         }
 
+        $diaActual = Carbon::now()->dayOfWeek;
+        $grupoActivo = GrupoHorario::obtenerActivoPorPsicologo(Auth::id());
+
+        $horariosHoy = collect();
+        if ($grupoActivo) {
+            $horariosHoy = GrupoHorario::obtenerHorariosHoy($grupoActivo->id, $diaActual);
+        }
+
+        $confirmadasHoy = Cita::obtenerCitasConfirmadasHoyPorPsicologo(Auth::id(), 3);
+        $ultimasConfirmadas = Cita::obtenerUltimasCitasConfirmadasPsicologo(Auth::id(), 5);
+        $estadisticasCitas = Cita::obtenerEstadisticasCitasPsicologo(Auth::id());
+        $tendenciaPacientes = Cita::obtenerTendenciaSemanalCitasPsicologo(Auth::id(), 4);
+        $citasPendientesAntiguas = Cita::obtenerCitasPendientesAntiguasPsicologo(Auth::id(), 5);
+
         return compact(
+            'horariosHoy', 
+            'confirmadasHoy', 
+            'ultimasConfirmadas', 
+            'estadisticasCitas', 
+            'tendenciaPacientes', 
+            'citasPendientesAntiguas',
+
             'estadoAnimoHoy',
             'saludo',
             'proximaCita',

@@ -11,8 +11,6 @@
 
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <!-- Cabecera de Página -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
@@ -32,14 +30,10 @@
                     </a>
                 </div>
             </div>
-
-            <!-- Feed de Publicaciones -->
             <div class="space-y-6">
                 @forelse($publicaciones as $pub)
                     <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                         class="rounded-2xl border shadow-sm overflow-hidden transition-all">
-
-                        <!-- Encabezado de la Publicación -->
                         <div
                             class="p-4 sm:p-5 flex items-center justify-between border-b border-gray-100 dark:border-gray-800/60">
                             <div class="flex items-center gap-3">
@@ -73,7 +67,6 @@
                                 </div>
                             </div>
 
-                            <!-- Menú de Opciones -->
                             <div class="relative" x-data="{ open: false }" @click.away="open = false">
                                 <button @click="open = !open"
                                     class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
@@ -116,7 +109,6 @@
                             </div>
                         </div>
 
-                        <!-- Cuerpo de la Publicación -->
                         <div class="p-4 sm:p-6">
                             @if ($pub->tipo === 'color')
                                 <div
@@ -159,7 +151,6 @@
                         </div>
                     </div>
                 @empty
-                    <!-- Estado Vacío -->
                     <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                         class="rounded-2xl border-2 border-dashed p-12 text-center shadow-sm">
                         <div
@@ -182,7 +173,6 @@
             </div>
         </div>
 
-        <!-- Modal para previsualización de imágenes -->
         <div x-data="{ open: false, src: '' }" @open-image-modal.window="src = $event.detail; open = true" x-show="open"
             style="display: none;"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"

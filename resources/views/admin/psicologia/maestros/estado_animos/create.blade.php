@@ -31,12 +31,9 @@
 
             <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
                 class="rounded-2xl border shadow-sm overflow-hidden p-6 sm:p-8">
-
                 <form action="{{ route('admin.psicologia.maestros.estado_animos.store') }}" method="POST">
                     @csrf
-
                     <div class="space-y-6">
-
                         <div>
                             <label for="nombre"
                                 class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
@@ -52,7 +49,6 @@
                                 </p>
                             @enderror
                         </div>
-
                         <div>
                             <label for="valor"
                                 class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
@@ -83,9 +79,7 @@
                                     alto (Eufórico). Solo se muestran valores disponibles.</span>
                             </p>
                         </div>
-
                     </div>
-
                     <div
                         class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-end gap-3">
                         <a href="{{ route('admin.psicologia.maestros.estado_animos.index') }}"
@@ -99,7 +93,6 @@
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>

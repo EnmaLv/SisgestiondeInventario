@@ -12,6 +12,7 @@ use App\Http\Controllers\salud\EstadoAnimoDiarioController;
 use App\Http\Controllers\salud\GrupoHorarioController;
 use App\Http\Controllers\salud\HistoriaController;
 use App\Http\Controllers\salud\NotaEvolucionCampoController;
+use App\Http\Controllers\salud\NotificationController;
 use App\Http\Controllers\salud\PlantillaGlobalController;
 use App\Http\Controllers\salud\PlantillaSeccionController;
 use App\Http\Controllers\salud\PrioridadController;
@@ -98,7 +99,7 @@ Route::put('/psicologia/maestros/prioridades/{prioridad}', [PrioridadController:
 Route::delete('/psicologia/maestros/prioridades/{prioridad}', [PrioridadController::class, 'destroy'])->name('admin.psicologia.maestros.prioridades.destroy');
 
 
-Route::get('/psicologia/maestros/mural', [PublicacionController::class, 'mural'])->name('admin.psicologia.maestros.mural');
+Route::get('/psicologia/maestros/publicaciones/mural', [PublicacionController::class, 'mural'])->name('admin.psicologia.maestros.publicaciones.mural');
 Route::get('/psicologia/maestros/publicaciones', [PublicacionController::class, 'index'])->name('admin.psicologia.maestros.publicaciones.index');
 Route::get('/psicologia/maestros/publicaciones/create', [PublicacionController::class, 'create'])->name('admin.psicologia.maestros.publicaciones.create');
 Route::post('/psicologia/maestros/publicaciones', [PublicacionController::class, 'store'])->name('admin.psicologia.maestros.publicaciones.store');
@@ -173,3 +174,7 @@ Route::patch('/psicologia/maestros/historias/secciones/{seccion}/reorder', [Hist
 Route::post('/psicologia/maestros/historias/{paciente}/evolucion', [HistoriaController::class, 'storeEvolucion'])->name('admin.psicologia.maestros.historias.evolucion.store');
 Route::post('/psicologia/maestros/historias/{paciente}/evolucion-pdf', [HistoriaController::class, 'evolucionPdf'])->name('admin.psicologia.maestros.historias.evolucion.pdf');
 Route::post('/psicologia/maestros/historias/{paciente}/evolucion-word', [HistoriaController::class, 'evolucionWord'])->name('admin.psicologia.maestros.historias.evolucion.word');
+
+
+Route::get('/notificaciones/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+Route::post('/notificaciones/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');

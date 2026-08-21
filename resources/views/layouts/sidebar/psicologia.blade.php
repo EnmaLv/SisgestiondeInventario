@@ -56,7 +56,7 @@
 @if (auth()->user()->tieneRol('paciente'))
     @canMenu($muralKeys)
     @canMenu('mural')
-    <a href="{{ url('admin/psicologia/maestros/mural') }}"
+    <a href="{{ url('admin/psicologia/maestros/publicaciones/mural') }}"
         class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
         :class="sidebarOpen ? 'px-3' : 'justify-center px-0'" title="Mural de Avisos">
         <i class="fas fa-newspaper text-base w-5 text-center flex-shrink-0 text-white"></i>
@@ -190,6 +190,7 @@
 </div>
 @endcanMenu
 
+@if (!auth()->user()->tieneRol('paciente'))
 @canMenu($publicacionesKeys)
 <div x-data="{ open: {{ request()->routeIs('publicaciones.*') ? 'true' : 'false' }} }" class="w-full space-y-1">
     <button @click="open = !open"
@@ -213,4 +214,5 @@
         </a>
     </div>
 </div>
+@endcanMenu
 @endcanMenu

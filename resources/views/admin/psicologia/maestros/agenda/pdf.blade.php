@@ -91,7 +91,7 @@
             <div class="header-title">
                 @if($loop->first)
                     <h1>{{ count($semanasInfo) > 1 ? 'AGENDA DEL MES' : 'AGENDA SEMANAL' }}</h1>
-                    <p>{{ mb_strtoupper($psicologo->name ?? 'PSICÓLOGO NO ASIGNADO') }}</p>
+                    <p>{{ mb_strtoupper($psicologo->persona->nombre_persona ?? 'PSICÓLOGO NO ASIGNADO') }}</p>
                 @endif
                 <p>SEMANA DEL {{ $currentDate->copy()->startOfWeek(\Carbon\Carbon::MONDAY)->format('d/m/Y') }} AL {{ $currentDate->copy()->endOfWeek(\Carbon\Carbon::FRIDAY)->format('d/m/Y') }}</p>
             </div>
@@ -187,17 +187,14 @@
                                         foreach($citasCalendario as $cita) {
                                             if (!$cita->fecha->isSameDay($fechaObj)) continue;
                                             
-                                            // Asignación por bloque si existe
                                             if (isset($cita->bloque) && $cita->bloque && strpos($cita->bloque, $blockStartStr) !== false) {
                                                 $matchedCitas[] = $cita;
                                                 continue;
                                             }
                                             
-                                            // Fallback por hora de inicio
                                             if (isset($cita->hora) && $cita->hora) {
                                                 $cStart = \Carbon\Carbon::parse($cita->hora);
                                                 if ($cStart->gte($blockStart) && $cStart->lt($blockEnd)) {
-                                                    // Evitar duplicados si ya fue asignado por bloque
                                                     if (!in_array($cita, $matchedCitas, true)) {
                                                         $matchedCitas[] = $cita;
                                                     }
@@ -214,7 +211,7 @@
                                                 echo '<div class="cita-block" style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 4px; border-radius: 6px; text-align: center; margin-bottom: 4px;">';
                                                 echo '<div style="color: #64748b; font-size: 7px; margin-bottom: 2px;">' . $mcStart->format('g:i A') . '</div>';
                                                 echo '<div class="cita-paciente" style="color: #334155; font-weight: bold; font-size: 8px; display: inline-block;">';
-                                                $nombreCorto = $mcita->paciente_short_name ?? $mcita->paciente_nombre ?? 'Paciente';
+                                                $nombreCorto = $mcita->paciente->persona->nombre_persona ?? $mcita->paciente->persona->nombre_persona ?? 'Paciente';
                                                 echo htmlspecialchars($nombreCorto) . '</div>';
                                                 echo '</div>';
                                             }

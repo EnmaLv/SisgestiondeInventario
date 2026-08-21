@@ -940,7 +940,7 @@ class Cita extends Model
                 }
 
                 $user = Usuario::find($userId);
-                if (!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario) {
+                if (!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario) {
                     return [false, 'Error: Usuario no autorizado para esta acción.'];
                 }
 
@@ -1646,7 +1646,7 @@ class Cita extends Model
             ->take($limit)
             ->get()
             ->map(function ($cita) {
-                $cita->paciente_nombre = $cita->paciente ? trim("{$cita->paciente->nombres} {$cita->paciente->apellidos}") : '';
+                $cita->paciente_nombre = $cita->paciente ? trim("{$cita->paciente->persona->nombre_persona} {$cita->paciente->persona->apellido_persona}") : '';
                 return $cita;
             });
     }
@@ -1871,9 +1871,9 @@ class Cita extends Model
             ->take($limit)
             ->get()
             ->map(function ($cita) {
-                $nombres = explode(' ', trim($cita->paciente->nombres ?? ''));
-                $apellidos = explode(' ', trim($cita->paciente->apellidos ?? ''));
-                $cita->paciente_nombre = trim("{$cita->paciente->nombres} {$cita->paciente->apellidos}");
+                $nombres = explode(' ', trim($cita->paciente->persona->nombre_persona ?? ''));
+                $apellidos = explode(' ', trim($cita->paciente->persona->apellido_persona ?? ''));
+                $cita->paciente_nombre = trim("{$cita->paciente->persona->nombre_persona} {$cita->paciente->persona->apellido_persona}");
                 $cita->paciente_nombre_corto = ($nombres[0] ?? '') . ' ' . ($apellidos[0] ?? '');
                 return $cita;
             });

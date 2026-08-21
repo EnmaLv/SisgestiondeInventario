@@ -87,7 +87,7 @@ class PublicacionController extends Controller
                 'data' => json_encode([
                     'type_id' => 'nuevo_aviso',
                     'body' => $mensaje,
-                    'url' => route('admin.psicologia.maestros.mural')
+                    'url' => route('admin.psicologia.maestros.publicaciones.mural')
                 ]),
                 'read_at' => null,
                 'created_at' => now(),

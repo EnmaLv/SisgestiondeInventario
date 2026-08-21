@@ -870,7 +870,7 @@ class CitaController extends Controller
 
         $citas->getCollection()->transform(fn($c) => [
             'id' => $c->id,
-            'psicologo' => $c->psicologo_nombre ?? 'Sin asignar',
+            'psicologo' => $c->psicologo->persona->nombre_persona ?? 'Sin asignar',
             'fecha' => $c->fecha ? Carbon::parse($c->fecha)->format('d/m/Y') : 'S/F',
             'fecha_formateada' => $c->fecha ? Carbon::parse($c->fecha)->translatedFormat('l d \d\e F, Y') : 'S/F',
             'hora' => $c->hora ? Carbon::parse($c->hora)->format('g:i A') : 'S/H',
