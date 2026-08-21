@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\salud;
 
-use App\Models\salud\CategoriaMedicamento;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CategoriaMedicamentoController extends Controller
 {
-
     private const TIPO_PRODUCTO_ID = 2;
 
     public function index(Request $request)
@@ -35,16 +34,28 @@ class CategoriaMedicamentoController extends Controller
             ],
             'descripcion' => 'nullable|string',
         ], [
-            'nombre.unique' => 'Ya existe una categoria con este nombre',
+            'nombre.unique' => 'Ya existe una categoría con este nombre',
         ]);
 
-        Categoria::crearCategoria(
-            $validated,
-            self::TIPO_PRODUCTO_ID
-        );
+        DB::beginTransaction();
+        try {
+            Categoria::crearCategoria(
+                $validated,
+                self::TIPO_PRODUCTO_ID
+            );
 
-        return redirect()->to($request->input('from', route('admin.salud.maestros.categorias.index')))
-            ->with('exito', 'Categoría registrada correctamente.');
+            DB::commit();
+
+            return redirect()->to($request->input('from', route('admin.salud.maestros.categorias.index')))
+                ->with('success', 'Categoría registrada correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al crear categoría', ['error' => $e->getMessage()]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al crear la categoría: ' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, $id)
@@ -54,35 +65,55 @@ class CategoriaMedicamentoController extends Controller
             'descripcion' => 'nullable|string|max:255',
         ]);
 
-        Categoria::actualizarCategoria($id, $request->only(['nombre', 'descripcion']));
+        DB::beginTransaction();
+        try {
+            Categoria::actualizarCategoria($id, $request->only(['nombre', 'descripcion']));
 
-        return redirect()->to($request->input('from', route('admin.salud.maestros.categorias.index')))
-            ->with('exito', 'Categoría actualizada correctamente.');
+            DB::commit();
+
+            return redirect()->to($request->input('from', route('admin.salud.maestros.categorias.index')))
+                ->with('success', 'Categoría actualizada correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar categoría', ['error' => $e->getMessage()]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar la categoría: ' . $e->getMessage());
+        }
     }
-
-
 
     public function destroy($id)
     {
-        if (Categoria::tieneProductos($id)) {
-            $cantidad = Categoria::contarProductos($id);
+        try {
+            // Lógica para inactivar categoría
+            $categoria = Categoria::findOrFail($id);
+            $categoria->update(['activo' => 0]);
 
-            return redirect()
-                ->route('admin.salud.maestros.categorias.index')
-                ->with('error', "No se puede eliminar la categoría porque tiene {$cantidad} producto(s) asociado(s).")
-                ->with('icono', 'error');
+            return redirect()->route('admin.salud.maestros.categorias.index')
+                ->with('success', 'Categoría inactivada correctamente.');
+        } catch (\Exception $e) {
+            Log::error('Error al inactivar categoría', ['error' => $e->getMessage()]);
+
+            return redirect()->back()
+                ->with('error', 'Error al inactivar la categoría.');
         }
-
-        Categoria::eliminarCategoria($id);
-
-        return redirect()
-            ->route('admin.salud.maestros.categorias.index')
-            ->with('success', 'Categoría eliminada exitosamente.');
     }
 
     public function activar($id)
     {
-        Categoria::activarCategoria($id);
-        return redirect()->route('admin.salud.maestros.categorias.index')->with('success', 'Categoria activada exitosamente.');
+        try {
+            // Lógica para activar categoría
+            $categoria = Categoria::findOrFail($id);
+            $categoria->update(['activo' => 1]);
+
+            return redirect()->route('admin.salud.maestros.categorias.index')
+                ->with('success', 'Categoría activada correctamente.');
+        } catch (\Exception $e) {
+            Log::error('Error al activar categoría', ['error' => $e->getMessage()]);
+
+            return redirect()->back()
+                ->with('error', 'Error al activar la categoría.');
+        }
     }
 }

@@ -237,7 +237,7 @@ class MedicamentoController extends Controller
 
         return redirect()
             ->route('admin.salud.maestros.medicamentos.index')
-            ->with('success', 'Medicamento inactivado exitosamente.');
+            ->with('success', 'Medicamento inactivado exitosamente.'); 
     }
 
 

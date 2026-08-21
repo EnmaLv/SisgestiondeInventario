@@ -30,13 +30,13 @@ class AppServiceProvider extends ServiceProvider
             // CAMBIO AQUÍ: Se reemplaza 'psicologia' por 'general' en el fallback de la sesión
             $tipoVal = $data['tipo'] ?? request('tipo') ?? session('modulo_activo', 'general');
 
-            $esPsicologia = in_array(strtolower($categoriaVal), ['mental', 'psicologia', 'psicología'])
-                || in_array(strtolower($tipoVal), ['mental', 'psicologia', 'psicología']);
+            $esPsicologia = in_array(strtolower($categoriaVal), ['salud', 'psicologia', 'psicología'])
+                || in_array(strtolower($tipoVal), ['salud', 'psicologia', 'psicología']);
 
             $themeColor = $esPsicologia ? 'indigo' : 'blue';
 
             $categoriaTexto = match ($categoriaVal) {
-                'mental' => 'Salud Mental / Psiquiátrica',
+                'salud' => 'Salud Mental / Psiquiátrica',
                 'biopsicosocial' => 'Biopsicosocial',
                 default => 'Salud General / Médica',
             };
