@@ -97,16 +97,16 @@ return new class extends Migration
             );
 
             $estudianteData = [
-                'descripcion' => 'Rol por defecto Estudiante',
-                'menu_permissions' => json_encode(['citas', 'mural']),
+                'descripcion' => 'Rol por defecto paciente',
+                'menu_permissions' => json_encode(['citas', 'mural', 'estado_animo_diario']),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
             if ($hasSlug) {
-                $estudianteData['slug'] = 'estudiante';
+                $estudianteData['slug'] = 'paciente';
             }
             DB::table('rol')->updateOrInsert(
-                ['nombre' => 'Estudiante'],
+                ['nombre' => 'Paciente'],
                 $estudianteData
             );
         }
@@ -121,7 +121,7 @@ return new class extends Migration
             DB::table('rol')->where('nombre', 'Secretaria')->delete();
             DB::table('rol')->where('nombre', 'Secretaria de Salud')->delete();
             DB::table('rol')->where('nombre', 'Administrador de Beca')->delete();
-            DB::table('rol')->where('nombre', 'Estudiante')->delete();
+            DB::table('rol')->where('nombre', 'Paciente')->delete();
         }
     }
 };
