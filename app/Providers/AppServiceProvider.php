@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
             $themeColor = $esPsicologia ? 'indigo' : 'blue';
 
             $categoriaTexto = match ($categoriaVal) {
-                'mental' => 'Salud Mental / Psiquiátrica',
+                'salud' => 'Salud Mental / Psiquiátrica',
                 'biopsicosocial' => 'Biopsicosocial',
                 default => 'Salud General / Médica',
             };
