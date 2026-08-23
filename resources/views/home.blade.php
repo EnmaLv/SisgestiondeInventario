@@ -108,7 +108,6 @@
         @endswitch
     </div>
 
-    {{-- CSS y JS específicos para esta vista --}}
     @push('css')
         <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     @endpush

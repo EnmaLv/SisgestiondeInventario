@@ -8,6 +8,7 @@ services:
     ports:
       - "8000:8000"
       - "5731:5731"
+      - "8080:8080"
     volumes:
       - .:/var/www
     depends_on:

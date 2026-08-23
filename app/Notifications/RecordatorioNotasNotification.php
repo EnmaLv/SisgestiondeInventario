@@ -25,13 +25,13 @@ class RecordatorioNotasNotification extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $pacienteName = $this->cita->paciente->name ?? 'Paciente';
+        $pacienteName = $this->cita->paciente->persona->nombre_persona ?? 'Paciente';
         return [
             'type_id' => 'recordatorio_notas',
             'cita_id' => $this->cita->id,
             'paciente_name' => $pacienteName,
             'body' => 'Recordatorio: Tienes pendiente registrar las notas de la sesión con ' . $pacienteName . '.',
-            'url' => route('historias.show', $this->cita->user_id),
+            'url' => route('admin.psicologia.maestros.historias.show', $this->cita->user_id),
         ];
     }
 }

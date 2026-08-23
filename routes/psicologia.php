@@ -87,7 +87,7 @@ Route::get('/psicologia/maestros/campos_evolucion', [NotaEvolucionCampoControlle
 Route::get('/psicologia/maestros/campos_evolucion/create', [NotaEvolucionCampoController::class, 'create'])->name('admin.psicologia.maestros.campos_evolucion.create');
 Route::post('/psicologia/maestros/campos_evolucion/store', [NotaEvolucionCampoController::class, 'store'])->name('admin.psicologia.maestros.campos_evolucion.store');
 Route::get('/psicologia/maestros/campos_evolucion/{campo}/edit', [NotaEvolucionCampoController::class, 'edit'])->name('admin.psicologia.maestros.campos_evolucion.edit');
-Route::put('/psicologia/maestros/campos_evolucion/{campo}', [NotaEvolucionCampoController::class, 'update'])->name('admin.psicologia.maestros.campos_evolucion.update');
+Route::patch('/psicologia/maestros/campos_evolucion/{campo}', [NotaEvolucionCampoController::class, 'update'])->name('admin.psicologia.maestros.campos_evolucion.update');
 Route::delete('/psicologia/maestros/campos_evolucion/{campo}', [NotaEvolucionCampoController::class, 'destroy'])->name('admin.psicologia.maestros.campos_evolucion.destroy');
 
 
@@ -107,14 +107,6 @@ Route::get('/psicologia/maestros/publicaciones/{id}/edit', [PublicacionControlle
 Route::put('/psicologia/maestros/publicaciones/{id}', [PublicacionController::class, 'update'])->name('admin.psicologia.maestros.publicaciones.update');
 Route::delete('/psicologia/maestros/publicaciones/{id}', [PublicacionController::class, 'destroy'])->name('admin.psicologia.maestros.publicaciones.destroy');
 Route::post('/psicologia/maestros/publicaciones/{id}/reaccionar', [PublicacionReaccionController::class, 'toggle'])->name('admin.psicologia.maestros.publicaciones.reaccionar');
-
-
-Route::get('/psicologia/maestros/mensajes', [ChatController::class, 'index'])->name('admin.psicologia.maestros.chat.index');
-Route::get('/psicologia/maestros/mensajes/contactos/lista', [ChatController::class, 'fetchContacts'])->name('admin.psicologia.maestros.chat.contacts');
-Route::post('/psicologia/maestros/mensajes/ping', [ChatController::class, 'ping'])->name('admin.psicologia.maestros.chat.ping');
-Route::get('/psicologia/maestros/mensajes/{user}', [ChatController::class, 'fetchMessages'])->name('admin.psicologia.maestros.chat.fetch');
-Route::post('/psicologia/maestros/mensajes/{user}', [ChatController::class, 'sendMessage'])->name('admin.psicologia.maestros.chat.store');
-
 
 Route::get('/psicologia/maestros/citas', [CitaController::class, 'index'])->name('admin.psicologia.maestros.citas.index');
 Route::get('/psicologia/maestros/citas/create', [CitaController::class, 'create'])->name('admin.psicologia.maestros.citas.create');

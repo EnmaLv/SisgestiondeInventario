@@ -35,7 +35,6 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
         ]; 
     }
 
-    //Modifica el inicio de la tabla
     public function startCell(): string
     {
         return 'A1';
@@ -54,9 +53,6 @@ class RegistroDiarioExport implements FromCollection, WithHeadings, ShouldAutoSi
         ];
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
     public function collection()
     {
         return Registro_diario::showData($this->filtro, true);

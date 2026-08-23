@@ -49,21 +49,17 @@ class WordExport
         $footer = $section->addFooter();
         $footer->addImage(public_path('img/pie.png'), ['width' => 450, 'alignment' => Jc::CENTER]);
 
-        // Add Expediente General Part
         self::fillExpedienteGeneralWordSection($section, $paciente, $seccionesPersonalizadas, $enfermedadesVinculadas);
         $section->addPageBreak();
 
-        // Encabezado Evolucion
         $headerStyle = ['bold' => true, 'size' => 18, 'color' => '111827']; 
         $subHeaderStyle = ['bold' => true, 'size' => 10, 'color' => '4B5563']; 
         $section->addText('NOTAS DE EVOLUCIÓN', $headerStyle, ['alignment' => 'center']);
         $section->addText('Psico-Guía UPTP | Dr. ' . mb_strtoupper($psicologoName) . ' | Psicólogo', $subHeaderStyle, ['alignment' => 'center']);
         $section->addText('', [], []);
         
-        // Cronología
         self::fillCronologiaSection($section, $citasSeleccionadas);
 
-        // Firma
         $section->addText('_______________________________', [], ['alignment' => 'center']);
         $section->addText('FIRMA Y SELLO DEL PSICÓLOGO', ['bold' => true, 'size' => 10], ['alignment' => 'center']);
         $section->addText('Fecha de Emisión: ' . date('d/m/Y'), ['size' => 9, 'color' => '6B7280'], ['alignment' => 'center']);
@@ -93,23 +89,17 @@ class WordExport
         $header->addImage(public_path('img/encabezado.png'), ['width' => 450, 'alignment' => Jc::CENTER]);
         $footer = $section->addFooter();
         $footer->addImage(public_path('img/pie.png'), ['width' => 450, 'alignment' => Jc::CENTER]);
-
-        // Encabezado
-        $headerStyle = ['bold' => true, 'size' => 18, 'color' => '111827']; // Almost black
-        $subHeaderStyle = ['bold' => true, 'size' => 10, 'color' => '4B5563']; // Gray 600
+        $headerStyle = ['bold' => true, 'size' => 18, 'color' => '111827']; 
+        $subHeaderStyle = ['bold' => true, 'size' => 10, 'color' => '4B5563'];
         $section->addText('INFORME CLÍNICO DE EVOLUCIÓN', $headerStyle, ['alignment' => 'center']);
         $section->addText('Psico-Guía UPTP | Dr. ' . mb_strtoupper($psicologoName) . ' | Psicólogo', $subHeaderStyle, ['alignment' => 'center']);
         $section->addText('', [], []);
-
-        // Info paciente
-        $titleStyle = ['bold' => true, 'size' => 13, 'color' => '111827']; // Almost black
+        $titleStyle = ['bold' => true, 'size' => 13, 'color' => '111827'];
         $section->addText(mb_strtoupper($paciente->name), $titleStyle);
         $section->addText('Sesiones: ' . $stats['realizadas'] . '  |  N° Expediente: ' . $historia->id, ['bold' => true, 'size' => 10, 'color' => '374151']); // Gray 700
         $section->addText('', [], []);
 
 
-
-        // Cronología
         $section->addText('NOTAS DE SESIÓN - CRONOLOGÍA', ['bold' => true, 'size' => 12, 'color' => '111827']); // Almost black
 
         self::fillCronologiaSection($section, $citasSeleccionadas);
@@ -117,7 +107,6 @@ class WordExport
         $section->addText('', [], []);
         $section->addText('', [], []);
 
-        // Firma
         $section->addText('_______________________________', [], ['alignment' => 'center']);
         $section->addText('FIRMA Y SELLO DEL PSICÓLOGO', ['bold' => true, 'size' => 10], ['alignment' => 'center']);
         $section->addText('Fecha de Emisión: ' . date('d/m/Y'), ['size' => 9, 'color' => '6B7280'], ['alignment' => 'center']);

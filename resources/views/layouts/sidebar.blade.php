@@ -85,8 +85,10 @@
                 </a>
             </div>
         @endif
+        {{-- hay que hacer que el chat se muestre siempre para los usuarios de bienestar 
+        estudiantil y no para los estudiantes y otras personas a menos que uno de los usuarios 
+        de bienstar estudiantil les haya escrito previantente --}}
 
-        @if (auth()->user()->tieneRol(['administrador', 'psicologo']))
             <div class="mt-auto px-2 pt-3 border-t border-gray-100 dark:border-gray-700">
                 <button type="button" @if (!request()->routeIs('chat.*')) @click="$dispatch('toggle-chat')" @endif
                     class="group flex items-center gap-3 h-11 w-full rounded-xl transition-all duration-200 relative"
@@ -112,6 +114,5 @@
                     </span>
                 </button>
             </div>
-        @endif
     </nav>
 </aside>

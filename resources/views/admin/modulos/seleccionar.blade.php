@@ -1,4 +1,8 @@
 @php
+    $user = auth()->user();
+    $esEstudiante = $user->tieneRol('paciente') || $user->tieneRol('becado');
+    $modulosEstudiante = ['psicologia', 'beca'];
+
     $moduloActivo = session('modulo_activo', 'general');
     $esPsicologia = in_array($moduloActivo, ['psicologia', 'salud']);
 
@@ -7,24 +11,21 @@
         : 'from-[var(--color-primary,#c52222)] to-[var(--color-tertiary,#800000)]';
 
     $primaryColor = $esPsicologia ? '#2563eb' : 'var(--color-primary, #dc2626)';
-    $badgeBg      = $esPsicologia ? 'bg-blue-600' : 'bg-red-600';
-    $iconBg       = $esPsicologia
+    $badgeBg = $esPsicologia ? 'bg-blue-600' : 'bg-red-600';
+    $iconBg = $esPsicologia
         ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'
         : 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400';
-    $textAccent   = $esPsicologia
-        ? 'text-indigo-600 dark:text-indigo-400'
-        : 'text-red-600 dark:text-red-400';
-    $hoverBorder  = $esPsicologia ? 'hover:border-indigo-500/50' : 'hover:border-red-500/50';
-    $ringActive   = $esPsicologia ? 'ring-2 ring-indigo-500/30' : 'ring-2 ring-red-500/30';
+    $textAccent = $esPsicologia ? 'text-indigo-600 dark:text-indigo-400' : 'text-red-600 dark:text-red-400';
+    $hoverBorder = $esPsicologia ? 'hover:border-indigo-500/50' : 'hover:border-red-500/50';
+    $ringActive = $esPsicologia ? 'ring-2 ring-indigo-500/30' : 'ring-2 ring-red-500/30';
 
     $moduloConfig = [
         'administracion' => ['icon' => 'fas fa-cog'],
-        'comedor'        => ['icon' => 'fas fa-utensils'],
-        'salud'          => ['icon' => 'fas fa-heartbeat'],
-        'psicologia'     => ['icon' => 'fas fa-brain'],
-        'salud'         => ['icon' => 'fas fa-brain'],
-        'beca'           => ['icon' => 'fas fa-graduation-cap'],
-        'transporte'     => ['icon' => 'fas fa-bus'],
+        'comedor' => ['icon' => 'fas fa-utensils'],
+        'salud' => ['icon' => 'fas fa-heartbeat'],
+        'psicologia' => ['icon' => 'fas fa-brain'],
+        'beca' => ['icon' => 'fas fa-graduation-cap'],
+        'transporte' => ['icon' => 'fas fa-bus'],
     ];
     $fallback = ['icon' => 'fas fa-cubes'];
 @endphp
@@ -73,7 +74,13 @@
         @csrf
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-6">
+
             @foreach ($modulos as $m)
+                {{-- Si el usuario es paciente o becado y el módulo no está permitido, lo salta --}}
+                @if ($esEstudiante && !in_array($m->key, $modulosEstudiante))
+                    @continue
+                @endif
+
                 @php
                     $conf = $moduloConfig[$m->key] ?? $fallback;
                     $esActivo = $moduloActivo == $m->key;

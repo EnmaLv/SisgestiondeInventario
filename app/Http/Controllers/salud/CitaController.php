@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers\salud;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Http\Controllers\Controller;
 use App\Models\salud\Cita;
 use App\Models\Usuario;
 use App\Models\salud\Prioridad;
 use App\Models\salud\GrupoHorario;
-use App\Models\salud\Horario;
-use App\Models\salud\AvanceSesion;
-use App\Models\salud\EstadoAnimo;
 use App\Models\salud\CitaNotaEvolucion;
 use App\Models\salud\NotaEvolucionCampo;
 use App\Models\salud\PlantillaGlobal;

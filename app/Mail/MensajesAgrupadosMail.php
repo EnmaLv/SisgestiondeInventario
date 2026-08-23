@@ -16,33 +16,24 @@ class MensajesAgrupadosMail extends Mailable implements ShouldQueue
     public $remitente;
     public $cantidadMensajes;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct($remitente, $cantidadMensajes)
     {
         $this->remitente = $remitente;
         $this->cantidadMensajes = $cantidadMensajes;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         $roleName = $this->remitente->role === 'psicologo' ? 'El psicólogo' : 'El paciente';
         $sujet = $this->cantidadMensajes > 1 
-            ? "{$roleName} {$this->remitente->name} te ha enviado {$this->cantidadMensajes} mensajes nuevos"
-            : "{$roleName} {$this->remitente->name} te ha enviado un mensaje nuevo";
+            ? "{$roleName} {$this->remitente->persona->nombre_persona} te ha enviado {$this->cantidadMensajes} mensajes nuevos"
+            : "{$roleName} {$this->remitente->persona->nombre_persona} te ha enviado un mensaje nuevo";
             
         return new Envelope(
             subject: $sujet,
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
@@ -55,11 +46,6 @@ class MensajesAgrupadosMail extends Mailable implements ShouldQueue
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

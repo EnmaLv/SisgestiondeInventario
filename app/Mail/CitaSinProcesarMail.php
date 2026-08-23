@@ -13,21 +13,11 @@ class CitaSinProcesarMail extends Mailable implements ShouldQueue
 
     public $cita;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
     public function __construct($cita)
     {
         $this->cita = $cita;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
     public function build()
     {
         return $this->subject('Recordatorio: Cita pendiente de procesamiento')

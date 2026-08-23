@@ -68,7 +68,7 @@ class PacientesExport implements FromCollection, WithHeadings, WithMapping, With
         $estimatedWidth = $columnCount * $pxPerColumn;
         $drawing->setWidth($estimatedWidth);
         $drawing->setResizeProportional(true);
-        $drawing->setCoordinates('A1'); // Start at A1
+        $drawing->setCoordinates('A1');
         $drawing->setOffsetX(10);
         $drawing->setOffsetY(10);
 
@@ -81,7 +81,6 @@ class PacientesExport implements FromCollection, WithHeadings, WithMapping, With
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 
-                // Set row heights for image space
                 $sheet->getRowDimension(1)->setRowHeight(15);
                 $sheet->getRowDimension(2)->setRowHeight(15);
                 $sheet->getRowDimension(3)->setRowHeight(15);

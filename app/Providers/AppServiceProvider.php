@@ -21,7 +21,6 @@ class AppServiceProvider extends ServiceProvider
             $data = $view->getData();
             $categoriaVal = $data['categoria'] ?? $data['categoriaFiltro'] ?? request('categoria') ?? request('categoriaFiltro') ?? '';
 
-            // CAMBIO AQUÍ: Se reemplaza 'psicologia' por 'general' en el fallback de la sesión
             $tipoVal = $data['tipo'] ?? request('tipo') ?? session('modulo_activo', 'general');
 
             $esPsicologia = in_array(strtolower($categoriaVal), ['salud', 'psicologia', 'psicología'])
@@ -64,7 +63,6 @@ class AppServiceProvider extends ServiceProvider
             $moduloActivo = session('modulo_activo');
             $permitidos = session('modulos_permitidos', []);
 
-            // Si no hay módulo activo, si no coincide con el solicitado, o no está permitido para el usuario
             if (!$moduloActivo || $moduloActivo !== $moduleKey || !in_array($moduleKey, $permitidos)) {
                 return false;
             }

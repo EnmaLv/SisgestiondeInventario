@@ -38,4 +38,4 @@ WORKDIR /var/www
 EXPOSE 8000 5731
 
 # Comando para iniciar el servidor interno de PHP
-CMD ["composer", "run", "dev"]
+CMD ["/bin/bash", "/var/www/docker/start.sh"]

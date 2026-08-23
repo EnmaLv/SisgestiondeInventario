@@ -26,7 +26,7 @@ class PenalizacionPacienteNotification extends Notification implements ShouldQue
         return [
             'type_id' => 'penalizacion_paciente',
             'body' => 'Usted ha incumplido con las normas de atención. Por lo tanto, ahora su prioridad de atención pasará a ser baja.',
-            'url' => route('citas.index'),
+            'url' => route('admin.psicologia.maestros.citas.index'),
         ];
     }
 }

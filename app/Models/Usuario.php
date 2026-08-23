@@ -26,6 +26,9 @@ class Usuario extends Authenticatable
         'master_key',
         'security_questions',
         'extra_permissions',
+        'ultima_actividad_chat',
+        'chat_activo_user_id',
+        'infracciones_reset_at',
     ];
 
     protected $hidden = ['password', 'master_key'];
@@ -272,5 +275,51 @@ class Usuario extends Authenticatable
 
         return $psicologos;
     }
-    
+
+    public static function obtenerContactosParaChat($userId, $isPsicologo)
+    {
+        if ($isPsicologo) {
+            $pacientesIds = DB::table('citas')->where('psicologo_id', $userId)->pluck('user_id')->unique();
+            return DB::table('usuario')
+                ->join('persona', 'usuario.id_persona', '=', 'persona.id_persona')
+                ->select(
+                    'usuario.id_usuario',
+                    'usuario.username',
+                    'persona.nombre_persona',
+                    'persona.apellido_persona',
+                    DB::raw("CONCAT(persona.nombre_persona, ' ', persona.apellido_persona) as name")
+                )
+                ->whereIn('usuario.id_usuario', $pacientesIds)
+                ->distinct()
+                ->get()
+                ->map(function ($u) {
+                    $firstName = explode(' ', trim($u->nombre_persona ?? ''))[0] ?? '';
+                    $firstLastName = explode(' ', trim($u->apellido_persona ?? ''))[0] ?? '';
+                    $shortName = trim($firstName . ' ' . $firstLastName);
+                    $u->name = $shortName ?: $u->name;
+                    return $u;
+                });
+        } else {
+            $psicologosIds = DB::table('citas')->where('user_id', $userId)->pluck('psicologo_id')->unique();
+            return DB::table('usuario')
+                ->join('persona', 'usuario.id_persona', '=', 'persona.id_persona')
+                ->select(
+                    'usuario.id_usuario',
+                    'usuario.username',
+                    'persona.nombre_persona',
+                    'persona.apellido_persona',
+                    DB::raw("CONCAT(persona.nombre_persona, ' ', persona.apellido_persona) as name")
+                )
+                ->whereIn('usuario.id_usuario', $psicologosIds)
+                ->distinct()
+                ->get()
+                ->map(function ($psicologo) {
+                    $firstName = explode(' ', trim($psicologo->nombre_persona ?? ''))[0] ?? '';
+                    $firstLastName = explode(' ', trim($psicologo->apellido_persona ?? ''))[0] ?? '';
+                    $shortName = trim($firstName . ' ' . $firstLastName);
+                    $psicologo->name = $shortName ?: $psicologo->name;
+                    return $psicologo;
+                });
+        }
+    }
 }

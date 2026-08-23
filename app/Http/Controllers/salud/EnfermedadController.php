@@ -88,7 +88,7 @@ class EnfermedadController extends Controller
             'nivel'     => $nivel,
         ]);
 
-        return redirect()->route('enfermedades.index', [
+        return redirect()->route('admin.enfermedades.index', [
             'tipo'      => session('modulo_activo', $request->get('tipo', 'fisica')),
             'return_to' => $request->return_to,
             'editing'   => $request->editing
@@ -100,7 +100,7 @@ class EnfermedadController extends Controller
         $enfermedad = Enfermedad::obtenerPorId($id);
 
         if (!$enfermedad) {
-            return redirect()->route('enfermedades.index')->with('error', 'Enfermedad no encontrada.');
+            return redirect()->route('admin.enfermedades.index')->with('error', 'Enfermedad no encontrada.');
         }
 
         $categoria = $this->resolverCategoria($request);
@@ -137,7 +137,7 @@ class EnfermedadController extends Controller
             'nivel'     => $nivel,
         ]);
 
-        return redirect()->route('enfermedades.index', [
+        return redirect()->route('admin.enfermedades.index', [
             'tipo'      => session('modulo_activo', $request->get('tipo', 'fisica')),
             'return_to' => $request->return_to,
             'editing'   => $request->editing

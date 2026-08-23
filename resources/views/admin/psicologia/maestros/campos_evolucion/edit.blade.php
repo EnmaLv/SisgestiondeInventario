@@ -1,15 +1,11 @@
 <x-app-layout>
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            {{-- Botón Volver --}}
             <a href="{{ route('admin.psicologia.maestros.campos_evolucion.index') }}"
                 class="inline-flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-indigo-600 mb-6 transition-colors group">
                 <i class="fas fa-arrow-left text-xs transition-transform group-hover:-translate-x-1"></i>
                 <span>Volver a los campos</span>
             </a>
-
-            {{-- Encabezado --}}
             <div class="mb-8">
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
                     Editar Campo de Evolución
@@ -18,15 +14,11 @@
                     Modificar la información del campo <strong class="text-indigo-600 dark:text-indigo-400">{{ $campo->titulo }}</strong>.
                 </p>
             </div>
-
-            {{-- Contenedor del Formulario --}}
             <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
                 class="rounded-2xl border shadow-sm overflow-hidden p-6 sm:p-8">
-
                 <form action="{{ route('admin.psicologia.maestros.campos_evolucion.update', $campo->id) }}" method="POST">
                     @csrf
                     @method('PATCH')
-
                     <div class="space-y-6">
                         <div>
                             <label for="titulo"
@@ -45,7 +37,6 @@
                         </div>
                     </div>
 
-                    {{-- Botones de Acción --}}
                     <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-3">
                         <a href="{{ route('admin.psicologia.maestros.campos_evolucion.index') }}"
                             class="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-gray-600 dark:text-gray-300 transition-all">
@@ -58,7 +49,6 @@
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>

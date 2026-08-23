@@ -21,7 +21,7 @@
             this.fetchContacts();
 
             if (window.Echo) {
-                window.Echo.private('App.Models.User.' + {{ auth()->id() ?? 'null' }})
+                window.Echo.private('App.Models.Usuario.' + {{ auth()->id() ?? 'null' }})
                     .listen('MessageSent', (e) => {
                         if (!this.selectedContact || this.selectedContact.id != e.sender_id) {
                             let contactIndex = this.contacts.findIndex(c => c.id == e.sender_id);
@@ -131,7 +131,7 @@
             <h3 class="font-extrabold text-xl tracking-tight" style="color: var(--text-main);" x-text="view === 'list' ? 'Mensajes' : selectedContact.name">Mensajes</h3>
         </div>
         <div class="flex items-center gap-1">
-            @if(auth()->user()->role !== 'paciente')
+            @if(!auth()->user()->tieneRol('paciente'))
                 <a href="#" title="Ver mensajería completa" class="hidden sm:inline-flex p-2 hover:bg-sky-50 dark:hover:bg-sky-900/50 rounded-full transition text-gray-400 dark:text-gray-500 hover:text-sky-600 dark:hover:text-sky-400">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
                 </a>
@@ -144,7 +144,6 @@
     </div>
 
     <div class="flex-1 overflow-y-auto no-scrollbar" style="background-color: var(--bg-card);">
-
         <div x-show="view === 'list'" class="h-full flex flex-col">
             <div class="px-4 py-4">
                 <div class="relative group">
@@ -155,7 +154,6 @@
 
             <div class="flex-1 overflow-y-auto px-2 space-y-0.5 no-scrollbar">
                 <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Recientes</div>
-
                 <template x-for="contact in contacts" :key="contact.id">
                     <div
                         @click="selectContact(contact)"
@@ -187,9 +185,7 @@
 
         <div x-show="view === 'chat'" class="h-full flex flex-col bg-gray-50 dark:bg-[#0f1115]" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-x-4">
             <div id="sidebar-messages-container" class="flex-1 p-4 md:p-6 flex flex-col gap-4 overflow-y-auto no-scrollbar" style="scroll-behavior: smooth;">
-
                 <div x-show="isLoading" class="text-center text-gray-400 dark:text-gray-500 text-xs font-medium py-4 uppercase tracking-wider">Cargando...</div>
-
                 <template x-for="msg in messages" :key="msg.id">
                     <div>
                         <template x-if="!msg.is_mine">
@@ -210,7 +206,6 @@
                                 </div>
                             </div>
                         </template>
-
                         <template x-if="msg.is_mine">
                             <div class="flex flex-col items-end gap-1">
                                 <div class="max-w-[75%]">
