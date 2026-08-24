@@ -32,6 +32,7 @@ use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\salud\EnfermedadController;
 use App\Http\Controllers\salud\NotificationController;
 
 Auth::routes();
@@ -314,7 +315,6 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::put('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'update'])->name('admin.salud.maestros.medicamentos.update');
         Route::delete('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'destroy'])->name('admin.salud.maestros.medicamentos.destroy');
         Route::put('/salud/maestros/medicamentos/{medicamento}/activar', [MedicamentoController::class, 'activar'])->name('admin.salud.maestros.medicamentos.activar');
-
 
         
         // TRANSPORTE

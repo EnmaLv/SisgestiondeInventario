@@ -589,6 +589,14 @@ return [
             'icon' => 'fas fa-pills',
             'active' => ['admin/salud/maestros/medicamentos*'],
         ],
+        [
+            'text' => 'Enfermedades',
+            'key' => 'enfermedades_salud',
+            'module' => 'psicologia',
+            //'route' => ['admin.enfermedades.index', ['tipo' => 'fisica']],
+            'icon' => 'fas fa-procedures',
+            'active' => ['admin/enfermedades*'],
+        ],
 
         [
             'text' => 'Citas',
@@ -612,7 +620,7 @@ return [
             'text' => 'Mural',
             'key' => 'mural',
             'module' => 'psicologia',
-            'url' => 'admin/psicologia/maestros/mural', 
+            'url' => 'admin/psicologia/maestros/mural',
             'icon' => 'fas fa-calendar-check',
             'active' => ['admin/psicologia/maestros/mural*'],
         ],

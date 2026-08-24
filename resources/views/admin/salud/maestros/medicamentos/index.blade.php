@@ -20,7 +20,7 @@
                     <a href="{{ url('admin/salud/maestros/medicamentos/create') }}"
                         class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-sm shadow-lg shadow-sky-600/30 hover:shadow-sky-600/40 active:scale-95 transition-all">
                         <i class="fas fa-plus text-xs"></i>
-                        <span>Crear Medicamento</span>
+                        <span>Nuevo Medicamento</span>
                     </a>
                 </div>
             </div>
