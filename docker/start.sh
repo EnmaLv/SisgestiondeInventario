@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+echo "Instalando dependencias de composer..."
+composer install --no-interaction
+
 echo "Esperando a que MySQL esté listo..."
 sleep 5
 
