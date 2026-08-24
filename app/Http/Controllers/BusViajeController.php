@@ -7,6 +7,7 @@ use App\Models\BusVehiculo;
 use App\Models\BusRuta;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BusViajeController extends Controller
 {
@@ -30,6 +31,19 @@ class BusViajeController extends Controller
         ];
     }
 
+    private function getConductores()
+    {
+        $conductores = Usuario::with('persona')
+            ->whereHas('roles', fn ($q) => $q->where('nombre', 'like', '%conductor%'))
+            ->get();
+
+        if ($conductores->isEmpty()) {
+            $conductores = Usuario::with('persona')->orderBy('username')->get();
+        }
+
+        return $conductores;
+    }
+
     public function index(Request $request)
     {
         $viajes = BusViaje::listarViajes($request->buscar, $request->input('estado'));
@@ -40,8 +54,7 @@ class BusViajeController extends Controller
     {
         $vehiculos   = BusVehiculo::where('activo', 1)->orderBy('placa')->get();
         $rutas       = BusRuta::where('estado', 1)->orderBy('nombre')->get();
-        $conductores = Usuario::whereHas('roles', fn ($q) => $q->where('nombre', 'like', '%conductor%'))
-            ->orderBy('username')->get();
+        $conductores = $this->getConductores();
         return view('admin.transporte.maestros.bus_viajes.create',
             compact('vehiculos', 'rutas', 'conductores'));
     }
@@ -49,7 +62,27 @@ class BusViajeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules());
-        BusViaje::crearViaje($validated);
+
+        if (!empty($validated['km_fin']) && $validated['km_fin'] > $validated['km_inicio']) {
+            $validated['distancia_km'] = $validated['km_fin'] - $validated['km_inicio'];
+        }
+
+        DB::transaction(function () use ($validated) {
+            $viaje = BusViaje::crearViaje($validated);
+            $vehiculo = BusVehiculo::find($validated['bus_vehiculo_id']);
+
+            if ($vehiculo) {
+                if ($validated['estado'] === 'en_curso') {
+                    $vehiculo->update(['estado' => 'en_ruta']);
+                } elseif ($validated['estado'] === 'finalizado') {
+                    $newKm = (!empty($validated['km_fin']) && $validated['km_fin'] > $vehiculo->km_actual)
+                        ? $validated['km_fin']
+                        : $vehiculo->km_actual;
+                    $vehiculo->update(['estado' => 'disponible', 'km_actual' => $newKm]);
+                }
+            }
+        });
+
         return redirect()
             ->route('admin.transporte.maestros.bus_viajes.index')
             ->with('success', 'Viaje registrado correctamente.');
@@ -59,8 +92,7 @@ class BusViajeController extends Controller
     {
         $vehiculos   = BusVehiculo::where('activo', 1)->orderBy('placa')->get();
         $rutas       = BusRuta::where('estado', 1)->orderBy('nombre')->get();
-        $conductores = Usuario::whereHas('roles', fn ($q) => $q->where('nombre', 'like', '%conductor%'))
-            ->orderBy('username')->get();
+        $conductores = $this->getConductores();
         return view('admin.transporte.maestros.bus_viajes.edit',
             compact('busViaje', 'vehiculos', 'rutas', 'conductores'));
     }
@@ -68,7 +100,29 @@ class BusViajeController extends Controller
     public function update(Request $request, BusViaje $busViaje)
     {
         $validated = $request->validate($this->rules($busViaje->id));
-        BusViaje::actualizarViaje($busViaje, $validated);
+
+        if (!empty($validated['km_fin']) && $validated['km_fin'] > $validated['km_inicio']) {
+            $validated['distancia_km'] = $validated['km_fin'] - $validated['km_inicio'];
+        }
+
+        DB::transaction(function () use ($busViaje, $validated) {
+            BusViaje::actualizarViaje($busViaje, $validated);
+            $vehiculo = BusVehiculo::find($validated['bus_vehiculo_id']);
+
+            if ($vehiculo) {
+                if ($validated['estado'] === 'en_curso') {
+                    $vehiculo->update(['estado' => 'en_ruta']);
+                } elseif ($validated['estado'] === 'finalizado') {
+                    $newKm = (!empty($validated['km_fin']) && $validated['km_fin'] > $vehiculo->km_actual)
+                        ? $validated['km_fin']
+                        : $vehiculo->km_actual;
+                    $vehiculo->update(['estado' => 'disponible', 'km_actual' => $newKm]);
+                } elseif ($validated['estado'] === 'cancelado') {
+                    $vehiculo->update(['estado' => 'disponible']);
+                }
+            }
+        });
+
         return redirect()
             ->route('admin.transporte.maestros.bus_viajes.index')
             ->with('success', 'Viaje actualizado correctamente.');
@@ -76,9 +130,9 @@ class BusViajeController extends Controller
 
     public function destroy(BusViaje $busViaje)
     {
-        $busViaje->delete();
+        $busViaje->update(['estado' => 'cancelado']);
         return redirect()
             ->route('admin.transporte.maestros.bus_viajes.index')
-            ->with('success', 'Viaje eliminado correctamente.');
+            ->with('success', 'Viaje cancelado correctamente.');
     }
 }

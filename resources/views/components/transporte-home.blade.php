@@ -112,8 +112,20 @@
             </a>
         </div>
     @endif
-   
-
+    {{-- combustible --}}
+    @if ($visibleModules['bus_carga_combustibles'] ?? false)
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/transporte/maestros/bus_carga_combustibles') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <i class="fas fa-gas-pump" style="font-size:2.2rem;color:var(--color-primary);"></i>
+                    </div>
+                    <h5>Combustible</h5>
+                    <p>{{ $total_bus_cargas }} recargas</p>
+                </div>
+            </a>
+        </div>
+    @endif
 </div>
 
 <div class="row mb-4">
@@ -159,6 +171,16 @@
                         </div>
                         <div style="color:var(--color-text-main);font-size:0.9rem;opacity:0.8;">
                             Vehículos Registrados
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="text-center">
+                        <div style="font-size:2rem;font-weight:800;color:var(--color-primary);">
+                            {{ $total_bus_cargas }}
+                        </div>
+                        <div style="color:var(--color-text-main);font-size:0.9rem;opacity:0.8;">
+                            Recargas de Combustible
                         </div>
                     </div>
                 </div>

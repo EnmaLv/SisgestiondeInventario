@@ -63,13 +63,16 @@ class BusRuta extends Model
         $ruta->update($datos);
         return $ruta;
     }
-    public function verificarNombre(Request $request)
+    public function rutaParadas()
     {
-        $query = BusRuta::where('nombre', trim($request->nombre));
-        if ($request->exclude) {
-            $query->where('id', '!=', $request->exclude);
-        }
-        return response()->json(['existe' => $query->exists()]);
+        return $this->hasMany(BusRutaParada::class, 'bus_ruta_id')->orderBy('orden');
     }
-    
+
+    public function paradas()
+    {
+        return $this->belongsToMany(BusParada::class, 'bus_ruta_paradas', 'bus_ruta_id', 'bus_parada_id')
+            ->withPivot('orden', 'estado')
+            ->withTimestamps()
+            ->orderBy('bus_ruta_paradas.orden');
+    }
 }

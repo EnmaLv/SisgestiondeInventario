@@ -147,7 +147,30 @@
                 </div>
             </div>
 
-            {{-- Fila 4: Descripción --}}
+            {{-- Fila 4: Paradas Intermedias --}}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="font-weight-bold mb-0">
+                                <i class="fas fa-map-pin" style="color:var(--color-primary);"></i> Paradas Intermedias del Recorrido <span class="text-muted font-weight-normal">(opcional)</span>
+                            </label>
+                            <button type="button" class="rd-btn rd-btn-default btn-sm" id="btnAgregarParada">
+                                <i class="fas fa-plus"></i> Añadir Parada
+                            </button>
+                        </div>
+                        <div class="p-3" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;">
+                            <div id="contenedorParadas">
+                                <p id="sinParadasMsg" class="text-muted mb-0 text-center py-2" style="font-size:0.9rem;">
+                                    No se han añadido paradas intermedias aún. Haz clic en <strong>Añadir Parada</strong> para agregarlas.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Fila 5: Descripción --}}
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
@@ -184,6 +207,8 @@
 <script>
 const CSRF   = '{{ csrf_token() }}';
 const rutaId = {{ $busRuta->id }};
+const paradasDisponibles = @json($paradas);
+const paradasIniciales   = @json($busRuta->rutaParadas->pluck('bus_parada_id'));
 
 function mostrarErrorInline(input, msg) {
     limpiarErrorInline(input);
@@ -225,5 +250,96 @@ document.querySelector('[name="nombre"]').addEventListener('input', function() {
         });
     }, 500);
 });
+
+// ── Manejo de Paradas Intermedias Dinámicas ──────────────────────
+const contenedorParadas = document.getElementById('contenedorParadas');
+const btnAgregarParada  = document.getElementById('btnAgregarParada');
+let contadorParadas     = 0;
+
+function actualizarNumeracionParadas() {
+    const items = contenedorParadas.querySelectorAll('.parada-item');
+    const sinMsg = document.getElementById('sinParadasMsg');
+    if (items.length === 0) {
+        if (!sinMsg) {
+            contenedorParadas.innerHTML = `
+                <p id="sinParadasMsg" class="text-muted mb-0 text-center py-2" style="font-size:0.9rem;">
+                    No se han añadido paradas intermedias aún. Haz clic en <strong>Añadir Parada</strong> para agregarlas.
+                </p>`;
+        }
+    } else {
+        if (sinMsg) sinMsg.remove();
+        items.forEach((item, index) => {
+            const badge = item.querySelector('.parada-orden-badge');
+            if (badge) badge.textContent = `Parada #${index + 1}`;
+        });
+    }
+}
+
+function crearFilaParada(seleccionadaId = '') {
+    const sinMsg = document.getElementById('sinParadasMsg');
+    if (sinMsg) sinMsg.remove();
+
+    contadorParadas++;
+    let optionsHtml = '<option value="">-- Seleccionar Parada --</option>';
+    paradasDisponibles.forEach(p => {
+        const selected = (p.id == seleccionadaId) ? 'selected' : '';
+        const direccion = p.direccion ? ` (${p.direccion})` : '';
+        optionsHtml += `<option value="${p.id}" ${selected}>${p.nombre}${direccion}</option>`;
+    });
+
+    const div = document.createElement('div');
+    div.className = 'parada-item d-flex align-items-center mb-2 p-2';
+    div.style.cssText = 'background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;gap:10px;';
+    div.innerHTML = `
+        <span class="rd-badge rd-badge-info parada-orden-badge" style="min-width:85px;text-align:center;">Parada #1</span>
+        <div class="flex-grow-1">
+            <select name="paradas[]" class="form-control rd-filter-input" required>
+                ${optionsHtml}
+            </select>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary btn-subir-parada" title="Subir">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary btn-bajar-parada" title="Bajar">
+            <i class="fas fa-arrow-down"></i>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-parada" title="Eliminar">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+
+    div.querySelector('.btn-eliminar-parada').addEventListener('click', () => {
+        div.remove();
+        actualizarNumeracionParadas();
+    });
+
+    div.querySelector('.btn-subir-parada').addEventListener('click', () => {
+        const prev = div.previousElementSibling;
+        if (prev && prev.classList.contains('parada-item')) {
+            contenedorParadas.insertBefore(div, prev);
+            actualizarNumeracionParadas();
+        }
+    });
+
+    div.querySelector('.btn-bajar-parada').addEventListener('click', () => {
+        const next = div.nextElementSibling;
+        if (next && next.classList.contains('parada-item')) {
+            contenedorParadas.insertBefore(next, div);
+            actualizarNumeracionParadas();
+        }
+    });
+
+    contenedorParadas.appendChild(div);
+    actualizarNumeracionParadas();
+}
+
+if (btnAgregarParada) {
+    btnAgregarParada.addEventListener('click', () => crearFilaParada());
+}
+
+// Cargar paradas existentes
+if (paradasIniciales && paradasIniciales.length > 0) {
+    paradasIniciales.forEach(paradaId => crearFilaParada(paradaId));
+}
 </script>
 @endpush

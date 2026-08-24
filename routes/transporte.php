@@ -9,6 +9,7 @@ use App\Http\Controllers\BusRutaController;
 use App\Http\Controllers\BusParadaController;
 use App\Http\Controllers\BusMantenimientoController;
 use App\Http\Controllers\BusViajeController;
+use App\Http\Controllers\BusCargaCombustibleController;
 
 /* Marcas */
 Route::get('/transporte/maestros/bus_marcas', [BusMarcaController::class, 'index'])->name('admin.transporte.maestros.bus_marcas.index');
@@ -74,3 +75,11 @@ Route::post('/transporte/maestros/bus_viajes/store', [BusViajeController::class,
 Route::get('/transporte/maestros/bus_viajes/{busViaje}/edit', [BusViajeController::class, 'edit'])->name('admin.transporte.maestros.bus_viajes.edit');
 Route::put('/transporte/maestros/bus_viajes/{busViaje}', [BusViajeController::class, 'update'])->name('admin.transporte.maestros.bus_viajes.update');
 Route::delete('/transporte/maestros/bus_viajes/{busViaje}', [BusViajeController::class, 'destroy'])->name('admin.transporte.maestros.bus_viajes.destroy');
+
+/* Cargas de Combustible */
+Route::get('/transporte/maestros/bus_carga_combustibles', [BusCargaCombustibleController::class, 'index'])->name('admin.transporte.maestros.bus_carga_combustibles.index');
+Route::get('/transporte/maestros/bus_carga_combustibles/create', [BusCargaCombustibleController::class, 'create'])->name('admin.transporte.maestros.bus_carga_combustibles.create');
+Route::post('/transporte/maestros/bus_carga_combustibles/store', [BusCargaCombustibleController::class, 'store'])->name('admin.transporte.maestros.bus_carga_combustibles.store');
+Route::get('/transporte/maestros/bus_carga_combustibles/{busCargaCombustible}/edit', [BusCargaCombustibleController::class, 'edit'])->name('admin.transporte.maestros.bus_carga_combustibles.edit');
+Route::put('/transporte/maestros/bus_carga_combustibles/{busCargaCombustible}', [BusCargaCombustibleController::class, 'update'])->name('admin.transporte.maestros.bus_carga_combustibles.update');
+Route::delete('/transporte/maestros/bus_carga_combustibles/{busCargaCombustible}', [BusCargaCombustibleController::class, 'destroy'])->name('admin.transporte.maestros.bus_carga_combustibles.destroy');
