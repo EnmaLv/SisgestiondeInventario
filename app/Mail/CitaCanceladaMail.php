@@ -30,8 +30,8 @@ class CitaCanceladaMail extends Mailable implements ShouldQueue
         return $this->subject('Aviso de Cita Cancelada')
             ->view('emails.cita_cancelada')
             ->with([
-                'paciente' => optional($this->paciente)->name ?: 'Paciente',
-                'psicologo' => optional($this->psicologo)->name ?: 'Psicólogo',
+                'paciente' => optional($this->paciente->persona)->nombre_persona ?: 'Paciente',
+                'psicologo' => optional($this->psicologo->persona)->nombre_persona ?: 'Psicólogo',
                 'fecha' => $this->cita->fecha ? Carbon::parse($this->cita->fecha)->translatedFormat('d \d\e F, Y') : 'una fecha por definir',
                 'hora' => $this->cita->hora ? Carbon::parse($this->cita->hora)->format('g:i A') : 'una hora por definir',
                 'cancelledBy' => $this->cancelledBy

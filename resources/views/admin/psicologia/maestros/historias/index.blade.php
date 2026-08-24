@@ -316,24 +316,17 @@
             @endphp
             {{-- Modificar --}}
             @if ($historias->isEmpty())
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-[32px] border-2 border-dashed border-slate-200 dark:border-gray-700 p-16 text-center shadow-sm h-fit mb-auto">
-                    <div
-                        class="w-20 h-20 bg-slate-50 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-10 h-10 text-slate-300 dark:text-gray-500" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                            </path>
-                        </svg>
+                <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="rounded-2xl border shadow-sm p-12 text-center h-fit mb-auto">
+                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500">
+                        <i class="fas fa-folder-open text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Sin expedientes activos</h3>
-                    <p class="text-slate-500 dark:text-gray-400 max-w-sm mx-auto leading-relaxed">
+                    <h3 class="text-lg font-bold mb-1" style="color: var(--text-main);">Sin expedientes activos</h3>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
                         Los pacientes aparecerán aquí automáticamente una vez que completes su primera cita.
                     </p>
                 </div>
             @else
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 sm:px-4 lg:px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($historias as $historia)
                         @php
                             $paciente = $historia['paciente'];
@@ -345,81 +338,64 @@
                             $primerApellido = $partes[1] ?? '';
                             $iniciales = strtoupper(substr($primerNombre, 0, 1) . substr($primerApellido, 0, 1));
                         @endphp
-                        <div class="paciente-card bg-white dark:bg-gray-800 rounded-[32px] border border-slate-100 dark:border-gray-700 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 group overflow-hidden flex flex-col w-full"
-                            data-nombre="{{ strtolower($paciente->name) }}">
-                            <div class="p-8 flex-1">
+                        <div class="paciente-card rounded-2xl border shadow-sm overflow-hidden flex flex-col w-full transition-all duration-300 hover:shadow-md group" style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" data-nombre="{{ strtolower($paciente->name) }}">
+                            <div class="p-6 flex-1">
                                 <div class="flex items-center gap-4 mb-6">
-                                    <div
-                                        class="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-200 dark:shadow-indigo-900/30 group-hover:scale-105 transition-transform flex-shrink-0">
+                                    <div class="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center text-white font-bold text-base flex-shrink-0 bg-{{ $themeColor ?? 'indigo' }}-600">
                                         @if ($hasPhoto)
-                                            <img src="{{ route('media.profile_photos', basename($photoPath)) }}"
-                                                alt="{{ $paciente->name }}" class="w-full h-full object-cover">
+                                            <img src="{{ route('media.profile_photos', basename($photoPath)) }}" alt="{{ $paciente->name }}" class="w-full h-full object-cover">
                                         @else
                                             {{ $iniciales }}
                                         @endif
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <h3
-                                            class="text-lg font-bold text-slate-900 dark:text-white truncate tracking-tight">
-                                            {{ $paciente->name }}</h3>
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+                                        <h3 class="text-base font-bold truncate tracking-tight" style="color: var(--text-main);">
+                                            {{ $paciente->name }}
+                                        </h3>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl text-[10px] font-bold border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-1">
+                                            <i class="fas fa-circle text-[6px]"></i>
                                             Activo
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-4 mb-6">
-                                    <div class="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-3">
-                                        <p
-                                            class="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">
-                                            Sesiones</p>
-                                        <p class="text-lg font-black text-slate-800 dark:text-white">
-                                            {{ $historia['citas_realizadas'] }}</p>
+                                <div class="grid grid-cols-2 gap-3 mb-2">
+                                    <div class="p-3 rounded-xl border border-gray-100 dark:border-gray-800" style="background-color: rgba(0,0,0,0.02);">
+                                        <p class="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">
+                                            Sesiones
+                                        </p>
+                                        <p class="text-base font-extrabold" style="color: var(--text-main);">
+                                            {{ $historia['citas_realizadas'] }}
+                                        </p>
                                     </div>
-                                    <div class="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-3">
-                                        <p
-                                            class="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">
-                                            Última</p>
-                                        <p class="text-sm font-bold text-slate-800 dark:text-white">
+                                    <div class="p-3 rounded-xl border border-gray-100 dark:border-gray-800" style="background-color: rgba(0,0,0,0.02);">
+                                        <p class="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">
+                                            Última
+                                        </p>
+                                        <p class="text-xs font-bold" style="color: var(--text-main);">
                                             {{ $historia['ultima_sesion'] instanceof \Carbon\Carbon ? $historia['ultima_sesion']->locale('es')->translatedFormat('d F') : \Carbon\Carbon::parse($historia['ultima_sesion'])->locale('es')->translatedFormat('d F') }}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <a href="{{ route('admin.psicologia.maestros.historias.show', $historia['id']) }}"
-                                class="bg-slate-50/50 dark:bg-gray-700/30 group-hover:bg-indigo-600 p-4 text-center border-t border-slate-50 dark:border-gray-700 transition-colors">
-                                <span
-                                    class="text-sm font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-white flex items-center justify-center gap-2">
-                                    Abrir Expediente
-                                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                    </svg>
-                                </span>
+                            <a href="{{ route('admin.psicologia.maestros.historias.show', $historia['id']) }}" class="p-4 text-center border-t text-xs font-bold transition-all flex items-center justify-center gap-2 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 text-{{ $themeColor ?? 'indigo' }}-600 dark:text-{{ $themeColor ?? 'indigo' }}-400">
+                                <span>Abrir Expediente</span>
+                                <i class="fas fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
                             </a>
                         </div>
                     @endforeach
                 </div>
 
-                <div id="no-results-msg"
-                    class="hidden bg-white dark:bg-gray-800 rounded-[32px] border-2 border-dashed border-slate-200 dark:border-gray-700 p-12 text-center shadow-sm h-fit mb-auto">
-                    <div
-                        class="w-16 h-16 bg-slate-50 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-slate-300 dark:text-gray-500" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
+                <div id="no-results-msg" class="hidden rounded-2xl border shadow-sm p-12 text-center h-fit mb-auto" style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500">
+                        <i class="fas fa-magnifying-glass text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Sin coincidencias</h3>
-                    <p class="text-slate-500 dark:text-gray-400 text-sm">No se encontraron pacientes que coincidan con
-                        tu búsqueda.</p>
+                    <h3 class="text-base font-bold mb-1" style="color: var(--text-main);">Sin coincidencias</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">No se encontraron pacientes que coincidan con tu búsqueda.</p>
                 </div>
 
-                <div class="mt-auto flex justify-center pb-2 pt-12">
+                <div class="mt-auto flex justify-center pb-2 pt-8">
                     {{ $historias->appends(request()->query())->links('admin.psicologia.maestros.historias.partials.pagination') }}
                 </div>
             @endif

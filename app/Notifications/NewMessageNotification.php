@@ -13,19 +13,11 @@ class NewMessageNotification extends Notification implements ShouldQueue
 
     public $message;
 
-    /**
-     * Create a new notification instance.
-     */
     public function __construct($message)
     {
         $this->message = $message;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['database'];
@@ -40,7 +32,7 @@ class NewMessageNotification extends Notification implements ShouldQueue
             'sender_id' => $this->message->sender_id,
             'sender_name' => $sender ? $sender->name : 'Usuario',
             'body' => $this->message->body,
-            'url' => route('chat.index') . '?user=' . $this->message->sender_id, // we might not have 'user' param correctly route but chat.index works for now
+            'url' => route('admin.psicologia.maestros.chat.index') . '?user=' . $this->message->sender_id,
         ];
     }
 }

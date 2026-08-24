@@ -28,8 +28,8 @@ class PenalizacionPsicologoNotification extends Notification implements ShouldQu
         return [
             'type_id' => 'penalizacion_psicologo',
             'paciente_id' => $this->paciente->id,
-            'body' => 'El paciente ' . ltrim($this->paciente->name ?? 'Paciente') . ' ha incumplido con las normas. Su prioridad ha sido cambiada a baja.',
-            'url' => route('historias.show', $this->paciente->id),
+            'body' => 'El paciente ' . ltrim($this->paciente->persona->nombre_persona ?? 'Paciente') . ' ha incumplido con las normas. Su prioridad ha sido cambiada a baja.',
+            'url' => route('admin.psicologia.maestros.historias.show', $this->paciente->id),
         ];
     }
 }

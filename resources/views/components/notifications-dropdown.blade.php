@@ -5,7 +5,6 @@
     $unreadCount = \App\Models\salud\Notification::obtenerConteoNoLeidas(auth()->id());
     $allNotifications = \App\Models\salud\Notification::obtenerNotificacionesRecientes(auth()->id());
 
-    // Estilos dinámicos alineados con el Theme Switcher
     $dropdownBg = $esPsicologia ? 'bg-slate-900/95 border-indigo-900/60' : 'bg-[#352728]/95 border-[#5c2028]';
     $btnHover = $esPsicologia ? 'hover:bg-indigo-600/20' : 'hover:bg-[#623739]';
     $focusRing = $esPsicologia ? 'focus:ring-indigo-500' : 'focus:ring-[#dc2626]';
@@ -25,13 +24,11 @@
     $unreadTimeColor = $esPsicologia ? 'text-indigo-400' : 'text-red-400';
     $unreadDotBg = $esPsicologia ? 'bg-indigo-500' : 'bg-red-500';
 
-    // Colores dinámicos para iconos principales de notificaciones
     $primaryIconBg = $esPsicologia ? 'bg-indigo-500/20' : 'bg-red-500/20';
     $primaryIconColor = $esPsicologia ? 'text-indigo-400' : 'text-red-400';
 @endphp
 
 <div class="relative" x-data="{ openNotif: false, optionsOpen: false, filter: 'all' }" @click.away="openNotif = false; optionsOpen = false">
-    {{-- Botón principal --}}
     <button @click="openNotif = !openNotif"
         class="relative p-2 text-gray-200 hover:text-white bg-white/10 {{ $btnHover }} rounded-full transition-all duration-200 focus:outline-none focus:ring-2 {{ $focusRing }}"
         title="Notificaciones">
@@ -48,7 +45,6 @@
         @endif
     </button>
 
-    {{-- Menú desplegable --}}
     <div x-show="openNotif" x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -58,7 +54,6 @@
         class="absolute right-0 mt-3 w-[320px] max-w-[95vw] sm:w-[380px] {{ $dropdownBg }} backdrop-blur-md rounded-2xl shadow-2xl border z-50 overflow-hidden"
         style="display: none;">
 
-        {{-- Header --}}
         <div class="px-4 pt-4 pb-2 flex items-center justify-between">
             <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Notificaciones</h3>
             <div class="relative">

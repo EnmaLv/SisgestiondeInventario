@@ -1,16 +1,11 @@
 <x-app-layout>
     <div class="fixed top-16 left-0 right-0 h-[calc(100dvh-4rem)] bg-gray-100 dark:bg-gray-900 flex overflow-hidden transition-all duration-300"
         :class="sidebarOpen ? 'lg:left-56' : 'lg:left-16'" x-data="chatComponent">
-
-        <!-- SIDEBAR IZQUIERDO (Lista de Chats) -->
         <div
             class="w-80 md:w-96 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full shrink-0">
-            <!-- Header Sidebar -->
             <div class="p-4 flex justify-between items-center">
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white leading-none">Chats</h1>
             </div>
-
-            <!-- Search Bar -->
             <div class="px-4 pb-4">
                 <div class="relative group">
                     <input type="text" placeholder="Buscar en Messenger"
@@ -22,8 +17,6 @@
                     </svg>
                 </div>
             </div>
-
-            <!-- Filtros (Todos, No leídos) -->
             <div class="px-4 flex gap-2 mb-2 overflow-x-auto no-scrollbar">
                 <button @click="filter = 'todos'"
                     :class="filter === 'todos' ? 'bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400' :
@@ -36,7 +29,6 @@
                     leídos</button>
             </div>
 
-            <!-- Lista de Contactos (SCROLL INDEPENDIENTE 1) -->
             <div class="flex-1 overflow-y-auto px-2 space-y-0.5 no-scrollbar">
                 <template x-for="contact in contacts" :key="contact.id">
                     <div @click="selectContact(contact)"
@@ -74,13 +66,10 @@
                 </template>
             </div>
         </div>
-
-        <!-- ÁREA PRINCIPAL (Chat Activo) -->
         <div class="flex-1 flex flex-col bg-white dark:bg-gray-800 h-full overflow-hidden relative">
 
             <template x-if="selectedContact">
                 <div class="flex-1 flex flex-col h-full">
-                    <!-- Header Chat (FIJO) -->
                     <div
                         class="h-16 px-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between shrink-0 shadow-sm z-10 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm">
                         <div class="flex items-center gap-3">
@@ -105,8 +94,6 @@
                         <div class="flex items-center gap-2">
                         </div>
                     </div>
-
-                    <!-- Mensajes (SCROLL INDEPENDIENTE 2) -->
                     <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 no-scrollbar bg-white dark:bg-gray-800"
                         id="messages-container">
 
@@ -127,14 +114,10 @@
                                 Todos los mensajes son privados.</p>
                         </div>
 
-                        <!-- Indicador de Carga -->
                         <div x-show="isLoading" class="text-center text-gray-400 dark:text-gray-500 text-sm py-4">
                             Cargando mensajes...</div>
-
-                        <!-- Loop de mensajes dinámicos -->
                         <template x-for="msg in messages" :key="msg.id">
                             <div>
-                                <!-- Burbuja Enviada por mi -->
                                 <template x-if="msg.is_mine">
                                     <div class="flex flex-col items-end gap-1">
                                         <div class="max-w-[70%]">
@@ -148,7 +131,6 @@
                                     </div>
                                 </template>
 
-                                <!-- Burbuja Recibida -->
                                 <template x-if="!msg.is_mine">
                                     <div class="flex items-end gap-2 group">
                                         <template x-if="selectedContact.profile_photo">
@@ -175,10 +157,8 @@
                                 </template>
                             </div>
                         </template>
-
                     </div>
 
-                    <!-- Barra de Input (FIJA ABAJO) -->
                     <div class="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 shrink-0">
                         <div class="flex items-center gap-2 max-w-5xl mx-auto">
                             <div class="flex-1 relative">
@@ -198,8 +178,6 @@
                     </div>
                 </div>
             </template>
-
-            <!-- Placeholder cuando no hay chat seleccionado -->
             <template x-if="!selectedContact">
                 <div
                     class="flex-1 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 h-full text-center p-6">
@@ -269,10 +247,9 @@
             newMessage: '',
             isLoading: false,
             currentEchoChannel: null,
-
             init() {
                 if (window.Echo) {
-                    window.Echo.private('App.Models.User.' + {{ auth()->id() ?? 'null' }})
+                    window.Echo.private('App.Models.Usuario.' + {{ auth()->id() ?? 'null' }})
                         .listen('MessageSent', (e) => {
                             if (!this.selectedContact || this.selectedContact.id != e
                                 .sender_id) {
@@ -291,7 +268,6 @@
                         });
                 }
 
-                // Enviar ping cada 30 segundos si hay un chat abierto
                 setInterval(() => {
                     if (this.selectedContact) {
                         axios.post('/mensajes/ping', {
@@ -314,20 +290,15 @@
                 if (this.currentEchoChannel) {
                     window.Echo.leave(this.currentEchoChannel);
                 }
-
-                // Ping inmediato al abrir el chat
                 axios.post('/mensajes/ping', {
                     chat_activo_user_id: this.selectedContact.id
                 }).catch(() => {});
-
                 axios.get(`/mensajes/${this.selectedContact.id}`)
                     .then(response => {
                         this.messages = response.data.messages;
                         const convId = response.data.conversation_id;
                         this.scrollToBottom();
-
                         this.currentEchoChannel = 'chat.' + convId;
-
                         if (window.Echo) {
                             window.Echo.private(this.currentEchoChannel)
                                 .listen('MessageSent', (e) => {
@@ -371,7 +342,7 @@
                     })
                     .then(response => {
                         this.messages.push(response.data);
-                        this.messages = [...this.messages]; // Fuerza la reactividad en Alpine
+                        this.messages = [...this.messages];
                         this.scrollToBottom();
 
                         let contactIndex = this.contacts.findIndex(c => c.id === this

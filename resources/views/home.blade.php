@@ -9,7 +9,7 @@
 <x-app-layout>
     <x-slot name="header">
         @include('components.alert')
-        @if (!auth()->user()->tieneRol('estudiante'))
+        @if (!auth()->user()->tieneRol('paciente'))
             <div
                 class="dashboard-header bg-gradient-to-r {{ $headerGradient }} rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden mb-6">
                 <div class="absolute -top-1/2 -right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none">
@@ -56,7 +56,7 @@
     <div>
         @switch($moduloActivo)
             @case('comedor')
-                @if (auth()->user()->tieneRol('estudiante'))
+                @if (auth()->user()->tieneRol('paciente'))
                     @include('components.estudiante.comedor-home')
                 @else
                     @include('components.comedor-home')
@@ -64,7 +64,7 @@
             @break
 
             @case('salud')
-                @if (auth()->user()->tieneRol('estudiante'))
+                @if (auth()->user()->tieneRol('paciente'))
                     @include('components.estudiante.salud-home')
                 @else
                     @include('components.salud-home')
@@ -72,7 +72,7 @@
             @break
 
             @case('psicologia')
-                @if (auth()->user()->tieneRol('estudiante'))
+                @if (auth()->user()->tieneRol('paciente'))
                     @include('components.estudiante.psicologia-home')
                 @else
                     @include('components.psicologia-home')
@@ -80,7 +80,7 @@
             @break
 
             @case('becas')
-                @if (auth()->user()->tieneRol('estudiante'))
+                @if (auth()->user()->tieneRol('paciente'))
                     @include('components.estudiante.becas-home')
                 @else
                     @include('components.becas-home')
@@ -88,7 +88,7 @@
             @break
 
             @case('transporte')
-                @if (auth()->user()->tieneRol('estudiante'))
+                @if (auth()->user()->tieneRol('paciente'))
                     @include('components.estudiante.transporte-home')
                 @else
                     @include('components.transporte-home')
@@ -108,7 +108,6 @@
         @endswitch
     </div>
 
-    {{-- CSS y JS específicos para esta vista --}}
     @push('css')
         <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     @endpush

@@ -279,7 +279,7 @@
                                                 style="color: var(--text-main);">
                                                 {{ $pub->titulo }}
                                             </span>
-                                            <a href="{{ route('admin.psicologia.maestros.mural.index') }}#pub-{{ $pub->id }}"
+                                            <a href="{{ route('admin.psicologia.maestros.publicaciones.mural') }}#pub-{{ $pub->id }}"
                                                 class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 shrink-0 text-xs"
                                                 title="Ver en mural">
                                                 <i class="fas fa-external-link-alt text-[10px]"></i>

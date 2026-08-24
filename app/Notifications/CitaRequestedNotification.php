@@ -28,9 +28,9 @@ class CitaRequestedNotification extends Notification implements ShouldQueue
         return [
             'type_id' => 'cita_requested',
             'cita_id' => $this->cita->id,
-            'paciente_name' => $this->cita->paciente->name,
-            'body' => 'Tienes una nueva solicitud de cita de ' . $this->cita->paciente->name . '.',
-            'url' => route('agenda.index'), // Psicologo views requested in the calendar or maybe route('citas.show', $cita) - Wait, we can route to agenda for now.
+            'paciente_name' => $this->cita->paciente->persona->nombre_persona,
+            'body' => 'Tienes una nueva solicitud de cita de ' . $this->cita->paciente->persona->nombre_persona . '.',
+            'url' => route('admin.psicologia.maestros.agenda.index'),
         ];
     }
 }

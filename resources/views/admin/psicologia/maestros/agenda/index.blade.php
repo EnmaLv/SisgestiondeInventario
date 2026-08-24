@@ -183,7 +183,7 @@
                                                             @foreach ($data['citas']->where('estado', '!=', 'cancelada') as $cita)
                                                                 <div class="px-2 py-1 rounded-lg text-[9px] font-extrabold truncate
                                                                     {{ $cita->estado === 'confirmada' ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60'
-                                                                    : ($cita->estado === 'realizada' ? 'bg-sky-600 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60'
+                                                                    : ($cita->estado === 'realizada' ? 'bg-sky-100 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60'
                                                                     : ($cita->estado === 'no_asistio' ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
                                                                     : 'bg-gray-100 dark:bg-gray-700/60 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600')) }}">
                                                                     {{ $cita->hora ? \Carbon\Carbon::parse($cita->hora)->format('g:i A') : 'S/H' }}
@@ -198,44 +198,47 @@
                                     </div>
 
                                 @elseif ($view === 'list')
-                                    <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-700/60 shadow-sm overflow-hidden p-4 sm:p-8">
-                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8">
-                                            <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight">Historial de Citas</h3>
-                                            <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                                                Total: {{ $citasCalendario->total() }} registros
-                                            </span>
+                                    <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="rounded-2xl border shadow-sm overflow-hidden p-6 sm:p-8">
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                                            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight" style="color: var(--text-main);">
+                                                Historial de Citas
+                                            </h3>
+                                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-gray-200 dark:border-gray-700/60 text-gray-500 dark:text-gray-400" style="background-color: rgba(0,0,0,0.02);">
+                                                <i class="fas fa-list-check text-xs"></i>
+                                                <span>Total: {{ $citasCalendario->total() }} registros</span>
+                                            </div>
                                         </div>
 
-                                        <div class="overflow-x-auto overflow-y-auto max-h-[calc(100vh-250px)] rounded-2xl invisible-scrollbar relative">
-                                            <table class="min-w-[600px] w-full text-left">
-                                                <thead class="bg-gray-50/90 dark:bg-gray-800/90 backdrop-blur-md sticky top-0 z-10 shadow-sm">
-                                                    <tr class="border-b border-gray-200 dark:border-gray-700/60">
-                                                        <th class="pb-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Paciente</th>
-                                                        <th class="pb-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Solicitada</th>
-                                                        <th class="pb-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Fecha y Hora</th>
-                                                        <th class="pb-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Estado</th>
-                                                        <th class="pb-4"></th>
+                                        <div class="overflow-x-auto overflow-y-auto max-h-[calc(100vh-250px)] rounded-xl relative">
+                                            <table class="min-w-[600px] w-full text-left border-collapse">
+                                                <thead class="sticky top-0 z-10 shadow-sm" style="background-color: var(--bg-card);">
+                                                    <tr class="border-b border-gray-100 dark:border-gray-800">
+                                                        <th class="pb-3 text-[10px] font-black uppercase tracking-wider text-gray-400">Paciente</th>
+                                                        <th class="pb-3 text-[10px] font-black uppercase tracking-wider text-gray-400">Solicitada</th>
+                                                        <th class="pb-3 text-[10px] font-black uppercase tracking-wider text-gray-400">Fecha y Hora</th>
+                                                        <th class="pb-3 text-[10px] font-black uppercase tracking-wider text-gray-400">Estado</th>
+                                                        <th class="pb-3"></th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700/60">
+                                                <tbody class="divide-y divide-gray-100 dark:divide-gray-800/60">
                                                     @forelse($citasCalendario as $cita)
-                                                        <tr class="group hover:bg-gray-50/80 dark:hover:bg-gray-700/40 transition-colors">
+                                                        <tr class="group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
                                                             <td class="py-4">
                                                                 <div class="flex items-center gap-3">
-                                                                    <div class="w-8 h-8 bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border border-sky-100 dark:border-sky-800/40 rounded-xl flex items-center justify-center text-[10px] font-black uppercase">
+                                                                    <div class="w-9 h-9 text-{{ $themeColor ?? 'indigo' }}-600 dark:text-{{ $themeColor ?? 'indigo' }}-400 border border-{{ $themeColor ?? 'indigo' }}-200 dark:border-{{ $themeColor ?? 'indigo me' }}-800/40 rounded-xl flex items-center justify-center text-xs font-black uppercase" style="background-color: rgba(0,0,0,0.02);">
                                                                         {{ substr($cita->paciente->persona->nombre_persona, 0, 1) }}
                                                                     </div>
-                                                                    <span class="text-sm font-extrabold text-gray-800 dark:text-gray-200">
+                                                                    <span class="text-sm font-bold" style="color: var(--text-main);">
                                                                         {{ $cita->paciente->persona->nombre_persona }}
                                                                     </span>
                                                                 </div>
                                                             </td>
                                                             <td class="py-4">
                                                                 <div class="flex flex-col">
-                                                                    <span class="text-sm font-extrabold text-gray-700 dark:text-gray-300">
+                                                                    <span class="text-xs font-bold" style="color: var(--text-main);">
                                                                         {{ $cita->created_at ? \Carbon\Carbon::parse($cita->created_at)->translatedFormat('d M, Y') : 'N/A' }}
                                                                     </span>
-                                                                    <span class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                                                                    <span class="text-[10px] font-bold text-gray-400 tracking-wider">
                                                                         {{ $cita->created_at ? \Carbon\Carbon::parse($cita->created_at)->format('g:i A') : '' }}
                                                                     </span>
                                                                 </div>
@@ -243,25 +246,26 @@
                                                             <td class="py-4">
                                                                 <div class="flex flex-col">
                                                                     @if (!$cita->hora)
-                                                                        <span class="text-sm font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-tight italic">Sin horario asignado</span>
+                                                                        <span class="text-xs font-bold text-gray-400 italic">Sin horario asignado</span>
                                                                     @else
-                                                                        <span class="text-sm font-extrabold text-gray-700 dark:text-gray-300">
+                                                                        <span class="text-xs font-bold" style="color: var(--text-main);">
                                                                             {{ $cita->fecha ? $cita->fecha->translatedFormat('d M, Y') : 'Sin fecha' }}
                                                                         </span>
-                                                                        <span class="text-[10px] font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                                                                        <span class="text-[10px] font-bold text-gray-400 tracking-wider">
                                                                             {{ \Carbon\Carbon::parse($cita->hora)->format('g:i A') }}
                                                                         </span>
                                                                     @endif
                                                                 </div>
                                                             </td>
                                                             <td class="py-4">
-                                                                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border
-                                                                    {{ $cita->estado === 'realizada' ? 'bg-sky-600 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border-sky-200 dark:border-sky-800/60'
-                                                                    : ($cita->estado === 'cancelada' ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800/60'
-                                                                    : ($cita->estado === 'rechazada' ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800/60'
-                                                                    : ($cita->estado === 'confirmada' ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border-sky-200 dark:border-sky-800/60'
-                                                                    : ($cita->estado === 'no_asistio' ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800/60'
-                                                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-600')))) }}">
+                                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-bold border uppercase tracking-wider
+                                                                    {{ $cita->estado === 'realizada' ? 'border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400'
+                                                                    : ($cita->estado === 'cancelada' ? 'border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400'
+                                                                    : ($cita->estado === 'rechazada' ? 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400'
+                                                                    : ($cita->estado === 'confirmada' ? 'border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400'
+                                                                    : ($cita->estado === 'no_asistio' ? 'border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400'
+                                                                    : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400')))) }}">
+                                                                    <i class="fas fa-circle text-[6px]"></i>
                                                                     {{ str_replace('_', ' ', $cita->estado) }}
                                                                 </span>
                                                             </td>
@@ -280,17 +284,15 @@
                                                                         'cancelado_por'        => $cita->cancelado_por ?? null,
                                                                         'motivo_rechazo'       => $cita->motivo_rechazo_propuesta ?? null,
                                                                     ]) }})"
-                                                                    class="p-2 text-gray-400 dark:text-gray-500 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-all">
-                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                                    </svg>
+                                                                    class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700/60 text-gray-400 hover:text-{{ $themeColor ?? 'indigo' }}-600 hover:border-{{ $themeColor ?? 'indigo' }}-300 inline-flex items-center justify-center transition-all active:scale-95">
+                                                                    <i class="fas fa-eye text-xs"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
                                                     @empty
                                                         <tr>
-                                                            <td colspan="5" class="py-12 text-center text-gray-400 dark:text-gray-500 font-extrabold text-xs uppercase tracking-wider">
+                                                            <td colspan="5" class="py-12 text-center text-gray-400 font-bold text-xs uppercase tracking-wider">
+                                                                <i class="fas fa-inbox text-2xl block mb-2 opacity-50"></i>
                                                                 Historial de citas vacío
                                                             </td>
                                                         </tr>
@@ -1690,82 +1692,115 @@
     <div id="detalleCitaModal"
         class="hidden fixed inset-0 bg-gray-900/40 backdrop-blur-sm items-center justify-center z-[100]"
         onclick="if(event.target===this){cerrarDetalleCita()}">
-        <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-700/60 shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-lg font-black text-gray-900 dark:text-white">Detalle de la Cita</h4>
-                    <button onclick="cerrarDetalleCita()" class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-700/60 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3 bg-sky-50 dark:bg-sky-950/40 rounded-2xl p-4 border border-sky-100 dark:border-sky-900/30">
-                        <div id="modalCitaInitial" class="w-10 h-10 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded-xl flex items-center justify-center text-sm font-black uppercase">—</div>
-                        <div>
-                            <p id="modalCitaPaciente" class="text-sm font-black text-gray-900 dark:text-white">—</p>
-                            <p class="text-[10px] font-black text-sky-600 dark:text-sky-400 uppercase tracking-wider">Paciente</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/40 rounded-2xl p-4">
-                            <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Fecha Solicitada</p>
-                            <p id="modalCitaSolicitud" class="text-sm font-extrabold text-gray-800 dark:text-gray-200">—</p>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/40 rounded-2xl p-4">
-                            <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Fecha Programada</p>
-                            <p id="modalCitaProgramada" class="text-sm font-extrabold text-gray-800 dark:text-gray-200">—</p>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/40 rounded-2xl p-4">
-                            <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Estado</p>
-                            <p id="modalCitaEstado" class="text-sm font-extrabold text-gray-800 dark:text-gray-200 capitalize">—</p>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/40 rounded-2xl p-4">
-                            <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Prioridad</p>
-                            <p id="modalCitaPrioridad" class="text-sm font-extrabold text-gray-800 dark:text-gray-200 capitalize">—</p>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700/40 rounded-2xl p-4">
-                        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Motivo de Consulta</p>
-                        <p id="modalCitaMotivo" class="text-sm font-medium text-gray-700 dark:text-gray-300">—</p>
-                    </div>
-                    <div id="modalCitaCancelInfo" class="hidden bg-rose-50 dark:bg-rose-950/40 rounded-2xl p-4 border border-rose-200 dark:border-rose-900/40">
-                        <p id="modalCitaCancelLabel" class="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-wider mb-1">Cancelado por</p>
-                        <p id="modalCitaCancelValue" class="text-sm font-extrabold text-rose-700 dark:text-rose-300">—</p>
+        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+            class="rounded-2xl border shadow-2xl w-full max-w-lg mx-4 overflow-hidden p-6 sm:p-8">
+            
+            <div class="flex items-center justify-between mb-6">
+                <h4 class="text-xl sm:text-2xl font-extrabold tracking-tight" style="color: var(--text-main);">
+                    Detalle de la Cita
+                </h4>
+                <button onclick="cerrarDetalleCita()"
+                    class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700/60 text-gray-400 hover:text-{{ $themeColor ?? 'indigo' }}-600 hover:border-{{ $themeColor ?? 'indigo' }}-300 inline-flex items-center justify-center transition-all active:scale-95"
+                    style="background-color: rgba(0,0,0,0.02);">
+                    <i class="fas fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex items-center gap-3 p-4 rounded-xl border border-{{ $themeColor ?? 'indigo' }}-200 dark:border-{{ $themeColor ?? 'indigo' }}-800/40" style="background-color: rgba(0,0,0,0.02);">
+                    <div id="modalCitaInitial"
+                        class="w-10 h-10 text-{{ $themeColor ?? 'indigo' }}-600 dark:text-{{ $themeColor ?? 'indigo' }}-400 border border-{{ $themeColor ?? 'indigo' }}-200 dark:border-{{ $themeColor ?? 'indigo' }}-800/40 rounded-xl flex items-center justify-center text-sm font-black uppercase"
+                        style="background-color: rgba(0,0,0,0.02);">—</div>
+                    <div>
+                        <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-0.5">
+                            Paciente
+                        </span>
+                        <p id="modalCitaPaciente" class="text-sm font-bold" style="color: var(--text-main);">—</p>
                     </div>
                 </div>
-                <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-end items-center" id="detalleCitaActions">
-                    <button onclick="cerrarDetalleCita()" class="px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 font-extrabold rounded-xl transition-colors text-sm w-full sm:w-auto">Cerrar</button>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-xl border border-gray-100 dark:border-gray-800" style="background-color: rgba(0,0,0,0.02);">
+                        <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">
+                            Fecha Solicitada
+                        </span>
+                        <p id="modalCitaSolicitud" class="text-xs font-bold" style="color: var(--text-main);">—</p>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-gray-100 dark:border-gray-800" style="background-color: rgba(0,0,0,0.02);">
+                        <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">
+                            Fecha Programada
+                        </span>
+                        <p id="modalCitaProgramada" class="text-xs font-bold" style="color: var(--text-main);">—</p>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-gray-100 dark:border-gray-800" style="background-color: rgba(0,0,0,0.02);">
+                        <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">
+                            Estado
+                        </span>
+                        <p id="modalCitaEstado" class="text-xs font-bold capitalize" style="color: var(--text-main);">—</p>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-gray-100 dark:border-gray-800" style="background-color: rgba(0,0,0,0.02);">
+                        <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">
+                            Prioridad
+                        </span>
+                        <p id="modalCitaPrioridad" class="text-xs font-bold capitalize" style="color: var(--text-main);">—</p>
+                    </div>
                 </div>
+
+                <div class="p-4 rounded-xl border border-gray-100 dark:border-gray-800" style="background-color: rgba(0,0,0,0.02);">
+                    <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">
+                        Motivo de Consulta
+                    </span>
+                    <p id="modalCitaMotivo" class="text-xs font-medium text-gray-600 dark:text-gray-300">—</p>
+                </div>
+
+                <div id="modalCitaCancelInfo" class="hidden p-4 rounded-xl border border-rose-200 dark:border-rose-800/40 bg-rose-50/50 dark:bg-rose-950/20">
+                    <span id="modalCitaCancelLabel" class="block text-[10px] font-black uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-1">
+                        Cancelado por
+                    </span>
+                    <p id="modalCitaCancelValue" class="text-xs font-bold text-rose-700 dark:text-rose-300">—</p>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-3" id="detalleCitaActions">
+                <button onclick="cerrarDetalleCita()"
+                    class="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-gray-600 dark:text-gray-300 transition-all active:scale-95">
+                    Cerrar
+                </button>
             </div>
         </div>
     </div>
 
     <div id="filterModal"
         class="fixed inset-0 z-[150] hidden items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4 transition-all">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700/60 flex flex-col max-h-[85vh] overflow-hidden">
-            <div class="p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-700/60">
-                <h3 class="text-lg font-black text-gray-900 dark:text-white tracking-tight">Filtrar Historial</h3>
+        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="w-full max-w-md rounded-2xl shadow-sm border flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="p-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight" style="color: var(--text-main);">Filtrar Historial</h3>
                 <button type="button" onclick="document.getElementById('filterModal').classList.add('hidden'); document.getElementById('filterModal').classList.remove('flex');"
                     class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <form method="GET" action="{{ route('admin.psicologia.maestros.agenda.index') }}" class="p-6 overflow-y-auto space-y-4 custom-scrollbar bg-white dark:bg-gray-800 flex-1">
+            <form method="GET" action="{{ route('admin.psicologia.maestros.agenda.index') }}" class="p-6 overflow-y-auto space-y-6 custom-scrollbar flex-1">
                 <input type="hidden" name="view" value="list">
                 <input type="hidden" name="psicologo_id" value="{{ $psicologoId }}">
                 <div>
-                    <label class="block text-[10px] font-black text-gray-400 dark:text-gray-400 uppercase tracking-wider mb-1">Fecha Desde</label>
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Fecha Desde</label>
                     <input type="date" name="from_date" value="{{ request('from_date') }}"
-                        class="w-full rounded-2xl border border-gray-200 dark:border-gray-700/60 bg-gray-50 dark:bg-gray-900/50 px-3.5 py-2 text-xs font-extrabold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all">
+                        style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                        class="w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 {{ $focusRingClass }} text-sm font-medium transition-all">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black text-gray-400 dark:text-gray-400 uppercase tracking-wider mb-1">Fecha Hasta</label>
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Fecha Hasta</label>
                     <input type="date" name="to_date" value="{{ request('to_date') }}"
-                        class="w-full rounded-2xl border border-gray-200 dark:border-gray-700/60 bg-gray-50 dark:bg-gray-900/50 px-3.5 py-2 text-xs font-extrabold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all">
+                        style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                        class="w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 {{ $focusRingClass }} text-sm font-medium transition-all">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black text-gray-400 dark:text-gray-400 uppercase tracking-wider mb-1">Estado</label>
-                    <select name="estado" class="w-full rounded-2xl border border-gray-200 dark:border-gray-700/60 bg-gray-50 dark:bg-gray-900/50 px-3.5 py-2 text-xs font-extrabold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Estado</label>
+                    <select name="estado" style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);" class="w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 {{ $focusRingClass }} text-sm font-medium transition-all">
                         <option value="">Todos los estados</option>
                         <option value="confirmada"  {{ request('estado') === 'confirmada'  ? 'selected' : '' }}>Confirmada</option>
                         <option value="realizada"   {{ request('estado') === 'realizada'   ? 'selected' : '' }}>Realizada</option>
@@ -1773,32 +1808,33 @@
                         <option value="cancelada"   {{ request('estado') === 'cancelada'   ? 'selected' : '' }}>Cancelada</option>
                     </select>
                 </div>
-                <div class="flex items-center justify-end gap-2 pt-4">
+                <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-3">
                     <button type="button" onclick="document.getElementById('filterModal').classList.add('hidden'); document.getElementById('filterModal').classList.remove('flex');"
-                        class="px-4 h-9 rounded-2xl text-xs font-extrabold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancelar</button>
-                    <button type="submit" class="px-4 h-9 rounded-2xl text-xs font-black text-white bg-sky-600 hover:bg-sky-700 shadow-sm transition-colors">Aplicar Filtros</button>
+                        class="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-gray-600 dark:text-gray-300 transition-all">Cancelar</button>
+                    <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl {{ $btnClass }} text-white text-xs font-bold shadow-md active:scale-95 transition-all">Aplicar Filtros</button>
                 </div>
             </form>
         </div>
     </div>
 
     <div id="confirmModal" class="fixed inset-0 z-[150] hidden items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-gray-200 dark:border-gray-700/60">
-            <div id="confirmIconBox" class="w-16 h-16 bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border border-sky-100 dark:border-sky-900/30 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+        <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);" class="rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-sm border">
+            <div id="confirmIconBox" class="w-16 h-16 bg-{{ $themeColor }}-50 dark:bg-{{ $themeColor }}-950/40 text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400 border border-{{ $themeColor }}-100 dark:border-{{ $themeColor }}-900/30 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <svg id="confirmIconSvg" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
-            <h3 id="confirmTitle" class="text-xl font-black text-gray-900 dark:text-white text-center mb-3 tracking-tight"></h3>
-            <p id="confirmText" class="text-sm font-medium text-gray-500 dark:text-gray-400 text-center mb-6 leading-relaxed"></p>
+            <h3 id="confirmTitle" class="text-xl font-extrabold text-center mb-2 tracking-tight" style="color: var(--text-main);"></h3>
+            <p id="confirmText" class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 text-center mb-6 leading-relaxed"></p>
             <div id="confirmInputArea" class="hidden mb-6">
-                <label id="confirmInputLabel" class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Motivo</label>
+                <label id="confirmInputLabel" class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Motivo</label>
                 <textarea id="confirmInputField" rows="3"
-                    class="w-full rounded-2xl border border-gray-200 dark:border-gray-700/60 bg-gray-50 dark:bg-gray-900/50 px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition-all resize-none"></textarea>
+                    style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                    class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 {{ $focusRingClass }} text-sm font-medium transition-all resize-none"></textarea>
             </div>
-            <div class="flex gap-3">
-                <button id="confirmNoBtn" class="flex-1 py-3.5 px-6 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-2xl font-black text-xs uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 transition-all">Cancelar</button>
-                <button id="confirmYesBtn" class="flex-1 py-3.5 px-6 bg-sky-600 text-white rounded-2xl font-black text-xs uppercase tracking-wider shadow-sm hover:bg-sky-700 transition-all">Aceptar</button>
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <button id="confirmNoBtn" class="flex-1 px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-gray-600 dark:text-gray-300 transition-all">Cancelar</button>
+                <button id="confirmYesBtn" class="flex-1 px-6 py-2.5 rounded-xl {{ $btnClass }} text-white text-xs font-bold shadow-md active:scale-95 transition-all">Aceptar</button>
             </div>
         </div>
     </div>

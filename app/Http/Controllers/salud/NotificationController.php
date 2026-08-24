@@ -19,7 +19,7 @@ class NotificationController extends Controller
         Notification::marcarComoLeida($id);
 
         $data = json_decode($notification->data, true);
-        $url = $data['url'] ?? route('dashboard');
+        $url = $data['url'] ?? route('home');
         $parsedUrl = parse_url($url);
         if (isset($parsedUrl['path'])) {
             $url = $parsedUrl['path'] . (isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '');

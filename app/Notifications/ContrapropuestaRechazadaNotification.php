@@ -31,7 +31,7 @@ class ContrapropuestaRechazadaNotification extends Notification implements Shoul
 
     public function toArray(object $notifiable): array
     {
-        $pacienteName = trim(($this->cita->paciente->nombres ?? '') . ' ' . ($this->cita->paciente->apellidos ?? '')) ?: 'El paciente';
+        $pacienteName = trim(($this->cita->paciente->persona->nombre_persona ?? '') . ' ' . ($this->cita->paciente->persona->apellido_persona ?? '')) ?: 'El paciente';
         
         return [
             'type_id' => 'contrapropuesta_rechazada',
@@ -39,7 +39,7 @@ class ContrapropuestaRechazadaNotification extends Notification implements Shoul
             'body' => $this->cita->propuesta_estado === null 
                 ? "El paciente $pacienteName ha rechazado la contrapropuesta y ha enviado una nueva sugerencia de horario." 
                 : "El paciente $pacienteName ha rechazado tu contrapropuesta de horario. La cita permanece pendiente.",
-            'url' => route('agenda.index'),
+            'url' => route('admin.psicologia.maestros.agenda.index'),
         ];
     }
 }

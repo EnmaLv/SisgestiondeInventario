@@ -613,7 +613,7 @@ return [
             'module' => 'psicologia',
             'url' => 'admin/psicologia/maestros/agenda',
             'icon' => 'fas fa-calendar-check',
-            'active' => ['admin/psicologia/maestros/agenda*'],
+            'active' => ['admin/psicologia/maestros/publicaciones/agenda*'],
         ],
 
         [
@@ -622,7 +622,25 @@ return [
             'module' => 'psicologia',
             'url' => 'admin/psicologia/maestros/mural',
             'icon' => 'fas fa-calendar-check',
-            'active' => ['admin/psicologia/maestros/mural*'],
+            'active' => ['admin/psicologia/maestros/publicaciones/mural*'],
+        ],
+
+        [
+            'text' => 'Notificaciones',
+            'key' => 'notificaciones',
+            'module' => 'psicologia',
+            'url' => 'admin/notificaciones', 
+            'icon' => 'fas fa-calendar-check',
+            'active' => ['admin/notificaciones*'],
+        ],
+
+        [
+            'text' => 'Estado de animo',
+            'key' => 'estado_animo_diario',
+            'module' => 'psicologia',
+            'url' => 'admin/psicologia/maestros/estado_animo_diario', 
+            'icon' => 'fas fa-calendar-check',
+            'active' => ['admin/psicologia/maestros/estado_animo_diario*'],
         ],
 
         [

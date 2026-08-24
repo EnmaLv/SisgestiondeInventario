@@ -16,18 +16,12 @@ class CitaAsignadaManualMail extends Mailable implements ShouldQueue
     public $cita;
     public $psicologo;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct($cita, $psicologo)
     {
         $this->cita = $cita;
         $this->psicologo = $psicologo;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -35,9 +29,6 @@ class CitaAsignadaManualMail extends Mailable implements ShouldQueue
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
@@ -45,11 +36,6 @@ class CitaAsignadaManualMail extends Mailable implements ShouldQueue
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

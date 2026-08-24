@@ -33,7 +33,7 @@ class AvisoAtencionPsicologoNotification extends Notification implements ShouldQ
             'paciente_id' => $this->paciente->id,
             'cita_id' => $this->cita->id,
             'body' => 'Recordatorio: Has rechazado o cancelado múltiples citas con el paciente ' . ltrim($this->paciente->name ?? 'Paciente') . '. Recuerda que puedes ajustar su prioridad de atención.',
-            'url' => route('agenda.index', ['avisoAtencionCita' => $this->cita->id]),
+            'url' => route('admin.psicologia.maestros.agenda.index', ['avisoAtencionCita' => $this->cita->id]),
         ];
     }
 }

@@ -302,11 +302,11 @@
 
         <header
             class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-40 flex-shrink-0 relative">
-            @includeIf('layouts.navigation')
+            @include('layouts.navigation')
         </header>
 
         <div class="flex flex-1 overflow-hidden relative" style="min-height: 0;">
-            @includeIf('layouts.sidebar')
+            @include('layouts.sidebar')
 
             <main class="flex-1 overflow-y-auto invisible-scrollbar p-6 scroll-smooth">
                 @isset($header)

@@ -12,7 +12,7 @@ class CitaCancelledNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $cita;
-    public $cancelledBy; // 'paciente' or 'psicologo'
+    public $cancelledBy;
 
     public function __construct(Cita $cita, $cancelledBy)
     {
@@ -38,13 +38,13 @@ class CitaCancelledNotification extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $senderName = $this->cancelledBy === 'paciente' ? $this->cita->paciente->name : $this->cita->psicologo->name;
+        $senderName = $this->cancelledBy === 'paciente' ? $this->cita->paciente->persona->nombre_persona : $this->cita->psicologo->persona->nombre_persona;
         $url = $this->cancelledBy === 'paciente' ? route('agenda.index') : route('citas.index');
         
         $body = $senderName . ' ha cancelado una cita.';
         if ($this->cancelledBy === 'pospuesta') {
-            $senderName = $this->cita->psicologo->name;
-            $url = route('citas.index');
+            $senderName = $this->cita->psicologo->persona->nombre_persona;
+            $url = route('admin.psicologia.maestros.citas.index');
             $body = $senderName . ' ha pospuesto tu cita confirmada. El psicólogo te asignará un nuevo horario pronto. Recibirás una notificación cuando lo haga.';
         }
         

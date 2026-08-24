@@ -400,4 +400,15 @@ Route::post('password/recover/verify', [PasswordRecoveryController::class, 'veri
 Route::post('password/recover/reset-password', [PasswordRecoveryController::class, 'resetPassword'])->name('password.recover.reset_password');
 Route::post('password/recover/reset-masterkey', [PasswordRecoveryController::class, 'resetMasterKey'])->name('password.recover.reset_masterkey');
 
+Route::middleware(['auth'])->group(function () {
+    Route::post('/broadcasting/auth', function () {
+        return \Illuminate\Support\Facades\Broadcast::auth(request());
+    });
+
+    Route::get('/mensajes', [\App\Http\Controllers\salud\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/mensajes/contactos/lista', [\App\Http\Controllers\salud\ChatController::class, 'fetchContacts'])->name('chat.contacts');
+    Route::post('/mensajes/ping', [\App\Http\Controllers\salud\ChatController::class, 'ping'])->name('chat.ping');
+    Route::get('/mensajes/{user}', [\App\Http\Controllers\salud\ChatController::class, 'fetchMessages'])->name('chat.fetch');
+    Route::post('/mensajes/{user}', [\App\Http\Controllers\salud\ChatController::class, 'sendMessage'])->name('chat.store');
+});
 require __DIR__ . '/beca.php';

@@ -1,12 +1,8 @@
 <x-app-layout>
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
             @include('components.alert')
-
             <div x-data="{ search: '', items: {{ json_encode($campos->pluck('titulo')->map(function ($t) {return strtolower($t);})) }} }">
-
-                {{-- Encabezado de la página --}}
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
@@ -26,7 +22,6 @@
                     </div>
                 </div>
 
-                {{-- Card de Buscador --}}
                 <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                     class="p-4 rounded-2xl border shadow-sm mb-6 flex items-center justify-between gap-4">
 
@@ -41,7 +36,6 @@
                     </div>
                 </div>
 
-                {{-- Card de la Tabla --}}
                 <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
                     class="rounded-2xl border shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
@@ -58,8 +52,6 @@
                                 @forelse($campos as $campo)
                                     <tr x-show="search === '' || '{{ strtolower($campo->titulo) }}'.includes(search.toLowerCase())"
                                         class="hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors">
-
-                                        {{-- Título --}}
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-3">
                                                 <div
@@ -71,8 +63,6 @@
                                                 </span>
                                             </div>
                                         </td>
-
-                                        {{-- Tipo Badge --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             @if (is_null($campo->psicologo_id))
                                                 <span
@@ -89,18 +79,15 @@
                                             @endif
                                         </td>
 
-                                        {{-- Acciones --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-right">
                                             <div class="flex items-center justify-end gap-1">
                                                 @if (!is_null($campo->psicologo_id))
-                                                    {{-- Editar --}}
                                                     <a href="{{ route('admin.psicologia.maestros.campos_evolucion.edit', $campo->id) }}"
                                                         class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-all"
                                                         title="Editar">
                                                         <i class="fas fa-pen-to-square text-sm"></i>
                                                     </a>
 
-                                                    {{-- Eliminar --}}
                                                     <form
                                                         action="{{ route('admin.psicologia.maestros.campos_evolucion.destroy', $campo->id) }}"
                                                         method="POST" class="inline">
@@ -135,7 +122,6 @@
                                     </tr>
                                 @endforelse
 
-                                {{-- Mensaje de búsqueda sin resultados --}}
                                 <tr x-show="search !== '' && !items.some(t => t.includes(search.toLowerCase()))"
                                     x-cloak>
                                     <td colspan="3" class="px-6 py-12 text-center text-gray-400">
@@ -148,17 +134,13 @@
                             </tbody>
                         </table>
                     </div>
-
-                    {{-- Paginación --}}
                     @if ($campos->hasPages())
                         <div class="px-6 py-4 flex justify-center border-t border-gray-100 dark:border-gray-800">
-                            {{ $campos->appends(request()->query())->links('enfermedades.partials.pagination') }}
+                            {{ $campos->appends(request()->query())->links('partials.pagination') }}
                         </div>
                     @endif
                 </div>
-
             </div>
-
         </div>
     </div>
 </x-app-layout>

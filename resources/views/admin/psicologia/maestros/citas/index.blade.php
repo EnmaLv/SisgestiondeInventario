@@ -1,22 +1,30 @@
 <x-app-layout>
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-3xl border-l-8 border-blue-700">
-                <div class="p-8 text-gray-900 dark:text-gray-100">
+    <div class="py-2">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            
+            <div class="p-6 sm:p-8 text-gray-900 dark:text-gray-100">
+                <div>
+                    
                     <div id="activeAppointmentsView">
-                        <div class="mb-6 flex justify-between items-center gap-4 border-b pb-6 dark:border-gray-700">
-                            <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight text-left">
-                                {{ auth()->user()->role === 'admin' ? 'Gestión Global de Citas' : 'Mis Citas' }}
-                            </h2>
-                            @if(auth()->user()->role !== 'admin')
+                        <div class="mb-2 flex justify-between items-center gap-4 pb-6">
+                            <div class="flex-shrink-0">
+                                <h3 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight whitespace-nowrap">
+                                    {{ auth()->user()->tieneRol(['psicologo', 'administrador']) ? 'Gestión Global de Citas' : 'Mis Citas' }}
+                                </h3>
+                                <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Recorrido clínico completo</p>
+                            </div>
+                            
+                            @if(!auth()->user()->tieneRol(['psicologo', 'administrador']))
                                 <div class="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
-                                    <button onclick="toggleHistoryView(true)" class="w-10 h-10 sm:w-11 sm:h-11 shrink-0 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 text-slate-400 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 hover:border-sky-200 dark:hover:border-sky-700 transition-all shadow-sm group" title="Ver historial de sesiones">
+                                    <button onclick="toggleHistoryView(true)" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-gray-700 text-slate-400 dark:text-gray-400 hover:text-blue-700 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 transition-all" title="Ver historial de sesiones">
                                         <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     </button>
                                     <a href="{{ route('admin.psicologia.maestros.citas.create') }}" class="inline-flex shrink-0 whitespace-nowrap items-center px-4 py-2 sm:px-5 sm:py-2.5 bg-blue-800 hover:bg-blue-700 text-white text-sm font-bold rounded-2xl transition-all shadow-md shadow-blue-100 dark:shadow-blue-900/30">+ Solicitar cita</a>
                                 </div>
                             @endif
                         </div>
+                        
+                        
 
                         @php
                             $citasActivas = $citas->filter(fn($c) => in_array($c->estado, ['pendiente', 'confirmada']));
@@ -28,234 +36,257 @@
                             </div>
                             <p class="text-lg font-bold text-slate-900 dark:text-white">No tienes citas en Gestión.</p>
                             <p class="text-sm text-slate-500 dark:text-gray-400 mt-2">
-                                {{ auth()->user()->role === 'admin' ? 'Aún no se han generado solicitudes de citas en el sistema.' : 'Solicita una nueva cita o consulta tu historial.' }}
+                                {{ auth()->user()->tieneRol(['psicologo', 'administrador']) ? 'Aún no se han generado solicitudes de citas en el sistema.' : 'Solicita una nueva cita o consulta tu historial.' }}
                             </p>
                         </div>
 
-                        <div id="citasCardsContainer" class="grid grid-cols-1 gap-4 {{ $citasActivas->isEmpty() ? 'hidden' : '' }}">
-                            @foreach($citasActivas as $cita)
-                                <div id="cita-card-{{ $cita->id }}" class="border border-slate-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm bg-white dark:bg-gray-800 transition hover:shadow-md" data-ajax-remove-card="true">
-                                    <div class="flex justify-between items-start mb-4 pb-4 border-b border-slate-100 dark:border-gray-700">
-                                        <div>
-                                            <h3 class="font-black text-lg text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-                                                <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                @if($cita->estado === 'confirmada' && $cita->fecha)
-                                                    {{ ucfirst(\Carbon\Carbon::parse($cita->fecha)->locale('es')->translatedFormat('l, d M Y')) }}
-                                                @else
-                                                    Cita en Espera
+                        <div id="citasCardsContainer" class="{{ $citasActivas->isEmpty() ? 'hidden' : '' }}">
+
+                            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                                <div class="overflow-x-auto">
+                                    <table style="background-color: var(--bg-card); border-color: var(--border-color);" class="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr class="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-gray-800 text-[11px] font-black uppercase tracking-wider text-gray-400">
+                                                <th class="px-6 py-4">Fecha / Hora</th>
+                                                @if(auth()->user()->tieneRol(['psicologo', 'administrador']))
+                                                    <th class="px-6 py-4">Paciente</th>
                                                 @endif
-                                            </h3>
-                                            @php
-                                                $bloqueConfirmado = $cita->bloque_propuesto;
-                                                if ($bloqueConfirmado) {
-                                                    preg_match('/^([^\s]+)\s+(\d{1,2}:\d{2})\s*[-–—]\s*(\d{1,2}:\d{2})$/', $bloqueConfirmado, $matches);
-                                                    if (count($matches) === 4) {
-                                                        $bloqueConfirmado = \Carbon\Carbon::createFromFormat('H:i', $matches[2])->format('g:i A') . ' - ' . \Carbon\Carbon::createFromFormat('H:i', $matches[3])->format('g:i A');
-                                                    } else {
-                                                        $dias = ['Lunes', 'Martes', 'Miércoles', 'Miercoles', 'Jueves', 'Viernes', 'Sábado', 'Sabado', 'Domingo'];
-                                                        $bloqueConfirmado = trim(str_ireplace($dias, '', $bloqueConfirmado));
-                                                    }
-                                                }
-                                            @endphp
-                                            @if($cita->estado === 'confirmada')
-                                                <p class="text-sm font-bold text-sky-600 dark:text-sky-400 mt-1 flex items-center gap-1">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    {{ $bloqueConfirmado }}
-                                                </p>
-                                            @endif
-                                        </div>
-                                        <span class="text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest border
-                                            {{ $cita->estado === 'confirmada' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800' }}">
-                                            {{ ucfirst($cita->estado ?: 'pendiente') }}
-                                        </span>
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                        @if(auth()->user()->role === 'admin')
-                                            <div class="bg-slate-50 dark:bg-gray-750 p-3 rounded-xl border border-slate-100 dark:border-gray-700">
-                                                <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">Paciente</p>
-                                                <p class="font-bold text-slate-700 dark:text-gray-300">{{ optional($cita->paciente)->name ?: ($cita->paciente_nombre ?? 'N/A') }}</p>
-                                            </div>
-                                        @endif
-                                        <div class="bg-slate-50 dark:bg-gray-750 p-3 rounded-xl border border-slate-100 dark:border-gray-700">
-                                            <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">Psicólogo</p>
-                                            <p class="font-bold text-slate-700 dark:text-gray-300 flex items-center gap-2">
-                                                <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-black">{{ substr(optional($cita->psicologo)->name ?: ($cita->psicologo_nombre ?? 'N'), 0, 1) }}</span>
-                                                {{ optional($cita->psicologo)->name ?: ($cita->psicologo_nombre ?? 'No asignado') }}
-                                            </p>
-                                        </div>
-                                        <div class="bg-slate-50 dark:bg-gray-750 p-3 rounded-xl border border-slate-100 dark:border-gray-700 md:col-span-2">
-                                            <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">Motivo</p>
-                                            <p class="text-sm font-medium text-slate-600 dark:text-gray-300 italic">"{{ $cita->motivo ?: 'Sin motivo' }}"</p>
-                                        </div>
-                                        @if($cita->estado !== 'confirmada')
-                                            @php
-                                                $rawBloques = $cita->bloques_sugeridos ?: '';
-                                                $horariosDisplay = trim(preg_replace('/^\s*Horarios\s*(propuestos)?\s*:\s*/i', '', $rawBloques));
-                                                $excepcionesDisplay = '';
-                                                if (str_contains($rawBloques, '|')) {
-                                                    $partes = explode('|', $rawBloques);
-                                                    $excepcionesDisplay = trim(preg_replace('/^\s*D[íi]as exceptuados:\s*/i', '', $partes[0]));
-                                                    $horariosDisplay = trim(preg_replace('/^\s*Horarios\s*(propuestos)?\s*:\s*/i', '', $partes[1] ?? ''));
-                                                }
-                                            @endphp
-                                            <div class="bg-slate-50 dark:bg-gray-750 p-3 rounded-xl border border-slate-100 dark:border-gray-700 md:col-span-2">
-                                                <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">Horarios sugeridos por ti</p>
-                                                <div class="flex flex-wrap gap-2 mt-1">
-                                                @if($horariosDisplay)
-                                                    @foreach(array_filter(array_map('trim', explode(';', $horariosDisplay))) as $bloque)
-                                                        <span class="px-3 py-1 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 rounded-lg text-xs font-semibold">{{ $bloque }}</span>
-                                                    @endforeach
-                                                @else
-                                                    <p class="text-sm font-medium text-slate-600 dark:text-gray-300">No definidos</p>
-                                                @endif
-                                                </div>
-                                            </div>
+                                                <th class="px-6 py-4">Psicólogo</th>
+                                                <th class="px-6 py-4">Motivo</th>
+                                                <th class="px-6 py-4 text-center">Estado</th>
+                                                <th class="px-6 py-4 text-right">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800/60 text-xs font-medium">
+                                            @foreach($citasActivas as $cita)
+                                                <tr id="cita-card-{{ $cita->id }}" class="hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors" data-ajax-remove-card="true">
 
-                                        @endif
-                                    </div>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        @php
+                                                            $bloqueConfirmado = $cita->bloque_propuesto;
+                                                            if ($bloqueConfirmado) {
+                                                                preg_match('/^([^\s]+)\s+(\d{1,2}:\d{2})\s*[-–—]\s*(\d{1,2}:\d{2})$/', $bloqueConfirmado, $matches);
+                                                                if (count($matches) === 4) {
+                                                                    $bloqueConfirmado = \Carbon\Carbon::createFromFormat('H:i', $matches[2])->format('g:i A') . ' - ' . \Carbon\Carbon::createFromFormat('H:i', $matches[3])->format('g:i A');
+                                                                } else {
+                                                                    $dias = ['Lunes', 'Martes', 'Miércoles', 'Miercoles', 'Jueves', 'Viernes', 'Sábado', 'Sabado', 'Domingo'];
+                                                                    $bloqueConfirmado = trim(str_ireplace($dias, '', $bloqueConfirmado));
+                                                                }
+                                                            }
+                                                        @endphp
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="font-black text-sm text-slate-800 dark:text-white flex items-center gap-1.5">
+                                                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                                @if($cita->estado === 'confirmada' && $cita->fecha)
+                                                                    {{ ucfirst(\Carbon\Carbon::parse($cita->fecha)->locale('es')->translatedFormat('l, d M Y')) }}
+                                                                @else
+                                                                    En Espera
+                                                                @endif
+                                                            </span>
+                                                            @if($cita->estado === 'confirmada' && $bloqueConfirmado)
+                                                                <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                                                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                                    {{ $bloqueConfirmado }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
 
-                                    @if(auth()->user()->role === 'paciente' && isset($cita->propuesta_estado) && $cita->propuesta_estado === 'pendiente')
-                                        <div class="mt-4 p-5 bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/50 rounded-2xl w-full relative overflow-hidden">
-                                            <div class="flex items-start gap-3 w-full">
-                                                <div class="p-2 bg-sky-500 text-white rounded-xl shadow-md shrink-0 mt-0.5">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <h4 class="text-sm font-black text-sky-850 dark:text-sky-300 uppercase tracking-tight">Propuesta de cambio de horario</h4>
-                                                    <p class="text-xs text-sky-700 dark:text-sky-400 mt-1 font-medium italic">"No puedo atenderte en los horarios que sugeriste, sin embargo, quiero atenderte lo más pronto posible, esta es mi propuesta para atenderte"</p>
+                                                    @if(auth()->user()->tieneRol(['psicologo', 'administrador']))
+                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                            <span class="font-bold text-slate-700 dark:text-gray-300">{{ optional($cita->paciente->persona)->nombre_persona ?: ($cita->paciente->persona ?? 'N/A') }}</span>
+                                                        </td>
+                                                    @endif
 
-                                                    <div class="mt-4 space-y-3 w-full">
-                                                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-450 dark:text-gray-500 mb-3">Opciones de horario propuestas por el psicólogo:</p>
-                                                    <form id="form-propuesta-{{ $cita->id }}" onsubmit="responderPropuestaForm(event, {{ $cita->id }})" class="w-full relative">
-                                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 w-full">
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center text-[10px] font-black shrink-0">{{ substr(optional($cita->psicologo->persona)->nombre_persona ?: 'N', 0, 1) }}</span>
+                                                            <span class="font-bold text-slate-700 dark:text-gray-300">
+                                                                {{ optional($cita->psicologo->persona)->nombre_persona ?: 'No asignado' }} {{ optional($cita->psicologo->persona)->apellido_persona ?: '' }}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="px-6 py-4 max-w-[200px]">
+                                                        <p class="text-slate-600 dark:text-gray-300 italic truncate">"{{ $cita->motivo ?: 'Sin motivo' }}"</p>
+                                                    </td>
+
+                                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                        <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border
+                                                            {{ $cita->estado === 'confirmada' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800' }}">
+                                                            {{ ucfirst($cita->estado ?: 'pendiente') }}
+                                                        </span>
+                                                    </td>
+
+                                                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                                                        <div class="flex items-center justify-end gap-2">
                                                             @php
-                                                                $bloquesArray = array_filter(array_map('trim', explode(';', $cita->bloques_propuestos_raw ?? '')));
+                                                                $puedeCancelar = true;
+                                                                if (auth()->user()->tieneRol(['paciente']) && $cita->estado === 'confirmada' && $cita->fecha && $cita->hora) {
+                                                                    $fechaSolo = substr($cita->fecha, 0, 10);
+                                                                    $fechaHoraCita = \Carbon\Carbon::parse($fechaSolo . ' ' . $cita->hora);
+                                                                    if ($fechaHoraCita->isPast()) {
+                                                                        $puedeCancelar = false;
+                                                                    }
+                                                                }
                                                             @endphp
-                                                            @foreach($bloquesArray as $index => $bloque)
-                                                                <label class="cursor-pointer block w-full h-full">
-                                                                    <input type="radio" name="bloque_seleccionado" value="{{ $bloque }}" class="peer sr-only" required onchange="document.getElementById('rechazo-area-{{ $cita->id }}').style.display='none'; if(typeof updateSubmitBtnState === 'function') updateSubmitBtnState({{ $cita->id }});">
-                                                                    <div class="p-3 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-600 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 dark:peer-checked:bg-sky-900/30 transition-all h-full w-full flex items-center justify-center text-center">
-                                                                        <p class="text-sm font-bold text-slate-700 dark:text-gray-300 peer-checked:text-sky-700 dark:peer-checked:text-sky-400">
+                                                            @if($puedeCancelar)
+                                                                <button type="button" onclick="openPatientCancelModal('{{ route('admin.psicologia.maestros.citas.cancel', $cita->id) }}', '{{ $cita->id }}')" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700/60 dark:hover:border-red-700/60 text-gray-400 hover:text-rose-600 hover:bg-rose-600/10 hover:border-rose-300 inline-flex items-center justify-center transition-all active:scale-95" title="Cancelar cita">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            @else
+                                                                <span class="text-[10px] text-slate-400 bg-slate-100 dark:bg-gray-700 px-2 py-1 rounded-lg font-bold uppercase tracking-wide whitespace-nowrap">Cita pasada</span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                @if(auth()->user()->tieneRol(['paciente']) && isset($cita->propuesta_estado) && $cita->propuesta_estado === 'pendiente')
+                                                    <tr class="bg-sky-50/60 dark:bg-sky-950/20 border-b border-sky-100 dark:border-sky-900/40">
+                                                        <td colspan="{{ auth()->user()->tieneRol(['psicologo', 'administrador']) ? 6 : 5 }}" class="px-6 py-4">
+                                                            <div class="flex items-start gap-3">
+                                                                <div class="p-2 bg-blue-700 text-white rounded-xl shadow-md shrink-0 mt-0.5">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                                                </div>
+                                                                <div class="flex-1 min-w-0">
+                                                                    <h4 class="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight mb-0.5">Propuesta de cambio de horario</h4>
+                                                                    <p class="text-xs text-slate-600 dark:text-gray-400 font-medium italic mb-3">"No puedo atenderte en los horarios que sugeriste, sin embargo, quiero atenderte lo más pronto posible, esta es mi propuesta para atenderte"</p>
+
+                                                                    <form id="form-propuesta-{{ $cita->id }}" onsubmit="responderPropuestaForm(event, {{ $cita->id }})" class="w-full">
+                                                                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-gray-500 mb-2">Opciones de horario propuestas por el psicólogo:</p>
+                                                                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 mb-3">
                                                                             @php
-                                                                                $parts = explode('|', $bloque);
-                                                                                if(count($parts) == 2) {
-                                                                                    $fechaFormateada = \Carbon\Carbon::parse($parts[0])->locale('es')->translatedFormat('l d M, Y');
-                                                                                    $dias = ['Lunes', 'Martes', 'Miércoles', 'Miercoles', 'Jueves', 'Viernes', 'Sábado', 'Sabado', 'Domingo'];
-                                                                                    $horarioLimpio = trim(str_ireplace($dias, '', $parts[1]));
-                                                                                    echo ucfirst($fechaFormateada) . '<br><span class="text-xs font-normal opacity-80">' . $horarioLimpio . '</span>';
-                                                                                } else {
-                                                                                    echo $bloque;
-                                                                                }
+                                                                                $bloquesArray = array_filter(array_map('trim', explode(';', $cita->bloques_propuestos_raw ?? '')));
                                                                             @endphp
-                                                                        </p>
-                                                                    </div>
-                                                                </label>
-                                                            @endforeach
+                                                                            @foreach($bloquesArray as $index => $bloque)
+                                                                                <label class="cursor-pointer block w-full h-full">
+                                                                                    <input type="radio" name="bloque_seleccionado" value="{{ $bloque }}" class="peer sr-only" required onchange="document.getElementById('rechazo-area-{{ $cita->id }}').style.display='none'; if(typeof updateSubmitBtnState === 'function') updateSubmitBtnState({{ $cita->id }});">
+                                                                                    <div class="p-2.5 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-600 rounded-xl peer-checked:border-blue-700 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/30 transition-all h-full w-full flex items-center justify-center text-center">
+                                                                                        <p class="text-xs font-bold text-slate-700 dark:text-gray-300 peer-checked:text-blue-700 dark:peer-checked:text-blue-400">
+                                                                                            @php
+                                                                                                $parts = explode('|', $bloque);
+                                                                                                if(count($parts) == 2) {
+                                                                                                    $fechaFormateada = \Carbon\Carbon::parse($parts[0])->locale('es')->translatedFormat('l d M, Y');
+                                                                                                    $dias = ['Lunes', 'Martes', 'Miércoles', 'Miercoles', 'Jueves', 'Viernes', 'Sábado', 'Sabado', 'Domingo'];
+                                                                                                    $horarioLimpio = trim(str_ireplace($dias, '', $parts[1]));
+                                                                                                    echo ucfirst($fechaFormateada) . '<br><span class="text-xs font-normal opacity-80">' . $horarioLimpio . '</span>';
+                                                                                                } else {
+                                                                                                    echo $bloque;
+                                                                                                }
+                                                                                            @endphp
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </label>
+                                                                            @endforeach
+                                                                            <label class="cursor-pointer block w-full h-full">
+                                                                                <input type="radio" id="radio-ninguno-{{ $cita->id }}" name="bloque_seleccionado" value="ninguno" class="peer sr-only" required onchange="document.getElementById('rechazo-area-{{ $cita->id }}').style.display='block'; if(typeof initCalendarForCita === 'function') initCalendarForCita({{ $cita->id }}, {{ $cita->psicologo_id }}); if(typeof updateSubmitBtnState === 'function') updateSubmitBtnState({{ $cita->id }});">
+                                                                                <div class="p-2.5 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-600 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-900/30 transition-all w-full flex items-center justify-center h-full text-center">
+                                                                                    <p class="text-xs font-bold text-slate-700 dark:text-gray-300 peer-checked:text-rose-700 dark:peer-checked:text-rose-400">Ninguno</p>
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
 
-                                                            <label class="cursor-pointer block w-full h-full">
-                                                                <input type="radio" id="radio-ninguno-{{ $cita->id }}" name="bloque_seleccionado" value="ninguno" class="peer sr-only" required onchange="document.getElementById('rechazo-area-{{ $cita->id }}').style.display='block'; if(typeof initCalendarForCita === 'function') initCalendarForCita({{ $cita->id }}, {{ $cita->psicologo_id }}); if(typeof updateSubmitBtnState === 'function') updateSubmitBtnState({{ $cita->id }});">
-                                                                <div class="p-3 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-600 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-900/30 transition-all w-full flex items-center justify-center h-full text-center">
-                                                                    <p class="text-sm font-bold text-slate-700 dark:text-gray-300 peer-checked:text-rose-700 dark:peer-checked:text-rose-400">Ninguno</p>
-                                                                </div>
-                                                            </label>
-                                                        </div>
+                                                                        <div id="rechazo-area-{{ $cita->id }}" style="display: none;" class="mb-3">
+                                                                            <div class="mt-3 border-t border-slate-200 dark:border-gray-700 pt-3">
+                                                                                <h5 class="text-sm font-bold text-slate-700 dark:text-gray-300 mb-1">Proponer nuevos horarios</h5>
+                                                                                <p class="text-xs text-gray-500 mb-3">Selecciona los días y horarios en los que podrías asistir.</p>
+                                                                                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-slate-200 dark:border-gray-700 mb-3">
+                                                                                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-black uppercase text-gray-400 mb-2">
+                                                                                        <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+                                                                                    </div>
+                                                                                    <div id="calendarGrid-{{ $cita->id }}" class="grid grid-cols-7 gap-1"></div>
+                                                                                </div>
+                                                                                <div id="slotsContainer-{{ $cita->id }}" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
+                                                                                <p id="minBlocksHelpText-{{ $cita->id }}" class="text-xs text-rose-500 font-bold mt-2 hidden">Debes seleccionar al menos 2 días, y elegir mínimo un bloque de horario por cada día.</p>
+                                                                                <input type="hidden" name="nuevos_bloques" id="nuevos_bloques_{{ $cita->id }}">
+                                                                            </div>
+                                                                            <label class="block text-xs font-black text-slate-500 dark:text-gray-400 uppercase tracking-widest mt-3 mb-1">Motivo del rechazo (Breve)</label>
+                                                                            <textarea name="motivo_rechazo" maxlength="50" class="w-full bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-700 outline-none resize-none" rows="2" placeholder="Explique por qué no puede asistir en estos horarios..."></textarea>
+                                                                        </div>
 
-                                                        <div id="rechazo-area-{{ $cita->id }}" style="display: none;" class="mb-4">
-                                                            <div class="mt-4 border-t border-slate-200 dark:border-gray-700 pt-4">
-                                                                <h5 class="text-sm font-bold text-slate-700 dark:text-gray-300 mb-2">Proponer nuevos horarios</h5>
-                                                                <p class="text-xs text-gray-500 mb-3">Selecciona los días y horarios en los que podrías asistir.</p>
-                                                                
-                                                                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-slate-200 dark:border-gray-700 mb-3">
-                                                                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-black uppercase text-gray-400 mb-2">
-                                                                        <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
-                                                                    </div>
-                                                                    <div id="calendarGrid-{{ $cita->id }}" class="grid grid-cols-7 gap-1"></div>
+                                                                        <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-gray-700/50">
+                                                                            <button type="submit" id="btn-submit-{{ $cita->id }}" class="px-5 py-2 text-xs font-black bg-slate-300 dark:bg-gray-600 text-slate-500 dark:text-gray-300 rounded-xl transition-all cursor-not-allowed">
+                                                                                Selecciona una opción
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
                                                                 </div>
-                                                                
-                                                                <div id="slotsContainer-{{ $cita->id }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2"></div>
-                                                                
-                                                                <p id="minBlocksHelpText-{{ $cita->id }}" class="text-xs text-rose-500 font-bold mt-2 hidden">Debes seleccionar al menos 2 días, y elegir mínimo un bloque de horario por cada día.</p>
-                                                                
-                                                                <input type="hidden" name="nuevos_bloques" id="nuevos_bloques_{{ $cita->id }}">
                                                             </div>
-
-                                                            <label class="block text-xs font-black text-slate-500 dark:text-gray-400 uppercase tracking-widest mt-4 mb-1">Motivo del rechazo (Breve)</label>
-                                                            <textarea name="motivo_rechazo" maxlength="50" class="w-full bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-sky-500 outline-none resize-none" rows="2" placeholder="Explique por qué no puede asistir en estos horarios..."></textarea>
-                                                        </div>
-
-                                                        <div class="flex justify-end gap-2 pt-3 border-t border-sky-100 dark:border-sky-900/30 w-full relative">
-                                                            <button type="submit" id="btn-submit-{{ $cita->id }}" class="px-5 py-2.5 text-xs font-black bg-slate-300 dark:bg-gray-600 text-slate-500 dark:text-gray-300 rounded-xl transition-all cursor-not-allowed">
-                                                                Selecciona una opción
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @elseif(auth()->user()->role === 'paciente' && isset($cita->propuesta_estado) && $cita->propuesta_estado !== 'pendiente')
-                                        <div class="mt-4 p-4 bg-slate-50 dark:bg-gray-700/50 border border-slate-150 dark:border-gray-700 rounded-2xl">
-                                            <p class="text-xs font-bold text-slate-600 dark:text-gray-400">
-                                                @if($cita->propuesta_estado === 'aceptada')
-                                                    <strong class="text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-                                                        Contrapropuesta aceptada
-                                                    </strong>
-                                                @else
-                                                    <span>Has respondido a la propuesta: </span>
-                                                    <strong class="text-slate-800 dark:text-white uppercase tracking-wider">
-                                                        @if($cita->propuesta_estado === 'cualquier_dia')
-                                                            Cualquier día está bien
-                                                        @elseif($cita->propuesta_estado === 'sugerencia_aceptada')
-                                                            Sugerencia aceptada ({{ $cita->propuesta_bloque_seleccionado }})
-                                                        @elseif($cita->propuesta_estado === 'rechazada')
-                                                            Rechazado, vas a esperar nueva cita
-                                                        @endif
-                                                    </strong>
+                                                        </td>
+                                                    </tr>
+                                                @elseif(auth()->user()->tieneRol(['paciente']) && isset($cita->propuesta_estado) && $cita->propuesta_estado !== 'pendiente')
+                                                    <tr class="bg-slate-50/50 dark:bg-gray-700/20 border-b border-slate-100 dark:border-gray-800">
+                                                        <td colspan="{{ auth()->user()->tieneRol(['psicologo', 'administrador']) ? 6 : 5 }}" class="px-6 py-3">
+                                                            <p class="text-xs font-bold text-slate-500 dark:text-gray-400 flex items-center gap-2">
+                                                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                                Has respondido a la propuesta:
+                                                                <strong class="text-slate-800 dark:text-white uppercase tracking-wider">
+                                                                    @if($cita->propuesta_estado === 'aceptada')
+                                                                        Contrapropuesta aceptada
+                                                                    @elseif($cita->propuesta_estado === 'cualquier_dia')
+                                                                        Cualquier día está bien
+                                                                    @elseif($cita->propuesta_estado === 'sugerencia_aceptada')
+                                                                        Sugerencia aceptada ({{ $cita->propuesta_bloque_seleccionado }})
+                                                                    @elseif($cita->propuesta_estado === 'rechazada')
+                                                                        Rechazado, vas a esperar nueva cita
+                                                                    @endif
+                                                                </strong>
+                                                            </p>
+                                                        </td>
+                                                    </tr>
                                                 @endif
-                                            </p>
-                                        </div>
-                                    @endif
 
-                                    @php
-                                        $puedeCancelar = true;
-                                        if (auth()->user()->role === 'paciente' && $cita->estado === 'confirmada' && $cita->fecha && $cita->hora) {
-                                            $fechaSolo = substr($cita->fecha, 0, 10);
-                                            $fechaHoraCita = \Carbon\Carbon::parse($fechaSolo . ' ' . $cita->hora);
-                                            if ($fechaHoraCita->isPast()) {
-                                                $puedeCancelar = false;
-                                            }
-                                        }
-                                    @endphp
+                                                @if($cita->estado !== 'confirmada')
+                                                    <tr class="bg-slate-50/30 dark:bg-gray-800/20 border-b border-slate-100 dark:border-gray-800">
+                                                        <td colspan="{{ auth()->user()->tieneRol(['psicologo', 'administrador']) ? 6 : 5 }}" class="px-6 py-3">
+                                                            @php
+                                                                $rawBloques = $cita->bloques_sugeridos ?: '';
+                                                                $horariosDisplay = trim(preg_replace('/^\s*Horarios\s*(propuestos)?\s*:\s*/i', '', $rawBloques));
+                                                                $excepcionesDisplay = '';
+                                                                if (str_contains($rawBloques, '|')) {
+                                                                    $partes = explode('|', $rawBloques);
+                                                                    $excepcionesDisplay = trim(preg_replace('/^\s*D[íi]as exceptuados:\s*/i', '', $partes[0]));
+                                                                    $horariosDisplay = trim(preg_replace('/^\s*Horarios\s*(propuestos)?\s*:\s*/i', '', $partes[1] ?? ''));
+                                                                }
+                                                            @endphp
+                                                            <div class="flex flex-wrap items-center gap-2">
+                                                                <span class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest shrink-0">Horarios sugeridos:</span>
+                                                                @if($horariosDisplay)
+                                                                    @foreach(array_filter(array_map('trim', explode(';', $horariosDisplay))) as $bloque)
+                                                                        <span class="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800 rounded-lg text-[10px] font-bold">{{ $bloque }}</span>
+                                                                    @endforeach
+                                                                @else
+                                                                    <span class="text-xs text-slate-400 dark:text-gray-500 italic">No definidos</span>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endif
 
-                                    <div class="mt-3 flex justify-end">
-                                        @if($puedeCancelar)
-                                            <button type="button" onclick="openPatientCancelModal('{{ route('admin.psicologia.maestros.citas.cancel', $cita->id) }}', '{{ $cita->id }}')" class="px-3 py-2 text-xs font-semibold text-white bg-red-600 rounded-2xl hover:bg-red-700">
-                                                Cancelar cita
-                                            </button>
-                                        @else
-                                            <div class="text-[10px] text-slate-500 bg-slate-100 dark:bg-gray-700 px-3 py-2 rounded-2xl font-bold uppercase tracking-wide">
-                                                Cita pasada - Esperando certificación
-                                            </div>
-                                        @endif
-                                    </div>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
-                            @endforeach
+                            </div>
                         </div>
+
                     </div>
 
                     <div id="historyAppointmentsView" class="hidden animate-in fade-in slide-in-from-right-4 duration-500">
-                        <div class="mb-6 flex flex-col sm:flex-row justify-between items-center border-b pb-6 dark:border-gray-700">
+
+                        <div class="mb-2 flex flex-col sm:flex-row justify-between items-center pb-6">
                             <div class="flex items-center gap-4">
-                                <button onclick="toggleHistoryView(false)" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-gray-700 text-slate-400 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-gray-600 transition-all">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-                                </button>
-                                <div>
-                                    <h2 class="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Historial de Sesiones</h2>
-                                    <p class="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-[0.2em] mt-0.5">Recorrido clínico completo</p>
+                                
+                                <div class="">
+                                    <h3 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight whitespace-nowrap">Historial de Sesiones</h3>
+                                    <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Recorrido clínico completo</p>
                                 </div>
                             </div>
                             <div class="mt-4 sm:mt-0 flex items-center gap-3">
                                 <span id="historyCount" class="text-[10px] font-black text-slate-300 dark:text-gray-600 uppercase tracking-widest">TOTAL: 0 REGISTROS</span>
+                                <button onclick="toggleHistoryView(false)" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-gray-700 text-slate-400 dark:text-gray-400 hover:text-blue-700 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 transition-all">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                </button>
                                 <button type="button" onclick="document.getElementById('patientFilterModal').classList.remove('hidden'); document.getElementById('patientFilterModal').classList.add('flex');" class="flex items-center gap-2 bg-blue-800 hover:bg-blue-700 text-white px-4 h-10 rounded-xl shadow-sm transition-all" title="Filtrar Fechas">
                                     <svg class="w-4 h-4 opacity-80 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                                     <span class="text-[10px] font-black uppercase tracking-wide">Filtrar</span>
@@ -263,21 +294,25 @@
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto rounded-[32px] border border-slate-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
-                            <table class="min-w-full divide-y divide-slate-100 dark:divide-gray-700 text-sm">
-                                <thead class="bg-slate-50/50 dark:bg-gray-700/30">
-                                    <tr>
-                                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest">Psicólogo</th>
-                                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest">Fecha y Hora</th>
-                                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest text-center">Estado</th>
-                                        <th class="px-6 py-4 text-right text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="historyTableBody" class="divide-y divide-slate-50 dark:divide-gray-700">
-                                </tbody>
-                            </table>
+                        <div class="rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table style="background-color: var(--bg-card); border-color: var(--border-color);" class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-gray-800 text-[11px] font-black uppercase tracking-wider text-gray-400">
+                                            <th class="px-6 py-4">Psicólogo</th>
+                                            <th class="px-6 py-4">Fecha y Hora</th>
+                                            <th class="px-6 py-4 text-center">Estado</th>
+                                            <th class="px-6 py-4 text-right">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyTableBody" class="divide-y divide-gray-100 dark:divide-gray-800/60 text-xs font-medium">
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+
                         <div id="historyPagination" class="mt-6 flex justify-center"></div>
+
                     </div>
 
                 </div>
@@ -285,38 +320,38 @@
         </div>
     </div>
 
-    @if(auth()->user()->role !== 'admin')
+    @if(!auth()->user()->tieneRol(['psicologo', 'administrador']))
         <div id="historyDetailModal" class="fixed inset-0 z-[150] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 transition-all animate-in fade-in duration-200">
-            <div class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-[32px] shadow-2xl shadow-slate-200/50 dark:shadow-gray-900/50 flex flex-col overflow-hidden border border-slate-100 dark:border-gray-700">
-                <div class="p-6 border-b border-slate-50 dark:border-gray-700 flex justify-between items-center bg-slate-50/30 dark:bg-gray-700/30">
+            <div style="background-color: var(--bg-card); border-color: var(--border-color);" class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-[15px] shadow-2xl shadow-slate-200/50 dark:shadow-gray-900/50 flex flex-col overflow-hidden border border-slate-100 dark:border-gray-700">
+                <div class="p-6 border-b border-slate-50 dark:border-gray-700 flex justify-between items-center">
                     <h3 class="text-lg font-black text-slate-800 dark:text-white tracking-tight uppercase">Detalle de Sesión</h3>
-                    <button type="button" onclick="closeHistoryDetail()" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-700 border border-slate-100 dark:border-gray-600 text-slate-400 dark:text-gray-400 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-sm">
+                    <button type="button" onclick="closeHistoryDetail()" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700/60 text-gray-400 hover:text-rose-600 hover:border-rose-300 inline-flex items-center justify-center transition-all active:scale-95">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-                <div id="historyDetailContent" class="p-8 space-y-6 bg-white dark:bg-gray-800">
+                <div id="historyDetailContent" class="p-8 space-y-6 bg-white dark:bg-gray-800/30">
                 </div>
             </div>
         </div>
     @endif
 
     <div id="patientCancelModal" class="fixed inset-0 z-[150] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 transition-all animate-in fade-in duration-200">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-[32px] shadow-2xl shadow-slate-200/50 dark:shadow-gray-900/50 flex flex-col overflow-hidden border border-slate-100 dark:border-gray-700">
+        <div style="background-color: var(--bg-card); border-color: var(--border-color);" class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-[15px] shadow-2xl shadow-slate-200/50 dark:shadow-gray-900/50 flex flex-col overflow-hidden border border-slate-100 dark:border-gray-700">
             <form id="patientCancelForm" method="POST" action="" data-ajax="true" data-ajax-remove="true" data-ajax-close-modal="patientCancelModal" data-ajax-success-message="Cita cancelada correctamente.">
                 @csrf
                 @method('PATCH')
                 <input type="hidden" id="patientCancelCitaId" value="">
-                <div class="p-6 border-b border-slate-50 dark:border-gray-700 flex justify-between items-center bg-slate-50/30 dark:bg-gray-700/30">
-                    <h3 class="text-lg font-black text-rose-600 dark:text-rose-400 tracking-tight uppercase">Cancelar Cita</h3>
-                    <button type="button" onclick="closePatientCancelModal()" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-700 border border-slate-100 dark:border-gray-600 text-slate-400 dark:text-gray-400 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-sm">
+                <div class="p-6 border-b border-slate-50 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="text-lg font-black text-gray-900 dark:text-white tracking-tight uppercase">Cancelar Cita</h3>
+                    <button type="button" onclick="closePatientCancelModal()" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700/60 text-gray-400 hover:text-rose-600 hover:border-rose-300 inline-flex items-center justify-center transition-all active:scale-95">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-                <div class="p-6 bg-white dark:bg-gray-800">
+                <div class="p-6 bg-white dark:bg-gray-800/30">
                     <p class="text-sm font-medium text-slate-600 dark:text-gray-300 mb-4">¿Estás seguro que deseas cancelar esta cita? Por favor explica brevemente el motivo.</p>
-                    <textarea name="motivo_cancelacion" maxlength="50" required class="w-full bg-slate-50 dark:bg-gray-900 border border-slate-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-rose-500 outline-none resize-none" rows="2" placeholder="Me surgió un imprevisto... (máx 50 carac.)"></textarea>
+                    <textarea name="motivo_cancelacion" maxlength="50" required class="w-full bg-white dark:bg-gray-800/30 border border-slate-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-rose-500 outline-none resize-none" rows="2" placeholder="Me surgió un imprevisto... (máx 50 carac.)"></textarea>
                 </div>
-                <div class="p-6 flex justify-end gap-3 bg-slate-50/30 dark:bg-gray-700/30 border-t border-slate-50 dark:border-gray-700">
+                <div class="p-6 flex justify-end gap-3 border-t border-slate-50 dark:border-gray-700">
                     <button type="button" onclick="closePatientCancelModal()" class="px-5 py-2.5 text-xs font-black bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 rounded-xl transition-all">Volver</button>
                     <button type="submit" class="px-5 py-2.5 text-xs font-black text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-all shadow-md shadow-rose-200 dark:shadow-none">Confirmar</button>
                 </div>
@@ -325,32 +360,27 @@
     </div>
 
     <div id="patientFilterModal" class="fixed inset-0 z-[150] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 transition-all animate-in fade-in duration-200">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-[32px] shadow-2xl shadow-slate-200/50 dark:shadow-gray-900/50 flex flex-col max-h-[85vh] overflow-hidden border border-slate-100 dark:border-gray-700">
-            <div class="p-6 border-b border-slate-50 dark:border-gray-700 flex justify-between items-center bg-slate-50/30 dark:bg-gray-700/30">
+        <div style="background-color: var(--bg-card); border-color: var(--border-color);" class="bg-white dark:bg-gray-800 w-full max-w-md rounded-[15px] shadow-2xl shadow-slate-200/50 dark:shadow-gray-900/50 flex flex-col max-h-[85vh] overflow-hidden border border-slate-100 dark:border-gray-700">
+            <div class="p-6 border-b border-slate-50 dark:border-gray-700 flex justify-between items-center">
                 <div>
                     <h3 class="text-lg font-black text-slate-800 dark:text-white tracking-tight uppercase">Filtrar Historial</h3>
                 </div>
-                <button type="button" onclick="document.getElementById('patientFilterModal').classList.add('hidden'); document.getElementById('patientFilterModal').classList.remove('flex');" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-700 border border-slate-100 dark:border-gray-600 text-slate-400 dark:text-gray-400 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-sm">
+                <button type="button" onclick="document.getElementById('patientFilterModal').classList.add('hidden'); document.getElementById('patientFilterModal').classList.remove('flex');" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700/60 text-gray-400 hover:text-rose-600 hover:border-rose-300 inline-flex items-center justify-center transition-all active:scale-95">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <form onsubmit="applyPatientFilter(event)" class="p-6 overflow-y-auto space-y-4 custom-scrollbar bg-white dark:bg-gray-800 flex-1">
+            <form onsubmit="applyPatientFilter(event)" class="p-6 overflow-y-auto space-y-4 custom-scrollbar bg-white dark:bg-gray-800/30 flex-1">
                 <div>
                     <label for="p_start_date" class="block mb-2 text-sm font-black text-slate-700 dark:text-gray-300">Fecha de Inicio</label>
-                    <input type="date" id="p_start_date" value="{{ now()->subMonth()->toDateString() }}" class="w-full rounded-2xl border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-4 py-3 text-sm focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all font-medium text-slate-800 dark:text-white" required>
+                    <input type="date" id="p_start_date" value="{{ now()->subMonth()->toDateString() }}" class="w-full rounded-2xl border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-4 py-3 text-sm focus:border-blue-700 focus:ring-4 focus:ring-blue-700/10 transition-all font-medium text-slate-800 dark:text-white" required>
                 </div>
                 <div>
                     <label for="p_end_date" class="block mb-2 text-sm font-black text-slate-700 dark:text-gray-300">Fecha de Fin</label>
-                    <input type="date" id="p_end_date" value="{{ now()->toDateString() }}" class="w-full rounded-2xl border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-4 py-3 text-sm focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all font-medium text-slate-800 dark:text-white" required>
+                    <input type="date" id="p_end_date" value="{{ now()->toDateString() }}" class="w-full rounded-2xl border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-4 py-3 text-sm focus:border-blue-700 focus:ring-4 focus:ring-blue-700/10 transition-all font-medium text-slate-800 dark:text-white" required>
                 </div>
-
                 <div class="pt-4 flex justify-end gap-2">
-                    <button type="button" onclick="clearPatientFilter()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-slate-700 dark:text-gray-300 font-bold rounded-2xl transition-all shadow-sm text-sm uppercase tracking-wider">
-                        Limpiar
-                    </button>
-                    <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-md shadow-blue-100 dark:shadow-blue-900/30 text-sm uppercase tracking-wider">
-                        Aplicar
-                    </button>
+                    <button type="button" onclick="clearPatientFilter()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-slate-700 dark:text-gray-300 font-bold rounded-2xl transition-all shadow-sm text-sm uppercase tracking-wider">Limpiar</button>
+                    <button type="submit" class="px-6 py-3 bg-blue-800 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-md shadow-blue-100 dark:shadow-blue-900/30 text-sm uppercase tracking-wider">Aplicar</button>
                 </div>
             </form>
         </div>
@@ -360,6 +390,15 @@
         let currentHistoryData = [];
         let currentStartDate = '{{ now()->subMonth()->toDateString() }}';
         let currentEndDate = '{{ now()->toDateString() }}';
+
+        function openCitaDetailPanel(citaId) {
+            const row = document.getElementById('cita-card-' + citaId);
+            if (row) {
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                row.classList.add('ring-2', 'ring-blue-400', 'ring-inset');
+                setTimeout(() => row.classList.remove('ring-2', 'ring-blue-400', 'ring-inset'), 2000);
+            }
+        }
 
         function applyPatientFilter(e) {
             e.preventDefault();
@@ -414,35 +453,35 @@
                         } else {
                             citas.forEach(cita => {
                                 const tr = document.createElement('tr');
-                                tr.className = 'group hover:bg-slate-50/50 dark:hover:bg-gray-700/50 transition-colors';
+                                tr.className = 'hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors';
 
                                 let badgeClass = 'bg-slate-50 dark:bg-gray-700 text-slate-500 dark:text-gray-400 border-slate-100 dark:border-gray-600';
                                 if (cita.estado === 'realizada') badgeClass = 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800';
                                 else if (cita.estado === 'cancelada' || cita.estado === 'rechazada' || cita.estado === 'no_asistio') badgeClass = 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800';
 
                                 tr.innerHTML = `
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 rounded-xl flex items-center justify-center text-[10px] font-black uppercase">
+                                            <div class="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-xl flex items-center justify-center text-[10px] font-black uppercase">
                                                 ${cita.psicologo.charAt(0)}
                                             </div>
                                             <span class="text-sm font-bold text-slate-700 dark:text-gray-300">${cita.psicologo}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex flex-col">
                                             <span class="text-sm font-bold text-slate-700 dark:text-gray-300">${cita.fecha_formateada}</span>
                                             <span class="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase">${cita.hora}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-center">
-                                        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${badgeClass}">
+                                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest border ${badgeClass}">
                                             ${cita.estado === 'no_asistio' ? 'AUSENTE' : (cita.estado === 'cancelada' && cita.cancelado_por ? (cita.cancelado_por === 'paciente' ? 'CANCELADA (TÚ)' : 'CANCELADA (PSICÓLOGO)') : cita.estado.toUpperCase())}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button onclick="showHistoryDetail(${cita.id})" class="p-2 text-slate-300 dark:text-gray-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                                        <button onclick="showHistoryDetail(${cita.id})" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700/60 dark:hover:border-blue-700/60 text-gray-400 hover:border-blue-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-600/10 dark:hover:bg-blue-950/50 inline-flex items-center justify-center transition-all active:scale-95" title="Ver detalle">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         </button>
                                     </td>
                                 `;
@@ -473,61 +512,33 @@
                 return;
             }
 
-            let html = `
-
-                <div class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-slate-100 dark:border-gray-700">
-            `;
+            let html = `<div class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-slate-100 dark:border-gray-700">`;
 
             if (currentPage > 1) {
-                html += `
-                    <button onclick="toggleHistoryView(true, ${currentPage - 1})" class="w-8 h-8 flex items-center justify-center text-slate-500 dark:text-gray-400 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg transition-all" title="Anterior">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                `;
+                html += `<button onclick="toggleHistoryView(true, ${currentPage - 1})" class="w-8 h-8 flex items-center justify-center text-slate-500 dark:text-gray-400 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg transition-all" title="Anterior"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>`;
             } else {
-                html += `
-                    <button disabled class="w-8 h-8 flex items-center justify-center text-slate-300 dark:text-gray-600 rounded-lg cursor-not-allowed">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                `;
+                html += `<button disabled class="w-8 h-8 flex items-center justify-center text-slate-300 dark:text-gray-600 rounded-lg cursor-not-allowed"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>`;
             }
 
             const maxVisible = 5;
             let start = Math.max(1, currentPage - 2);
             let end = Math.min(lastPage, start + maxVisible - 1);
-
             if (end - start + 1 < maxVisible) {
                 start = Math.max(1, end - maxVisible + 1);
             }
 
             for (let i = start; i <= end; i++) {
                 if (i === currentPage) {
-                    html += `
-                        <button disabled class="w-8 h-8 flex items-center justify-center text-white bg-blue-800 font-medium rounded-lg shadow-sm text-sm">
-                            ${i}
-                        </button>
-                    `;
+                    html += `<button disabled class="w-8 h-8 flex items-center justify-center text-white bg-blue-800 font-medium rounded-lg shadow-sm text-sm">${i}</button>`;
                 } else {
-                    html += `
-                        <button onclick="toggleHistoryView(true, ${i})" class="w-8 h-8 flex items-center justify-center text-slate-600 dark:text-gray-300 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-gray-700 font-medium rounded-lg transition-all text-sm">
-                            ${i}
-                        </button>
-                    `;
+                    html += `<button onclick="toggleHistoryView(true, ${i})" class="w-8 h-8 flex items-center justify-center text-slate-600 dark:text-gray-300 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-gray-700 font-medium rounded-lg transition-all text-sm">${i}</button>`;
                 }
             }
 
             if (currentPage < lastPage) {
-                html += `
-                    <button onclick="toggleHistoryView(true, ${currentPage + 1})" class="w-8 h-8 flex items-center justify-center text-slate-500 dark:text-gray-400 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg transition-all" title="Siguiente">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                `;
+                html += `<button onclick="toggleHistoryView(true, ${currentPage + 1})" class="w-8 h-8 flex items-center justify-center text-slate-500 dark:text-gray-400 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg transition-all" title="Siguiente"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>`;
             } else {
-                html += `
-                    <button disabled class="w-8 h-8 flex items-center justify-center text-slate-300 dark:text-gray-600 rounded-lg cursor-not-allowed">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                `;
+                html += `<button disabled class="w-8 h-8 flex items-center justify-center text-slate-300 dark:text-gray-600 rounded-lg cursor-not-allowed"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>`;
             }
 
             html += `</div>`;
@@ -570,7 +581,7 @@
             if (parsedNotas.avance_estado) {
                 const aMap = {
                     'estancado': { color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 border-rose-100 dark:border-rose-800', label: 'Estancado' },
-                    'en_progreso': { color: 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 border-sky-100 dark:border-sky-800', label: 'En Progreso' },
+                    'en_progreso': { color: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border-blue-100 dark:border-blue-800', label: 'En Progreso' },
                     'logrado': { color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-100 dark:border-emerald-800', label: 'Logrado' }
                 };
                 const style = aMap[parsedNotas.avance_estado] || { color: 'text-slate-400 dark:text-gray-500 bg-slate-50 dark:bg-gray-700 border-slate-100 dark:border-gray-600', label: parsedNotas.avance_estado };
@@ -580,7 +591,7 @@
             content.innerHTML = `
                 <div class="grid grid-cols-2 gap-y-6 overflow-y-auto max-h-[70vh] pr-2 custom-scrollbar">
                     <div class="col-span-2 flex items-center gap-4 pb-4 border-b border-slate-50 dark:border-gray-700">
-                        <div class="w-12 h-12 bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 rounded-2xl flex items-center justify-center text-sm font-black uppercase">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-2xl flex items-center justify-center text-sm font-black uppercase">
                             ${cita.psicologo.charAt(0)}
                         </div>
                         <div class="flex-1">
@@ -588,17 +599,14 @@
                             <h4 class="text-base font-black text-slate-800 dark:text-white tracking-tight">${cita.psicologo}</h4>
                         </div>
                     </div>
-
                     <div>
                         <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">Fecha</p>
                         <p class="text-sm font-bold text-slate-700 dark:text-gray-300">${cita.fecha_formateada}</p>
                     </div>
-
                     <div>
                         <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">Estado</p>
-                        <span class="text-[10px] font-black text-sky-600 dark:text-sky-400 uppercase tracking-widest">${statusLabel.toUpperCase()}</span>
+                        <span class="text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">${statusLabel.toUpperCase()}</span>
                     </div>
-
                     <div class="col-span-2">
                         <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1">Motivo de Solicitud</p>
                         <p class="text-sm font-medium text-slate-600 dark:text-gray-300 italic leading-relaxed">"${cita.motivo || 'No especificado'}"</p>
@@ -661,8 +669,8 @@
             if (!token) return;
 
             AppModal.confirm('¿Confirmar respuesta?', '¿Estás seguro de enviar esta respuesta a la propuesta de cambio de horario?', {
-                iconColor: 'bg-sky-50 text-sky-700',
-                btnColor: 'bg-sky-600 hover:bg-sky-700'
+                iconColor: 'bg-blue-50 text-blue-700',
+                btnColor: 'bg-blue-700 hover:bg-blue-800'
             }).then(confirmed => {
                 if (!confirmed) return;
 
@@ -742,8 +750,8 @@
             }
 
             AppModal.confirm('¿Confirmar respuesta?', '¿Estás seguro de enviar esta respuesta a la propuesta de cambio de horario?', {
-                iconColor: 'bg-sky-50 text-sky-700',
-                btnColor: 'bg-sky-600 hover:bg-sky-700',
+                iconColor: 'bg-blue-50 text-blue-700',
+                btnColor: 'bg-blue-700 hover:bg-blue-800',
                 btnText: 'Sí, enviar'
             }).then(confirmed => {
                 if (!confirmed) {
@@ -880,12 +888,12 @@
                     if (!isAvailable) {
                         baseClasses += 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed opacity-50';
                     } else if (isSelected) {
-                        baseClasses += 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 hover:bg-sky-200 cursor-pointer border border-sky-400 shadow-sm';
+                        baseClasses += 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 hover:bg-blue-200 cursor-pointer border border-blue-400 shadow-sm';
                     } else {
                         baseClasses += 'bg-gray-50 dark:bg-gray-700 text-gray-500 border border-gray-200 hover:border-gray-300 cursor-pointer';
                     }
 
-                    if (isActive) baseClasses += ' ring-2 ring-sky-500';
+                    if (isActive) baseClasses += ' ring-2 ring-blue-700';
 
                     btn.className = baseClasses;
                     btn.innerHTML = `<span>${d.getDate()}</span>`;
@@ -951,9 +959,9 @@
                 btn.className = 'flex items-center justify-center px-3 py-2 rounded-lg border text-xs font-semibold transition-all duration-200 ';
                 
                 if (state.selectedSlotsByDate[state.activeDay].includes(slot)) {
-                    btn.className += 'border-sky-500 bg-sky-600 text-white shadow-md scale-[1.02]';
+                    btn.className += 'border-blue-700 bg-blue-700 text-white shadow-md scale-[1.02]';
                 } else {
-                    btn.className += 'border-gray-200 bg-gray-50 text-gray-700 hover:border-sky-400 hover:bg-sky-50';
+                    btn.className += 'border-gray-200 bg-gray-50 text-gray-700 hover:border-blue-400 hover:bg-blue-50';
                 }
                 
                 btn.textContent = slot;
@@ -1009,11 +1017,11 @@
                 const helpText = document.getElementById(`minBlocksHelpText-${citaId}`);
                 if (!isValidDays || !isValidSlots) {
                     btnSubmit.disabled = true;
-                    btnSubmit.className = 'px-5 py-2.5 text-xs font-black bg-rose-600/50 text-white rounded-xl transition-all cursor-not-allowed';
+                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-rose-600/50 text-white rounded-xl transition-all cursor-not-allowed';
                     if(helpText) helpText.classList.remove('hidden');
                 } else {
                     btnSubmit.disabled = false;
-                    btnSubmit.className = 'px-5 py-2.5 text-xs font-black bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-md transition-all active:scale-95';
+                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-md transition-all active:scale-95';
                     if(helpText) helpText.classList.add('hidden');
                 }
             } else {
@@ -1021,7 +1029,7 @@
                 if (radioOther) {
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = 'Enviar';
-                    btnSubmit.className = 'px-5 py-2.5 text-xs font-black bg-sky-600 hover:bg-sky-700 text-white rounded-xl shadow-md transition-all active:scale-95';
+                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-blue-800 hover:bg-blue-700 text-white rounded-xl shadow-md transition-all active:scale-95';
                     const helpText = document.getElementById(`minBlocksHelpText-${citaId}`);
                     if(helpText) helpText.classList.add('hidden');
                 }

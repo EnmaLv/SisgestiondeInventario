@@ -4,6 +4,7 @@ namespace App\Models\salud;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 
 class Publicacion extends Model
 {

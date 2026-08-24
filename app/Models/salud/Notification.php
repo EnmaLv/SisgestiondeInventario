@@ -4,6 +4,7 @@ namespace App\Models\salud;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 
 class Notification extends Model
 {
@@ -24,7 +25,8 @@ class Notification extends Model
 
     public static function obtenerPorIdYUsuario($id, $userId)
     {
-        return self::where('id', $id)
+        return DB::table('notifications')
+            ->where('id', $id)
             ->where('notifiable_id', $userId)
             ->first();
     }
@@ -33,7 +35,8 @@ class Notification extends Model
     {
         $fechaLimite = now()->subMonth();
 
-        $notificaciones = self::where('notifiable_type', Usuario::class)
+        $notificaciones = DB::table('notifications')
+            ->where('notifiable_type', Usuario::class)
             ->where('notifiable_id', $userId)
             ->where('created_at', '>=', $fechaLimite)
             ->orderBy('created_at', 'desc')
@@ -43,8 +46,8 @@ class Notification extends Model
 
         $replacements = [];
         foreach ($psicologos as $psi) {
-            $nombres = trim($psi->nombres ?? '');
-            $apellidos = trim($psi->apellidos ?? '');
+            $nombres = trim($psi->persona->nombre_persona ?? '');
+            $apellidos = trim($psi->persona->apellido_persona ?? '');
             $fullName = trim($nombres . ' ' . $apellidos);
             if ($fullName) {
                 $firstName = explode(' ', $nombres)[0] ?? '';
@@ -79,7 +82,8 @@ class Notification extends Model
 
     public static function obtenerConteoNoLeidas($userId)
     {
-        return self::where('notifiable_type', Usuario::class)
+        return DB::table('notifications')
+            ->where('notifiable_type', Usuario::class)
             ->where('notifiable_id', $userId)
             ->where('created_at', '>=', now()->subMonth())
             ->whereNull('read_at')
@@ -88,28 +92,39 @@ class Notification extends Model
 
     public static function marcarComoLeida($id)
     {
-        return self::where('id', $id)->update(['read_at' => now()]);
+        return DB::table('notifications')->where('id', $id)->update(['read_at' => now()]);
     }
 
     public static function marcarTodasComoLeidas($userId)
     {
-        return self::where('notifiable_id', $userId)
+        return DB::table('notifications')
+            ->where('notifiable_id', $userId)
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
     }
 
     public static function limpiarNotificacionesMensajes($userId, $targetUserId)
     {
-        $notifications = self::where('notifiable_id', $userId)
-            ->where('type', 'App\Notifications\NewMessageNotification')
-            ->whereNull('read_at')
-            ->get();
+        try {
+            DB::beginTransaction();
+            $notifications = DB::table('notifications')
+                ->where('notifiable_id', $userId)
+                ->where('type', 'App\Notifications\NewMessageNotification')
+                ->whereNull('read_at')
+                ->get();
 
-        foreach ($notifications as $notification) {
-            $data = is_string($notification->data) ? json_decode($notification->data, true) : $notification->data;
-            if (($data['sender_id'] ?? null) == $targetUserId) {
-                $notification->update(['read_at' => now()]);
+            foreach ($notifications as $notification) {
+                $data = json_decode($notification->data, true);
+                if (($data['sender_id'] ?? null) == $targetUserId) {
+                    DB::table('notifications')
+                        ->where('id', $notification->id)
+                        ->update(['read_at' => now(), 'updated_at' => now()]);
+                }
             }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
     }
 }
