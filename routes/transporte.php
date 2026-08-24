@@ -7,6 +7,8 @@ use App\Http\Controllers\BusTipoCombustibleController;
 use App\Http\Controllers\BusVehiculoController;
 use App\Http\Controllers\BusRutaController;
 use App\Http\Controllers\BusParadaController;
+use App\Http\Controllers\BusMantenimientoController;
+use App\Http\Controllers\BusViajeController;
 
 /* Marcas */
 Route::get('/transporte/maestros/bus_marcas', [BusMarcaController::class, 'index'])->name('admin.transporte.maestros.bus_marcas.index');
@@ -56,3 +58,19 @@ Route::post('/transporte/maestros/bus_paradas/store', [BusParadaController::clas
 Route::put('/transporte/maestros/bus_paradas/{busParada}', [BusParadaController::class, 'update'])->name('admin.transporte.maestros.bus_paradas.update');
 Route::delete('/transporte/maestros/bus_paradas/{busParada}', [BusParadaController::class, 'destroy'])->name('admin.transporte.maestros.bus_paradas.destroy');
 Route::put('/transporte/maestros/bus_paradas/{busParada}/activar', [BusParadaController::class, 'activar'])->name('admin.transporte.maestros.bus_paradas.activar');
+
+/* Mantenimiento */
+Route::get('/transporte/maestros/bus_mantenimientos', [BusMantenimientoController::class, 'index'])->name('admin.transporte.maestros.bus_mantenimientos.index');
+Route::get('/transporte/maestros/bus_mantenimientos/create', [BusMantenimientoController::class, 'create'])->name('admin.transporte.maestros.bus_mantenimientos.create');
+Route::post('/transporte/maestros/bus_mantenimientos/store', [BusMantenimientoController::class, 'store'])->name('admin.transporte.maestros.bus_mantenimientos.store');
+Route::get('/transporte/maestros/bus_mantenimientos/{busMantenimiento}/edit', [BusMantenimientoController::class, 'edit'])->name('admin.transporte.maestros.bus_mantenimientos.edit');
+Route::put('/transporte/maestros/bus_mantenimientos/{busMantenimiento}', [BusMantenimientoController::class, 'update'])->name('admin.transporte.maestros.bus_mantenimientos.update');
+Route::delete('/transporte/maestros/bus_mantenimientos/{busMantenimiento}', [BusMantenimientoController::class, 'destroy'])->name('admin.transporte.maestros.bus_mantenimientos.destroy');
+
+/* Viajes */
+Route::get('/transporte/maestros/bus_viajes', [BusViajeController::class, 'index'])->name('admin.transporte.maestros.bus_viajes.index');
+Route::get('/transporte/maestros/bus_viajes/create', [BusViajeController::class, 'create'])->name('admin.transporte.maestros.bus_viajes.create');
+Route::post('/transporte/maestros/bus_viajes/store', [BusViajeController::class, 'store'])->name('admin.transporte.maestros.bus_viajes.store');
+Route::get('/transporte/maestros/bus_viajes/{busViaje}/edit', [BusViajeController::class, 'edit'])->name('admin.transporte.maestros.bus_viajes.edit');
+Route::put('/transporte/maestros/bus_viajes/{busViaje}', [BusViajeController::class, 'update'])->name('admin.transporte.maestros.bus_viajes.update');
+Route::delete('/transporte/maestros/bus_viajes/{busViaje}', [BusViajeController::class, 'destroy'])->name('admin.transporte.maestros.bus_viajes.destroy');

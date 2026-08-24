@@ -258,6 +258,8 @@
         e.preventDefault();
         const form = this;
         const data = new FormData(form);
+        const btnSubmit = form.querySelector('.rd-submit-btn');
+        const originalHtml = btnSubmit.innerHTML;
 
         fetch(form.action, {
             method: 'POST',
@@ -276,7 +278,12 @@
                 mostrarErrores(res.errors ?? {}, '#formCrear');
             }
         })
-        .catch(() => mostrarErrores({ nombre: ['Error inesperado, intente de nuevo.'] }, '#formCrear'));
+        .catch(() => mostrarErrores({ nombre: ['Error inesperado, intente de nuevo.'] }, '#formCrear'))
+        .finally(() => {
+            // Restaurar estado del botón
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = originalHtml;
+        });
     });
 
     // ── EDITAR ────────────────────────────────────────────────────────
@@ -294,6 +301,8 @@
         const form = this;
         const data = new FormData(form);
         data.append('_method', 'PUT');
+        const btnSubmit = form.querySelector('.rd-submit-btn');
+        const originalHtml = btnSubmit.innerHTML;
 
         fetch(form.action, {
             method: 'POST',
@@ -311,7 +320,12 @@
                 mostrarErrores(res.errors ?? {}, '#formEditar');
             }
         })
-        .catch(() => mostrarErrores({ nombre: ['Error inesperado, intente de nuevo.'] }, '#formEditar'));
+        .catch(() => mostrarErrores({ nombre: ['Error inesperado, intente de nuevo.'] }, '#formEditar'))
+        .finally(() => {
+            // Restaurar estado del botón
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = originalHtml;
+        });
     });
 
     // ── INACTIVAR / ACTIVAR ───────────────────────────────────────────

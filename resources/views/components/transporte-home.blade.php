@@ -84,6 +84,35 @@
             </a>
         </div>
     @endif
+     {{-- viajes --}}
+    @if ($visibleModules['bus_viajes'] ?? false)
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/transporte/maestros/bus_viajes') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <i class="fas fa-map-marked-alt" style="font-size:2.2rem;color:var(--color-primary);"></i>
+                    </div>
+                    <h5>Viajes</h5>
+                    <p>{{ $total_bus_viajes }} registrados</p>
+                </div>
+            </a>
+        </div>
+    @endif
+    {{-- mantenimientos --}}
+    @if ($visibleModules['bus_mantenimientos'] ?? false)
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <a href="{{ url('/admin/transporte/maestros/bus_mantenimientos') }}" class="module-link">
+                <div class="module-card-light">
+                    <div class="module-icon">
+                        <i class="fas fa-tools" style="font-size:2.2rem;color:var(--color-primary);"></i>
+                    </div>
+                    <h5>Mantenimiento</h5>
+                    <p>{{ $total_bus_mantenimientos }} registrados</p>
+                </div>
+            </a>
+        </div>
+    @endif
+   
 
 </div>
 

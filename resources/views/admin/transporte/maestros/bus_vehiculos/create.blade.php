@@ -202,11 +202,12 @@
                             <input type="number" name="capacidad_tanque_litros" step="0.01"
                                 class="form-control rd-filter-input @error('capacidad_tanque_litros') is-invalid @enderror"
                                 placeholder="Ej: 120.00" value="{{ old('capacidad_tanque_litros') }}" min="0"
-                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,4)">
+                                oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);">
                         </div>
                         @error('capacidad_tanque_litros') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
                     </div>
                 </div>
+                
                 <div class="col-md-3">
                     <div class="form-group">
                         <label class="font-weight-bold">Consumo (L/km)</label>
@@ -214,8 +215,7 @@
                             <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
                             <input type="number" name="consumo_litros_km" step="0.001"
                                 class="form-control rd-filter-input @error('consumo_litros_km') is-invalid @enderror"
-                                placeholder="Ej: 0.350" value="{{ old('consumo_litros_km') }}" min="0"
-                                oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,5)">
+                                placeholder="Ej: 0.500" value="{{ old('consumo_litros_km') }}" min="0">
                         </div>
                         @error('consumo_litros_km') <div class="text-danger mt-1"><b>{{ $message }}</b></div> @enderror
                     </div>

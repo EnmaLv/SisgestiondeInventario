@@ -21,6 +21,8 @@ use \App\Models\BusTipoCombustible;
 use \App\Models\BusVehiculo;
 use \App\Models\BusRuta;
 use \App\Models\BusParada;
+use \App\Models\BusMantenimiento;
+use \App\Models\BusViaje;
 
 class HomeController extends Controller
 {
@@ -110,6 +112,8 @@ class HomeController extends Controller
         $total_bus_vehiculos = BusVehiculo::count();
         $total_bus_rutas = BusRuta::count();
         $total_bus_paradas = BusParada::count();
+        $total_bus_mantenimientos = BusMantenimiento::count();
+        $total_bus_viajes = BusViaje::count();
         
 
 
@@ -147,6 +151,8 @@ class HomeController extends Controller
             'bus_vehiculos'     => 'admin/transporte/maestros/bus_vehiculos',
             'bus_rutas'         => 'admin/transporte/maestros/bus_rutas',
             'bus_paradas' => 'admin/transporte/maestros/bus_paradas',
+            'bus_mantenimientos' => 'admin/transporte/maestros/bus_mantenimientos',
+            'bus_viajes' => 'admin/transporte/maestros/bus_viajes',
         ];
 
         $visibleModules = [];
@@ -178,6 +184,8 @@ class HomeController extends Controller
             'total_bus_vehiculos',
             'total_bus_rutas',
             'total_bus_paradas',
+            'total_bus_mantenimientos',
+            'total_bus_viajes',
         ));
     }
 }
