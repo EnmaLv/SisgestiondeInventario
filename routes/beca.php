@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BecaBeneficioController;
+use App\Http\Controllers\BecaController;
 use App\Models\Becas\Beneficio;
+use App\Models\Becas\Beca;
 use App\Http\Resources\BeneficioResource;
 use App\Services\becas\JornadaBecasServices;
 use App\Http\Resources\becas\JornadaResource;

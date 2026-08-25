@@ -17,6 +17,14 @@ class Beneficio extends Model
         'status',
     ];
 
+    protected $casts = [
+        'status' => 'boolean',
+    ];
 
-    
+    public function becas()
+    {
+        return $this->belongsToMany(Beca::class, 'be_beca_beneficio', 'beneficio_id', 'beca_id')
+            ->withPivot(['observacion', 'activo'])
+            ->withTimestamps();
+    }
 }

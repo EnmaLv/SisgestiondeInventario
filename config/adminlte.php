@@ -650,7 +650,30 @@ return [
             'active' => ['admin/modulos*'],
         ],
 
-        //modulos de becas
+        /* ---------------------------------------------------
+        | GESTION DE BECAS
+        --------------------------------------------------- */
+        [
+            'header' => 'Gestion de Becas',
+            'classes' => 'text-bold',
+            'module' => 'beca',
+        ],
+        [
+            'text' => 'Gestion de Becas',
+            'key' => 'becas',
+            'module' => 'beca',
+            'url' => 'admin/becas',
+            'icon' => 'fas fa-graduation-cap',
+            'active' => ['admin/becas', 'admin/becas/create'],
+        ],
+        [
+            'text' => 'Registrar Beneficios',
+            'key' => 'beneficios_becas',
+            'module' => 'beca',
+            'url' => 'admin/becas/beneficios',
+            'icon' => 'fas fa-gift',
+            'active' => ['admin/becas/beneficios*'],
+        ],
         [
             'text' => 'Solicitudes',
             'key' => 'solicitudes_becas',
