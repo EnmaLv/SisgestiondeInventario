@@ -4,62 +4,89 @@ namespace App\Http\Controllers\salud;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \App\Models\salud\Enfermedad;
+use App\Models\salud\Enfermedad;
 
 class EnfermedadController extends Controller
 {
+
     public function index(Request $request)
     {
-        $tipo = session('modulo_activo', $request->get('tipo', 'fisica'));
+        $categoriaFiltro = $this->resolverCategoria($request);
+        $tipo = $request->get('tipo', $categoriaFiltro);
         $returnTo = $request->get('return_to');
         $editing = $request->get('editing');
         $search = $request->get('search');
+        $activo = $request->get('activo', 1);
 
-        $categoriaFiltro = $this->resolverCategoria($request);
+        $enfermedades = Enfermedad::obtenerEnfermedades(10, $search, $categoriaFiltro, $activo);
 
-        $enfermedades = Enfermedad::obtenerEnfermedades(10, $search, $categoriaFiltro);
+        $estilos = $this->obtenerConfiguracionEstilo($categoriaFiltro);
 
-        if ($request->ajax()) {
-            return view('admin.enfermedades.components.disease_list', compact(
-                'enfermedades', 'tipo', 'returnTo', 'search', 'categoriaFiltro', 'editing'
-            ));
-        }
+        $data = array_merge([
+            'enfermedades'    => $enfermedades,
+            'tipo'            => $tipo,
+            'categoriaFiltro' => $categoriaFiltro,
+            'returnTo'        => $returnTo,
+            'editing'         => $editing,
+            'search'          => $search,
+            'activo'          => $activo,
+        ], $estilos);
 
-        return view('admin.enfermedades.index', compact(
-            'enfermedades', 'tipo', 'returnTo', 'search', 'categoriaFiltro', 'editing'
-        ));
+        return view('admin.enfermedades.index', $data);
     }
 
     private function resolverCategoria(?Request $request = null): string
     {
+        $contexto = $request ? ($request->get('tipo') ?? $request->get('tipo_contexto')) : null;
+
+        if ($contexto) {
+            return match ($contexto) {
+                'psicologia', 'mental'       => 'mental',
+                'biopsicosocial'             => 'biopsicosocial',
+                'medicina', 'salud', 'fisica' => 'fisica',
+                default                      => 'fisica',
+            };
+        }
+
         $moduloActivo = session('modulo_activo');
 
         if ($moduloActivo) {
             return match ($moduloActivo) {
-                'psicologia', 'mental' => 'mental',
-                'biopsicosocial'       => 'biopsicosocial',
-                'medicina', 'salud'    => 'fisica',
-                default                => 'fisica',
+                'psicologia', 'mental'       => 'mental',
+                'biopsicosocial'             => 'biopsicosocial',
+                'medicina', 'salud', 'fisica' => 'fisica',
+                default                      => 'fisica',
             };
         }
 
-        $contexto = $request ? $request->get('tipo_contexto', $request->get('tipo')) : null;
-
-        return match ($contexto) {
-            'psicologia', 'mental' => 'mental',
-            'biopsicosocial'       => 'biopsicosocial',
-            default                => 'fisica',
-        };
+        return 'fisica';
     }
 
-    public function create(Request $request)
+    private function obtenerConfiguracionEstilo(string $categoria): array
     {
-        $categoria = $this->resolverCategoria($request);
-        $tipo = session('modulo_activo', $request->get('tipo', 'fisica'));
-        $returnTo = $request->get('return_to');
-        $editing = $request->get('editing');
-
-        return view('admin.enfermedades.create', compact('tipo', 'categoria', 'returnTo', 'editing'));
+        return match ($categoria) {
+            'mental' => [
+                'categoriaTexto' => 'Psicología / Salud Mental',
+                'themeColor'     => 'indigo',
+                'btnClass'       => 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/30 hover:shadow-indigo-600/40',
+                'spinnerColor'   => 'border-indigo-600',
+                'focusRingClass' => 'focus:ring-indigo-500',
+            ],
+            'biopsicosocial' => [
+                'categoriaTexto' => 'Biopsicosocial',
+                'themeColor'     => 'teal',
+                'btnClass'       => 'bg-teal-600 hover:bg-teal-700 shadow-teal-600/30 hover:shadow-teal-600/40',
+                'spinnerColor'   => 'border-teal-600',
+                'focusRingClass' => 'focus:ring-teal-500',
+            ],
+            default => [
+                'categoriaTexto' => 'Salud / Medicina General',
+                'themeColor'     => 'sky',
+                'btnClass'       => 'bg-sky-600 hover:bg-sky-700 shadow-sky-600/30 hover:shadow-sky-600/40',
+                'spinnerColor'   => 'border-sky-600',
+                'focusRingClass' => 'focus:ring-sky-500',
+            ],
+        };
     }
 
     public function store(Request $request)
@@ -78,7 +105,10 @@ class EnfermedadController extends Controller
         $existe = Enfermedad::existeEnfermedad($validated['nombre'], $codigo, $categoria);
 
         if ($existe) {
-            return back()->withErrors(['nombre' => 'Esta enfermedad o código ya existe dentro de esta categoría.'])->withInput();
+            return back()
+                ->withErrors(['nombre' => 'Esta enfermedad o código ya existe dentro de esta categoría.'])
+                ->withInput()
+                ->with('modal_mode', 'create');
         }
 
         Enfermedad::crearEnfermedad([
@@ -88,27 +118,11 @@ class EnfermedadController extends Controller
             'nivel'     => $nivel,
         ]);
 
-        return redirect()->route('admin.enfermedades.index', [
-            'tipo'      => session('modulo_activo', $request->get('tipo', 'fisica')),
-            'return_to' => $request->return_to,
-            'editing'   => $request->editing
-        ])->with('success', 'Enfermedad registrada correctamente.');
-    }
-
-    public function edit(Request $request, string $id)
-    {
-        $enfermedad = Enfermedad::obtenerPorId($id);
-
-        if (!$enfermedad) {
-            return redirect()->route('admin.enfermedades.index')->with('error', 'Enfermedad no encontrada.');
-        }
-
-        $categoria = $this->resolverCategoria($request);
-        $tipo = session('modulo_activo', $request->get('tipo', $enfermedad->categoria));
-        $returnTo = $request->get('return_to');
-        $editing = $request->get('editing');
-
-        return view('admin.enfermedades.edit', compact('enfermedad', 'tipo', 'categoria', 'returnTo', 'editing'));
+        return redirect()->route('admin.enfermedades.index', array_filter([
+            'tipo'      => $request->get('tipo_contexto', $request->get('tipo', $categoria)),
+            'return_to' => $request->get('return_to'),
+            'editing'   => $request->get('editing')
+        ]))->with('success', 'Enfermedad registrada correctamente.');
     }
 
     public function update(Request $request, string $id)
@@ -122,12 +136,17 @@ class EnfermedadController extends Controller
         ]);
 
         $codigo = $validated['codigo'] ?? null;
-        $nivel = $validated['nivel'] ?? 0;
+
+        $nivel  = isset($validated['nivel']) && $validated['nivel'] !== '' ? (int)$validated['nivel'] : 0;
 
         $existe = Enfermedad::existeEnfermedad($validated['nombre'], $codigo, $categoria, $id);
 
         if ($existe) {
-            return back()->withErrors(['nombre' => 'Esta combinación de enfermedad y código ya existe.'])->withInput();
+            return back()
+                ->withErrors(['nombre' => 'Esta combinación de enfermedad y código ya existe.'])
+                ->withInput()
+                ->with('modal_mode', 'edit')
+                ->with('editing_id', $id);
         }
 
         Enfermedad::actualizarEnfermedad($id, [
@@ -137,28 +156,48 @@ class EnfermedadController extends Controller
             'nivel'     => $nivel,
         ]);
 
-        return redirect()->route('admin.enfermedades.index', [
-            'tipo'      => session('modulo_activo', $request->get('tipo', 'fisica')),
-            'return_to' => $request->return_to,
-            'editing'   => $request->editing
-        ])->with('success', 'Enfermedad actualizada correctamente.');
+        return redirect()->route('admin.enfermedades.index', array_filter([
+            'tipo'      => $request->get('tipo_contexto', $request->get('tipo', $categoria)),
+            'return_to' => $request->get('return_to'),
+            'editing'   => $request->get('editing')
+        ]))->with('success', 'Enfermedad actualizada correctamente.');
     }
 
     public function destroy(Request $request, $id)
     {
+        $categoria = $this->resolverCategoria($request);
+
         Enfermedad::eliminarEnfermedad($id);
 
-        return redirect()->route('enfermedades.index', [
-            'tipo' => $request->tipo_contexto,
-            'return_to' => $request->return_to,
-            'editing' => $request->editing
-        ])->with('success', 'Enfermedad eliminada correctamente.');
+        return redirect()->route('admin.enfermedades.index', array_filter([
+            'tipo'      => $request->get('tipo_contexto', $request->get('tipo', $categoria)),
+            'return_to' => $request->get('return_to'),
+            'editing'   => $request->get('editing'),
+            'activo'    => $request->get('activo', 1),
+            'search'    => $request->get('search'),
+        ]))->with('success', 'Enfermedad desactivada correctamente.');
     }
+
+    public function activar(Request $request, $id)
+    {
+        $categoria = $this->resolverCategoria($request);
+
+        Enfermedad::activar($id);
+
+        return redirect()->route('admin.enfermedades.index', array_filter([
+            'tipo'      => $request->get('tipo_contexto', $request->get('tipo', $categoria)),
+            'return_to' => $request->get('return_to'),
+            'editing'   => $request->get('editing'),
+            'activo'    => $request->get('activo', 0),
+            'search'    => $request->get('search'),
+        ]))->with('success', 'Enfermedad activada correctamente.');
+    }
+
 
     public function search(Request $request)
     {
         $search = $request->get('q');
-        $categoria = $request->get('categoria');
+        $categoria = $request->get('categoria', $this->resolverCategoria($request));
 
         $enfermedades = Enfermedad::obtenerEnfermedades(20, $search, $categoria);
 

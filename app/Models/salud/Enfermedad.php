@@ -16,21 +16,25 @@ class Enfermedad
         'nivel',
         'activo',
     ];
-    
+
     const TIPO_MENTAL = 'mental';
     const TIPO_FISICA = 'fisica';
     const TIPO_BIOPSICOSOCIAL = 'biopsicosocial';
 
-    public static function obtenerEnfermedades($cantidad = 8, $search = null, $categoria = null)
+    public static function obtenerEnfermedades($cantidad = 8, $search = null, $categoria = null, $activo = 1)
     {
-        $query = DB::table('enfermedades')
-            ->where('activo', 1);
+        $query = DB::table('enfermedades');
+
+        // Filtrar dinámicamente por estado
+        if ($activo !== null && $activo !== '') {
+            $query->where('activo', (int)$activo);
+        }
 
         if ($search) {
             $searchNormalized = mb_strtolower(trim($search), 'UTF-8');
             $query->where(function ($q) use ($searchNormalized) {
                 $q->whereRaw("LOWER(nombre) LIKE ?", ["%{$searchNormalized}%"])
-                  ->orWhereRaw("LOWER(codigo) LIKE ?", ["%{$searchNormalized}%"]);
+                    ->orWhereRaw("LOWER(codigo) LIKE ?", ["%{$searchNormalized}%"]);
             });
         }
 
@@ -47,7 +51,6 @@ class Enfermedad
     {
         return DB::table('enfermedades')
             ->where('id', $id)
-            ->where('activo', 1)
             ->first();
     }
 
@@ -100,6 +103,7 @@ class Enfermedad
                 'codigo' => $data['codigo'] ?? $data['tipo'] ?? null,
                 'nombre' => $data['nombre'],
                 'categoria' => $data['categoria'] ?? 'fisica',
+                'nivel'     => $data['nivel'] ?? 0,
                 'updated_at' => Carbon::now(),
             ]);
             DB::commit();
@@ -116,6 +120,22 @@ class Enfermedad
             DB::beginTransaction();
             $res = DB::table('enfermedades')->where('id', $id)->update([
                 'activo' => 0,
+                'updated_at' => Carbon::now(),
+            ]);
+            DB::commit();
+            return $res;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public static function activar($id)
+    {
+        try {
+            DB::beginTransaction();
+            $res = DB::table('enfermedades')->where('id', $id)->update([
+                'activo' => 1,
                 'updated_at' => Carbon::now(),
             ]);
             DB::commit();

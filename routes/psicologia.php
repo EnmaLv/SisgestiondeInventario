@@ -21,13 +21,11 @@ use App\Http\Controllers\salud\PublicacionController;
 use App\Http\Controllers\salud\PublicacionReaccionController;
 
 Route::get('enfermedades', [EnfermedadController::class, 'index'])->name('admin.enfermedades.index');
-Route::get('enfermedades/create', [EnfermedadController::class, 'create'])->name('admin.enfermedades.create');
 Route::post('enfermedades/store', [EnfermedadController::class, 'store'])->name('admin.enfermedades.store');
-Route::get('enfermedades/{enfermedad}/edit', [EnfermedadController::class, 'edit'])->name('admin.enfermedades.edit');
-Route::put('enfermedades/{enfermedad}', [EnfermedadController::class, 'update'])->name('admin.enfermedades.update');
-Route::delete('enfermedades/{enfermedad}', [EnfermedadController::class, 'destroy'])->name('admin.enfermedades.destroy');
+Route::put('enfermedades/{id}', [EnfermedadController::class, 'update'])->name('admin.enfermedades.update');
+Route::delete('enfermedades/{id}', [EnfermedadController::class, 'destroy'])->name('admin.enfermedades.destroy');
+Route::put('enfermedades/{id}/activar', [EnfermedadController::class, 'activar'])->name('admin.enfermedades.activar');
 Route::get('enfermedades/api/search', [EnfermedadController::class, 'search'])->name('admin.enfermedades.api.search');
-
 
 Route::get('/psicologia/maestros/estado_animos', [EstadoAnimoController::class, 'index'])->name('admin.psicologia.maestros.estado_animos.index');
 Route::get('/psicologia/maestros/estado_animos/create', [EstadoAnimoController::class, 'create'])->name('admin.psicologia.maestros.estado_animos.create');

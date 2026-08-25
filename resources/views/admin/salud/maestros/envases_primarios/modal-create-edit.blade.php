@@ -4,15 +4,6 @@
     'tipoProductoId' => 2,
 ])
 
-@php
-    $isSalud = (int) $tipoProductoId === 1;
-
-    // Colores según el módulo
-    $btnBgClass     = $isSalud ? 'bg-red-800 hover:bg-red-900' : 'bg-sky-600 hover:bg-sky-700';
-    $focusRingClass = $isSalud ? 'focus-within:ring-red-500' : 'focus-within:ring-sky-500';
-    $iconColorClass = $isSalud ? 'text-red-800' : 'text-sky-600';
-@endphp
-
 <div id="{{ $modalId }}"
     class="fixed inset-0 z-50 {{ $errors->has('nombre') ? 'flex' : 'hidden' }} items-center justify-center p-4">
 
@@ -26,7 +17,7 @@
         {{-- Header --}}
         <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color: var(--border-color);">
             <h3 class="flex items-center gap-2 text-base font-extrabold tracking-tight" style="color: var(--text-main);">
-                <i id="{{ $modalId }}Icon" class="fas fa-plus-circle {{ $iconColorClass }}"></i>
+                <i id="{{ $modalId }}Icon" class="fas fa-plus-circle text-sky-600"></i>
                 <span id="{{ $modalId }}Title">Nuevo Envase Primario</span>
             </h3>
             <button type="button" onclick="closeModal('{{ $modalId }}')"
@@ -46,7 +37,7 @@
                     <label class="block text-[16px] font-black uppercase tracking-wider text-gray-400 mb-1.5">
                         Nombre
                     </label>
-                    <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 {{ $focusRingClass }} transition-all"
+                    <div class="flex items-stretch rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all"
                         style="border-color: var(--border-color);">
                         <span class="flex items-center justify-center px-3.5 bg-gray-50 dark:bg-black/20 text-gray-400 border-r"
                             style="border-color: var(--border-color);">
@@ -71,7 +62,7 @@
                     Cancelar
                 </button>
                 <button type="submit"
-                    class="rd-submit-btn inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl {{ $btnBgClass }} text-white font-bold text-sm shadow-md active:scale-95 transition-all">
+                    class="rd-submit-btn inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm shadow-md active:scale-95 transition-all">
                     <i class="fas fa-check text-xs"></i> <span id="{{ $modalId }}BtnText">Guardar</span>
                 </button>
             </div>
@@ -81,7 +72,7 @@
 
 <script>
     const DEFAULT_STORE_ROUTE_ENVASE = "{{ $storeRoute }}";
-    const ICON_COLOR_CLASS_ENVASE = "{{ $iconColorClass }}";
+    const ICON_COLOR_CLASS_ENVASE = "text-sky-600";
 
     function abrirModalCrearEnvasePrimario(modalId = '{{ $modalId }}') {
         const form = document.getElementById(modalId + 'Form');

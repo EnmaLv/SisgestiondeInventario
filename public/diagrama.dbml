@@ -186,7 +186,7 @@ Table perfil {
   updated_at    timestamp
 }
 
-Table departamento {
+Table artamento {
   id          bigint       [pk, increment]
   nombre      varchar(150) [not null]
   descripcion text
