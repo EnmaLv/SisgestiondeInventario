@@ -179,7 +179,34 @@ class CitaController extends Controller
         return view('admin.psicologia.maestros.citas.show', compact('cita'));
     }
 
-    public function editNote($citaId)
+            private function resolverCategoria(?Request $request = null): string
+    {
+        $contexto = $request ? ($request->get('tipo') ?? $request->get('tipo_contexto')) : null;
+
+        if ($contexto) {
+            return match ($contexto) {
+                'psicologia', 'mental'       => 'mental',
+                'biopsicosocial'             => 'biopsicosocial',
+                'medicina', 'salud', 'fisica' => 'fisica',
+                default                      => 'fisica',
+            };
+        }
+
+        $moduloActivo = session('modulo_activo');
+
+        if ($moduloActivo) {
+            return match ($moduloActivo) {
+                'psicologia', 'mental'       => 'mental',
+                'biopsicosocial'             => 'biopsicosocial',
+                'medicina', 'salud', 'fisica' => 'fisica',
+                default                      => 'fisica',
+            };
+        }
+
+        return 'fisica';
+    }
+
+    public function editNote($citaId, Request $request)
     {
         $cita = Cita::obtenerDetalle($citaId);
         abort_if(!$cita, 404);
@@ -192,6 +219,11 @@ class CitaController extends Controller
         $estadosAnimo = \Illuminate\Support\Facades\DB::table('estado_animos')->orderBy('valor', 'asc')->get();
 
         $camposGuardadosRaw = CitaNotaEvolucion::obtenerPorCita($citaId);
+
+        $categoriaFiltro = $this->resolverCategoria($request);
+        $tipo = $request->get('tipo', $categoriaFiltro);
+        $returnTo = $request->get('return_to');
+        $editing = $request->get('editing');
 
         $camposOcultos = [
             'Detalle del Avance',
@@ -216,7 +248,8 @@ class CitaController extends Controller
 
         $camposDisponibles = NotaEvolucionCampo::obtenerPorPsicologo($user->id_usuario);
 
-        return view('admin.psicologia.maestros.citas.edit_note', compact('cita', 'avances', 'estadosAnimo', 'camposGuardados', 'camposDisponibles'));
+        return view('admin.psicologia.maestros.citas.edit_note', 
+        compact('cita', 'avances', 'estadosAnimo', 'camposGuardados', 'camposDisponibles', 'tipo', 'categoriaFiltro', 'returnTo', 'editing'));
     }
 
     public function downloadPdf($citaId)

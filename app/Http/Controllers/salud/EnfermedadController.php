@@ -111,18 +111,27 @@ class EnfermedadController extends Controller
                 ->with('modal_mode', 'create');
         }
 
-        Enfermedad::crearEnfermedad([
+        $fromidreuse = Enfermedad::crearEnfermedad([
             'nombre'    => $validated['nombre'],
             'codigo'    => $codigo,
             'categoria' => $categoria,
             'nivel'     => $nivel,
         ]);
 
-        return redirect()->route('admin.enfermedades.index', array_filter([
-            'tipo'      => $request->get('tipo_contexto', $request->get('tipo', $categoria)),
-            'return_to' => $request->get('return_to'),
-            'editing'   => $request->get('editing')
-        ]))->with('success', 'Enfermedad registrada correctamente.');
+
+        $from = $request->input('from');
+
+        if ($from) {
+            return redirect($from . '?enfermedad_id=' . $fromidreuse)
+                ->with('success', 'Enfermedad creada exitosamente.');
+        } else {
+            return redirect()->route('admin.enfermedades.index', array_filter([
+                'tipo'      => $request->get('tipo_contexto', $request->get('tipo', $categoria)),
+                'return_to' => $request->get('return_to'),
+                'editing'   => $request->get('editing')
+            ]))
+            ->with('success', 'Enfermedad creada exitosamente.');
+        }
     }
 
     public function update(Request $request, string $id)
