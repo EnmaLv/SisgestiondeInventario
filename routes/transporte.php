@@ -5,11 +5,11 @@ use App\Http\Controllers\BusMarcaController;
 use App\Http\Controllers\BusModeloController;
 use App\Http\Controllers\BusTipoCombustibleController;
 use App\Http\Controllers\BusVehiculoController;
-use App\Http\Controllers\BusRutaController;
 use App\Http\Controllers\BusParadaController;
 use App\Http\Controllers\BusMantenimientoController;
 use App\Http\Controllers\BusViajeController;
 use App\Http\Controllers\BusCargaCombustibleController;
+use App\Http\Controllers\BusRutaController;
 
 /* Marcas */
 Route::get('/transporte/maestros/bus_marcas', [BusMarcaController::class, 'index'])->name('admin.transporte.maestros.bus_marcas.index');
