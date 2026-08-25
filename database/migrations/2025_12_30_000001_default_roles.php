@@ -96,18 +96,18 @@ return new class extends Migration
                 $administradorBecas
             );
 
-            $estudianteData = [
+            $pacienteData = [
                 'descripcion' => 'Rol por defecto paciente',
-                'menu_permissions' => json_encode(['citas', 'mural', 'estado_animo_diario']),
+                'menu_permissions' => json_encode(["citas", "mural", "notificaciones", "publicaciones", "estado_animo_diario"]),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
             if ($hasSlug) {
-                $estudianteData['slug'] = 'paciente';
+                $pacienteData['slug'] = 'paciente';
             }
             DB::table('rol')->updateOrInsert(
                 ['nombre' => 'Paciente'],
-                $estudianteData
+                $pacienteData
             );
         }
     }

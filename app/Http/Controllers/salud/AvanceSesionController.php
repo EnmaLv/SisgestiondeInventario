@@ -12,9 +12,9 @@ class AvanceSesionController extends Controller
 {
     private function verificarAcceso(): void
     {
+        /** @var Usuario $user */
         $user = Auth::user();
-
-        $rolesPermitidos = ['psicologo', 'administrador', 'admin'];
+        $rolesPermitidos = ['psicologo', 'administrador'];
 
         if (!$user || !$user->tieneRol($rolesPermitidos)) {
             abort(403, 'No tienes permisos para acceder a esta sección.');

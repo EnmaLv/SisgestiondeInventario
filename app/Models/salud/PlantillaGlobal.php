@@ -42,7 +42,7 @@ class PlantillaGlobal
                 'titulo' => $data['titulo'],
                 'descripcion' => $data['descripcion'] ?? null,
                 'secciones' => json_encode($data['secciones_estructura']),
-                'status' => 1, // Al actualizarla, se marca como activa
+                'status' => 1,
                 'updated_at' => now(),
             ]);
     }

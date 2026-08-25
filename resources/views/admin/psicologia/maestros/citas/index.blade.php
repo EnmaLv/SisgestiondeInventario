@@ -153,7 +153,9 @@
                                                                     <p class="text-xs text-slate-600 dark:text-gray-400 font-medium italic mb-3">"No puedo atenderte en los horarios que sugeriste, sin embargo, quiero atenderte lo más pronto posible, esta es mi propuesta para atenderte"</p>
 
                                                                     <form id="form-propuesta-{{ $cita->id }}" onsubmit="responderPropuestaForm(event, {{ $cita->id }})" class="w-full">
-                                                                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-gray-500 mb-2">Opciones de horario propuestas por el psicólogo:</p>
+                                                                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-gray-400 mb-2">
+                                                                            Opciones de horario propuestas por el psicólogo:
+                                                                        </p>
                                                                         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 mb-3">
                                                                             @php
                                                                                 $bloquesArray = array_filter(array_map('trim', explode(';', $cita->bloques_propuestos_raw ?? '')));
@@ -161,15 +163,15 @@
                                                                             @foreach($bloquesArray as $index => $bloque)
                                                                                 <label class="cursor-pointer block w-full h-full">
                                                                                     <input type="radio" name="bloque_seleccionado" value="{{ $bloque }}" class="peer sr-only" required onchange="document.getElementById('rechazo-area-{{ $cita->id }}').style.display='none'; if(typeof updateSubmitBtnState === 'function') updateSubmitBtnState({{ $cita->id }});">
-                                                                                    <div class="p-2.5 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-600 rounded-xl peer-checked:border-blue-700 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/30 transition-all h-full w-full flex items-center justify-center text-center">
-                                                                                        <p class="text-xs font-bold text-slate-700 dark:text-gray-300 peer-checked:text-blue-700 dark:peer-checked:text-blue-400">
+                                                                                    <div class="p-2.5 bg-white dark:bg-gray-800/80 border-2 border-slate-200 dark:border-gray-700/80 rounded-xl peer-checked:border-sky-600 dark:peer-checked:border-sky-500 peer-checked:bg-sky-50 dark:peer-checked:bg-sky-950/40 transition-all h-full w-full flex items-center justify-center text-center shadow-sm">
+                                                                                        <p class="text-xs font-bold text-slate-700 dark:text-gray-200 peer-checked:text-sky-700 dark:peer-checked:text-sky-400">
                                                                                             @php
                                                                                                 $parts = explode('|', $bloque);
                                                                                                 if(count($parts) == 2) {
                                                                                                     $fechaFormateada = \Carbon\Carbon::parse($parts[0])->locale('es')->translatedFormat('l d M, Y');
                                                                                                     $dias = ['Lunes', 'Martes', 'Miércoles', 'Miercoles', 'Jueves', 'Viernes', 'Sábado', 'Sabado', 'Domingo'];
                                                                                                     $horarioLimpio = trim(str_ireplace($dias, '', $parts[1]));
-                                                                                                    echo ucfirst($fechaFormateada) . '<br><span class="text-xs font-normal opacity-80">' . $horarioLimpio . '</span>';
+                                                                                                    echo ucfirst($fechaFormateada) . '<br><span class="text-xs font-normal opacity-75 dark:opacity-80">' . $horarioLimpio . '</span>';
                                                                                                 } else {
                                                                                                     echo $bloque;
                                                                                                 }
@@ -180,32 +182,34 @@
                                                                             @endforeach
                                                                             <label class="cursor-pointer block w-full h-full">
                                                                                 <input type="radio" id="radio-ninguno-{{ $cita->id }}" name="bloque_seleccionado" value="ninguno" class="peer sr-only" required onchange="document.getElementById('rechazo-area-{{ $cita->id }}').style.display='block'; if(typeof initCalendarForCita === 'function') initCalendarForCita({{ $cita->id }}, {{ $cita->psicologo_id }}); if(typeof updateSubmitBtnState === 'function') updateSubmitBtnState({{ $cita->id }});">
-                                                                                <div class="p-2.5 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-600 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-900/30 transition-all w-full flex items-center justify-center h-full text-center">
-                                                                                    <p class="text-xs font-bold text-slate-700 dark:text-gray-300 peer-checked:text-rose-700 dark:peer-checked:text-rose-400">Ninguno</p>
+                                                                                <div class="p-2.5 bg-white dark:bg-gray-800/80 border-2 border-slate-200 dark:border-gray-700/80 rounded-xl peer-checked:border-rose-500 dark:peer-checked:border-rose-500 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-950/40 transition-all w-full flex items-center justify-center h-full text-center shadow-sm">
+                                                                                    <p class="text-xs font-bold text-slate-700 dark:text-gray-200 peer-checked:text-rose-700 dark:peer-checked:text-rose-400">Ninguno</p>
                                                                                 </div>
                                                                             </label>
                                                                         </div>
 
                                                                         <div id="rechazo-area-{{ $cita->id }}" style="display: none;" class="mb-3">
-                                                                            <div class="mt-3 border-t border-slate-200 dark:border-gray-700 pt-3">
-                                                                                <h5 class="text-sm font-bold text-slate-700 dark:text-gray-300 mb-1">Proponer nuevos horarios</h5>
-                                                                                <p class="text-xs text-gray-500 mb-3">Selecciona los días y horarios en los que podrías asistir.</p>
-                                                                                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border border-slate-200 dark:border-gray-700 mb-3">
-                                                                                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-black uppercase text-gray-400 mb-2">
+                                                                            <div class="mt-3 border-t border-slate-200 dark:border-gray-700/80 pt-3">
+                                                                                <h5 class="text-sm font-bold text-slate-700 dark:text-gray-200 mb-1">Proponer nuevos horarios</h5>
+                                                                                <p class="text-xs text-slate-500 dark:text-gray-400 mb-3">Selecciona los días y horarios en los que podrías asistir.</p>
+                                                                                <div class="bg-slate-50/50 dark:bg-gray-800/40 p-3 rounded-xl border border-slate-200 dark:border-gray-700/80 mb-3">
+                                                                                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-black uppercase text-slate-400 dark:text-gray-400 mb-2">
                                                                                         <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
                                                                                     </div>
                                                                                     <div id="calendarGrid-{{ $cita->id }}" class="grid grid-cols-7 gap-1"></div>
                                                                                 </div>
                                                                                 <div id="slotsContainer-{{ $cita->id }}" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
-                                                                                <p id="minBlocksHelpText-{{ $cita->id }}" class="text-xs text-rose-500 font-bold mt-2 hidden">Debes seleccionar al menos 2 días, y elegir mínimo un bloque de horario por cada día.</p>
+                                                                                <p id="minBlocksHelpText-{{ $cita->id }}" class="text-xs text-rose-600 dark:text-rose-400 font-bold mt-2 hidden">
+                                                                                    Debes seleccionar al menos 2 días, y elegir mínimo un bloque de horario por cada día.
+                                                                                </p>
                                                                                 <input type="hidden" name="nuevos_bloques" id="nuevos_bloques_{{ $cita->id }}">
                                                                             </div>
                                                                             <label class="block text-xs font-black text-slate-500 dark:text-gray-400 uppercase tracking-widest mt-3 mb-1">Motivo del rechazo (Breve)</label>
-                                                                            <textarea name="motivo_rechazo" maxlength="50" class="w-full bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-700 outline-none resize-none" rows="2" placeholder="Explique por qué no puede asistir en estos horarios..."></textarea>
+                                                                            <textarea name="motivo_rechazo" maxlength="50" class="w-full bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl p-3 text-sm text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-sky-600 dark:focus:ring-sky-500 outline-none resize-none shadow-sm transition-all" rows="2" placeholder="Explique por qué no puede asistir en estos horarios..."></textarea>
                                                                         </div>
 
                                                                         <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-gray-700/50">
-                                                                            <button type="submit" id="btn-submit-{{ $cita->id }}" class="px-5 py-2 text-xs font-black bg-slate-300 dark:bg-gray-600 text-slate-500 dark:text-gray-300 rounded-xl transition-all cursor-not-allowed">
+                                                                            <button type="submit" id="btn-submit-{{ $cita->id }}" class="px-5 py-2 text-xs font-black bg-slate-200 dark:bg-gray-700 text-slate-400 dark:text-gray-400 rounded-xl transition-all cursor-not-allowed">
                                                                                 Selecciona una opción
                                                                             </button>
                                                                         </div>
@@ -674,7 +678,7 @@
             }).then(confirmed => {
                 if (!confirmed) return;
 
-                fetch(`/citas/${citaId}/responder-propuesta`, {
+                fetch(`citas/${citaId}/responder-propuesta`, {
                     method: 'PATCH',
                     headers: {
                         'X-CSRF-TOKEN': token,
@@ -762,7 +766,7 @@
                     return;
                 }
 
-                fetch(`/citas/${citaId}/responder-propuesta`, {
+                fetch(`citas/${citaId}/responder-propuesta`, {
                     method: 'PATCH',
                     headers: {
                         'X-CSRF-TOKEN': token,
@@ -830,9 +834,9 @@
 
                 const grid = document.getElementById(`calendarGrid-${citaId}`);
                 if(!grid) return;
-                grid.innerHTML = '<div class="col-span-7 text-center py-4 text-gray-500 text-sm">Cargando disponibilidad...</div>';
+                grid.innerHTML = '<div class="col-span-7 text-center py-4 text-slate-400 dark:text-gray-400 text-sm">Cargando disponibilidad...</div>';
 
-                fetch(`/citas/available-slots?psicologo_id=${psicologoId}`, {
+                fetch(`citas/available_slots?psicologo_id=${psicologoId}`, {
                     headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                 })
                 .then(r => r.json())
@@ -843,11 +847,11 @@
                 })
                 .catch(err => {
                     console.error(err);
-                    if(grid) grid.innerHTML = `<div class="col-span-7 text-center py-4 text-rose-500 text-sm">Error fetch: ${err.message}</div>`;
+                    if(grid) grid.innerHTML = `<div class="col-span-7 text-center py-4 text-rose-600 dark:text-rose-400 text-sm">Error fetch: ${err.message}</div>`;
                 });
             } catch (err) {
                 const grid = document.getElementById(`calendarGrid-${citaId}`);
-                if (grid) grid.innerHTML = `<div class="col-span-7 text-rose-500 text-xs py-2">Error init: ${err.message}</div>`;
+                if (grid) grid.innerHTML = `<div class="col-span-7 text-rose-600 dark:text-rose-400 text-xs py-2">Error init: ${err.message}</div>`;
             }
         }
 
@@ -886,20 +890,20 @@
                     let baseClasses = 'relative flex items-center justify-center h-8 w-full rounded-lg text-xs font-bold transition-all duration-200 ';
 
                     if (!isAvailable) {
-                        baseClasses += 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed opacity-50';
+                        baseClasses += 'bg-slate-100 dark:bg-gray-800/60 text-slate-300 dark:text-gray-600 cursor-not-allowed opacity-50';
                     } else if (isSelected) {
-                        baseClasses += 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 hover:bg-blue-200 cursor-pointer border border-blue-400 shadow-sm';
+                        baseClasses += 'bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 hover:bg-sky-200 dark:hover:bg-sky-900/60 cursor-pointer border border-sky-400 dark:border-sky-500/60 shadow-sm';
                     } else {
-                        baseClasses += 'bg-gray-50 dark:bg-gray-700 text-gray-500 border border-gray-200 hover:border-gray-300 cursor-pointer';
+                        baseClasses += 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-slate-300 dark:hover:border-gray-600 cursor-pointer shadow-sm';
                     }
 
-                    if (isActive) baseClasses += ' ring-2 ring-blue-700';
+                    if (isActive) baseClasses += ' ring-2 ring-sky-600 dark:ring-sky-400';
 
                     btn.className = baseClasses;
                     btn.innerHTML = `<span>${d.getDate()}</span>`;
 
                     if (isSelected && state.selectedSlotsByDate && state.selectedSlotsByDate[ymd] && state.selectedSlotsByDate[ymd].length > 0) {
-                        btn.innerHTML += '<span class="absolute top-1 right-1 w-1.5 h-1.5 bg-green-500 rounded-full"></span>';
+                        btn.innerHTML += '<span class="absolute top-1 right-1 w-1.5 h-1.5 bg-emerald-500 dark:bg-emerald-400 rounded-full"></span>';
                     }
 
                     if (isAvailable) {
@@ -908,7 +912,7 @@
                     grid.appendChild(btn);
                 });
             } catch (err) {
-                grid.innerHTML = `<div class="col-span-7 text-rose-500 text-xs py-2">Error render: ${err.message}</div>`;
+                grid.innerHTML = `<div class="col-span-7 text-rose-600 dark:text-rose-400 text-xs py-2">Error render: ${err.message}</div>`;
             }
         }
 
@@ -939,13 +943,13 @@
             const state = calendarsState[citaId];
 
             if (!state.activeDay || state.diasSeleccionados.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center text-xs text-gray-500 py-2">Selecciona un día en el calendario para ver los horarios.</div>';
+                container.innerHTML = '<div class="col-span-full text-center text-xs text-slate-400 dark:text-gray-400 py-2">Selecciona un día en el calendario para ver los horarios.</div>';
                 return;
             }
 
             const slots = state.disponibilidad[state.activeDay] || [];
             if (slots.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center text-xs text-gray-500 py-2">No hay horarios disponibles este día.</div>';
+                container.innerHTML = '<div class="col-span-full text-center text-xs text-slate-400 dark:text-gray-400 py-2">No hay horarios disponibles este día.</div>';
                 return;
             }
 
@@ -956,12 +960,12 @@
             slots.forEach(slot => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'flex items-center justify-center px-3 py-2 rounded-lg border text-xs font-semibold transition-all duration-200 ';
+                btn.className = 'flex items-center justify-center px-3 py-2 rounded-lg border text-xs font-semibold transition-all duration-200 shadow-sm ';
                 
                 if (state.selectedSlotsByDate[state.activeDay].includes(slot)) {
-                    btn.className += 'border-blue-700 bg-blue-700 text-white shadow-md scale-[1.02]';
+                    btn.className += 'border-sky-600 dark:border-sky-500 bg-sky-600 dark:bg-sky-400/10 text-white shadow-md scale-[1.02]';
                 } else {
-                    btn.className += 'border-gray-200 bg-gray-50 text-gray-700 hover:border-blue-400 hover:bg-blue-50';
+                    btn.className += 'border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 hover:border-sky-400 dark:hover:border-sky-500/50 hover:bg-sky-50 dark:hover:bg-sky-950/30';
                 }
                 
                 btn.textContent = slot;
@@ -1017,11 +1021,11 @@
                 const helpText = document.getElementById(`minBlocksHelpText-${citaId}`);
                 if (!isValidDays || !isValidSlots) {
                     btnSubmit.disabled = true;
-                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-rose-600/50 text-white rounded-xl transition-all cursor-not-allowed';
+                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-rose-600/40 dark:bg-rose-950/50 text-white/70 dark:text-rose-200/50 rounded-xl transition-all cursor-not-allowed';
                     if(helpText) helpText.classList.remove('hidden');
                 } else {
                     btnSubmit.disabled = false;
-                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-md transition-all active:scale-95';
+                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-rose-600 hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 text-white rounded-xl shadow-md transition-all active:scale-95';
                     if(helpText) helpText.classList.add('hidden');
                 }
             } else {
@@ -1029,7 +1033,7 @@
                 if (radioOther) {
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = 'Enviar';
-                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-blue-800 hover:bg-blue-700 text-white rounded-xl shadow-md transition-all active:scale-95';
+                    btnSubmit.className = 'px-5 py-2 text-xs font-black bg-sky-600 hover:bg-sky-700 dark:bg-sky-600 dark:hover:bg-sky-500 text-white rounded-xl shadow-md transition-all active:scale-95';
                     const helpText = document.getElementById(`minBlocksHelpText-${citaId}`);
                     if(helpText) helpText.classList.add('hidden');
                 }

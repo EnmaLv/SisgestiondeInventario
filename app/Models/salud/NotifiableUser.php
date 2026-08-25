@@ -34,7 +34,7 @@ class NotifiableUser
 
     public function getMorphClass()
     {
-        return 'App\Models\User';
+        return 'App\Models\Usuario';
     }
 
     public function routeNotificationForMail($notification)

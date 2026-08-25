@@ -126,12 +126,8 @@ class Horario
         }
 
         $query->where(function ($q) use ($inicio, $fin) {
-            $q->whereBetween('hora_inicio', [$inicio, $fin])
-                ->orWhereBetween('hora_fin', [$inicio, $fin])
-                ->orWhere(function ($q2) use ($inicio, $fin) {
-                    $q2->where('hora_inicio', '<', $inicio)
-                        ->where('hora_fin', '>', $fin);
-                });
+            $q->where('hora_inicio', '<', $fin)
+            ->where('hora_fin', '>', $inicio);
         });
 
         $overlaps = $query->get();
