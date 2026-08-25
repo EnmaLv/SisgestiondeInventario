@@ -3,63 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\Models\BusMantenimiento;
+use App\Models\BusVehiculo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BusMantenimientoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private function rules(int $excludeId = null): array
     {
-        //
+        return [
+            'bus_vehiculo_id' => 'required|exists:bus_vehiculos,id',
+            'tipo'            => 'required|in:preventivo,correctivo',
+            'titulo'          => 'required|string|max:150',
+            'descripcion'     => 'nullable|string|max:2000',
+            'costo'           => 'nullable|numeric|min:0|max:9999999',
+            'fecha'           => 'required|date|before_or_equal:today',
+            'km_al_servicio'  => 'nullable|numeric|min:0|max:9999999',
+            'proximo_km'      => 'nullable|numeric|min:0|max:9999999',
+            'proxima_fecha'   => 'nullable|date|after:fecha',
+            'estado'          => 'required|in:pendiente,en_proceso,completado',
+        ];
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function index(Request $request)
+    {
+        $mantenimientos = BusMantenimiento::listarMantenimientos(
+            $request->buscar,
+            $request->input('estado')
+        );
+        return view('admin.transporte.maestros.bus_mantenimientos.index', compact('mantenimientos'));
+    }
+
     public function create()
     {
-        //
+        $vehiculos = BusVehiculo::where('activo', 1)->orderBy('placa')->get();
+        return view('admin.transporte.maestros.bus_mantenimientos.create', compact('vehiculos'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate($this->rules());
+        BusMantenimiento::crearMantenimiento($validated, Auth::id());
+        return redirect()
+            ->route('admin.transporte.maestros.bus_mantenimientos.index')
+            ->with('success', 'Mantenimiento registrado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(BusMantenimiento $busMantenimiento)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(BusMantenimiento $busMantenimiento)
     {
-        //
+        $vehiculos = BusVehiculo::where('activo', 1)->orderBy('placa')->get();
+        return view('admin.transporte.maestros.bus_mantenimientos.edit',
+            compact('busMantenimiento', 'vehiculos'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, BusMantenimiento $busMantenimiento)
     {
-        //
+        $validated = $request->validate($this->rules($busMantenimiento->id));
+        BusMantenimiento::actualizarMantenimiento($busMantenimiento, $validated);
+        return redirect()
+            ->route('admin.transporte.maestros.bus_mantenimientos.index')
+            ->with('success', 'Mantenimiento actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(BusMantenimiento $busMantenimiento)
     {
-        //
+        $busMantenimiento->delete();
+        return redirect()
+            ->route('admin.transporte.maestros.bus_mantenimientos.index')
+            ->with('success', 'Mantenimiento eliminado correctamente.');
     }
 }

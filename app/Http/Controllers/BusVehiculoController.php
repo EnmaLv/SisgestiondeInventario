@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class BusVehiculoController extends Controller
 {
-    // ── Reglas centralizadas — se usan en store y update ─────────
     private function rules(int $excludeId = null): array
     {
         return [
