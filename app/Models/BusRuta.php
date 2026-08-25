@@ -77,4 +77,8 @@ class BusRuta extends Model
         ]);
         return $ruta;
     }
+    public function rutaParadas()
+    {
+        return $this->hasMany(BusRutaParada::class, 'bus_ruta_id')->orderBy('orden');
+    }
 }

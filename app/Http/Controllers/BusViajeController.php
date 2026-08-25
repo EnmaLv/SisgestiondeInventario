@@ -19,12 +19,10 @@ class BusViajeController extends Controller
             'conductor.persona'
         ]);
 
-        // Filtro por Estado ('todos', 'programado', 'en_curso', 'finalizado', 'cancelado')
         if ($request->filled('estado') && $request->estado !== 'todos') {
             $query->where('estado', $request->estado);
         }
 
-        // Búsqueda general
         if ($request->filled('buscar')) {
             $buscar = $request->buscar;
             $query->where(function ($q) use ($buscar) {
@@ -51,7 +49,6 @@ class BusViajeController extends Controller
 
     public function create()
     {
-        // 1. Obtener Autobuses activos que NO estén en un viaje activo en este momento
         $vehiculosOcupados = BusViaje::whereIn('estado', ['programado', 'en_curso'])
             ->pluck('vehiculo_id');
 
@@ -59,20 +56,15 @@ class BusViajeController extends Controller
             ->whereNotIn('id', $vehiculosOcupados)
             ->get();
 
-        // 2. Obtener Rutas activas
         $rutas = BusRuta::where('estado', 1)->get();
-
-        // 3. Obtener Conductores activos que tampoco tengan un viaje activo asignado
         $conductoresOcupados = BusViaje::whereIn('estado', ['programado', 'en_curso'])
             ->whereNotNull('conductor_id')
             ->pluck('conductor_id');
 
-        // Ajusta la consulta según el rol o estado de tus usuarios
         $conductores = Usuario::with('persona')
             ->whereNotIn('id_usuario', $conductoresOcupados)
             ->get();
 
-        // 4. Determinar turno sugerido automáticamente
         $turnoSugerido = BusViaje::calcularTurnoActual();
 
         return view('admin.transporte.maestros.bus_viajes.create', compact('vehiculos', 'rutas', 'conductores', 'turnoSugerido'));
@@ -92,7 +84,6 @@ class BusViajeController extends Controller
             'turno.required'        => 'Debe especificar el turno del viaje.',
         ]);
 
-        // Validar doble asignación en el servidor antes de guardar
         $vehiculoEnUso = BusViaje::where('vehiculo_id', $request->vehiculo_id)
             ->whereIn('estado', ['programado', 'en_curso'])
             ->exists();
@@ -113,7 +104,6 @@ class BusViajeController extends Controller
                 ->with('error', 'El conductor seleccionado ya tiene un viaje activo o programado asignado.');
         }
 
-        // Crear el viaje
         $viaje = BusViaje::create([
             'vehiculo_id'  => $request->vehiculo_id,
             'bus_ruta_id'  => $request->bus_ruta_id,
@@ -128,7 +118,6 @@ class BusViajeController extends Controller
             'hubo_desvio'  => false,
         ]);
 
-        // Generar el identificador para Firebase (ej. viaje_15)
         $viaje->update([
             'firebase_id' => 'viaje_' . $viaje->id,
         ]);
@@ -139,7 +128,6 @@ class BusViajeController extends Controller
 
     public function edit(BusViaje $busViaje)
     {
-        // 1. Obtener Autobuses activos que NO estén en OTRO viaje activo
         $vehiculosOcupados = BusViaje::where('id', '!=', $busViaje->id)
             ->whereIn('estado', ['programado', 'en_curso'])
             ->pluck('vehiculo_id');
@@ -148,10 +136,8 @@ class BusViajeController extends Controller
             ->whereNotIn('id', $vehiculosOcupados)
             ->get();
 
-        // 2. Obtener Rutas activas
         $rutas = BusRuta::where('estado', 1)->get();
 
-        // 3. Obtener Conductores activos que NO estén en OTRO viaje activo
         $conductoresOcupados = BusViaje::where('id', '!=', $busViaje->id)
             ->whereIn('estado', ['programado', 'en_curso'])
             ->whereNotNull('conductor_id')
@@ -178,7 +164,6 @@ class BusViajeController extends Controller
             'turno.required'        => 'Debe especificar el turno del viaje.',
         ]);
 
-        // Validar doble asignación excluyendo el viaje actual
         $vehiculoEnUso = BusViaje::where('id', '!=', $busViaje->id)
             ->where('vehiculo_id', $request->vehiculo_id)
             ->whereIn('estado', ['programado', 'en_curso'])
@@ -201,7 +186,6 @@ class BusViajeController extends Controller
                 ->with('error', 'El conductor seleccionado ya tiene otro viaje activo o programado asignado.');
         }
 
-        // Actualizar datos del viaje
         $busViaje->update([
             'vehiculo_id'  => $request->vehiculo_id,
             'bus_ruta_id'  => $request->bus_ruta_id,
@@ -215,7 +199,6 @@ class BusViajeController extends Controller
 
     public function show(BusViaje $busViaje)
     {
-        // Cargar relaciones requeridas para el mapa y las métricas
         $busViaje->load([
             'vehiculo',
             'ruta.paradas' => function ($query) {
@@ -229,7 +212,6 @@ class BusViajeController extends Controller
 
     public function destroy(BusViaje $busViaje)
     {
-        // Cancelación de viaje programado
         $busViaje->update(['estado' => 'cancelado']);
         return redirect()->back()->with('success', 'El viaje ha sido cancelado exitosamente.');
     }

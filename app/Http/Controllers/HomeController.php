@@ -16,12 +16,16 @@ use App\Models\Becas\JornadaBeca;
 use App\Models\Becas\Beneficio;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\BusMarca;
-use App\Models\BusModelo;
-use App\Models\BusTipoCombustible;
-use App\Models\BusVehiculo;
-use App\Models\BusRuta;
-use App\Models\BusParada;
+// MÓDULO TRANSPORTE — Abdias
+use \App\Models\BusMarca;
+use \App\Models\BusModelo;
+use \App\Models\BusTipoCombustible;
+use \App\Models\BusVehiculo;
+use \App\Models\BusRuta;
+use \App\Models\BusParada;
+use \App\Models\BusMantenimiento;
+use \App\Models\BusViaje;
+use \App\Models\BusCargaCombustible;
 use App\Services\Salud\PsicologiaHomeService;
 
 class HomeController extends Controller
@@ -108,9 +112,12 @@ class HomeController extends Controller
         $total_bus_marcas            = BusMarca::count();
         $total_bus_modelos           = BusModelo::count();
         $total_bus_tipo_combustibles = BusTipoCombustible::count();
-        $total_bus_vehiculos         = BusVehiculo::count();
-        $total_bus_rutas             = BusRuta::count();
-        $total_bus_paradas           = BusParada::count();
+        $total_bus_vehiculos = BusVehiculo::count();
+        $total_bus_rutas = BusRuta::count();
+        $total_bus_paradas = BusParada::count();
+        $total_bus_mantenimientos = BusMantenimiento::count();
+        $total_bus_viajes = BusViaje::count();
+        $total_bus_cargas = BusCargaCombustible::count();
 
         $menuConfig = config('adminlte.menu');
 
@@ -140,12 +147,15 @@ class HomeController extends Controller
             'bus_marcas'            => 'admin/transporte/maestros/bus_marcas',
             'bus_modelos'           => 'admin/transporte/maestros/bus_modelos',
             'bus_tipo_combustibles' => 'admin/transporte/maestros/bus_tipo_combustibles',
-            'bus_vehiculos'         => 'admin/transporte/maestros/bus_vehiculos',
-            'bus_rutas'             => 'admin/transporte/maestros/bus_rutas',
-            'bus_paradas'           => 'admin/transporte/maestros/bus_paradas',
+            'bus_vehiculos'     => 'admin/transporte/maestros/bus_vehiculos',
+            'bus_rutas'         => 'admin/transporte/maestros/bus_rutas',
+            'bus_paradas'       => 'admin/transporte/maestros/bus_paradas',
+            'bus_mantenimientos'=> 'admin/transporte/maestros/bus_mantenimientos',
+            'bus_viajes'        => 'admin/transporte/maestros/bus_viajes',
+            'bus_carga_combustibles' => 'admin/transporte/maestros/bus_carga_combustibles',
             // ── Becas ──────────────────────────────────────────
             'jornada_becas'         => 'admin/becas/jornada',
-            'beneficios'            => 'admin/becas/beneficios',
+            'beneficios'  
         ];
 
         $visibleModules = [];
@@ -176,6 +186,9 @@ class HomeController extends Controller
             'total_bus_vehiculos',
             'total_bus_rutas',
             'total_bus_paradas',
+            'total_bus_mantenimientos',
+            'total_bus_viajes',
+            'total_bus_cargas',
             // ── Becas ──────────────────────────────────────────
             'total_jornadas_becas',
             'total_beneficios'

@@ -734,16 +734,30 @@ return [
             'url'    => 'admin/transporte/maestros/bus_paradas',
             'active' => ['admin/transporte/maestros/bus_paradas*'],
         ],
-
         [
             'text'   => 'Viajes',
-            'icon'   => 'fas fa-calendar-alt',
+            'icon'   => 'fas fa-map-marked-alt',
             'module' => 'transporte',
             'key'    => 'transporte_viajes',
             'url'    => 'admin/transporte/maestros/bus_viajes',
             'active' => ['admin/transporte/maestros/bus_viajes*'],
-        ]
-
+        ],
+        [
+            'text'   => 'Mantenimiento',
+            'icon'   => 'fas fa-tools',
+            'module' => 'transporte',
+            'key'    => 'transporte_mantenimientos',
+            'url'    => 'admin/transporte/maestros/bus_mantenimientos',
+            'active' => ['admin/transporte/maestros/bus_mantenimientos*'],
+        ],
+        [
+            'text'   => 'Combustible',
+            'icon'   => 'fas fa-gas-pump',
+            'module' => 'transporte',
+            'key'    => 'transporte_combustibles',
+            'url'    => 'admin/transporte/maestros/bus_carga_combustibles',
+            'active' => ['admin/transporte/maestros/bus_carga_combustibles*'],
+        ],
     ],
 
 

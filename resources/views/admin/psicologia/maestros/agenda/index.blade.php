@@ -406,9 +406,12 @@
                                                                             $horaFin    = $intervalo['fin'];
 
                                                                             $horarioBloque = $horarios->where('dia', $dia)->first(function ($h) use ($horaInicio, $horaFin) {
-                                                                                $inicioConfig = \Carbon\Carbon::parse($h->hora_inicio)->format('H:i');
-                                                                                $finConfig    = \Carbon\Carbon::parse($h->hora_fin)->format('H:i');
-                                                                                return $inicioConfig <= $horaInicio && $finConfig >= $horaFin;
+                                                                                $hInicio = \Carbon\Carbon::parse($h->hora_inicio);
+                                                                                $hFin    = \Carbon\Carbon::parse($h->hora_fin);
+                                                                                $iInicio = \Carbon\Carbon::parse($horaInicio);
+                                                                                $iFin    = \Carbon\Carbon::parse($horaFin);
+                                                                                // El bloque se superpone con el intervalo (sin contar bordes exactos)
+                                                                                return $hInicio->lt($iFin) && $hFin->gt($iInicio);
                                                                             });
 
                                                                             $bloqueLabel        = $horarioBloque
@@ -760,12 +763,20 @@
                 const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '-'; };
 
                 set('citaPacienteName', cita.paciente);
+                set('citaPsicologoName', 'Psicólogo: ' + (cita.psicologo || '-'));
+                set('citaFechaSolicitud', cita.fecha_solicitud_iso ? new Date(cita.fecha_solicitud_iso)
+                    .toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    }) : cita.fecha_solicitud);
                 set('citaFechaConfirmada', cita.fecha_confirmada || 'Pendiente');
                 set('citaBloqueConfirmado', Utils.formatAmPm(cita.bloque_confirmado));
                 set('citaEstado', cita.estado);
                 set('citaMotivo', cita.motivo);
+                set('citaBloqueTag', (cita.estado || '').toUpperCase());
 
-                const pMap = { baja: 'bg-emerald-500', media: 'bg-sky-600', alta: 'bg-amber-500', 'crítica': 'bg-rose-500' };
+                const pMap = { baja: 'bg-emerald-500', media: 'bg-sky-600', alta: 'bg-amber-500', crítica: 'bg-rose-500' };
                 const dot  = document.getElementById('citaPrioridadDot');
                 if (dot) dot.className = `h-2 w-2 rounded-full ${pMap[cita.prioridad] || 'bg-sky-600'}`;
                 set('citaPrioridadTexto', (cita.prioridad || 'Media').charAt(0).toUpperCase() + (cita.prioridad || 'media').slice(1));
@@ -1005,7 +1016,7 @@
                     } else {
                         candidates.forEach(can => {
                             const li = document.createElement('li');
-                            li.className = `group rounded-2xl border p-4 transition-all ${can.status === 'proposed' ? 'bg-sky-50/40 dark:bg-sky-950/30 border-sky-200 dark:border-sky-800/60' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60'}`;
+                            li.className = `group rounded-2xl border border-emerald-200 dark:border-emerald-800/60 p-4 transition-all`;
                             li.innerHTML = `
                                 <div class="flex justify-between items-center gap-4">
                                     <div class="flex items-center gap-3">

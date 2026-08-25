@@ -11,6 +11,7 @@ use App\Http\Controllers\salud\EstadoAnimoController;
 use App\Http\Controllers\salud\EstadoAnimoDiarioController;
 use App\Http\Controllers\salud\GrupoHorarioController;
 use App\Http\Controllers\salud\HistoriaController;
+use App\Http\Controllers\salud\MediaController;
 use App\Http\Controllers\salud\NotaEvolucionCampoController;
 use App\Http\Controllers\salud\NotificationController;
 use App\Http\Controllers\salud\PlantillaGlobalController;
@@ -105,6 +106,9 @@ Route::get('/psicologia/maestros/publicaciones/{id}/edit', [PublicacionControlle
 Route::put('/psicologia/maestros/publicaciones/{id}', [PublicacionController::class, 'update'])->name('admin.psicologia.maestros.publicaciones.update');
 Route::delete('/psicologia/maestros/publicaciones/{id}', [PublicacionController::class, 'destroy'])->name('admin.psicologia.maestros.publicaciones.destroy');
 Route::post('/psicologia/maestros/publicaciones/{id}/reaccionar', [PublicacionReaccionController::class, 'toggle'])->name('admin.psicologia.maestros.publicaciones.reaccionar');
+
+Route::get('/media/profile-photos/{filename}', [MediaController::class, 'showProfilePhoto'])->name('media.profile_photos');
+Route::get('/media/publicaciones/{filename}', [MediaController::class, 'showPublicacionMedia'])->name('media.publicaciones');
 
 Route::get('/psicologia/maestros/citas', [CitaController::class, 'index'])->name('admin.psicologia.maestros.citas.index');
 Route::get('/psicologia/maestros/citas/create', [CitaController::class, 'create'])->name('admin.psicologia.maestros.citas.create');

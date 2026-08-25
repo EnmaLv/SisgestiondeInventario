@@ -665,7 +665,7 @@ class CitaController extends Controller
 
         /** @var Usuario $user */
         $user = Auth::user();
-        abort_if(!$user || !$user->tieneRol('psicologo') || $cita->psicologo_id !== $user->id_usuario, 403);
+        abort_if(!$user || !$user->tieneRol(['psicologo', 'administrador']) || $cita->psicologo_id !== $user->id_usuario, 403);
 
         $validated = request()->validate([
             'motivo_rechazo' => 'nullable|string|max:1000',
