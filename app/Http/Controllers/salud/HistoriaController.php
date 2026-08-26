@@ -110,12 +110,44 @@ class HistoriaController extends Controller
         return Excel::download(new \App\Exports\Historias\PacientesExport(Auth::id(), $search, $filters, $filterNames), 'Listado_Pacientes_' . date('Y_m_d') . '.xlsx');
     }
 
-    public function show($pacienteId)
+        private function resolverCategoria(?Request $request = null): string
+    {
+        $contexto = $request ? ($request->get('tipo') ?? $request->get('tipo_contexto')) : null;
+
+        if ($contexto) {
+            return match ($contexto) {
+                'psicologia', 'mental'       => 'mental',
+                'biopsicosocial'             => 'biopsicosocial',
+                'medicina', 'salud', 'fisica' => 'fisica',
+                default                      => 'fisica',
+            };
+        }
+
+        $moduloActivo = session('modulo_activo');
+
+        if ($moduloActivo) {
+            return match ($moduloActivo) {
+                'psicologia', 'mental'       => 'mental',
+                'biopsicosocial'             => 'biopsicosocial',
+                'medicina', 'salud', 'fisica' => 'fisica',
+                default                      => 'fisica',
+            };
+        }
+
+        return 'fisica';
+    }
+
+    public function show($pacienteId, Request $request)
     {
         /** @var Usuario $user */
         $user = Auth::user();
         $paciente = $user->obtenerUsuarioPorId($pacienteId);
         abort_if(!$paciente, 404);
+
+        $categoriaFiltro = $this->resolverCategoria($request);
+        $tipo = $request->get('tipo', $categoriaFiltro);
+        $returnTo = $request->get('return_to');
+        $editing = $request->get('editing');
 
         $paciente->name = trim(($paciente->nombre_persona ?? '') . ' ' . ($paciente->apellido_persona ?? ''));
         $paciente->primera_cita = Cita::obtenerFechaPrimeraCita($paciente->id);
@@ -165,6 +197,10 @@ class HistoriaController extends Controller
             'enfermedadesVinculadas' => $enfermedadesVinculadas,
             'seccionesPersonalizadas' => $seccionesPersonalizadas,
             'plantillas' => $plantillas,
+            'tipo'            => $tipo,
+            'categoriaFiltro' => $categoriaFiltro,
+            'returnTo'        => $returnTo,
+            'editing'         => $editing
         ]);
     }
 

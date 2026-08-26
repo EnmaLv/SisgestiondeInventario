@@ -32,6 +32,7 @@ use App\Http\Controllers\salud\CategoriaMedicamentoController;
 use App\Http\Controllers\salud\EnvasePrimarioController;
 use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\salud\ConsultorioController;
 use App\Http\Controllers\salud\EnfermedadController;
 use App\Http\Controllers\salud\NotificationController;
 
@@ -316,7 +317,14 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::delete('/salud/maestros/medicamentos/{medicamento}', [MedicamentoController::class, 'destroy'])->name('admin.salud.maestros.medicamentos.destroy');
         Route::put('/salud/maestros/medicamentos/{medicamento}/activar', [MedicamentoController::class, 'activar'])->name('admin.salud.maestros.medicamentos.activar');
 
-        
+        //Consultorios
+        Route::get('/salud/maestros/consultorios', [ConsultorioController::class, 'index'])->name('admin.salud.maestros.consultorios.index');
+        Route::post('/salud/maestros/consultorios/store', [ConsultorioController::class, 'store'])->name('admin.salud.maestros.consultorios.store');
+        Route::get('/salud/maestros/consultorios/{consultorio}', [ConsultorioController::class, 'show'])->name('admin.salud.maestros.consultorios.show');
+        Route::put('/salud/maestros/consultorios/{consultorio}', [ConsultorioController::class, 'update'])->name('admin.salud.maestros.consultorios.update');
+        Route::delete('/salud/maestros/consultorios/{consultorio}', [ConsultorioController::class, 'destroy'])->name('admin.salud.maestros.consultorios.destroy');
+        Route::put('/salud/maestros/consultorios/{consultorio}/activar', [ConsultorioController::class, 'activar'])->name('admin.salud.maestros.consultorios.activar');
+
         // TRANSPORTE
         require __DIR__ . '/transporte.php';
 

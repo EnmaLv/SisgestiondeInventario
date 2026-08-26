@@ -699,7 +699,7 @@ Table sobrantes_comedor {
 // ============================================================
 
 Table consultorio {
-  id          bigint       [pk, increment]
+  id          bigint       [pk, increment] 
   nombre      varchar(150) [not null]
   sede_id bigint       [not null, ref: > sede.id]
   descripcion text
@@ -711,11 +711,12 @@ Table consultorio {
 Table horario_consultorio {
   id             bigint  [pk, increment]
   consultorio_id bigint  [not null, ref: > consultorio.id]
-  dia_semana     tinyint [not null, note: '1=lunes … 7=domingo']
+  dia    tinyint [not null, note: '1=lunes … 7=domingo']
   hora_inicio    time    [not null]
   hora_fin       time    [not null]
 }
 
+//psicologia
 Table cita {
   id             bigint      [pk, increment]
   id_persona     bigint      [not null, ref: > persona.id_persona]
@@ -736,9 +737,9 @@ Table enfermedades {
   activo         bool [not null, default: 1]
 }
 
+//salud 
 Table consulta {
   id             bigint   [pk, increment]
-  cita_id        bigint   [ref: > cita.id]
   id_persona     bigint   [not null, ref: > persona.id_persona]
   medico_id      bigint   [not null, ref: > persona.id_persona]
   consultorio_id bigint   [not null, ref: > consultorio.id]
