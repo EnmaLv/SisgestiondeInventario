@@ -6,6 +6,7 @@
     'edit' => true,
     'toggle' => true,
     'onEdit' => null,
+    'onShow' => null, 
 ])
 
 @php
@@ -40,11 +41,19 @@
             @if ($base)
                 {{-- Ver detalles --}}
                 @if ($show)
-                    <a href="{{ url($base . '/' . $id) }}" onclick="event.stopPropagation()"
-                        class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-sky-500 hover:bg-sky-100 dark:hover:bg-sky-950/50 transition-colors"
-                        title="Ver detalles">
-                        <i class="fas fa-eye text-xs"></i>
-                    </a>
+                    @if ($onShow)
+                        <button type="button" onclick='{!! $onShow !!}'
+                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-sky-500 hover:bg-sky-100 dark:hover:bg-sky-950/50 transition-colors"
+                            title="Ver detalles">
+                            <i class="fas fa-eye text-xs"></i>
+                        </button>
+                    @else
+                        <a href="{{ url($base . '/' . $id) }}" onclick="event.stopPropagation()"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-sky-500 hover:bg-sky-100 dark:hover:bg-sky-950/50 transition-colors"
+                            title="Ver detalles">
+                            <i class="fas fa-eye text-xs"></i>
+                        </a>
+                    @endif
                 @endif
 
                 {{-- Editar --}}

@@ -8,7 +8,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
-                        Catálogo de Enfermedades
+                        Consultorios
                     </h1>
                     <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
                         Bienvenido <span class="font-bold">{{ auth()->user()->persona->nombre_persona }}</span> ·
@@ -17,35 +17,28 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button type="button" onclick="abrirModalCrearEnfermedad('modal-create-edit')"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl {{ $btnClass }} text-white font-extrabold text-sm shadow-lg active:scale-95 transition-all">
+                    <button type="button" onclick="abrirModalCrearConsultorio()"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 shadow-sky-600/30 hover:shadow-sky-600/40 text-white font-extrabold text-sm shadow-lg active:scale-95 transition-all">
                         <i class="fas fa-plus text-xs"></i>
-                        <span>Nueva Enfermedad</span>
+                        <span>Nuevo Consultorio</span>
                     </button>
                 </div>
             </div>
 
-            {{-- Card de Buscador + Estado --}}
+            {{-- Card de Buscador + Estado + Filtros --}}
             <div style="background-color: var(--bg-card); border-color: var(--border-color);"
                 class="p-2.5 rounded-2xl border shadow-sm mb-3 flex flex-col lg:flex-row lg:items-center gap-4">
 
-                <form action="{{ route('admin.enfermedades.index') }}" method="GET" class="relative w-full">
-                    <input type="hidden" name="tipo" value="{{ $tipo }}">
+                <form action="#" method="GET" class="relative w-full">
                     <input type="hidden" name="activo" value="{{ request('activo', 1) }}">
-                    @if ($returnTo)
-                        <input type="hidden" name="return_to" value="{{ $returnTo }}">
-                    @endif
-                    @if ($editing)
-                        <input type="hidden" name="editing" value="{{ $editing }}">
-                    @endif
 
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                         <i class="fas fa-search text-sm"></i>
                     </div>
-                    <input type="text" name="search" value="{{ request('search', $search) }}"
-                        placeholder="Buscar por código CIE-10/DSM-5 o nombre del diagnóstico..."
+                    <input type="text" name="buscar" value="{{ request('buscar') }}"
+                        placeholder="Buscar consultorio..."
                         style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
-                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 {{ $focusRingClass }} transition-all">
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
                 </form>
 
                 <div class="flex items-center gap-3 shrink-0">
@@ -75,79 +68,66 @@
                             <tr
                                 class="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-gray-800 text-[13px] font-black uppercase tracking-wider">
                                 <th class="px-6 py-4 text-center" style="width: 80px;">#</th>
-                                <th class="px-6 py-4 text-center">Código CIE-10</th>
-                                <th class="px-6 py-4 text-center">Diagnóstico / Nombre</th>
-                                <th class="px-6 py-4 text-center">Gravedad</th>
-                                <th class="px-6 py-4 text-center" style="width: 120px;">Acciones</th>
+                                <th class="px-6 py-4 text-center">Nombre</th>
+                                <th class="px-6 py-4 text-center">Sede</th>
+                                <th class="px-6 py-4 text-center">Activo</th>
+                                <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
 
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800/60 text-xs font-medium">
-                            @forelse($enfermedades as $enfermedad)
-                                <x-table-row :id="$enfermedad->id">
+                            @forelse($consultorios as $data)
+                                <x-table-row :id="$data->id">
                                     {{-- Numeración --}}
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         <span
                                             class="inline-flex items-center px-3 py-1 text-[12px] font-black rounded-lg text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-800">
-                                            {{ ($enfermedades->currentPage() - 1) * $enfermedades->perPage() + $loop->iteration }}
+                                            {{ ($consultorios->currentPage() - 1) * $consultorios->perPage() + $loop->iteration }}
                                         </span>
                                     </td>
-
-                                    {{-- Código CIE-10 --}}
+                                    {{-- Nombre --}}
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
                                         <span
-                                            class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/40">
-                                            {{ $enfermedad->codigo ?: 'S/C' }}
+                                            class="inline-flex items-center px-3 py-1 text-[12px] font-black rounded-lg text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-800">
+                                            {{ $data->nombre }}
                                         </span>
                                     </td>
-
-                                    {{-- Nombre / Diagnóstico --}}
+                                    {{-- Sede --}}
                                     <td class="px-6 py-4 text-center whitespace-nowrap font-bold"
                                         style="color: var(--text-main);">
-                                        {{ $enfermedad->nombre }}
+                                        {{ $data->sede->nombre }}
                                     </td>
 
-                                    {{-- Nivel de Gravedad --}}
+                                    {{-- Estado --}}
                                     <td class="px-6 py-4 text-center whitespace-nowrap">
-                                        @php
-                                            $nivel = (int) ($enfermedad->nivel ?? 0);
-                                        @endphp
-
-                                        <span
-                                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-wider 
-                                            {{ $nivel >= 4
-                                                ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
-                                                : ($nivel >= 2
-                                                    ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
-                                                    : 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800') }}">
-
-                                            <i
-                                                class="fas {{ $nivel >= 4 ? 'fa-triangle-exclamation' : ($nivel >= 2 ? 'fa-circle-exclamation' : 'fa-circle-check') }} text-[9px]"></i>
-                                            {{ $nivel }}
-                                        </span>
+                                        @if ($data->activo)
+                                            <span
+                                                class="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-black rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                                                <i class="fas fa-check-circle"></i> Activo
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-black rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">
+                                                <i class="fas fa-times-circle"></i> Inactivo
+                                            </span>
+                                        @endif
                                     </td>
 
                                     {{-- Componente de Acciones --}}
-                                    <x-table-actions 
-                                    :id="$enfermedad->id" 
-                                    baseUrl="admin/enfermedades" 
-                                    :status="$enfermedad->activo ?? true"
-                                    :show="false" 
-                                    :on-edit="'abrirModalEditarEnfermedad(' .
-                                        htmlspecialchars(json_encode($enfermedad), ENT_QUOTES, 'UTF-8') .
-                                        ', `' .
-                                        route('admin.enfermedades.update', $enfermedad->id) .
-                                        '`)'">
-                                    </x-table-actions>
-
+                                    <x-table-actions :id="$data->id" baseUrl="admin/salud/maestros/consultorios"
+                                        :status="$data->activo" :on-show="'abrirModalVerConsultorio(event, ' . $data->id . ')'" :on-edit="'abrirModalEditarConsultorio(' .
+                                            htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8') .
+                                            ', `' .
+                                            route('admin.salud.maestros.consultorios.update', $data->id) .
+                                            '`)'" />
                                 </x-table-row>
                             @empty
                                 <tr>
-                                    <td colspan="5"
+                                    <td colspan="6"
                                         class="px-6 py-12 text-center text-gray-400 dark:text-gray-500 font-bold text-xs uppercase tracking-wider">
                                         <i
-                                            class="fas fa-folder-open text-3xl mb-3 block text-gray-300 dark:text-gray-700"></i>
-                                        No hay enfermedades registradas
+                                            class="fas fa-box-open text-3xl mb-3 block text-gray-300 dark:text-gray-700"></i>
+                                        No hay consultorios registrados
                                     </td>
                                 </tr>
                             @endforelse
@@ -155,9 +135,9 @@
                     </table>
                 </div>
 
-                @if ($enfermedades->hasPages())
+                @if ($consultorios->hasPages())
                     <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
-                        {{ $enfermedades->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
+                        {{ $consultorios->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
                     </div>
                 @endif
             </div>
@@ -165,12 +145,12 @@
         </div>
     </div>
 
-    @include('admin.enfermedades.modal-create-edit', [
+    @include('admin.salud.maestros.consultorios.modal-create-edit', [
         'modalId' => 'modal-create-edit',
-        'tipo' => $tipo,
-        'returnTo' => $returnTo,
-        'editing' => $editing,
-        'categoriaTexto' => $categoriaTexto,
+    ])
+    @include('admin.salud.maestros.consultorios.modal-show', [
+        'modalId' => 'modal-show',
+        'sedes' => $sedes,
     ])
 
     <script>
@@ -178,7 +158,7 @@
         document.getElementById('estadoToggle').addEventListener('change', function() {
             const params = new URLSearchParams(window.location.search);
             params.set('activo', this.checked ? 1 : 0);
-            window.location.href = "{{ route('admin.enfermedades.index') }}?" + params.toString();
+            window.location.href = "{{ route('admin.salud.maestros.consultorios.index') }}?" + params.toString();
         });
     </script>
 </x-app-layout>

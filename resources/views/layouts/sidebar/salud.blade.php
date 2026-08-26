@@ -56,4 +56,16 @@
             </span>
         </a>
     @endcanMenu
+
+    @canMenu('consultorios')
+        <a href="{{ route('admin.salud.maestros.consultorios.index') }}"
+           class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
+           :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+           title="Consultorios">
+            <i class="fas fa-stethoscope text-base w-5 text-center flex-shrink-0 text-white"></i>
+            <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                Consultorios
+            </span>
+        </a>
+    @endcanMenu
 @endcanMenu

@@ -97,12 +97,12 @@
                                         @if ($envase->estado)
                                             <span
                                                 class="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-black rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
-                                                <i class="fas fa-check-circle"></i> estado
+                                                <i class="fas fa-check-circle"></i> Activo
                                             </span>
                                         @else
                                             <span
                                                 class="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-black rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">
-                                                <i class="fas fa-times-circle"></i> Inestado
+                                                <i class="fas fa-times-circle"></i> Inactivo
                                             </span>
                                         @endif
                                     </td>
