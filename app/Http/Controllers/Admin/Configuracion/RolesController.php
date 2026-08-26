@@ -49,14 +49,11 @@ class RolesController extends Controller
         $data['menu_permissions'] = array_values($data['menu_permissions'] ?? []);
         $modulosSeleccionados = $data['modulos'] ?? [];
 
-        // ✨ VALIDACIÓN PREVENTIVA (CREACIÓN)
         if (count($modulosSeleccionados) > 1) {
-            // Si tiene más de un módulo, obligamos a que tenga el selector
             if (!in_array('admin/modulos/seleccionar', $data['menu_permissions'])) {
                 $data['menu_permissions'][] = 'admin/modulos/seleccionar';
             }
         } else {
-            // Si tiene 1 o ningún módulo, removemos el selector por fuerza (limpieza)
             $data['menu_permissions'] = array_values(array_diff($data['menu_permissions'], ['admin/modulos/seleccionar']));
         }
 
@@ -120,14 +117,11 @@ class RolesController extends Controller
             $data['menu_permissions'] = array_values($data['menu_permissions'] ?? []);
             $modulosSeleccionados = $data['modulos'] ?? [];
 
-            // ✨ VALIDACIÓN PREVENTIVA (EDICIÓN)
             if (count($modulosSeleccionados) > 1) {
-                // Si tiene más de un módulo, obligamos a que tenga el selector
                 if (!in_array('admin/modulos/seleccionar', $data['menu_permissions'])) {
                     $data['menu_permissions'][] = 'admin/modulos/seleccionar';
                 }
             } else {
-                // Si tiene 1 o ningún módulo, removemos el selector por fuerza (limpieza)
                 $data['menu_permissions'] = array_values(array_diff($data['menu_permissions'], ['admin/modulos/seleccionar']));
             }
         }

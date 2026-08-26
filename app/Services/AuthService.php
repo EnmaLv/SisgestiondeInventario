@@ -41,7 +41,9 @@ class AuthService
                 'master_key' => $isFirstUser ? bcrypt('admin123') : null,
             ]);
 
-            $this->assignRol($usuario->id_usuario, $perfilNombre);
+            if ($isFirstUser) {
+                $this->assignRol($usuario->id_usuario, $perfilNombre);
+            }
 
             return $usuario;
         });
@@ -52,17 +54,11 @@ class AuthService
         $rol = DB::table('rol')->where('nombre', $rolNombre)->first();
         
         if (!$rol) {
-            $rolId = DB::table('rol')->insertGetId([
-                'nombre' => $rolNombre,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        } else {
-            $rolId = $rol->id_rol;
+            return;
         }
 
         DB::table('rol_usuario')->updateOrInsert(
-            ['id_usuario' => $usuarioId, 'id_rol' => $rolId],
+            ['id_usuario' => $usuarioId, 'id_rol' => $rol->id_rol],
             ['created_at' => now(), 'updated_at' => now()]
         );
     }

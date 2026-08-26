@@ -98,141 +98,103 @@
     </style>
 </head>
 <body>
-
     <img src="{{ public_path('img/logo-universidad-watermark.png') }}" class="watermark" alt="Logo de fondo">
 
     <main>
         <div class="header-title">
             <h1>HORARIO LABORAL</h1>
+            <p>{{ mb_strtoupper($psicologo->persona->nombre_persona ?? 'PSICÓLOGO NO ASIGNADO') }} {{ mb_strtoupper($psicologo->persona->apellido_persona ?? 'N/A') }}</p>
         </div>
 
-    @php
-        // Calcular el rango laboral por día (hora_inicio más temprana y hora_fin más tardía)
-        $rangoPorDia = [];
-        foreach ($dias as $dia) {
-            $bloquesDia = $horariosPorDia[$dia] ?? collect();
-            if ($bloquesDia->isEmpty()) {
-                $rangoPorDia[$dia] = null;
-            } else {
-                $minInicio = $bloquesDia->min('hora_inicio');
-                $maxFin = $bloquesDia->max('hora_fin');
-                $rangoPorDia[$dia] = [
-                    'inicio' => $minInicio,
-                    'fin' => $maxFin,
-                ];
-            }
-        }
+        @php
+            $intervalos = collect([
+                ['inicio' => '07:00', 'fin' => '08:15'],
+                ['inicio' => '08:15', 'fin' => '09:20'],
+                ['inicio' => '09:20', 'fin' => '10:00'],
+                ['inicio' => '10:00', 'fin' => '10:45'],
+                ['inicio' => '10:45', 'fin' => '11:30'],
+                ['inicio' => '11:30', 'fin' => '12:20'],
+                ['inicio' => '12:20', 'fin' => '13:00'],
+                ['inicio' => '13:00', 'fin' => '13:45'],
+                ['inicio' => '13:45', 'fin' => '14:25'],
+                ['inicio' => '14:25', 'fin' => '15:05'],
+                ['inicio' => '15:05', 'fin' => '15:45'],
+                ['inicio' => '16:00', 'fin' => '16:40'],
+                ['inicio' => '16:40', 'fin' => '17:20'],
+                ['inicio' => '17:20', 'fin' => '18:00'],
+                ['inicio' => '18:00', 'fin' => '18:35'],
+                ['inicio' => '18:35', 'fin' => '19:10'],
+                ['inicio' => '19:10', 'fin' => '19:45'],
+                ['inicio' => '19:45', 'fin' => '20:20'],
+                ['inicio' => '20:20', 'fin' => '20:55'],
+                ['inicio' => '20:55', 'fin' => '21:30'],
+            ])->sortBy(fn($i) => \Carbon\Carbon::parse($i['inicio'])->timestamp)->values()->all();
 
-        // Determinar el rango global de horas para la tabla
-        $globalInicio = null;
-        $globalFin = null;
-        foreach ($rangoPorDia as $rango) {
-            if ($rango) {
-                if ($globalInicio === null || $rango['inicio'] < $globalInicio) {
-                    $globalInicio = $rango['inicio'];
+            $secciones = ['Matutino' => [], 'Vespertino' => [], 'Nocturno' => []];
+            foreach ($intervalos as $intervalo) {
+                $t = \Carbon\Carbon::parse($intervalo['inicio']);
+                if ($t->lt(\Carbon\Carbon::parse('12:30'))) {
+                    $secciones['Matutino'][] = $intervalo;
+                } elseif ($t->lt(\Carbon\Carbon::parse('18:00'))) {
+                    $secciones['Vespertino'][] = $intervalo;
+                } else {
+                    $secciones['Nocturno'][] = $intervalo;
                 }
-                if ($globalFin === null || $rango['fin'] > $globalFin) {
-                    $globalFin = $rango['fin'];
-                }
             }
-        }
+        @endphp
 
-        if (!$globalInicio) $globalInicio = '07:00';
-        if (!$globalFin) $globalFin = '19:00';
-
-        // Generar los intervalos fijos de hora en hora basados en el rango global
-        $fixedHours = collect();
-        $startOfDay = \Carbon\Carbon::parse($globalInicio)->startOfHour();
-        $endOfDay = \Carbon\Carbon::parse($globalFin);
-        if ($endOfDay->minute > 0) {
-            $endOfDay = $endOfDay->copy()->addHour()->startOfHour();
-        }
-
-        while ($startOfDay < $endOfDay) {
-            $nextHour = $startOfDay->copy()->addHour();
-            $fixedHours->push($startOfDay->format('h:i A') . ' - ' . $nextHour->format('h:i A'));
-            $startOfDay = $nextHour;
-        }
-
-        // Arreglo para controlar las celdas que debemos omitir (por rowspan)
-        $skipCells = [];
-        // Flag para saber si ya imprimimos el rango de este día
-        $rangoImpreso = [];
-        foreach($dias as $dia) {
-            $skipCells[$dia] = 0;
-            $rangoImpreso[$dia] = false;
-        }
-    @endphp
-
-    <table>
-        <thead>
-            <tr>
-                <th class="time-col">HORA</th>
-                @foreach($dias as $dia)
-                    <th class="day-col">{{ mb_strtoupper($dia) }}</th>
-                @endforeach
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($fixedHours as $horaFija)
+        <table>
+            <thead>
                 <tr>
-                    <td class="time-col" style="font-size: 8.5px;">{{ $horaFija }}</td>
-                    
+                    <th class="time-col">HORA</th>
                     @foreach($dias as $dia)
-                        @if($skipCells[$dia] > 0)
-                            @php $skipCells[$dia]--; @endphp
-                        @else
-                            @php
-                                $matched = false;
-                                $rowStartTime = \Carbon\Carbon::parse(explode(' - ', $horaFija)[0]);
-                                $rango = $rangoPorDia[$dia] ?? null;
-                                
-                                if ($rango && !$rangoImpreso[$dia]) {
-                                    $rangoInicio = \Carbon\Carbon::parse($rango['inicio']);
-                                    $rangoFin = \Carbon\Carbon::parse($rango['fin']);
-                                    
-                                    // Redondear inicio al piso de la hora para alinear con la grilla
-                                    $rangoInicioHora = $rangoInicio->copy()->startOfHour();
-                                    
-                                    if ($rowStartTime->equalTo($rangoInicioHora)) {
-                                        $matched = true;
-                                        $rangoImpreso[$dia] = true;
-                                        
-                                        // Redondear fin al techo de la hora
-                                        $rangoFinHora = $rangoFin->copy();
-                                        if ($rangoFinHora->minute > 0) {
-                                            $rangoFinHora = $rangoFinHora->addHour()->startOfHour();
-                                        }
-                                        
-                                        $horasDeDuracion = (int) ceil($rangoInicioHora->diffInMinutes($rangoFinHora) / 60);
-                                        if ($horasDeDuracion < 1) $horasDeDuracion = 1;
-                                        
-                                        if ($horasDeDuracion > 1) {
-                                            $skipCells[$dia] = $horasDeDuracion - 1;
-                                        }
-                                        
-                                        $textoInicio = $rangoInicio->format('g:i a');
-                                        $textoFin = $rangoFin->format('g:i a');
-                                        $nombrePsicologo = mb_strtoupper($psicologo->name ?? 'PSICÓLOGO');
-                                        
-                                        // Aplicar estilo directamente al TD, sin div interno
-                                        echo '<td rowspan="' . $horasDeDuracion . '" class="celda-rango">';
-                                        echo '<span class="rango-horas">' . $textoInicio . ' - ' . $textoFin . '</span>';
-                                        echo '<span class="rango-nombre">' . $nombrePsicologo . '</span>';
-                                        echo '</td>';
-                                    }
-                                }
-                                
-                                if (!$matched) {
-                                    echo '<td><span class="empty-dash">-</span></td>';
-                                }
-                            @endphp
-                        @endif
+                        <th class="day-col">{{ mb_strtoupper($dia) }}</th>
                     @endforeach
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach($secciones as $seccionNombre => $bloques)
+                    @if(!empty($bloques))
+                        <tr>
+                            <td colspan="{{ count($dias) + 1 }}" style="background-color: #e2e8f0; font-size: 8px; font-weight: 900; text-align: center; padding: 4px; text-transform: uppercase; letter-spacing: 1px; color: #475569;">
+                                {{ $seccionNombre }}
+                            </td>
+                        </tr>
+                        @foreach($bloques as $intervalo)
+                            <tr>
+                                <td class="time-col" style="font-size: 8px;">
+                                    {{ \Carbon\Carbon::parse($intervalo['inicio'])->format('g:i') }} - {{ \Carbon\Carbon::parse($intervalo['fin'])->format('g:i') }}
+                                </td>
+                                @foreach($dias as $dia)
+                                    @php
+                                        $blockStart = \Carbon\Carbon::parse($intervalo['inicio']);
+                                        $blockEnd   = \Carbon\Carbon::parse($intervalo['fin']);
+
+                                        $horarioBloque = ($horariosPorDia[$dia] ?? collect())
+                                            ->first(function ($h) use ($blockStart, $blockEnd) {
+                                                $hInicio = \Carbon\Carbon::parse($h->hora_inicio);
+                                                $hFin    = \Carbon\Carbon::parse($h->hora_fin);
+                                                return $hInicio->lt($blockEnd) && $hFin->gt($blockStart);
+                                            });
+                                    @endphp
+                                    @if($horarioBloque)
+                                        <td style="background-color: #f1f5f9; border: 1px solid #cbd5e1; text-align: center; padding: 5px;">
+                                            <span style="font-size: 7px; font-weight: 900; color: #1e293b; display: block;">
+                                                {{ \Carbon\Carbon::parse($horarioBloque->hora_inicio)->format('g:i A') }} - {{ \Carbon\Carbon::parse($horarioBloque->hora_fin)->format('g:i A') }}
+                                            </span>
+                                        </td>
+                                    @else
+                                        <td style="border: 1px solid #e2e8f0; background-color: #ffffff; text-align: center;">
+                                            <span style="color: #e2e8f0; font-size: 8px;">—</span>
+                                        </td>
+                                    @endif
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
     </main>
 </body>
 </html>

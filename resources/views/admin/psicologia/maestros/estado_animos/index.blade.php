@@ -125,8 +125,8 @@
             </div>
 
             @if ($estados->hasPages())
-                <div class="mt-8 flex justify-center">
-                    {{ $estados->appends(request()->query())->links('estado_animos.partials.pagination') }}
+                <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+                    {{ $estados->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
                 </div>
             @endif
 

@@ -107,13 +107,10 @@ class RegisterController extends Controller
         ];
 
         if (!$this->adminExists()) {
-            // Primer registro del sistema (Instalación limpia)
             $rules['master_key'] = ['required', 'string', 'min:6'];
         } else {
-            // El sistema ya tiene administradores
             $rules['id_rol'] = ['required', 'exists:rol,id_rol'];
 
-            // Determinamos si el Administrador seleccionó otorgar el rol "Administrador" al nuevo usuario
             $selectedRol = Rol::find($data['id_rol'] ?? null);
             if ($selectedRol && strtolower($selectedRol->nombre) === 'administrador') {
                 $rules['master_key'] = ['required', 'string', 'min:6'];

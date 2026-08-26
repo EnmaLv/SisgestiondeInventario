@@ -20,7 +20,7 @@ class PersonaSeeder extends Seeder
             'segundo_apellido_persona' => null,
             'cedula_persona' => '12345678',
             'telefono_persona' => 04241234567,
-            'genero_persona' => '',
+            'genero_persona' => 'Masculino',
             'edad_persona' => \Carbon\Carbon::parse(now()->toDateString())->age,
             'fecha_nacimiento_persona' => now()->toDateString(),
             'email_persona' => 'admin@example.com',
@@ -59,9 +59,9 @@ class PersonaSeeder extends Seeder
             'segundo_nombre_persona' => null,
             'apellido_persona' => 'Salud',
             'segundo_apellido_persona' => null,
-            'cedula_persona' => '11223344',
+            'cedula_persona' => '31710990',
             'telefono_persona' => 04241234567,
-            'genero_persona' => '',
+            'genero_persona' => 'Femenino',
             'edad_persona' => \Carbon\Carbon::parse(now()->toDateString())->age,
             'fecha_nacimiento_persona' => now()->toDateString(),
             'email_persona' => 'nohelysq2006@gmail.com',
@@ -83,6 +83,37 @@ class PersonaSeeder extends Seeder
         DB::table('rol_usuario')->insert([
             'id_rol' => 4,
             'id_usuario' => 2,
+        ]);
+
+        DB::table('persona')->insert([
+            'nombre_persona' => 'America',
+            'segundo_nombre_persona' => null,
+            'apellido_persona' => 'IDK',
+            'segundo_apellido_persona' => null,
+            'cedula_persona' => '11223344',
+            'telefono_persona' => 04241234567,
+            'genero_persona' => 'Femenino',
+            'edad_persona' => \Carbon\Carbon::parse(now()->toDateString())->age,
+            'fecha_nacimiento_persona' => now()->toDateString(),
+            'email_persona' => 'america@example.com',
+            'semestre_persona' => 6,
+            'id_perfil' => 2,
+            'id_sede' => 1,
+        ]);
+
+        DB::table('usuario')->insert([
+            'id_persona' => 3,
+            'id_perfil' => 1,
+            'username' => 'america@example.com',
+            'password' => bcrypt('12345678'),
+            'master_key' => bcrypt('masterkey123'),
+            'security_questions' => null,
+            'extra_permissions' => null,
+        ]);
+
+        DB::table('rol_usuario')->insert([
+            'id_rol' => 7,
+            'id_usuario' => 3,
         ]);
     }
 }

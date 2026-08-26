@@ -4,6 +4,7 @@ namespace App\Http\Controllers\salud;
 
 use App\Http\Controllers\Controller;
 use App\Models\salud\Cita;
+use App\Models\salud\GrupoHorario;
 use App\Models\salud\Horario;
 use App\Models\salud\Prioridad;
 use App\Models\Usuario;
@@ -235,14 +236,14 @@ class AgendaController extends Controller
         $psicologoId = $user->id_usuario;
         $psicologo = $user;
         
-        if ($user->tieneRol(['administrador', 'admin']) && $request->has('psicologo_id')) {
+        if ($user->tieneRol(['administrador']) && $request->has('psicologo_id')) {
             $psicologoId = $request->input('psicologo_id');
             $psicologo = Usuario::find($psicologoId);
                             
             if (!$psicologo) {
                 abort(404, 'Psicólogo no encontrado');
             }
-        } elseif (!$user->tieneRol(['psicologo'])) {
+        } elseif (!$user->tieneRol(['psicologo', 'administrador'])) {
             abort(403, 'Solo los psicólogos pueden exportar su agenda.');
         }
 
@@ -265,8 +266,8 @@ class AgendaController extends Controller
                 ->get();
 
             $citasCalendario = $citas->map(function($cita) {
-                $nombres = $cita->paciente->nombres ?? $cita->nombres ?? '';
-                $apellidos = $cita->paciente->apellidos ?? $cita->apellidos ?? '';
+                $nombres = $cita->paciente->persona->nombre_persona ?? $cita->nombres ?? '';
+                $apellidos = $cita->paciente->persona->apellido_persona ?? $cita->apellidos ?? '';
 
                 $cita->paciente_nombre = trim("{$nombres} {$apellidos}");
                 
@@ -286,14 +287,18 @@ class AgendaController extends Controller
 
         $dias = Horario::diasSemana();
         
-        $data = [
-            'psicologo' => $psicologo,
-            'dias' => $dias,
-            'semanasInfo' => $semanasInfo,
-        ];
-        
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.psicologia.maestros.agenda.pdf', $data)
-            ->setPaper('a4', 'landscape');
+        $grupoActivo = GrupoHorario::obtenerActivoPorPsicologo($psicologoId);
+        $horarios = Horario::obtenerPorFiltros($psicologoId, $grupoActivo ? $grupoActivo->id : null, null);
+
+        $horariosPorDia = [];
+        foreach ($dias as $dia) {
+            $horariosPorDia[$dia] = $horarios->where('dia', $dia);
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView(
+            'admin.psicologia.maestros.agenda.pdf',
+            compact('semanasInfo', 'dias', 'psicologo', 'horarios', 'horariosPorDia')
+        )->setPaper('a4', 'landscape');
 
         return $pdf->stream('Agenda_Semanal_' . Str::slug($psicologo->username ?? 'Psicologo') . '.pdf');
     }

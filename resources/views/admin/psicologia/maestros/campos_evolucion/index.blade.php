@@ -135,8 +135,8 @@
                         </table>
                     </div>
                     @if ($campos->hasPages())
-                        <div class="px-6 py-4 flex justify-center border-t border-gray-100 dark:border-gray-800">
-                            {{ $campos->appends(request()->query())->links('partials.pagination') }}
+                        <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+                            {{ $campos->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
                         </div>
                     @endif
                 </div>

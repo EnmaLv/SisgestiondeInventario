@@ -115,7 +115,7 @@
 
                 @if ($prioridades->hasPages())
                     <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
-                        {{ $prioridades->appends(request()->query())->links('partials.pagination') }}
+                        {{ $prioridades->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
                     </div>
                 @endif
             </div>
