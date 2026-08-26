@@ -23,7 +23,7 @@
         </div>
         <form action="{{ route('admin.becas.store') }}" method="POST" class="rd-prevent-double-submit">
             @csrf
-            @include('admin.becas._form')
+            @include('admin.becas._form_fields')
             <hr>
             <div class="d-flex justify-content-end" style="gap:12px;">
                 <a href="{{ route('admin.becas.index') }}" class="rd-btn rd-btn-default">Cancelar</a>

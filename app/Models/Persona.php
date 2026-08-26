@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Becas\BecaBeneficiario;
 use App\Traits\ConvierteAMayusculasNoEloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -201,6 +202,11 @@ class Persona extends Model
     public function usuarios()
     {
         return $this->hasMany(Usuario::class, 'id_persona', 'id_persona');
+    }
+
+    public function becasBeneficiario()
+    {
+        return $this->hasMany(BecaBeneficiario::class, 'persona_id', 'id_persona');
     }
 
     public function personaPnf()

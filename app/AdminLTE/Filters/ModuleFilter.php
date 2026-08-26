@@ -125,8 +125,7 @@ class ModuleFilter implements FilterInterface
             'es_admin'              => $esAdmin,
         ]);
 
-        if (! $esAdmin && count($permitidos) === 1) {
-            session(['modulo_activo' => $permitidos[0]]);
-        }
+        // No se selecciona automáticamente un módulo al entrar por primera vez.
+        // La vista de selección debe mostrarse para que el usuario elija el módulo.
     }
 }

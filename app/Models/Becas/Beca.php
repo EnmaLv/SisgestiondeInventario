@@ -13,10 +13,12 @@ class Beca extends Model
         'nombre',
         'descripcion',
         'activo',
+        'requiere_tutor',
     ];
 
     protected $casts = [
         'activo' => 'boolean',
+        'requiere_tutor' => 'boolean',
     ];
 
     public function beneficios()
@@ -29,6 +31,21 @@ class Beca extends Model
     public function asignacionesTrabajo()
     {
         return $this->hasMany(BecaTrabajoAsignacion::class, 'beca_id');
+    }
+
+    public function beneficiarios()
+    {
+        return $this->hasMany(BecaBeneficiario::class, 'beca_id');
+    }
+
+    public function tutores()
+    {
+        return $this->hasMany(BecaTutor::class, 'beca_id');
+    }
+
+    public function preguntas()
+    {
+        return $this->hasMany(BecaPregunta::class, 'beca_id');
     }
 
     public function scopeBuscar($query, ?string $buscar)

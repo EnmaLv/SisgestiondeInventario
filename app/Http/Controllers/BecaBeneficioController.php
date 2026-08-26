@@ -15,6 +15,8 @@ class BecaBeneficioController extends Controller
 
     public function index(Request $request)
     {
+        session(['modulo_activo' => 'beca']);
+
         $beneficios = $this->beneficioService->listar($request->only(['buscar', 'activo']));
 
         return view('admin.becas.beneficios.index', compact('beneficios'));
@@ -22,11 +24,15 @@ class BecaBeneficioController extends Controller
 
     public function create()
     {
+        session(['modulo_activo' => 'beca']);
+
         return view('admin.becas.beneficios.create');
     }
 
     public function store(BecaBeneficioRequest $request)
     {
+        session(['modulo_activo' => 'beca']);
+
         $beneficio = $this->beneficioService->crear($request->validated());
 
         return redirect()
@@ -36,11 +42,15 @@ class BecaBeneficioController extends Controller
 
     public function edit(Beneficio $beneficio)
     {
+        session(['modulo_activo' => 'beca']);
+
         return view('admin.becas.beneficios.edit', compact('beneficio'));
     }
 
     public function update(BecaBeneficioRequest $request, Beneficio $beneficio)
     {
+        session(['modulo_activo' => 'beca']);
+
         $this->beneficioService->actualizar($beneficio, $request->validated());
 
         return redirect()
@@ -50,6 +60,8 @@ class BecaBeneficioController extends Controller
 
     public function toggle(Beneficio $beneficio)
     {
+        session(['modulo_activo' => 'beca']);
+
         $beneficio = $this->beneficioService->cambiarEstado($beneficio);
         $mensaje = $beneficio->status ? 'Beneficio activado exitosamente.' : 'Beneficio desactivado exitosamente.';
 
