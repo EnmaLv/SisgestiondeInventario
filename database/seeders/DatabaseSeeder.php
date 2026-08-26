@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             PlantillaGlobalSeeder::class,
             PrioridadesSeeder::class,
             MedicamentoSeeder::class,
+            ConsultorioSeeder::class,
         ]);
         \App\Models\Proveedor::factory(1)->create();
     }
