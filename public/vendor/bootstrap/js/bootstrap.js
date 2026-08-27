@@ -9,6 +9,19 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.bootstrap = {}, global.jQuery, global.Popper));
 })(this, (function (exports, $, Popper) { 'use strict';
 
+
+  if (import.meta.env.VITE_REVERB_APP_KEY && import.meta.env.VITE_REVERB_APP_KEY !== 'disabled') {
+      window.Echo = new Echo({
+          broadcaster: 'reverb',
+          key: import.meta.env.VITE_REVERB_APP_KEY,
+          wsHost: import.meta.env.VITE_REVERB_HOST,
+          wsPort: import.meta.env.VITE_REVERB_PORT ?? 8080,
+          wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
+          forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'http') === 'https',
+          enabledTransports: ['ws', 'wss'],
+      });
+  }
+  
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var $__default = /*#__PURE__*/_interopDefaultLegacy($);
@@ -4352,6 +4365,6 @@
   exports.Util = Util;
 
   Object.defineProperty(exports, '__esModule', { value: true });
-
+  
 }));
 //# sourceMappingURL=bootstrap.js.map
