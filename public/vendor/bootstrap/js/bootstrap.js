@@ -9,16 +9,6 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.bootstrap = {}, global.jQuery, global.Popper));
 })(this, (function (exports, $, Popper) { 'use strict';
 
-
-  if (import.meta.env.VITE_PUSHER_APP_KEY) {
-      window.Echo = new Echo({
-          broadcaster: 'pusher',
-          key: import.meta.env.VITE_PUSHER_APP_KEY,
-          cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-          forceTLS: true,
-      });
-  }
-
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var $__default = /*#__PURE__*/_interopDefaultLegacy($);
