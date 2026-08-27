@@ -26,6 +26,11 @@ class Consultorio extends Model
         return $this->belongsTo(Sede::class, 'sede_id');
     }
 
+    public function horarios()
+    {
+        return $this->hasMany(HorarioConsultorio::class, 'consultorio_id');
+    }
+
     public static function listar($buscar = null, $activo = 1)
     {
         $query = self::query()->with('sede');

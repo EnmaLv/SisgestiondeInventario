@@ -68,4 +68,15 @@
             </span>
         </a>
     @endcanMenu
+    @canMenu('horarios')
+        <a href="{{ route('admin.salud.movimientos.horarios.index') }}"
+           class="w-full flex items-center h-10 rounded-lg px-3 gap-2.5 text-white/90 hover:bg-[#623739] hover:text-white transition-all min-w-0"
+           :class="sidebarOpen ? 'px-3' : 'justify-center px-0'"
+           title="Horarios">
+            <i class="fas fa-clock text-base w-5 text-center flex-shrink-0 text-white"></i>
+            <span class="text-sm font-medium truncate" :class="sidebarOpen ? 'block' : 'hidden'">
+                Horarios
+            </span>
+        </a>
+    @endcanMenu
 @endcanMenu

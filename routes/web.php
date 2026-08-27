@@ -34,6 +34,7 @@ use App\Http\Controllers\salud\MedicamentoController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\salud\ConsultorioController;
 use App\Http\Controllers\salud\EnfermedadController;
+use App\Http\Controllers\salud\HorarioConsultorioController;
 use App\Http\Controllers\salud\NotificationController;
 
 Auth::routes();
@@ -324,6 +325,12 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::put('/salud/maestros/consultorios/{consultorio}', [ConsultorioController::class, 'update'])->name('admin.salud.maestros.consultorios.update');
         Route::delete('/salud/maestros/consultorios/{consultorio}', [ConsultorioController::class, 'destroy'])->name('admin.salud.maestros.consultorios.destroy');
         Route::put('/salud/maestros/consultorios/{consultorio}/activar', [ConsultorioController::class, 'activar'])->name('admin.salud.maestros.consultorios.activar');
+
+        //Horarios
+        Route::get('/salud/movimientos/horarios', [HorarioConsultorioController::class, 'index'])->name('admin.salud.movimientos.horarios.index');
+        Route::get('/salud/movimientos/horarios/create', [HorarioConsultorioController::class, 'create'])->name('admin.salud.movimientos.horarios.create');
+        Route::post('/salud/movimientos/horarios', [HorarioConsultorioController::class, 'store'])->name('admin.salud.movimientos.horarios.store');
+        Route::delete('/salud/movimientos/horarios/{horario}', [HorarioConsultorioController::class, 'destroy'])->name('admin.salud.movimientos.horarios.destroy');
 
         // TRANSPORTE
         require __DIR__ . '/transporte.php';
