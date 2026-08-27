@@ -1,4 +1,3 @@
-@vite('resources/css/gerenal.css')
 <li>
 
     <div class="form-inline my-2">

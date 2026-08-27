@@ -1,4 +1,3 @@
-@vite('resources/css/gerenal.css')
 <aside class="main-sidebar {{ config('adminlte.classes_sidebar', 'sidebar-dark-primary elevation-4') }}">
 
     {{-- Sidebar brand logo --}}
