@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background:#ffffff;
             border-radius:16px;
@@ -21,7 +21,7 @@
         </div>
 
         {{-- Fecha + Imagen --}}
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
                 <small style="font-size:0.75rem; color:#94a3b8;">Hoy</small>
                 <div style="font-weight:600; font-size:0.95rem; color:#0f172a;">
@@ -47,8 +47,8 @@
 
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12 m-auto">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full mx-auto">
 
             <div class="rd-card p-4">
 
@@ -65,14 +65,14 @@
                     class="rd-prevent-double-submit">
                     @csrf
 
-                    <div class="row">
+                    <div class="flex flex-wrap -mx-2">
 
                         {{-- Proveedor --}}
-                        <div class="col-md-4 mb-3">
+                        <div class="w-full md:w-1/3 mb-3">
                             <label class="rd-label">Proveedor</label>
-                            <div class="rd-input-group">
+                            <div class="flex items-stretch w-full">
                                 <span><i class="fas fa-user-tie"></i></span>
-                                <select name="proveedor_id" id="proveedor_id" class="form-control rd-input">
+                                <select name="proveedor_id" id="proveedor_id" class="block w-full rounded-lg border px-3 py-2 text-sm rd-input">
                                     <option value="">Seleccione un proveedor</option>
                                     @foreach ($proveedores as $proveedor)
                                         <option value="{{ $proveedor->id }}"
@@ -99,11 +99,11 @@
                         </div>
 
                         {{-- Fecha --}}
-                        <div class="col-md-4 mb-3">
+                        <div class="w-full md:w-1/3 mb-3">
                             <label class="rd-label">Fecha de la Requisicion</label>
-                            <div class="rd-input-group">
+                            <div class="flex items-stretch w-full">
                                 <span><i class="fas fa-calendar-alt"></i></span>
-                                <input type="datetime-local" id="fecha" name="fecha" class="form-control rd-input"
+                                <input type="datetime-local" id="fecha" name="fecha" class="block w-full rounded-lg border px-3 py-2 text-sm rd-input"
                                     value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}" readonly>
                             </div>
                             @error('fecha')
@@ -112,12 +112,12 @@
                         </div>
 
                         {{-- Observaciones --}}
-                        <div class="col-md-4 mb-3">
+                        <div class="w-full md:w-1/3 mb-3">
                             <label class="rd-label">Observaciones</label>
-                            <div class="rd-input-group">
+                            <div class="flex items-stretch w-full">
                                 <span><i class="fas fa-sticky-note"></i></span>
                                 <input type="text" id="observaciones" name="observaciones"
-                                    placeholder="Ingrese observaciones" class="form-control rd-input"
+                                    placeholder="Ingrese observaciones" class="block w-full rounded-lg border px-3 py-2 text-sm rd-input"
                                     value="{{ old('observaciones') }}">
                             </div>
                             @error('observaciones')
@@ -129,7 +129,7 @@
 
                     <hr>
 
-                    <div class="d-flex justify-content-end" style="gap:10px;">
+                    <div class="flex justify-end" style="gap:10px;">
                         <a href="{{ url('admin/movimientos/compras') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>

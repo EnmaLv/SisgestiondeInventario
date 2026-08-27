@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -33,15 +33,13 @@
                     <h3 class="rd-title-sm">Recetas Registradas</h3>
                 </div>
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
-                        <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>  
-                        <div class="toggle-container">
-                            <input type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ request('estado', 1) == 1 ? 'checked' : '' }}>
-                            <label for="estadoToggle" class="toggle-label">
-                                <span class="toggle-inner"></span>
-                                <span class="toggle-switch"></span>
-                            </label>
-                        </div>
+                    <div class="flex gap-3 items-center">
+                        <span class="font-bold text-sm text-gray-600 dark:text-gray-300">Filtrar por estado:</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="estadoToggle" class="sr-only peer"
+                                {{ request('estado', 1) == 1 ? 'checked' : '' }}>
+                            <div class="w-10 h-6 bg-gray-300 dark:bg-gray-700 rounded-full peer peer-checked:bg-[var(--color-primary)] transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-4"></div>
+                        </label>
                     </div>
                     <form action="{{ route('admin.maestros.recetas.index') }}" method="GET" class="rd-search-inline"
                         role="search">
@@ -167,7 +165,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $recetas->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>

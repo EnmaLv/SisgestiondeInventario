@@ -1,7 +1,6 @@
 @extends('adminlte::auth.auth-page', ['authType' => 'login'])
 
 @section('adminlte_css_pre')
-    <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 @stop
 
 @php
@@ -27,12 +26,12 @@
         @csrf
 
         {{-- Email field --}}
-        <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+        <div class="flex items-stretch w-full mb-3">
+            <input type="email" name="email" class="block w-full rounded-lg border px-3 py-2 text-sm @error('email') is-invalid @enderror"
                 value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="flex">
+                <div class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
                     <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
@@ -45,12 +44,12 @@
         </div>
 
         {{-- Password field --}}
-        <div class="input-group mb-3">
-            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+        <div class="flex items-stretch w-full mb-3">
+            <input type="password" name="password" class="block w-full rounded-lg border px-3 py-2 text-sm @error('password') is-invalid @enderror"
                 placeholder="Contraseña">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="flex">
+                <div class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
@@ -63,7 +62,7 @@
         </div>
 
         {{-- Login field --}}
-        <div class="row">
+        <div class="flex flex-wrap -mx-2">
             <div class="col-7">
                 <div class="icheck-primary" title="{{ __('adminlte::adminlte.remember_me_hint') }}">
                     <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
@@ -75,7 +74,7 @@
             </div>
 
             <div class="col-5">
-                <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}"
+                <button type=submit class="flex w-full items-center justify-center {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}"
                     style="border-radius: 10px">
                     <span class="fas fa-sign-in-alt"></span>
                     {{ __('adminlte::adminlte.sign_in') }}

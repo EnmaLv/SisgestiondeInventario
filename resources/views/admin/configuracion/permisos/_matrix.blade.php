@@ -64,7 +64,7 @@
             $id = 'check_' . Str::slug($val);
         @endphp
 
-        <div class="custom-control custom-checkbox mb-2 permission-item d-flex align-items-center justify-content-between" style="margin-left:{{ $margin }}px;">
+        <div class="custom-control custom-checkbox mb-2 permission-item flex items-center justify-between" style="margin-left:{{ $margin }}px;">
             <div class="flex-grow-1">
                 <input type="checkbox" class="custom-control-input perm-chk" id="{{ $id }}" value="{{ e($val) }}" @if($checked) checked @endif data-role="{{ $isRoleProvided ? '1' : '0' }}" @if(! $isRoleProvided) name="allow[]" @endif>
                 <label class="custom-control-label font-weight-normal mb-0" style="cursor:pointer; font-size:0.9rem; color: #334155;" for="{{ $id }}">
@@ -98,7 +98,7 @@
                 $id = 'check_' . Str::slug($val);
             @endphp
 
-            <div class="custom-control custom-checkbox mb-2 permission-item d-flex align-items-center justify-content-between">
+            <div class="custom-control custom-checkbox mb-2 permission-item flex items-center justify-between">
                 <div class="flex-grow-1">
                     <input type="checkbox" class="custom-control-input perm-chk" id="{{ $id }}" value="{{ e($val) }}" @if($checked) checked @endif data-role="{{ $isRoleProvided ? '1' : '0' }}" @if(! $isRoleProvided) name="allow[]" @endif>
                     <label class="custom-control-label font-weight-normal mb-0" style="cursor:pointer; font-size:0.9rem; color: #334155;" for="{{ $id }}">

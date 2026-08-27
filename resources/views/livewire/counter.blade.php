@@ -5,14 +5,14 @@
     <button wire:click="decrement">- Quitar</button>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
+<div class="flex flex-wrap -mx-2">
+    <div class="w-full">
         <div class="card card-outline card-primary">
             <div model:wire.live class="card-header">
                 <h3 class="card-title"><b>Productos Registrados</b></h3>
 
                 <div class="card-tools">
-                    <a class="btn btn-primary" href=" {{ url('admin/maestros/productos/create') }}" class="btn btn-tool">
+                    <a class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700" href=" {{ url('admin/maestros/productos/create') }}" class="inline-flex items-center rounded-lg p-2 text-slate-500 hover:bg-slate-100">
                         <i class="fas fa-plus"></i>
                         <b>Crear Nuevo</b>
                     </a>
@@ -66,14 +66,14 @@
                                 </td>
                                 <td style="text-align: center;">
                                     <a href="{{ url('admin/maestros/productos/' . $producto->id) }}"
-                                        class="btn btn-info"><i class="fas fa-eye"></i></a>
+                                        class="inline-flex items-center justify-center rounded-lg bg-sky-600 px-3 py-2 font-semibold text-white hover:bg-sky-700"><i class="fas fa-eye"></i></a>
                                     <a href="{{ url('admin/maestros/productos/' . $producto->id . '/edit') }}"
-                                        class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                        class="inline-flex items-center justify-center rounded-lg bg-amber-500 px-3 py-2 font-semibold text-white hover:bg-amber-600"><i class="fas fa-edit"></i></a>
                                     <form action="{{ url('admin/maestros/productos/' . $producto->id) }}"
                                         method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger"
+                                        <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700"
                                             onclick="preguntar{{ $producto->id }}(event)"><i
                                                 class="fas fa-trash"></i></button>
                                     </form>

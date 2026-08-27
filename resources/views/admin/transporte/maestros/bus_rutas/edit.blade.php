@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem; color:#0f172a; font-weight:700;">Editar Ruta</h1>
@@ -16,7 +16,7 @@
 @section('content')
     @if ($errors->any())
         <div class="alert alert-danger shadow-sm" style="border-radius: 8px;">
-            <b class="d-block mb-1"><i class="fas fa-exclamation-triangle mr-2"></i> Por favor verifique los siguientes
+            <b class="block mb-1"><i class="fas fa-exclamation-triangle mr-2"></i> Por favor verifique los siguientes
                 errores:</b>
             <ul class="mb-0 pl-3">
                 @foreach ($errors->all() as $error)
@@ -37,8 +37,8 @@
 
         <div id="hidden-paradas-inputs"></div>
 
-        <div class="row">
-            <div class="col-lg-5">
+        <div class="flex flex-wrap -mx-2">
+            <div class="w-full lg:w-5/12">
                 <div class="rd-card p-4 mb-4"
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                     <h3 class="rd-title-sm mb-3" style="font-size:1.1rem;color:#0f172a;font-weight:700;">Datos de la Ruta
@@ -46,35 +46,35 @@
 
                     <div class="form-group">
                         <label class="rd-label">Nombre de la Ruta</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-route"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-route"></i></span>
                             <input type="text" name="nombre" id="inputNombre"
-                                class="form-control rd-input @error('nombre') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-input @error('nombre') is-invalid @enderror"
                                 placeholder="Ej: Zona Sur - Directo" value="{{ old('nombre', $busRuta->nombre) }}"
                                 maxlength="100" required>
                         </div>
                         <div id="errorNombreUnico" class="text-danger mt-1" style="display:none;"></div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-6">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-1/2">
                             <div class="form-group mb-3">
                                 <label class="rd-label">Distancia (km)</label>
-                                <div class="input-group mt-1">
-                                    <span class="input-group-text"><i class="fas fa-road"></i></span>
+                                <div class="flex items-stretch w-full mt-1">
+                                    <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-road"></i></span>
                                     <input type="number" name="distancia_km" id="inputDistancia" step="0.01"
-                                        class="form-control rd-input" placeholder="Calculando..."
+                                        class="block w-full rounded-lg border px-3 py-2 text-sm rd-input" placeholder="Calculando..."
                                         value="{{ old('distancia_km', $busRuta->distancia_km) }}" min="0.1" required
                                         readonly>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="w-1/2">
                             <div class="form-group mb-3">
                                 <label class="rd-label">Sede</label>
-                                <div class="input-group mt-1">
-                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                    <select name="sede_id" class="form-control rd-input" required>
+                                <div class="flex items-stretch w-full mt-1">
+                                    <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-building"></i></span>
+                                    <select name="sede_id" class="block w-full rounded-lg border px-3 py-2 text-sm rd-input" required>
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($sedes as $sede)
                                             <option value="{{ $sede->id }}"
@@ -91,7 +91,7 @@
 
                 <div class="rd-card p-4 mb-4"
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="flex justify-between items-center mb-3">
                         <h4 class="m-0 font-weight-bold" style="font-size:1rem; color:#0f172a;"><i
                                 class="fas fa-clock mr-2 text-primary"></i>Planificación Horarios</h4>
                         <button type="button" id="btn-add-horario" class="rd-btn rd-btn-success btn-sm"><i
@@ -106,9 +106,9 @@
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                     <div class="form-group mb-0">
                         <label class="rd-label">Descripción</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
-                            <input name="descripcion" class="form-control rd-input" style="resize:none; height: auto;"
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-sticky-note"></i></span>
+                            <input name="descripcion" class="block w-full rounded-lg border px-3 py-2 text-sm rd-input" style="resize:none; height: auto;"
                                 placeholder="Transporte a la zona sur"
                                 value="{{ old('descripcion', $busRuta->descripcion) }}">
                         </div>
@@ -116,7 +116,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-7">
+            <div class="w-full lg:w-7/12">
                 <div class="rd-card p-4 mb-4"
                     style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                     <div class="mb-3">
@@ -126,13 +126,13 @@
                             alterar el orden.</small>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-8 mb-3 mb-md-0">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-full md:w-2/3 mb-3 mb-md-0">
                             <div id="mapa-constructor"
                                 style="height:440px; border-radius:12px; border:2px solid #cbd5e1; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="w-full md:w-1/3">
                             <label class="rd-label" style="font-size: 0.85rem;"><i class="fas fa-list-ol mr-1"></i>
                                 Secuencia (Arrastra para reordenar)</label>
                             <div id="lista-secuencia-paradas" class="list-group style-scroll"
@@ -143,7 +143,7 @@
                     @error('paradas')
                         <div class="text-danger mt-2"><b>Debe añadir al menos 2 paradas al trazado en el mapa.</b></div>
                     @enderror
-                    <div class="d-flex justify-content-end" style="gap:12px;">
+                    <div class="flex justify-end" style="gap:12px;">
                         <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"
                             style="color:white; width:200px;"><i class="fas fa-save mr-2"></i> Actualizar Ruta</button>
                     </div>
@@ -298,7 +298,7 @@
                             <span class="badge-orden">${index + 1}</span>
                             <span>${parada.nombre}</span>
                         </div>
-                        <button type="button" class="btn btn-xs text-danger" onclick="eliminarPuntoSecuencia(${index})"><i class="fas fa-times"></i></button>
+                        <button type="button" class="inline-flex items-center rounded px-2 py-1 text-xs text-danger" onclick="eliminarPuntoSecuencia(${index})"><i class="fas fa-times"></i></button>
                     </div>
                 `;
 
@@ -365,14 +365,14 @@
             const fila = document.createElement('tr');
             fila.setAttribute('id', `fila-horario-${indiceHorario}`);
             fila.innerHTML = `
-                <td><input type="time" name="horarios[${indiceHorario}][hora_salida]" value="${hora}" class="form-control form-control-sm" required></td>
+                <td><input type="time" name="horarios[${indiceHorario}][hora_salida]" value="${hora}" class="block w-full rounded-lg border px-3 py-2 text-sm block w-full rounded-lg border px-3 py-2 text-sm-sm" required></td>
                 <td>
-                    <select name="horarios[${indiceHorario}][tipo_viaje]" class="form-control form-control-sm" required>
+                    <select name="horarios[${indiceHorario}][tipo_viaje]" class="block w-full rounded-lg border px-3 py-2 text-sm block w-full rounded-lg border px-3 py-2 text-sm-sm" required>
                         <option value="entrada" ${tipo === 'entrada' ? 'selected' : ''}>Entrada ☀️</option>
                         <option value="salida" ${tipo === 'salida' ? 'selected' : ''}>Salida 🏠</option>
                     </select>
                 </td>
-                <td class="text-center"><button type="button" class="btn btn-xs btn-danger" onclick="document.getElementById('fila-horario-${indiceHorario}').remove()"><i class="fas fa-trash"></i></button></td>
+                <td class="text-center"><button type="button" class="inline-flex items-center rounded px-2 py-1 text-xs btn-danger" onclick="document.getElementById('fila-horario-${indiceHorario}').remove()"><i class="fas fa-trash"></i></button></td>
             `;
             document.getElementById('contenedor-horarios').appendChild(fila);
             indiceHorario++;

@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem;color:#0f172a;font-weight:700;">Despacho y Control de Viajes</h1>
@@ -30,8 +30,8 @@
                 <div class="rd-actions">
                     <!-- Filtro por Estado -->
                     <form action="{{ route('admin.transporte.maestros.bus_viajes.index') }}" method="GET" id="filterForm"
-                        class="d-flex align-items-center gap-2">
-                        <select name="estado" class="form-control rd-filter-input" style="min-width: 160px; height: 38px;"
+                        class="flex items-center gap-2">
+                        <select name="estado" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" style="min-width: 160px; height: 38px;"
                             onchange="this.form.submit()">
                             <option value="todos"
                                 {{ request('estado') == 'todos' || !request('estado') ? 'selected' : '' }}>Todos los estados
@@ -175,7 +175,7 @@
                 </tbody>
             </table>
 
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $viajes->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>

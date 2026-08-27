@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 flex justify-between items-center">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Ver Datos</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -9,9 +9,9 @@
             </p>
         </div>
 
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -28,8 +28,8 @@
 
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12 m-auto">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full mx-auto">
             <div class="rd-card p-4">
 
                 <div class="rd-card-header mb-3">

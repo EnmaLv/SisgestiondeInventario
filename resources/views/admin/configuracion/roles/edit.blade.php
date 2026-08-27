@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Editar Rol: {{ $rol->nombre }}</h1>
@@ -19,8 +19,8 @@
 @section('content')
     @include('components.alert')
 
-    <div class="row justify-content-center fade-in">
-        <div class="col-md-11">
+    <div class="flex flex-wrap -mx-2 justify-center fade-in">
+        <div class="w-full md:w-11/12">
             <div class="rd-card shadow-sm border-0">
                 <div class="rd-card-body p-4">
                     <form action="{{ route('admin.configuracion.roles.update', $rol->id_rol) }}" method="POST"
@@ -29,10 +29,10 @@
                         @method('PUT')
 
                         {{-- 1. Datos Básicos del Rol --}}
-                        <div class="row mb-4">
-                            <div class="col-md-6">
+                        <div class="flex flex-wrap -mx-2 mb-4">
+                            <div class="w-full md:w-1/2">
                                 <label class="rd-label mb-2">Nombre del Rol</label>
-                                <div class="rd-input-group {{ $isProtected ?? false ? 'bg-light' : '' }}">
+                                <div class="flex items-stretch w-full {{ $isProtected ?? false ? 'bg-light' : '' }}">
                                     <span><i class="fas fa-tag"></i></span>
                                     <input type="text" name="nombre" class="rd-input w-100"
                                         value="{{ old('nombre', $rol->nombre) }}"
@@ -40,14 +40,14 @@
                                         placeholder="Nombre del rol">
                                 </div>
                                 @error('nombre')
-                                    <div class="col-md-12 mt-2">
+                                    <div class="w-full mt-2">
                                         <small class="text-danger">{{ $message }}</small>
                                     </div>
                                 @enderror
                             </div>
-                            <div class="col-md-6">
+                            <div class="w-full md:w-1/2">
                                 <label class="rd-label mb-2">Descripción</label>
-                                <input type="text" name="descripcion" class="form-control"
+                                <input type="text" name="descripcion" class="block w-full rounded-lg border px-3 py-2 text-sm"
                                     style="border: 1px solid #d8dee9; border-radius: 10px; height: 45px; padding: 0 12px;"
                                     value="{{ old('descripcion', $rol->descripcion) }}" placeholder="Descripcion del rol"
                                     {{ $isProtected ?? false ? 'readonly' : '' }}>
@@ -58,12 +58,12 @@
 
                         {{-- 2. Asignación de Módulos de la Base de Datos --}}
                         <div class="form-group mb-5">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-between items-center mb-3">
                                 <label class="rd-label m-0">
                                     <i class="fas fa-cubes mr-2 text-success"></i> Acceso a Módulos Globales del Sistema
                                 </label>
                                 @if (!$isAdminRole && !($isProtected ?? false))
-                                    <button type="button" id="selectAllModules" class="btn btn-xs btn-outline-secondary"
+                                    <button type="button" id="selectAllModules" class="inline-flex items-center rounded px-2 py-1 text-xs btn-outline-secondary"
                                         style="border-radius: 6px;">
                                         Alternar Módulos
                                     </button>
@@ -72,7 +72,7 @@
 
                             <div class="modules-container p-4 {{ $isAdminRole ? 'bg-light opacity-75' : '' }}"
                                 style="border: 1px solid #eef2f6; border-radius: 12px; background: #fafbfc;">
-                                <div class="row">
+                                <div class="flex flex-wrap -mx-2">
                                     @forelse($modulos as $modulo)
                                         @php
                                             $moduloChecked =
@@ -82,7 +82,7 @@
 
                                             $moduloDisabled = $isAdminRole || ($isProtected ?? false) ? 'disabled' : '';
                                         @endphp
-                                        <div class="col-md-4 mb-2">
+                                        <div class="w-full md:w-1/3 mb-2">
                                             <div class="custom-control custom-checkbox item-modulo">
                                                 <input type="checkbox" name="modulos[]" value="{{ $modulo->id }}"
                                                     class="custom-control-input modulo-check"
@@ -97,7 +97,7 @@
                                             </div>
                                         </div>
                                     @empty
-                                        <div class="col-12 text-center text-muted py-2">
+                                        <div class="w-full text-center text-muted py-2">
                                             <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> No hay módulos
                                             activos registrados en la base de datos.
                                         </div>
@@ -105,18 +105,18 @@
                                 </div>
                             </div>
                             @error('modulos')
-                                <small class="text-danger d-block mt-2">{{ $message }}</small>
+                                <small class="text-danger block mt-2">{{ $message }}</small>
                             @enderror
                         </div>
 
                         {{-- 3. Permisos de Menú y Navegación con Grilla Tipo Masonry --}}
                         <div class="form-group mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-between items-center mb-3">
                                 <label class="rd-label m-0">
                                     <i class="fas fa-list-check mr-2 text-primary"></i> Permisos de Menú y Navegación
                                 </label>
                                 @if (!$isAdminRole && !($isProtected ?? false))
-                                    <button type="button" id="selectAll" class="btn btn-xs btn-outline-secondary"
+                                    <button type="button" id="selectAll" class="inline-flex items-center rounded px-2 py-1 text-xs btn-outline-secondary"
                                         style="border-radius:6px;">
                                         Alternar Todos
                                     </button>
@@ -279,9 +279,9 @@
                         <hr class="my-4" style="opacity:0.5;">
 
                         {{-- Panel de Acciones --}}
-                        <div class="d-flex gap-3 justify-content-end" style="gap: 10px">
+                        <div class="flex gap-3 justify-end" style="gap: 10px">
                             <a href="{{ route('admin.configuracion.roles.index') }}"
-                                class="rd-btn rd-btn-default px-4 d-flex align-items-center">
+                                class="rd-btn rd-btn-default px-4 flex items-center">
                                 Cancelar
                             </a>
                             @if (!($isProtected ?? false))
@@ -290,7 +290,7 @@
                                     <i class="fas fa-sync-alt"></i> Actualizar Rol
                                 </button>
                             @else
-                                <div class="alert alert-warning w-100 mb-0 shadow-sm border-0 d-flex align-items-center"
+                                <div class="alert alert-warning w-100 mb-0 shadow-sm border-0 flex items-center"
                                     style="border-radius: 10px;">
                                     <i class="fas fa-lock mr-3 fa-lg"></i>
                                     <div>El rol <strong>{{ $rol->nombre }}</strong> es un rol de sistema protegido y no
@@ -338,7 +338,7 @@
 
         .rd-input:focus,
         .perm-check:focus,
-        .form-control:focus {
+        .block w-full rounded-lg border px-3 py-2 text-sm:focus {
             outline: none !important;
             box-shadow: none !important;
         }

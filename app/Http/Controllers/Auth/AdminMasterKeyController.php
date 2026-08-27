@@ -11,7 +11,7 @@ class AdminMasterKeyController extends Controller
 {
     public function showForm()
     {
-        if (!session('pending_admin_id')) {
+        if (!Auth::check() && !session('pending_admin_id')) {
             return redirect()->route('login');
         }
 
@@ -24,7 +24,7 @@ class AdminMasterKeyController extends Controller
             'master_key' => ['required', 'string'],
         ]);
 
-        $id = session('pending_admin_id');
+        $id = session('pending_admin_id') ?: Auth::id();
         if (!$id) {
             return redirect()->route('login')->withErrors(['email' => 'Session expired, please login again.']);
         }
@@ -38,6 +38,7 @@ class AdminMasterKeyController extends Controller
             // clear pending and login
             session()->forget('pending_admin_id');
             Auth::loginUsingId($user->id_usuario ?? $user->id);
+            $request->session()->regenerate();
             return redirect()->intended('/home');
         }
 

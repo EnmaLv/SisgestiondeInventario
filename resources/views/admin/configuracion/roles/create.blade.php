@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Crear Nuevo Rol</h1>
@@ -19,51 +19,51 @@
 @section('content')
     @include('components.alert')
 
-    <div class="row justify-content-center fade-in">
-        <div class="col-md-11"> 
+    <div class="flex flex-wrap -mx-2 justify-center fade-in">
+        <div class="w-full md:w-11/12"> 
             <div class="rd-card shadow-sm border-0">
                 <div class="rd-card-body p-4">
                     <form action="{{ route('admin.configuracion.roles.store') }}" method="POST" class="rd-prevent-double-submit">
                         @csrf
                         
-                        <div class="row mb-4">
-                            <div class="col-md-6">
+                        <div class="flex flex-wrap -mx-2 mb-4">
+                            <div class="w-full md:w-1/2">
                                 <label class="rd-label mb-2">Nombre del Rol</label>
-                                <div class="rd-input-group">
+                                <div class="flex items-stretch w-full">
                                     <span><i class="fas fa-tag"></i></span>
                                     <input type="text" name="nombre" class="rd-input w-100" 
                                            placeholder="Ej: Supervisor" required value="{{ old('nombre') }}">
                                 </div>
                                 @error('nombre')
-                                    <div class="col-md-12 mt-2">
+                                    <div class="w-full mt-2">
                                         <small class="text-danger">{{ $message }}</small>
                                     </div>
                                 @enderror
                             </div>
                             
-                            <div class="col-md-6">
+                            <div class="w-full md:w-1/2">
                                 <label class="rd-label mb-2">Descripción Corta</label>
-                                <input type="text" name="descripcion" class="form-control" 
+                                <input type="text" name="descripcion" class="block w-full rounded-lg border px-3 py-2 text-sm" 
                                        placeholder="Propósito del rol" value="{{ old('descripcion') }}"
                                        style="border: 1px solid #d8dee9; border-radius: 10px; padding: 8px 12px; height: 45px;">
                             </div>
                         </div>
 
                         <div class="form-group mb-5">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-between items-center mb-3">
                                 <label class="rd-label m-0">
                                     <i class="fas fa-cubes mr-2 text-success"></i> Acceso a Módulos Globales del Sistema
                                 </label>
-                                <button type="button" id="selectAllModules" class="btn btn-xs btn-outline-secondary" style="border-radius: 6px;">
+                                <button type="button" id="selectAllModules" class="inline-flex items-center rounded px-2 py-1 text-xs btn-outline-secondary" style="border-radius: 6px;">
                                     Seleccionar Todos los Módulos
                                 </button>
                             </div>
                             
                             <div class="modules-container p-4" 
                                  style="border: 1px solid #eef2f6; border-radius: 12px; background: #fafbfc;">
-                                <div class="row">
+                                <div class="flex flex-wrap -mx-2">
                                     @forelse($modulos as $modulo)
-                                        <div class="col-md-4 mb-2">
+                                        <div class="w-full md:w-1/3 mb-2">
                                             <div class="custom-control custom-checkbox item-modulo">
                                                 <input type="checkbox" name="modulos[]" value="{{ $modulo->id }}" 
                                                        class="custom-control-input modulo-check" id="modulo_{{ $modulo->id }}"
@@ -74,23 +74,23 @@
                                             </div>
                                         </div>
                                     @empty
-                                        <div class="col-12 text-center text-muted py-2">
+                                        <div class="w-full text-center text-muted py-2">
                                             <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> No hay módulos activos registrados en la base de datos.
                                         </div>
                                     @endforelse
                                 </div>
                             </div>
                             @error('modulos')
-                                <small class="text-danger d-block mt-2">{{ $message }}</small>
+                                <small class="text-danger block mt-2">{{ $message }}</small>
                             @enderror
                         </div>
 
                         <div class="form-group mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-between items-center mb-3">
                                 <label class="rd-label m-0">
                                     <i class="fas fa-list-check mr-2 text-primary"></i> Visibilidad de Ítems del Menú Lateral
                                 </label>
-                                <button type="button" id="selectAll" class="btn btn-xs btn-outline-secondary" style="border-radius: 6px;">
+                                <button type="button" id="selectAll" class="inline-flex items-center rounded px-2 py-1 text-xs btn-outline-secondary" style="border-radius: 6px;">
                                     Seleccionar Todos los Menús
                                 </button>
                             </div>
@@ -179,7 +179,7 @@
                         </div>
 
                         {{-- Botones de Acción --}}
-                        <div class="d-flex mt-5 justify-content-end" style="gap: 10px">
+                        <div class="flex mt-5 justify-end" style="gap: 10px">
                             <a href="{{ route('admin.configuracion.roles.index') }}" class="rd-btn rd-btn-default px-4" style="height: 48px; justify-content: center;">
                                 Cancelar
                             </a>

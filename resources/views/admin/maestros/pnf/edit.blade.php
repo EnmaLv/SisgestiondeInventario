@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -17,9 +17,9 @@
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -60,23 +60,23 @@
                 @csrf
                 @method('PUT')
 
-                <div class="row g-3">
-                    <div class="col-md-6">
+                <div class="flex flex-wrap -mx-2 g-3">
+                    <div class="w-full md:w-1/2">
                         <label class="rd-label">Nombre del PNF</label>
-                        <div class="rd-input-group">
+                        <div class="flex items-stretch w-full">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
-                            <input type="text" name="nombre" class="form-control rd-filter-input"
+                            <input type="text" name="nombre" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                 placeholder="Ingrese el nombre" value="{{ $pnf->nombre_pnf }}">
                         </div>
                         @error('nombre')
                             <span class="rd-error">Este campo es obligatorio.</span>
                         @enderror
                     </div>
-                    <div class="col-md-6">
+                    <div class="w-full md:w-1/2">
                         <label class="rd-label">Estado</label>
-                        <div class="rd-input-group">
+                        <div class="flex items-stretch w-full">
                             <span class="rd-input-icon"><i class="fas fa-toggle-on"></i></span>
-                            <select name="id_estatus" class="form-control">
+                            <select name="id_estatus" class="block w-full rounded-lg border px-3 py-2 text-sm">
                                 <option value="" disabled selected>Seleccione</option>
                                 <option value="1" {{ $pnf->id_estatus == 1 ? 'selected' : '' }}>Activo</option>
                                 <option value="2" {{ $pnf->id_estatus == 2 ? 'selected' : '' }}>Inactivo</option>
@@ -87,7 +87,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="mt-4 d-flex gap-2 justify-content-end">
+                <div class="mt-4 flex gap-2 justify-end">
                     <a href="{{ url('admin/maestros/pnf') }}" class="rd-btn rd-btn-default">
                         Cancelar
                     </a>

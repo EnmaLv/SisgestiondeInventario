@@ -49,7 +49,7 @@
                     <h3 class="rd-title-sm">Estados Registrados</h3>
                 </div>
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="flex gap-3 items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
                         <div class="toggle-container">
                             <input wire:model.live="filtroEstado" type="checkbox" id="estadoToggle"
@@ -106,7 +106,7 @@
                                     <div class="rd-action-group">
                                         {{-- Botón Editar --}}
                                         <button wire:click="edit({{ $datos->id }})" class="rd-action"
-                                            data-bs-toggle="modal" data-bs-target="#modalEditar" title="Editar">
+                                            data-modal-toggle="modal" data-modal-target="#modalEditar" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </button>
 
@@ -138,7 +138,7 @@
             </div>
 
             {{-- Paginación del servidor --}}
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $estados->onEachSide(1)->links('components.pagination-livewire') }}
             </div>
         </div>

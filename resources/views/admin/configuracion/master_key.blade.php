@@ -3,7 +3,7 @@
 @section('title', 'Verificación de Seguridad')
 
 @section('content')
-    <div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="flex justify-center items-center" style="min-height: 70vh;">
         <div class="rd-card p-0" style="
             width: 100%;
             max-width: 450px;
@@ -32,35 +32,35 @@
                         <label for="master_key" style="font-weight: 600; color: #334155; font-size: 0.9rem;">
                             Llave Maestra
                         </label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text bg-transparent border-right-0" style="border-radius: 8px 0 0 8px;">
+                        <div class="flex items-stretch w-full">
+                            <div class="flex items-stretch w-full-prepend">
+                                <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 bg-transparent border-right-0" style="border-radius: 8px 0 0 8px;">
                                     <i class="fas fa-key text-muted"></i>
                                 </span>
                             </div>
                             <input type="password" 
                                 name="master_key" 
                                 id="master_key"
-                                class="form-control border-left-0 @error('master_key') is-invalid @enderror" 
+                                class="block w-full rounded-lg border px-3 py-2 text-sm border-left-0 @error('master_key') is-invalid @enderror" 
                                 placeholder="Introduce tu clave..."
                                 style="border-radius: 0 8px 8px 0; height: 45px;"
                                 required 
                                 autofocus />
-                            <div class="input-group-append">
+                            <div class="flex">
                                 <button type="button" class="rd-btn rd-btn-primary" id="togglePassword" style="border-radius: 0 8px 8px 0; border-left: none;">
                                     <i class="fas fa-eye" id="eyeIcon"></i>
                                 </button>
                             </div>
                         </div>
                         @error('master_key') 
-                            <span class="invalid-feedback d-block mt-2" role="alert">
+                            <span class="invalid-feedback block mt-2" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span> 
                         @enderror
                     </div>
 
                     <div class="mt-4">
-                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn w-100 text-center d-flex justify-content-center align-items-center">
+                        <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn w-100 text-center flex justify-center items-center">
                             Verificar Acceso
                         </button>
                     </div>
@@ -89,7 +89,7 @@
 
 @push('css')
     <style>
-        .input-group-text{
+        .inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800{
             border: none !important;
         }
     </style>

@@ -4,13 +4,13 @@
         : collect();
 @endphp
 
-<div class="row">
-    <div class="col-md-8">
+<div class="flex flex-wrap -mx-2">
+    <div class="w-full md:w-2/3">
         <div class="form-group mb-3">
             <label class="font-weight-bold">Nombre de la beca</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
-                <input type="text" name="nombre" class="form-control rd-filter-input"
+            <div class="flex items-stretch w-full">
+                <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-graduation-cap"></i></span>
+                <input type="text" name="nombre" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                     value="{{ old('nombre', $beca->nombre ?? '') }}" placeholder="Ej: Beca comedor integral">
             </div>
             @error('nombre')
@@ -22,7 +22,7 @@
 
 <div class="form-group mb-3">
     <label class="font-weight-bold">Descripcion</label>
-    <textarea name="descripcion" rows="3" class="form-control rd-filter-input" placeholder="Descripcion general"
+    <textarea name="descripcion" rows="3" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" placeholder="Descripcion general"
         style="resize:none;">{{ old('descripcion', $beca->descripcion ?? '') }}</textarea>
 </div>
 
@@ -65,7 +65,7 @@
                     </td>
                     <td>
                         <input type="text" name="beneficios[{{ $index }}][observacion]"
-                            class="form-control rd-filter-input"
+                            class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                             value="{{ old("beneficios.$index.observacion", $pivot->observacion ?? '') }}"
                             placeholder="Detalle opcional">
                     </td>
@@ -90,7 +90,7 @@
     })->toArray() : []);
 @endphp
 
-<div class="rd-card-header mb-3 d-flex justify-content-between align-items-center">
+<div class="rd-card-header mb-3 flex justify-between items-center">
     <h3 class="rd-title-sm">Tutores de la beca</h3>
     <button type="button" id="addTutorBtn" class="rd-btn rd-btn-secondary">
         <i class="fas fa-plus"></i> Agregar tutor
@@ -131,19 +131,19 @@
     </table>
 </div>
 
-<div class="modal fade" id="addTutorModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
+<div class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4" id="addTutorModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="relative w-full w-full max-w-4xl" role="document">
+        <div class="relative w-full">
             <div class="modal-header">
                 <h5 class="modal-title">Agregar tutor a la beca</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-modal-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="flex flex-wrap -mx-2">
+                    <div class="w-full md:w-1/2">
                         <div class="form-group">
                             <label>Rol del tutor</label>
-                            <select id="tutorRoleSelect" class="form-control rd-filter-input">
+                            <select id="tutorRoleSelect" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input">
                                 <option value="">Seleccione rol</option>
                                 @foreach($roles as $role)
                                     <option value="{{ $role->id_rol }}">{{ $role->nombre }}</option>
@@ -151,10 +151,10 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="w-full md:w-1/2">
                         <div class="form-group">
                             <label>Persona</label>
-                            <select id="tutorPersonSelect" class="form-control rd-filter-input" disabled>
+                            <select id="tutorPersonSelect" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" disabled>
                                 <option value="">Seleccione primero un rol</option>
                             </select>
                         </div>
@@ -162,11 +162,11 @@
                 </div>
                 <div class="form-group">
                     <label>Descripción</label>
-                    <textarea id="tutorDescription" class="form-control rd-filter-input" rows="3" placeholder="Describe el rol completo de esta persona"></textarea>
+                    <textarea id="tutorDescription" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" rows="3" placeholder="Describe el rol completo de esta persona"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="rd-btn rd-btn-default" data-modal-dismiss="modal">Cancelar</button>
                 <button type="button" id="saveTutorModalBtn" class="rd-btn rd-btn-primary">Agregar</button>
             </div>
         </div>
@@ -285,7 +285,7 @@
                 $('#addTutorModal').modal('show');
             });
 
-            addTutorModalEl.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(button) {
+            addTutorModalEl.querySelectorAll('[data-modal-dismiss="modal"]').forEach(function(button) {
                 button.addEventListener('click', function() {
                     $('#addTutorModal').modal('hide');
                     resetTutorModal();

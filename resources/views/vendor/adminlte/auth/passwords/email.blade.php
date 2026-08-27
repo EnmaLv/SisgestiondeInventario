@@ -24,12 +24,12 @@
         @csrf
 
         {{-- Email field --}}
-        <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+        <div class="flex items-stretch w-full mb-3">
+            <input type="email" name="email" class="block w-full rounded-lg border px-3 py-2 text-sm @error('email') is-invalid @enderror"
                 value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="flex">
+                <div class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
                     <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
@@ -42,7 +42,7 @@
         </div>
 
         {{-- Send reset link button --}}
-        <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}" style="border-radius: 10px">
+        <button type="submit" class="flex w-full items-center justify-center {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}" style="border-radius: 10px">
             <span class="fas fa-share-square"></span>
             {{ __('adminlte::adminlte.send_password_reset_link') }}
         </button>

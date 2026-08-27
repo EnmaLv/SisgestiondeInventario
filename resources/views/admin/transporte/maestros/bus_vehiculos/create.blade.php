@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 flex justify-between items-center">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Registrar Nuevo Vehículo</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600;font-size:0.95rem;">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</span>
             </div>
             <div
@@ -32,14 +32,14 @@
         <form action="{{ route('admin.transporte.maestros.bus_vehiculos.store') }}" method="POST"
             class="rd-prevent-double-submit">
             @csrf
-            <div class="row">
-                <div class="col-md-3">
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Placa</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-id-card"></i></span>
                             <input type="text" name="placa"
-                                class="form-control rd-filter-input @error('placa') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('placa') is-invalid @enderror"
                                 placeholder="Ej: ABC-123" value="{{ old('placa') }}" maxlength="20">
                         </div>
                         @error('placa')
@@ -48,13 +48,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Modelo</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-car"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-car"></i></span>
                             <select id="selectModelo" name="modelo_id"
-                                class="form-control rd-filter-input @error('modelo_id') is-invalid @enderror">
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('modelo_id') is-invalid @enderror">
                                 <option value="">-- Seleccione --</option>
                                 @foreach ($modelos as $modelo)
                                     <option value="{{ $modelo->id }}"
@@ -70,7 +70,7 @@
                         <div class="mt-2">
                             <small style="color:#64748b;font-size:0.85rem;">
                                 ¿No encuentras?
-                                <button type="button" data-toggle="modal" data-target="#modalAddModelo"
+                                <button type="button" data-modal-toggle="modal" data-target="#modalAddModelo"
                                     style="background:none;border:none;padding:0;color:#a84348;font-weight:600;font-size:0.85rem;cursor:pointer;">
                                     <i class="fas fa-plus-circle"></i> Añádelo aquí
                                 </button>
@@ -79,13 +79,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Año</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-calendar"></i></span>
                             <input type="number" name="anio"
-                                class="form-control rd-filter-input @error('anio') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('anio') is-invalid @enderror"
                                 value="{{ old('anio') }}" min="1990" max="{{ date('Y') }}"
                                 placeholder="Ej: 2026" maxlength="4"
                                 oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
@@ -96,13 +96,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Color</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-palette"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-palette"></i></span>
                             <input type="text" name="color"
-                                class="form-control rd-filter-input @error('color') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('color') is-invalid @enderror"
                                 placeholder="Ej: Blanco" value="{{ old('color') }}" maxlength="50">
                         </div>
                         @error('color')
@@ -112,14 +112,14 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-3">
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Peso del Vehículo</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-weight-hanging"></i></span>
                             <input type="text" name="peso"
-                                class="form-control rd-filter-input @error('peso') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('peso') is-invalid @enderror"
                                 placeholder="Ej: 3.5 Ton / 3500 kg" value="{{ old('peso') }}" maxlength="50">
                         </div>
                         @error('peso')
@@ -128,13 +128,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Cantidad de Pasajeros</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-users"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-users"></i></span>
                             <input type="number" name="cantidad_pasajeros"
-                                class="form-control rd-filter-input @error('cantidad_pasajeros') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('cantidad_pasajeros') is-invalid @enderror"
                                 placeholder="Ej: 40" value="{{ old('cantidad_pasajeros') }}" min="1"
                                 oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,3)">
                         </div>
@@ -144,13 +144,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Cantidad de Cilindros</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-plug"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-plug"></i></span>
                             <input type="number" name="cantidad_cilindros"
-                                class="form-control rd-filter-input @error('cantidad_cilindros') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('cantidad_cilindros') is-invalid @enderror"
                                 placeholder="Ej: 1" value="{{ old('cantidad_cilindros', 1) }}" min="1"
                                 oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)">
                         </div>
@@ -160,13 +160,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Sede</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-building"></i></span>
                             <select name="sede_id"
-                                class="form-control rd-filter-input @error('sede_id') is-invalid @enderror">
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('sede_id') is-invalid @enderror">
                                 <option value="">-- Seleccione --</option>
                                 @foreach ($sedes as $sede)
                                     <option value="{{ $sede->id }}"
@@ -183,14 +183,14 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-3">
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Tipo de Combustible</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-gas-pump"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-gas-pump"></i></span>
                             <select id="selectCombustible" name="tipo_combustible_id"
-                                class="form-control rd-filter-input @error('tipo_combustible_id') is-invalid @enderror">
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('tipo_combustible_id') is-invalid @enderror">
                                 <option value="">-- Seleccione --</option>
                                 @foreach ($tipos as $tipo)
                                     <option value="{{ $tipo->id }}"
@@ -206,7 +206,7 @@
                         <div class="mt-2">
                             <small style="color:#64748b;font-size:0.85rem;">
                                 ¿No encuentras?
-                                <button type="button" data-toggle="modal" data-target="#modalAddCombustible"
+                                <button type="button" data-modal-toggle="modal" data-target="#modalAddCombustible"
                                     style="background:none;border:none;padding:0;color:#a84348;font-weight:600;font-size:0.85rem;cursor:pointer;">
                                     <i class="fas fa-plus-circle"></i> Añádelo aquí
                                 </button>
@@ -215,13 +215,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Capacidad Tanque (L)</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-fill-drip"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-fill-drip"></i></span>
                             <input type="text" inputmode="decimal" name="capacidad_tanque_litros" step="0.01"
-                                class="form-control rd-filter-input @error('capacidad_tanque_litros') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('capacidad_tanque_litros') is-invalid @enderror"
                                 placeholder="Ej: 120.00" value="{{ old('capacidad_tanque_litros') }}" min="0"
                                 oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
                         </div>
@@ -231,13 +231,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">KM Actual</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-road"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-road"></i></span>
                             <input type="text" inputmode="decimal" name="km_actual" step="0.01"
-                                class="form-control rd-filter-input @error('km_actual') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('km_actual') is-invalid @enderror"
                                 placeholder="Ej: 50000.00" value="{{ old('km_actual') }}" min="0"
                                 oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,9)">
                         </div>
@@ -247,13 +247,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">KM Próx. Mantenimiento</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-wrench"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-wrench"></i></span>
                             <input type="text" inputmode="decimal" name="km_proximo_mantenimiento" step="0.01"
-                                class="form-control rd-filter-input @error('km_proximo_mantenimiento') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('km_proximo_mantenimiento') is-invalid @enderror"
                                 placeholder="Ej: 55000.00" value="{{ old('km_proximo_mantenimiento') }}" min="0"
                                 oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,9)">
                         </div>
@@ -264,14 +264,14 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-3">
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Consumo Urbano (L/km)</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-city"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-city"></i></span>
                             <input type="text" inputmode="decimal" name="consumo_urbano" step="0.001"
-                                class="form-control rd-filter-input @error('consumo_urbano') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('consumo_urbano') is-invalid @enderror"
                                 placeholder="Ej: 0.350" value="{{ old('consumo_urbano') }}" min="0"
                                 oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
                         </div>
@@ -281,13 +281,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Consumo Carretera (L/km)</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-route"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-route"></i></span>
                             <input type="text" inputmode="decimal" name="consumo_carretera" step="0.001"
-                                class="form-control rd-filter-input @error('consumo_carretera') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('consumo_carretera') is-invalid @enderror"
                                 placeholder="Ej: 0.280" value="{{ old('consumo_carretera') }}" min="0"
                                 oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
                         </div>
@@ -297,13 +297,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Consumo Ralentí (L/h)</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-clock"></i></span>
                             <input type="text" inputmode="decimal" name="consumo_relenti" step="0.001"
-                                class="form-control rd-filter-input @error('consumo_relenti') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('consumo_relenti') is-invalid @enderror"
                                 placeholder="Ej: 1.500" value="{{ old('consumo_relenti') }}" min="0"
                                 oninput="this.value=this.value.replace(/[^0-9.]/g,'').slice(0,6)">
                         </div>
@@ -313,13 +313,13 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="w-full md:w-1/4">
                     <div class="form-group">
                         <label class="font-weight-bold">Estado Operativo</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-info-circle"></i></span>
                             <select name="estado"
-                                class="form-control rd-filter-input @error('estado') is-invalid @enderror">
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('estado') is-invalid @enderror">
                                 <option value="disponible" {{ old('estado') == 'disponible' ? 'selected' : '' }}>
                                     Disponible</option>
                                 <option value="en_ruta" {{ old('estado') == 'en_ruta' ? 'selected' : '' }}>En Ruta
@@ -338,7 +338,7 @@
             </div>
 
             <hr>
-            <div class="d-flex justify-content-end" style="gap:12px;">
+            <div class="flex justify-end" style="gap:12px;">
                 <a href="{{ route('admin.transporte.maestros.bus_vehiculos.index') }}" class="rd-btn rd-btn-default">
                     Cancelar
                 </a>
@@ -349,21 +349,21 @@
         </form>
     </div>
 
-    <div class="modal fade" id="modalAddModelo" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4" id="modalAddModelo" tabindex="-1" aria-hidden="true">
+        <div class="relative w-full w-full max-w-2xl flex items-center justify-center min-h-full">
+            <div class="relative w-full rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
                 <div class="modal-header" style="border-bottom:1px solid #e5e7eb;">
                     <h5 class="modal-title rd-title-sm">
                         <i class="fas fa-car mr-2" style="color:var(--color-primary)"></i>Nuevo Modelo
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-modal-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="font-weight-bold">Marca</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-industry"></i></span>
-                            <select id="newModeloMarca" class="form-control rd-filter-input">
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-industry"></i></span>
+                            <select id="newModeloMarca" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input">
                                 <option value="">-- Seleccione una marca --</option>
                                 @foreach ($marcas as $marca)
                                     <option value="{{ $marca->id }}">{{ $marca->nombre }}</option>
@@ -374,9 +374,9 @@
                     </div>
                     <div class="form-group">
                         <label class="font-weight-bold">Nombre del Modelo</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                            <input type="text" id="newModeloNombre" class="form-control rd-filter-input"
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-tag"></i></span>
+                            <input type="text" id="newModeloNombre" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                 placeholder="Ej: Corolla" maxlength="100">
                         </div>
                         <div id="errorModeloNombre" class="text-danger mt-1" style="display:none;"></div>
@@ -384,15 +384,15 @@
                     <div class="form-group mb-0">
                         <label class="font-weight-bold">Descripción <span
                                 class="text-muted font-weight-normal">(opcional)</span></label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
-                            <input type="text" id="newModeloDescripcion" class="form-control rd-filter-input"
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-align-left"></i></span>
+                            <input type="text" id="newModeloDescripcion" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                 placeholder="Ej: Sedán compacto" maxlength="255">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #e5e7eb;">
-                    <button type="button" class="rd-btn rd-btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="rd-btn rd-btn-default" data-modal-dismiss="modal">Cancelar</button>
                     <button type="button" id="btnGuardarModelo" class="rd-btn rd-btn-primary">
                         <i class="fas fa-check"></i> Guardar y Seleccionar
                     </button>
@@ -401,21 +401,21 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalAddCombustible" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4" id="modalAddCombustible" tabindex="-1" aria-hidden="true">
+        <div class="relative w-full w-full max-w-2xl flex items-center justify-center min-h-full">
+            <div class="relative w-full rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
                 <div class="modal-header" style="border-bottom:1px solid #e5e7eb;">
                     <h5 class="modal-title rd-title-sm">
                         <i class="fas fa-gas-pump mr-2" style="color:var(--color-primary)"></i>Nuevo Tipo de Combustible
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-modal-dismiss="modal"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="font-weight-bold">Nombre</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-gas-pump"></i></span>
-                            <input type="text" id="newCombustibleNombre" class="form-control rd-filter-input"
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-gas-pump"></i></span>
+                            <input type="text" id="newCombustibleNombre" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                 placeholder="Ej: Gasolina" maxlength="100">
                         </div>
                         <div id="errorCombustibleNombre" class="text-danger mt-1" style="display:none;"></div>
@@ -423,15 +423,15 @@
                     <div class="form-group mb-0">
                         <label class="font-weight-bold">Descripción <span
                                 class="text-muted font-weight-normal">(opcional)</span></label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
-                            <input type="text" id="newCombustibleDescripcion" class="form-control rd-filter-input"
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-align-left"></i></span>
+                            <input type="text" id="newCombustibleDescripcion" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                 placeholder="Ej: Combustible de 95 octanos" maxlength="255">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #e5e7eb;">
-                    <button type="button" class="rd-btn rd-btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="rd-btn rd-btn-default" data-modal-dismiss="modal">Cancelar</button>
                     <button type="button" id="btnGuardarCombustible" class="rd-btn rd-btn-primary">
                         <i class="fas fa-check"></i> Guardar y Seleccionar
                     </button>

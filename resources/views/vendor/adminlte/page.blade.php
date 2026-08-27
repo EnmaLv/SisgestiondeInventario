@@ -1,4 +1,6 @@
-@extends('adminlte::master')
+@extends('layouts.app')
+
+@section('legacy_admin_shell', true)
 
 @inject('layoutHelper', 'JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper')
 @inject('preloaderHelper', 'JeroenNoten\LaravelAdminLte\Helpers\PreloaderHelper')

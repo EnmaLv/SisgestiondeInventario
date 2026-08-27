@@ -1,14 +1,14 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 flex justify-between items-center">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">{{ $beca->nombre }}</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
                 Codigo <strong>{{ $beca->codigo }}</strong>
             </p>
         </div>
-        <div class="d-flex" style="gap:12px;">
+        <div class="flex" style="gap:12px;">
             <a href="{{ route('admin.becas.edit', $beca) }}?from=show" class="rd-btn rd-btn-primary">
                 <i class="fas fa-edit"></i> Editar
             </a>
@@ -23,8 +23,8 @@
     @include('components.alert')
 
     <div class="rd-card p-4 mb-4">
-        <div class="row">
-            <div class="col-md-4">
+        <div class="flex flex-wrap -mx-2">
+            <div class="w-full md:w-1/3">
                 <strong>Estado</strong>
                 <p class="mb-0 mt-2">
                     <span class="rd-badge {{ $beca->activo ? 'rd-badge-success' : 'rd-badge-danger' }}">

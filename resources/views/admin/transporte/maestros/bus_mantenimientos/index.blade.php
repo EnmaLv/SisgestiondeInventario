@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem;color:#0f172a;font-weight:700;">Mantenimientos</h1>
@@ -28,8 +28,8 @@
                 </div>
                 <div class="rd-actions">
                     <form action="{{ route('admin.transporte.maestros.bus_mantenimientos.index') }}" method="GET"
-                        class="d-flex gap-3 align-items-center">
-                        <select name="estado" class="form-control rd-filter-input" style="width:160px;"
+                        class="flex gap-3 items-center">
+                        <select name="estado" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" style="width:160px;"
                             onchange="this.form.submit()">
                             <option value="">Todos los estados</option>
                             <option value="pendiente"  {{ request('estado') == 'pendiente'  ? 'selected' : '' }}>Pendiente</option>
@@ -103,7 +103,7 @@
                 </tbody>
             </table>
 
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $mantenimientos->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>

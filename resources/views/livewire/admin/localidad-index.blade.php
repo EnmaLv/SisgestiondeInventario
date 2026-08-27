@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="flex gap-3 items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
                         <div class="toggle-container">
                             <input wire:model.live="filtroEstado" type="checkbox" id="estadoToggle" class="toggle-checkbox" {{ $filtroEstado ? 'checked' : '' }}>
@@ -116,8 +116,8 @@
                                     <div class="rd-action-group">
                                         <button wire:click="edit({{ $datos->id }})"
                                             class="rd-action" 
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEditar">
+                                            data-modal-toggle="modal"
+                                            data-modal-target="#modalEditar">
                                             <i class="fas fa-edit"></i>
                                         </button>
 

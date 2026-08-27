@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
 
         <div>
@@ -23,13 +23,13 @@
     <div class="rd-card rd-card-full shadow-sm border-0 overflow-hidden">
         <div class="rd-card-body border-bottom bg-white">
             <form action="{{ route('admin.configuracion.roles.index') }}" method="GET">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
+                <div class="flex flex-wrap -mx-2 items-center">
+                    <div class="w-full md:w-1/2">
                         <h3 class="rd-title-sm">Listado de Roles</h3>
                     </div>
-                    <div class="col-md-6 d-flex justify-content-end">
-                        <div class="d-flex align-items-center gap-2"> 
-                            <div class="rd-input-group">
+                    <div class="w-full md:w-1/2 flex justify-end">
+                        <div class="flex items-center gap-2"> 
+                            <div class="flex items-stretch w-full">
                                 <span><i class="fas fa-search"></i></span>
                                 <input type="text" name="q" value="{{ request('q') }}" class="rd-input w-100" placeholder="Buscar por nombre o descripción...">
                             </div>
@@ -75,7 +75,7 @@
                                     $isProtected = in_array(strtolower($rol->nombre ?? ''), array_map('strtolower', $protected));
                                 @endphp
                                 
-                                <div class="d-flex justify-content-center gap-2">
+                                <div class="flex justify-center gap-2">
                                     @if(!$isProtected)
                                         <a href="{{ route('admin.configuracion.roles.edit', $rol->id_rol) }}" 
                                            class="rd-action" title="Editar permisos">
@@ -83,7 +83,7 @@
                                         </a>
                                         
                                         <form action="{{ route('admin.configuracion.roles.destroy', $rol->id_rol) }}" 
-                                              method="POST" class="d-inline delete-form">
+                                              method="POST" class="inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="rd-action rd-btn-danger" title="Eliminar Rol">
@@ -137,7 +137,7 @@
             </table>
         </div>
 
-        <div class="rd-card-body border-top bg-light d-flex justify-content-center">
+        <div class="rd-card-body border-top bg-light flex justify-center">
             {{ $roles->appends(request()->query())->links('components.pagination') }}
         </div>
     </div>

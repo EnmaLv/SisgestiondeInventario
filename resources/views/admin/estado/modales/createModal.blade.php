@@ -1,6 +1,6 @@
-<div wire:ignore.self class="modal fade" id="modalCrear" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-modern" style="border-radius: 50px">
+<div wire:ignore.self class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4" id="modalCrear" data-modal-backdrop="static" data-modal-keyboard="false" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+    <div class="relative w-full flex items-center justify-center min-h-full">
+        <div class="relative w-full modal-modern" style="border-radius: 50px">
             <div class="rd-card p-4">
                 <div class="rd-card-header mb-3">
                     <h3 class="rd-title-sm">Crear Nuevo Estado</h3>
@@ -8,13 +8,13 @@
                 <hr>
                 <form wire:submit.prevent="store" id="formCrearEstado" class="rd-prevent-double-submit">
                     <input type="hidden" wire:model="from">
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-full mb-3">
                             <label class="rd-label">Nombre del Estado</label>
-                            <div class="rd-input-group">
+                            <div class="flex items-stretch w-full">
                                 <span><i class="fas fa-globe me-2"></i></span>
                                 <input type="text" 
-                                    class="form-control rd-input" 
+                                    class="block w-full rounded-lg border px-3 py-2 text-sm rd-input" 
                                     id="nombre_estado_crear" 
                                     wire:model.defer="nombre_estado"
                                     inputmode="text"
@@ -29,8 +29,8 @@
                             </div>
                         </div>    
                     </div>
-                    <div class="d-flex justify-content-end" style="gap:10px;">
-                        <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">
+                    <div class="flex justify-end" style="gap:10px;">
+                        <button type="button" class="rd-btn rd-btn-default" data-modal-dismiss="modal">
                             Cancelar
                         </button>
                         <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">

@@ -14,7 +14,7 @@
                             wire:model.live="buscar" />
                     </div>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
+                    <button class="rd-icon-btn" data-modal-toggle="collapse" data-target="#filters" aria-expanded="false"
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
                     </button>
@@ -142,7 +142,7 @@
             </div>
 
             {{-- Paginación del servidor --}}
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $compras->onEachSide(1)->links('components.pagination-livewire') }}
             </div>
         </div>

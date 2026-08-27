@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 flex justify-between items-center">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Editar Proveedor</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -25,8 +25,8 @@
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12 m-auto">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full mx-auto">
             <div class="rd-card p-4">
                 <div class="rd-card-header mb-3">
                     <h3 class="rd-title-sm">Editar Proveedor</h3>
@@ -40,13 +40,13 @@
                     @csrf
                     @method('PUT')
 
-                    <div class="row">
-                        <div class="col-md-4">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-full md:w-1/3">
                             <div class="form-group">
                                 <label class="font-weight-bold">Empresa</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                    <input type="text" class="form-control rd-filter-input" name="empresa"
+                                <div class="flex items-stretch w-full mb-2">
+                                    <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-building"></i></span>
+                                    <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" name="empresa"
                                         value="{{ old('empresa', $proveedor->empresa) }}"
                                         placeholder="Nombre de la empresa">
                                 </div>
@@ -55,12 +55,12 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="w-full md:w-1/3">
                             <div class="form-group">
                                 <label class="font-weight-bold">Dirección</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input type="text" class="form-control rd-filter-input"
+                                <div class="flex items-stretch w-full mb-2">
+                                    <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                         value="{{ old('direccion', $proveedor->direccion) }}" name="direccion"
                                         placeholder="Dirección completa">
                                 </div>
@@ -69,12 +69,12 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="w-full md:w-1/3">
                             <div class="form-group">
                                 <label class="font-weight-bold">Nombre del Proveedor</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control rd-filter-input"
+                                <div class="flex items-stretch w-full mb-2">
+                                    <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                         value="{{ old('nombre', $proveedor->nombre) }}" name="nombre"
                                         placeholder="Nombre del proveedor">
                                 </div>
@@ -84,13 +84,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col-md-4">
+                    <div class="flex flex-wrap -mx-2 mt-3">
+                        <div class="w-full md:w-1/3">
                             <div class="form-group">
                                 <label class="font-weight-bold">Teléfono</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                    <input type="text" class="form-control rd-filter-input" name="telefono"
+                                <div class="flex items-stretch w-full mb-2">
+                                    <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-phone"></i></span>
+                                    <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" name="telefono"
                                         value="{{ old('telefono', $proveedor->telefono) }}" id="telefono"
                                         data-inputmask="'mask': '(999) 999-9999'" data-mask placeholder="(123) 456-7890">
                                 </div>
@@ -99,12 +99,12 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="w-full md:w-1/3">
                             <div class="form-group">
                                 <label class="font-weight-bold">Email</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control rd-filter-input" name="email"
+                                <div class="flex items-stretch w-full mb-2">
+                                    <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" name="email"
                                         value="{{ old('email', $proveedor->email) }}" placeholder="correo@empresa.com">
                                 </div>
                                 @error('email')
@@ -114,7 +114,7 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="d-flex justify-content-end gap-2">
+                    <div class="flex justify-end gap-2">
                         <a href="{{ url('admin/maestros/proveedores') }}" class="rd-btn rd-btn-default">
                             Cancelar
                         </a>

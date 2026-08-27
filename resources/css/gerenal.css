@@ -114,10 +114,224 @@ label{
 
 /* RD condensed styles for the registro diario block */
 .rd-card {
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #eef2f6;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    background: var(--bg-card);
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.legacy-content-header {
+    margin-bottom: 1.5rem;
+}
+
+.legacy-content-header .rd-card {
+    background: transparent !important;
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.legacy-content-header .rd-card h1 {
+    margin: 0 !important;
+    color: var(--text-main) !important;
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em;
+}
+
+.legacy-content-header .rd-card p {
+    color: #64748b !important;
+    font-size: 0.875rem !important;
+    font-weight: 500;
+}
+
+.legacy-admin-shell main > .w-full {
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+.legacy-admin-shell .rd-card {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.legacy-admin-shell [style*="background:#ffffff"],
+.legacy-admin-shell [style*="background: #ffffff"],
+.legacy-admin-shell [style*="background:#fff;"],
+.legacy-admin-shell [style*="background: #fff;"] {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+.legacy-admin-shell .rd-card-body {
+    color: var(--text-main);
+}
+
+.legacy-admin-shell .rd-label,
+.legacy-admin-shell .rd-title-sm {
+    color: var(--text-main) !important;
+}
+
+.legacy-admin-shell .rd-input-group {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+}
+
+.legacy-admin-shell .rd-card-headerr {
+    border-color: var(--border-color) !important;
+}
+
+.legacy-admin-shell .rd-card-footer {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    color: #9ca3af !important;
+}
+
+.legacy-admin-shell .rd-card-headerr .rd-title,
+.legacy-admin-shell .rd-card-search .rd-title {
+    color: var(--text-main) !important;
+}
+
+.legacy-admin-shell .rd-card-headerr .rd-sub,
+.legacy-admin-shell .rd-card-list .rd-sub-sm {
+    color: #9ca3af !important;
+}
+
+.legacy-admin-shell .rd-table thead th {
+    background: color-mix(in srgb, var(--bg-card) 94%, #94a3b8 6%) !important;
+    color: var(--text-main) !important;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.legacy-admin-shell .rd-table tbody {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.legacy-admin-shell .rd-table tbody td {
+    padding: 1rem 1.5rem;
+    text-align: center;
+    border-bottom-color: color-mix(in srgb, var(--border-color) 70%, transparent);
+}
+
+.legacy-admin-shell .rd-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.legacy-admin-shell .rd-badge-success {
+    background: #ecfdf5 !important;
+    color: #059669 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+.legacy-admin-shell .rd-badge-danger {
+    background: #fff1f2 !important;
+    color: #e11d48 !important;
+    border: 1px solid #fecdd3 !important;
+}
+
+html.dark .legacy-admin-shell .rd-badge-success {
+    background: rgba(6, 78, 59, 0.45) !important;
+    color: #6ee7b7 !important;
+    border-color: rgba(6, 95, 70, 0.7) !important;
+}
+
+html.dark .legacy-admin-shell .rd-badge-danger {
+    background: rgba(136, 19, 55, 0.35) !important;
+    color: #fda4af !important;
+    border-color: rgba(159, 18, 57, 0.65) !important;
+}
+
+.legacy-admin-shell .rd-action {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent !important;
+    color: #9ca3af !important;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.legacy-admin-shell .rd-action:hover {
+    color: var(--color-primary) !important;
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent) !important;
+}
+
+.legacy-admin-shell .rd-action.btn-abrir-editar,
+.legacy-admin-shell a.rd-action[href*="/edit"] {
+    color: #9ca3af !important;
+}
+
+.legacy-admin-shell .rd-action.btn-abrir-editar:hover,
+.legacy-admin-shell a.rd-action[href*="/edit"]:hover {
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.1) !important;
+}
+
+.legacy-admin-shell .rd-action.rd-btn-danger,
+.legacy-admin-shell .rd-action.rd-action-danger,
+.legacy-admin-shell .rd-action.rd-action-success,
+.legacy-admin-shell .rd-action.rd-btn-success {
+    background: transparent !important;
+    color: #9ca3af !important;
+}
+
+.legacy-admin-shell .rd-action.rd-btn-danger:hover,
+.legacy-admin-shell .rd-action.rd-action-danger:hover {
+    color: #f43f5e !important;
+    background: rgba(244, 63, 94, 0.1) !important;
+}
+
+.legacy-admin-shell .rd-action.rd-action-success:hover,
+.legacy-admin-shell .rd-action.rd-btn-success:hover {
+    color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+}
+
+.legacy-admin-shell .rd-action-group {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.legacy-admin-shell .toggle-label {
+    background-color: #374151 !important;
+}
+
+.legacy-admin-shell .toggle-checkbox:checked + .toggle-label {
+    background-color: var(--color-primary) !important;
+}
+
+@media (max-width: 640px) {
+    .legacy-admin-shell main > .w-full {
+        padding-top: 1rem;
+    }
+}
+
+html.dark .legacy-content-header .rd-card p {
+    color: #9ca3af !important;
 }
 
 .rd-card-body {
@@ -142,7 +356,7 @@ label{
     margin: 0;
     font-weight: 700;
     font-size: 1.05rem;
-    color: #0f172a;
+    color: var(--text-main);
 }
 
 .rd-actions {
@@ -177,8 +391,21 @@ label{
     height: 40px;
     border-radius: 8px;
     border: 1px solid #e6eef6;
-    background: #fff;
+    background: var(--bg-card);
+    color: var(--text-main);
     cursor: pointer;
+}
+
+.legacy-admin-shell .rd-icon-btn {
+    border-color: var(--border-color);
+    background: var(--bg-card);
+    color: #9ca3af;
+}
+
+.legacy-admin-shell .rd-icon-btn:hover {
+    background: color-mix(in srgb, var(--color-primary) 10%, var(--bg-card));
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 
@@ -198,15 +425,39 @@ label{
     }
 }
 
+.legacy-admin-shell .rd-btn {
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+}
+
 .rd-btn-primary {
-    background: var(--color-secondary);
+    background: var(--color-primary);
     color: #fff;
     transition: var(--trans-default);
 
     &:not(:disabled):hover {
         color: white;
-        background: var(--color-btn-hover); 
+        background: var(--color-btn-hover);
     }
+}
+
+.legacy-admin-shell .rd-btn-success {
+    background: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+.legacy-admin-shell .rd-btn-success:hover {
+    background: var(--color-btn-hover) !important;
+}
+
+.legacy-admin-shell button[class*="bg-green-"],
+.legacy-admin-shell button[class*="bg-emerald-"],
+.legacy-admin-shell a[class*="bg-green-"],
+.legacy-admin-shell a[class*="bg-emerald-"] {
+    background-color: var(--color-primary) !important;
+    color: #ffffff !important;
 }
 
 .rd-btn-alter{
@@ -225,8 +476,8 @@ label{
 
 .rd-btn-default {
     background: transparent;
-    color: #4a5568;
-    border: 1px solid #e2e8f0;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
 
 }
 
@@ -280,7 +531,7 @@ label{
 .rd-filter-input {
     padding: 8px 10px;
     border-radius: 8px;
-    border: 1px solid #e6eef6;
+    border: 1px solid var(--input-border);
 }
 
 /*Tabla*/
@@ -291,17 +542,17 @@ label{
 }
 
 .rd-table thead th {
-    background: #fbfdff;
+    background: color-mix(in srgb, var(--bg-card) 94%, #94a3b8 6%);
     padding: 12px 10px;
     text-align: left;
-    border-bottom: 1px solid #eef2f6;
+    border-bottom: 1px solid var(--border-color);
     font-weight: 700;
-    color: #374151;
+    color: var(--text-main);
 }
 
 .rd-table tbody td {
     padding: 12px 10px;
-    border-bottom: 1px solid #f6f8fb;
+    border-bottom: 1px solid var(--border-color);
     vertical-align: middle;
 }
 

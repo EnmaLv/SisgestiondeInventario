@@ -10,8 +10,8 @@
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-5">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-5/12">
             <div class="rd-card p-4"
                 style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                 <form id="formEditar" action="{{ route('admin.transporte.maestros.bus_paradas.update', $busParada->id) }}"
@@ -21,11 +21,11 @@
 
                     <div class="form-group">
                         <label class="rd-label">Nombre de la Parada</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-map-pin"></i></span>
                             <input type="text" name="nombre" id="crearNombre"
                                 value="{{ old('nombre', $busParada->nombre) }}"
-                                class="form-control rd-filter-input @error('nombre') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('nombre') is-invalid @enderror"
                                 placeholder="Ej: Hiper Sol Acarigua" maxlength="100" required autofocus>
                         </div>
                         <div id="errorNombreUnico" class="text-danger mt-1" style="display:none;"></div>
@@ -36,10 +36,10 @@
 
                     <div class="form-group">
                         <label class="rd-label">Dirección descriptiva</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-map-marker-alt"></i></span>
                             <input type="text" name="direccion" value="{{ old('direccion', $busParada->direccion) }}"
-                                class="form-control rd-filter-input @error('direccion') is-invalid @enderror"
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('direccion') is-invalid @enderror"
                                 placeholder="Ej: Av. Circunvalación, frente al centro comercial">
                         </div>
                         @error('direccion')
@@ -47,25 +47,25 @@
                         @enderror
                     </div>
 
-                    <div class="row">
-                        <div class="col-6">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-1/2">
                             <div class="form-group">
                                 <label class="rd-label">Latitud</label>
                                 <input type="text" id="latInput" name="lat"
                                     value="{{ old('lat', $busParada->lat) }}"
-                                    class="form-control rd-filter-input @error('lat') is-invalid @enderror" readonly
+                                    class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('lat') is-invalid @enderror" readonly
                                     placeholder="Haga clic en el mapa" required>
                                 @error('lat')
                                     <div class="text-danger font-weight-bold mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="w-1/2">
                             <div class="form-group">
                                 <label class="rd-label">Longitud</label>
                                 <input type="text" id="lngInput" name="lng"
                                     value="{{ old('lng', $busParada->lng) }}"
-                                    class="form-control rd-filter-input @error('lng') is-invalid @enderror" readonly
+                                    class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('lng') is-invalid @enderror" readonly
                                     placeholder="Haga clic en el mapa" required>
                                 @error('lng')
                                     <div class="text-danger font-weight-bold mt-1">{{ $message }}</div>
@@ -74,7 +74,7 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between mt-4"
+                    <div class="flex justify-between mt-4"
                         style="border-top:1px solid #e5e7eb; padding-top:20px;">
                         <a href="{{ route('admin.transporte.maestros.bus_paradas.index') }}"
                             class="rd-btn rd-btn-default">Cancelar</a>
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        <div class="col-md-7 mb-3 mb-md-0">
+        <div class="w-full md:w-7/12 mb-3 mb-md-0">
             <div class="rd-card"
                 style="border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                 <div id="map"

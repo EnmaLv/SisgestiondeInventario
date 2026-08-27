@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Nueva Composición de Receta</h1>
@@ -10,9 +10,9 @@
                 Bienvenido: <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
             </p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Fecha Actual</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Fecha Actual</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -28,11 +28,11 @@
 
 @section('content')
     @include('components.alert')
-    <div class="row justify-content-center fade-in">
-        <div class="col-md-11">
+    <div class="flex flex-wrap -mx-2 justify-center fade-in">
+        <div class="w-full md:w-11/12">
             <div class="rd-card shadow-sm border-0 overflow-hidden">
                 <div class="rd-card-body border-bottom bg-light">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex justify-between items-center">
                         <h3 class="rd-title-sm m-0">
                             <i class="fas fa-plus-circle mr-2" style="color: var(--color-secondary)"></i>Registrar
                             Ingredientes
@@ -46,11 +46,11 @@
                     <form action="{{ route('admin.maestros.receta_ingredientes.store') }}" method="POST"
                         class="rd-prevent-double-submit">
                         @csrf
-                        <div class="row">
-                            <div class="col-md-4 border-right pr-md-4">
+                        <div class="flex flex-wrap -mx-2">
+                            <div class="w-full md:w-1/3 border-right pr-md-4">
                                 <div class="form-group">
                                     <label class="rd-label mb-2">Seleccionar Receta</label>
-                                    <div class="rd-input-group">
+                                    <div class="flex items-stretch w-full">
                                         <span><i class="fas fa-concierge-bell"></i></span>
                                         <select class="rd-input w-100" name="recetas_id" required>
                                             <option value="">Seleccione una receta...</option>
@@ -82,11 +82,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-8 pl-md-4">
+                            <div class="w-full md:w-2/3 pl-md-4">
                                 <label class="rd-label mb-2">Agregar Insumos</label>
-                                <div class="d-flex gap-2 align-items-start mb-4">
+                                <div class="flex gap-2 items-start mb-4">
                                     <div style="flex-grow:1">
-                                        <div class="rd-input-group">
+                                        <div class="flex items-stretch w-full">
                                             <span><i class="fas fa-search"></i></span>
                                             <select class="rd-input w-100" id="producto_select">
                                                 <option value="">Buscar producto...</option>
@@ -100,14 +100,14 @@
                                         </div>
                                     </div>
                                     <div style="width:120px">
-                                        <div class="rd-input-group">
+                                        <div class="flex items-stretch w-full">
                                             <span><i class="fas fa-hashtag"></i></span>
                                             <input type="number" step="any" min="0" id="cantidad_input"
                                                 class="rd-input w-100" placeholder="0.00">
                                         </div>
                                     </div>
                                     <div style="width:150px">
-                                        <div class="rd-input-group">
+                                        <div class="flex items-stretch w-full">
                                             <span><i class="fas fa-balance-scale"></i></span>
                                             <select class="rd-input w-100" id="unidad_select">
                                                 <option value="">Unidad</option>
@@ -143,7 +143,7 @@
                             </div>
                         </div>
                         <hr class="my-4" style="opacity: 0.4;">
-                        <div class="d-flex justify-content-end gap-3">
+                        <div class="flex justify-end gap-3">
                             <a href="{{ url('admin/maestros/receta_ingredientes') }}"
                                 class="rd-btn rd-btn-default px-4">Cancelar</a>
                             <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5">
@@ -183,7 +183,7 @@
         .rd-input:focus,
         .rd-btn:focus,
         select:focus,
-        .form-control:focus {
+        .block w-full rounded-lg border px-3 py-2 text-sm:focus {
             outline: none !important;
             box-shadow: none !important;
             border-color: var(--color-tertiary) !important;
@@ -224,22 +224,22 @@
 
                 const li = document.createElement('li');
                 li.className =
-                    'list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom fade-in';
+                    'list-group-item flex justify-between items-center bg-transparent py-3 border-bottom fade-in';
                 li.id = 'prod_' + prodId;
 
                 li.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <div class="mr-3 d-flex align-items-center justify-content-center" style="width:38px; height:38px; border-radius:10px; background: #fff; border: 1px solid #eef2f6;">
+                    <div class="flex items-center">
+                        <div class="mr-3 flex items-center justify-center" style="width:38px; height:38px; border-radius:10px; background: #fff; border: 1px solid #eef2f6;">
                             <i class="fas fa-plus text-success"></i>
                         </div>
                         <div>
-                            <span class="font-weight-bold d-block" style="color: #1e293b; font-size: 0.95rem;">${prodNombre}</span>
+                            <span class="font-weight-bold block" style="color: #1e293b; font-size: 0.95rem;">${prodNombre}</span>
                             <small class="badge badge-soft-secondary" style="background: #f1f5f9; color: #475569; padding: 2px 8px;">
                                 ${cantidad} ${unidadNombre}
                             </small>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center">
+                    <div class="flex items-center">
                         <input type="hidden" name="producto_id[]" value="${prodId}">
                         <input type="hidden" name="cantidad_porcion[]" value="${cantidad}">
                         <input type="hidden" name="unidad_id[]" value="${unidadId}">

@@ -1,6 +1,6 @@
  <div class="rd-wrapper">
     @include('components.alert')
-    <div class="rd-card rd-card-desayuno mb-4 col-md-12 text-center mx-auto">
+    <div class="rd-card rd-card-desayuno mb-4 w-full text-center mx-auto">
         <div class="rd-card-headerr">
             <h2 class="rd-title">Desayuno del día</h2>
             <p class="rd-sub">Selecciona el desayuno de hoy y registra la cantidad servida</p>
@@ -8,12 +8,12 @@
         <div class="rd-card-body">
             <form wire:submit.prevent="saveDesayuno" class="rd-search-form" autocomplete="off">
                 @csrf
-                <div class="row g-3">
+                <div class="flex flex-wrap -mx-2 g-3">
                     @foreach ($desayunos_agregados as $index => $desayuno)
-                        <div class="col-12 fade-in">
-                            <div class="row g-3 align-items-center">
-                                <div class="col-md-5">
-                                    <div class="rd-input-group">
+                        <div class="w-full fade-in">
+                            <div class="flex flex-wrap -mx-2 g-3 items-center">
+                                <div class="w-full md:w-5/12">
+                                    <div class="flex items-stretch w-full">
                                         <select
                                             wire:model.live="desayunos_agregados.{{ $index }}.receta_id"
                                             class="rd-input @error('desayunos_agregados.' . $index . '.receta_id') rd-input-error @enderror"
@@ -25,10 +25,10 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-7">
-                                    <div class="d-flex align-items-center">
+                                <div class="w-full md:w-7/12">
+                                    <div class="flex items-center">
                                         
-                                        <div class="rd-input-group mr-2">
+                                        <div class="flex items-stretch w-full mr-2">
                                             <input type="number"
                                                 wire:model.live="desayunos_agregados.{{ $index }}.cantidad"
                                                 class="rd-input @error('desayunos_agregados.' . $index . '.cantidad') rd-input-error @enderror"
@@ -46,11 +46,11 @@
                             </div>
                         </div>
                         @if(!$loop->last)
-                            <div class="col-12"><hr class="my-3"></div> 
+                            <div class="w-full"><hr class="my-3"></div> 
                         @endif
 
                     @endforeach
-                    <div class="col-md-12 d-flex mt-4 justify-content-end align-items-center">
+                    <div class="w-full flex mt-4 justify-end items-center">
                         <button type="button" wire:click="addDesayuno" style="@if ($desayuno_registrado || !$horarioPermitido) opacity: 0.5; cursor: not-allowed; @endif" 
                         class="rd-btn rd-btn-default mr-4" @disabled($desayuno_registrado || !$horarioPermitido)>
                             Agregar Desayuno
@@ -129,8 +129,8 @@
             </form>
         </div>
 
-        <div class="rd-card-footer">
-            <small class="text-muted">Una vez guardado, no se podrá modificar</small>
+        <div class="px-5 py-3 border-t border-[var(--border-color)] bg-[var(--bg-card)] text-gray-500 dark:text-gray-400">
+            <small>Una vez guardado, no se podrá modificar</small>
         </div>
     </div>
     <div>
@@ -150,7 +150,7 @@
                                 class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
+                    <button class="rd-icon-btn" data-modal-toggle="collapse" data-target="#filters" aria-expanded="false"
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
                     </button>

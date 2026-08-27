@@ -13,18 +13,18 @@
 @section('content')
     @include('components.alert')
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/2">
             <div class="rd-card p-4"
                 style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                 <form id="formCrear" action="{{ route('admin.transporte.maestros.bus_viajes.store') }}" method="POST">
                     @csrf
                     <div class="form-group mb-3">
                         <label class="rd-label">Autobús / Unidad Disponible</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-bus"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-bus"></i></span>
                             <select name="vehiculo_id" id="vehiculoSelect"
-                                class="form-control rd-filter-input @error('vehiculo_id') is-invalid @enderror" required>
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('vehiculo_id') is-invalid @enderror" required>
                                 <option value="">-- Seleccionar Vehículo --</option>
                                 @foreach ($vehiculos as $vehiculo)
                                     <option value="{{ $vehiculo->id }}"
@@ -41,10 +41,10 @@
 
                     <div class="form-group mb-3">
                         <label class="rd-label">Ruta de Transporte</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-route"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-route"></i></span>
                             <select name="bus_ruta_id" id="rutaSelect"
-                                class="form-control rd-filter-input @error('bus_ruta_id') is-invalid @enderror" required>
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('bus_ruta_id') is-invalid @enderror" required>
                                 <option value="">-- Seleccionar Ruta --</option>
                                 @foreach ($rutas as $ruta)
                                     <option value="{{ $ruta->id }}" data-distancia="{{ $ruta->distancia_km }}"
@@ -62,10 +62,10 @@
 
                     <div class="form-group mb-3">
                         <label class="rd-label">Conductor Asignado</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-id-card"></i></span>
                             <select name="conductor_id" id="conductorSelect"
-                                class="form-control rd-filter-input @error('conductor_id') is-invalid @enderror" required>
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('conductor_id') is-invalid @enderror" required>
                                 <option value="">-- Seleccionar Chofer --</option>
                                 @foreach ($conductores as $conductor)
                                     <option value="{{ $conductor->id_usuario }}"
@@ -84,10 +84,10 @@
 
                     <div class="form-group mb-4">
                         <label class="rd-label">Turno Correspondiente</label>
-                        <div class="input-group mt-1">
-                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                        <div class="flex items-stretch w-full mt-1">
+                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-clock"></i></span>
                             <select name="turno" id="turnoSelect"
-                                class="form-control rd-filter-input @error('turno') is-invalid @enderror" required>
+                                class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('turno') is-invalid @enderror" required>
                                 <option value="mañana" {{ old('turno', $turnoSugerido) === 'mañana' ? 'selected' : '' }}>
                                     Mañana (06:00 AM - 12:59 AM)</option>
                                 <option value="tarde" {{ old('turno', $turnoSugerido) === 'tarde' ? 'selected' : '' }}>
@@ -101,7 +101,7 @@
                         @enderror
                     </div>
 
-                    <div class="d-flex justify-content-between mt-4"
+                    <div class="flex justify-between mt-4"
                         style="border-top:1px solid #e5e7eb; padding-top:20px;">
                         <a href="{{ route('admin.transporte.maestros.bus_viajes.index') }}"
                             class="rd-btn rd-btn-default">Cancelar</a>
@@ -113,7 +113,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 mt-3 mt-md-0">
+        <div class="w-full md:w-1/2 mt-3 mt-md-0">
             <div class="rd-card p-4"
                 style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
                 <h3 style="font-size:1.1rem;color:#0f172a;font-weight:700;" class="mb-3">
@@ -121,15 +121,15 @@
                 </h3>
 
                 <div class="p-3 mb-3" style="background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;">
-                    <div class="d-flex justify-content-between mb-2">
+                    <div class="flex justify-between mb-2">
                         <span class="text-muted">Estado Inicial:</span>
                         <span class="rd-badge rd-badge-warning">Programado</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
+                    <div class="flex justify-between mb-2">
                         <span class="text-muted">Distancia de la Ruta:</span>
                         <strong id="infoDistancia" style="color:#0f172a;">-- km</strong>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    <div class="flex justify-between">
                         <span class="text-muted">Cantidad de Paradas:</span>
                         <strong id="infoParadas" style="color:#0f172a;">--</strong>
                     </div>

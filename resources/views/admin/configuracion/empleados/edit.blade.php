@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Editar Perfil de Empleado</h1>
@@ -19,8 +19,8 @@
 @section('content')
     @include('components.alert')
 
-    <div class="row justify-content-center">
-        <div class="col-md-9">
+    <div class="flex flex-wrap -mx-2 justify-center">
+        <div class="w-full md:w-3/4">
             <div class="rd-card shadow-sm border-0 overflow-hidden fade-in">
                 
                 <form action="{{ route('admin.configuracion.empleados.update', $usuario->id_usuario) }}" method="POST" class="rd-prevent-double-submit">
@@ -34,17 +34,17 @@
                     </div>
 
                     <div class="rd-card-body p-4">
-                        <div class="row">
-                            <div class="col-md-6 form-group mb-4">
+                        <div class="flex flex-wrap -mx-2">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Correo de Usuario (Login / Gmail)</label>
-                                <div class="rd-input-group @error('username') border-danger @enderror">
+                                <div class="flex items-stretch w-full @error('username') border-danger @enderror">
                                     <span><i class="fas fa-envelope"></i></span>
                                     <input type="email" name="username" class="rd-input w-100" value="{{ old('username', $usuario->username) }}" required placeholder="ejemplo@gmail.com">
                                 </div>
                                 @error('username') <div class="rd-error">{{ $message }}</div> @enderror
                             </div>
 
-                            <div class="col-md-6 form-group mb-4">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Asignación de Rol</label>
                                 @php
                                     $isAdminUsuario = $usuario->roles->contains('nombre', 'Administrador');
@@ -55,7 +55,7 @@
                                 @endphp
 
                                 @if(!$hideRoleSelectForSelfAdmin)
-                                    <div class="rd-input-group @error('role') border-danger @enderror">
+                                    <div class="flex items-stretch w-full @error('role') border-danger @enderror">
                                         <span><i class="fas fa-shield-alt"></i></span>
                                         <select name="role" id="roleSelect" class="rd-input w-100">
                                             @foreach($roles as $r)
@@ -66,12 +66,12 @@
                                         </select>
                                     </div>
                                 @else
-                                    <div class="rd-input-group" style="background: #f8fafc; border-style: dashed;">
+                                    <div class="flex items-stretch w-full" style="background: #f8fafc; border-style: dashed;">
                                         <span><i class="fas fa-user-check text-success"></i></span>
                                         <div class="rd-input w-100 py-2">{{ $currentRole ? $currentRole->nombre : '—' }}</div>
                                     </div>
                                     <input type="hidden" name="role" id="roleSelectHidden" data-text="{{ $currentRole ? $currentRole->nombre : '' }}" value="{{ $currentRole ? $currentRole->id_rol : '' }}">
-                                    <small class="text-danger mt-1 d-block">No puedes cambiar tu propio rol de Administrador.</small>
+                                    <small class="text-danger mt-1 block">No puedes cambiar tu propio rol de Administrador.</small>
                                 @endif
 
                                 @error('role') <div class="rd-error">{{ $message }}</div> @enderror
@@ -85,7 +85,7 @@
                         </div>
                     </div>
 
-                    <div class="rd-card-body border-bottom bg-light py-3 border-top d-flex justify-content-between align-items-center">
+                    <div class="rd-card-body border-bottom bg-light py-3 border-top flex justify-between items-center">
                         <h3 class="rd-title-sm m-0">
                             <i class="fas fa-lock mr-2" style="color: var(--color-secondary)"></i> Seguridad y Credenciales
                         </h3>
@@ -96,29 +96,29 @@
                     </div>
 
                     <div id="securityFieldsWrapper" class="rd-card-body p-4 border-bottom" style="display: none; background-color: #fafbfc;">
-                        <div class="row">
-                            <div class="col-md-6 form-group mb-4">
+                        <div class="flex flex-wrap -mx-2">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Nueva Contraseña</label>
-                                <div class="rd-input-group @error('password') border-danger @enderror">
+                                <div class="flex items-stretch w-full @error('password') border-danger @enderror">
                                     <span><i class="fas fa-key"></i></span>
                                     <input type="password" name="password" class="rd-input w-100" placeholder="Escriba la nueva contraseña">
                                 </div>
                                 @error('password') <div class="rd-error">{{ $message }}</div> @enderror
                             </div>
 
-                            <div class="col-md-6 form-group mb-4">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Confirmar Nueva Contraseña</label>
-                                <div class="rd-input-group">
+                                <div class="flex items-stretch w-full">
                                     <span><i class="fas fa-check-double"></i></span>
                                     <input type="password" name="password_confirmation" class="rd-input w-100" placeholder="Repita la nueva contraseña">
                                 </div>
                             </div>
 
-                            <div id="newAdminKeyWrap" class="col-12 form-group mb-4 p-3" style="display:none; background: #fffcf0; border: 1px dashed #fcd34d; border-radius: 12px;">
+                            <div id="newAdminKeyWrap" class="w-full form-group mb-4 p-3" style="display:none; background: #fffcf0; border: 1px dashed #fcd34d; border-radius: 12px;">
                                 <label class="rd-label text-warning mb-2" style="font-size: 0.9rem;">
                                     <i class="fas fa-star mr-1"></i> Llave Maestra de Autorización (Solo Administradores)
                                 </label>
-                                <div class="rd-input-group bg-white" style="border-color: #fbbf24;">
+                                <div class="flex items-stretch w-full bg-white" style="border-color: #fbbf24;">
                                     <span><i class="fas fa-shield-alt text-warning"></i></span>
                                     <input type="password" name="master_key" id="newAdminKey" class="rd-input w-100" 
                                            placeholder="{{ $isAdminUsuario ? 'Escriba una nueva llave maestra o deje en blanco para mantener la actual' : 'Defina la llave maestra para el nuevo Administrador...' }}">
@@ -147,10 +147,10 @@
                             <h5 class="rd-title-sm mb-3" style="font-size: 0.95rem; color: #475569;">
                                 <i class="fas fa-question-circle mr-1"></i> Preguntas de Recuperación (Opcionales)
                             </h5>
-                            <div class="row">
-                                <div class="col-md-6 form-group mb-3">
+                            <div class="flex flex-wrap -mx-2">
+                                <div class="w-full md:w-1/2 form-group mb-3">
                                     <label class="rd-label small mb-1">Pregunta de Seguridad #1</label>
-                                    <div class="rd-input-group bg-white">
+                                    <div class="flex items-stretch w-full bg-white">
                                         <span><i class="fas fa-list text-muted"></i></span>
                                         <select name="security_questions[pregunta_1]" class="rd-input w-100">
                                             <option value="" {{ empty(old('security_questions.pregunta_1', $q1)) ? 'selected' : '' }}>-- Selecciona pregunta 1 --</option>
@@ -162,17 +162,17 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 form-group mb-3">
+                                <div class="w-full md:w-1/2 form-group mb-3">
                                     <label class="rd-label small mb-1">Respuesta #1</label>
-                                    <div class="rd-input-group bg-white">
+                                    <div class="flex items-stretch w-full bg-white">
                                         <span><i class="fas fa-comment-dots text-muted"></i></span>
                                         <input type="password" name="security_questions[respuesta_1]" class="rd-input w-100" placeholder="Escriba la nueva respuesta...">
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 form-group mb-3 mb-md-0">
+                                <div class="w-full md:w-1/2 form-group mb-3 mb-md-0">
                                     <label class="rd-label small mb-1">Pregunta de Seguridad #2</label>
-                                    <div class="rd-input-group bg-white">
+                                    <div class="flex items-stretch w-full bg-white">
                                         <span><i class="fas fa-list text-muted"></i></span>
                                         <select name="security_questions[pregunta_2]" class="rd-input w-100">
                                             <option value="" {{ empty(old('security_questions.pregunta_2', $q2)) ? 'selected' : '' }}>-- Selecciona pregunta 2 --</option>
@@ -184,9 +184,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 form-group mb-0">
+                                <div class="w-full md:w-1/2 form-group mb-0">
                                     <label class="rd-label small mb-1">Respuesta #2</label>
-                                    <div class="rd-input-group bg-white">
+                                    <div class="flex items-stretch w-full bg-white">
                                         <span><i class="fas fa-comment-dots text-muted"></i></span>
                                         <input type="password" name="security_questions[respuesta_2]" class="rd-input w-100" placeholder="Escriba la nueva respuesta...">
                                     </div>
@@ -202,10 +202,10 @@
                     </div>
 
                     <div class="rd-card-body p-4">
-                        <div class="row">
-                            <div class="col-md-6 form-group mb-4">
+                        <div class="flex flex-wrap -mx-2">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Cédula de Identidad</label>
-                                <div class="rd-input-group @error('cedula_persona') border-danger @enderror">
+                                <div class="flex items-stretch w-full @error('cedula_persona') border-danger @enderror">
                                     <span><i class="fas fa-id-card"></i></span>
                                     <input type="text" name="cedula_persona" class="rd-input w-100" 
                                            value="{{ old('cedula_persona', optional($usuario->persona)->cedula_persona) }}" placeholder="Ej: V-12345678">
@@ -213,9 +213,9 @@
                                 @error('cedula_persona') <div class="rd-error">{{ $message }}</div> @enderror
                             </div>
 
-                            <div class="col-md-6 form-group mb-4">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Teléfono de Contacto</label>
-                                <div class="rd-input-group @error('telefono_persona') border-danger @enderror">
+                                <div class="flex items-stretch w-full @error('telefono_persona') border-danger @enderror">
                                     <span><i class="fas fa-phone"></i></span>
                                     <input type="text" name="telefono_persona" class="rd-input w-100" 
                                            value="{{ old('telefono_persona', optional($usuario->persona)->telefono_persona) }}" placeholder="Ej: 0412-1234567">
@@ -223,9 +223,9 @@
                                 @error('telefono_persona') <div class="rd-error">{{ $message }}</div> @enderror
                             </div>
 
-                            <div class="col-md-6 form-group mb-4">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Nombres</label>
-                                <div class="rd-input-group @error('nombre_persona') border-danger @enderror">
+                                <div class="flex items-stretch w-full @error('nombre_persona') border-danger @enderror">
                                     <span><i class="fas fa-user"></i></span>
                                     <input type="text" name="nombre_persona" class="rd-input w-100" 
                                            value="{{ old('nombre_persona', optional($usuario->persona)->nombre_persona) }}" placeholder="Nombres del empleado">
@@ -233,9 +233,9 @@
                                 @error('nombre_persona') <div class="rd-error">{{ $message }}</div> @enderror
                             </div>
 
-                            <div class="col-md-6 form-group mb-4">
+                            <div class="w-full md:w-1/2 form-group mb-4">
                                 <label class="rd-label mb-2">Apellidos</label>
-                                <div class="rd-input-group @error('apellido_persona') border-danger @enderror">
+                                <div class="flex items-stretch w-full @error('apellido_persona') border-danger @enderror">
                                     <span><i class="fas fa-user"></i></span>
                                     <input type="text" name="apellido_persona" class="rd-input w-100" 
                                            value="{{ old('apellido_persona', optional($usuario->persona)->apellido_persona) }}" placeholder="Apellidos del empleado">
@@ -244,7 +244,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 d-flex gap-2 justify-content-end">
+                        <div class="mt-4 flex gap-2 justify-end">
                             <a href="{{ route('admin.configuracion.empleados.index') }}" class="rd-btn rd-btn-alter px-4" style="height: 45px; justify-content: center; align-items: center;">
                                 Cancelar
                             </a>

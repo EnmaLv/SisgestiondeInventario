@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -17,9 +17,9 @@
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -57,10 +57,10 @@
                 class="rd-prevent-double-submit">
                 @csrf
                 @method('PUT')
-                <div class="row g-3">
-                    <div class="col-md-4">
+                <div class="flex flex-wrap -mx-2 g-3">
+                    <div class="w-full md:w-1/3">
                         <label class="rd-label">Nombre de la Sede</label>
-                        <div class="rd-input-group">
+                        <div class="flex items-stretch w-full">
                             <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
                             <input type="text" name="nombre" class="rd-input w-100" value="{{ $sede->nombre }}"
                                 placeholder="Ingrese el nombre">
@@ -69,9 +69,9 @@
                             <b> <span class="rd-error">{{ $message }}</span></b>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="w-full md:w-1/3">
                         <label class="rd-label">Dirección</label>
-                        <div class="rd-input-group">
+                        <div class="flex items-stretch w-full">
                             <span class="rd-input-icon"><i class="fas fa-map-marker-alt"></i></span>
                             <input type="text" name="direccion" class="rd-input w-100" value="{{ $sede->direccion }}"
                                 placeholder="Ingrese la dirección">
@@ -80,9 +80,9 @@
                             <b> <span class="rd-error">Este campo es obligatorio.</span></b>
                         @enderror
                     </div>
-                    <div class="col-md-4">
+                    <div class="w-full md:w-1/3">
                         <label class="rd-label">Teléfono</label>
-                        <div class="rd-input-group">
+                        <div class="flex items-stretch w-full">
                             <span class="rd-input-icon"><i class="fas fa-phone"></i></span>
                             <input type="text" name="telefono" id="telefono" class="rd-input w-100"
                                 value="{{ $sede->telefono }}" placeholder="(123) 456-7890"
@@ -93,7 +93,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="mt-4 d-flex gap-2 justify-content-end">
+                <div class="mt-4 flex gap-2 justify-end">
                     <a href="{{ route('admin.maestros.sedes.index') }}" class="rd-btn rd-btn-default">
                         Cancelar
                     </a>

@@ -2,7 +2,7 @@
 
 @section('content_header')
     @include('components.alert')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;

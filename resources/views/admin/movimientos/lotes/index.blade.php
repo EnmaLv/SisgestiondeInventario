@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -20,9 +20,9 @@
         </div>
 
         <!-- Imagen + Fecha -->
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -49,7 +49,7 @@
     @if ($hayLotesVencidosSinMerma)
         <div class="rd-card rd-card-full mb-4" style="border-left:6px solid #dc2626;">
             <div class="rd-card-body">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="flex justify-between items-center flex-wrap gap-3">
 
                     <div>
                         <h3 class="rd-title-sm text-danger mb-1">
@@ -64,7 +64,7 @@
 
                     <form action="{{ route('admin.movimientos.lotes.mermar') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-danger px-4" onclick="confirmarMerma(event, this)">
+                        <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700 px-4" onclick="confirmarMerma(event, this)">
                             <i class="fas fa-trash-alt mr-1"></i>
                             Mermar productos vencidos
                         </button>
@@ -176,7 +176,7 @@
             </div>
 
             {{-- Paginación del servidor --}}
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $lotes->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>

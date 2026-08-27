@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -17,9 +17,9 @@
                 Bienvenido <strong>{{ auth()->user()->persona->nombre_persona }}</strong>.
             </p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -59,7 +59,7 @@
                         <button class="rd-icon-btn" type="submit" title="Buscar"><i class="fas fa-search"></i></button>
                     </form>
 
-                    <button class="rd-icon-btn" data-toggle="collapse" data-target="#filters" aria-expanded="false"
+                    <button class="rd-icon-btn" data-modal-toggle="collapse" data-target="#filters" aria-expanded="false"
                         aria-controls="filters" title="Filtros">
                         <i class="fas fa-filter"></i>
                     </button>
@@ -133,7 +133,7 @@
                                 <td class="text-center">
                                     @if ($tipoEntrada)
                                         <span
-                                            class="text-success rd-badge rd-badge-success d-inline-flex align-items-center">
+                                            class="text-success rd-badge rd-badge-success inline-flex items-center">
                                             <svg class="me-1 text-success" width="16" height="16" fill="currentColor"
                                                 viewBox="0 2 16 16">
                                                 <path
@@ -142,7 +142,7 @@
                                             {{ $movimientos->tipo_movimiento }}
                                         </span>
                                     @else
-                                        <span class="text-danger rd-badge rd-badge-danger d-inline-flex align-items-center">
+                                        <span class="text-danger rd-badge rd-badge-danger inline-flex items-center">
                                             <svg class="me-1 text-danger" width="16" height="16" fill="currentColor"
                                                 viewBox="0 -3 16 16">
                                                 <path
@@ -172,7 +172,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $movimiento->onEachSide(1)->appends(request()->query())->links('components.pagination') }}
             </div>
         </div>

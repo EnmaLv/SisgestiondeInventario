@@ -20,12 +20,12 @@
         @csrf
 
         {{-- Name field --}}
-        <div class="input-group mb-3">
-            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+        <div class="flex items-stretch w-full mb-3">
+            <input type="text" name="name" class="block w-full rounded-lg border px-3 py-2 text-sm @error('name') is-invalid @enderror"
                 value="{{ old('name') }}" placeholder="{{ __('adminlte::adminlte.full_name') }}" autofocus>
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="flex">
+                <div class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
                     <span class="fas fa-user {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
@@ -38,12 +38,12 @@
         </div>
 
         {{-- Email field --}}
-        <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+        <div class="flex items-stretch w-full mb-3">
+            <input type="email" name="email" class="block w-full rounded-lg border px-3 py-2 text-sm @error('email') is-invalid @enderror"
                 value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="flex">
+                <div class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
                     <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
@@ -56,12 +56,12 @@
         </div>
 
         {{-- Password field --}}
-        <div class="input-group mb-3">
-            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+        <div class="flex items-stretch w-full mb-3">
+            <input type="password" name="password" class="block w-full rounded-lg border px-3 py-2 text-sm @error('password') is-invalid @enderror"
                 placeholder="{{ __('adminlte::adminlte.password') }}">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="flex">
+                <div class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
@@ -74,13 +74,13 @@
         </div>
 
         {{-- Confirm password field --}}
-        <div class="input-group mb-3">
+        <div class="flex items-stretch w-full mb-3">
             <input type="password" name="password_confirmation"
-                class="form-control @error('password_confirmation') is-invalid @enderror"
+                class="block w-full rounded-lg border px-3 py-2 text-sm @error('password_confirmation') is-invalid @enderror"
                 placeholder="{{ __('adminlte::adminlte.retype_password') }}">
 
-            <div class="input-group-append">
-                <div class="input-group-text">
+            <div class="flex">
+                <div class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
@@ -93,7 +93,7 @@
         </div>
 
         {{-- Register button --}}
-        <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}" style="border-radius: 10px">
+        <button type="submit" class="flex w-full items-center justify-center {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}" style="border-radius: 10px">
             <span class="fas fa-user-plus"></span>
             {{ __('adminlte::adminlte.register') }}
         </button>

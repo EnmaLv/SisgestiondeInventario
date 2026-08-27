@@ -477,7 +477,7 @@
             </p>
 
             <div class="button-group">
-                <a href="{{ route('home') }}" class="btn btn-primary" onclick="goHome(event)">
+                <a href="{{ route('home') }}" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700" onclick="goHome(event)">
                     <i class="fas fa-home"></i>
                     Ir al Login
                 </a>

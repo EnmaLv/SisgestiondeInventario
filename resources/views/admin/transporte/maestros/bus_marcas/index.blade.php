@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem;color:#0f172a;font-weight:700;">Marcas de Buses</h1>
@@ -10,7 +10,7 @@
             </p>
         </div>
         <div>
-            <button type="button" class="rd-btn rd-btn-primary" data-toggle="modal" data-target="#modalCrear">
+            <button type="button" class="rd-btn rd-btn-primary" data-modal-toggle="modal" data-target="#modalCrear">
                 <i class="fas fa-plus"></i> Nueva Marca
             </button>
         </div>
@@ -27,7 +27,7 @@
                     <h3 class="rd-title-sm">Marcas Registradas</h3>
                 </div>
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="flex gap-3 items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
                         <div class="toggle-container">
                             <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
@@ -80,7 +80,7 @@
                                         data-id="{{ $marca->id }}"
                                         data-nombre="{{ $marca->nombre }}"
                                         data-descripcion="{{ $marca->descripcion }}"
-                                        data-toggle="modal" data-target="#modalEditar"
+                                        data-modal-toggle="modal" data-target="#modalEditar"
                                         title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -115,21 +115,21 @@
                 </tbody>
             </table>
 
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $marcas->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>
 
     {{-- ==================== MODAL CREAR ==================== --}} 
-    <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4" id="modalCrear" tabindex="-1" aria-labelledby="modalCrearLabel" aria-hidden="true">
+        <div class="relative w-full w-full max-w-2xl flex items-center justify-center min-h-full">
+            <div class="relative w-full rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
                 <div class="modal-header" style="border-bottom:1px solid #e5e7eb;">
                     <h5 class="modal-title rd-title-sm" id="modalCrearLabel">
                         <i class="fas fa-plus-circle mr-2" style="color:var(--color-primary)"></i>Nueva Marca
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-modal-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
@@ -138,10 +138,10 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="font-weight-bold">Nombre</label>
-                            <div class="input-group mt-1">
-                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <div class="flex items-stretch w-full mt-1">
+                                <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-tag"></i></span>
                                 <input type="text" name="nombre"
-                                    class="form-control rd-filter-input @error('nombre') is-invalid @enderror"
+                                    class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input @error('nombre') is-invalid @enderror"
                                     placeholder="Ej: Toyota" value="{{ old('nombre') }}" maxlength="100" autofocus>
                             </div>
                             @error('nombre')
@@ -150,17 +150,17 @@
                         </div>
                         <div class="form-group mb-0">
                             <label class="font-weight-bold">Descripción <span class="text-muted font-weight-normal">(opcional)</span></label>
-                            <div class="input-group mt-1">
-                                <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                            <div class="flex items-stretch w-full mt-1">
+                                <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-align-left"></i></span>
                                 <input type="text" name="descripcion"
-                                    class="form-control rd-filter-input"
+                                    class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                     placeholder="Ej: Marca japonesa de vehículos"
                                     value="{{ old('descripcion') }}" maxlength="255">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer" style="border-top:1px solid #e5e7eb;">
-                        <button type="button" class="rd-btn rd-btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="rd-btn rd-btn-default" data-modal-dismiss="modal">Cancelar</button>
                         <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn">
                             <i class="fas fa-check"></i> Guardar
                         </button>
@@ -171,14 +171,14 @@
     </div>
 
     {{-- ==================== MODAL EDITAR ==================== --}}
-    <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+        <div class="relative w-full w-full max-w-2xl flex items-center justify-center min-h-full">
+            <div class="relative w-full rd-card" style="border-radius:12px;border:1px solid #e5e7eb;">
                 <div class="modal-header" style="border-bottom:1px solid #e5e7eb;">
                     <h5 class="modal-title rd-title-sm" id="modalEditarLabel">
                         <i class="fas fa-edit mr-2" style="color:var(--color-primary)"></i>Editar Marca
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-modal-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
@@ -187,25 +187,25 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="font-weight-bold">Nombre</label>
-                            <div class="input-group mt-1">
-                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <div class="flex items-stretch w-full mt-1">
+                                <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-tag"></i></span>
                                 <input type="text" id="editNombre" name="nombre"
-                                    class="form-control rd-filter-input"
+                                    class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                     placeholder="Nombre de la marca" maxlength="100">
                             </div>
                         </div>
                         <div class="form-group mb-0">
                             <label class="font-weight-bold">Descripción <span class="text-muted font-weight-normal">(opcional)</span></label>
-                            <div class="input-group mt-1">
-                                <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                            <div class="flex items-stretch w-full mt-1">
+                                <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"><i class="fas fa-align-left"></i></span>
                                 <input type="text" id="editDescripcion" name="descripcion"
-                                    class="form-control rd-filter-input"
+                                    class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                     placeholder="Descripción de la marca" maxlength="255">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer" style="border-top:1px solid #e5e7eb;">
-                        <button type="button" class="rd-btn rd-btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="rd-btn rd-btn-default" data-modal-dismiss="modal">Cancelar</button>
                         <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn" style="color:white;">
                             <i class="fas fa-save"></i> Guardar
                         </button>
@@ -248,7 +248,7 @@
                 const div = document.createElement('div');
                 div.className = 'text-danger mt-1';
                 div.innerHTML = `<b>${errors[campo][0]}</b>`;
-                input.closest('.input-group').after(div);
+                input.closest('.flex items-stretch w-full').after(div);
             }
         });
     }
@@ -387,7 +387,7 @@
                             data-id="${marca.id}"
                             data-nombre="${marca.nombre}"
                             data-descripcion="${descripcion}"
-                            data-toggle="modal" data-target="#modalEditar"
+                            data-modal-toggle="modal" data-target="#modalEditar"
                             title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>

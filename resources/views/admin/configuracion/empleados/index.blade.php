@@ -2,7 +2,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Gestión de Empleados</h1>
@@ -20,15 +20,15 @@
     <div class="rd-card rd-card-full shadow-sm border-0 overflow-hidden">
         <div class="rd-card-body border-bottom bg-white">
             <form action="{{ route('admin.configuracion.empleados.index') }}" method="GET">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
+                <div class="flex flex-wrap -mx-2 items-center">
+                    <div class="w-full md:w-1/3">
                         <h3 class="rd-title-sm">
                             <i class="fas fa-users-cog mr-2" style="color: var(--color-secondary)"></i>Directorio de Personal
                         </h3>
                     </div>
                     
-                    <div class="col-md-8 d-flex justify-content-end gap-2">
-                        <div class="rd-input-group" style="min-width: 250px;">
+                    <div class="w-full md:w-2/3 flex justify-end gap-2">
+                        <div class="flex items-stretch w-full" style="min-width: 250px;">
                             <span><i class="fas fa-filter"></i></span>
                             <select name="rol" class="rd-input w-100">
                                 <option value="">Todos los Roles</option>
@@ -88,7 +88,7 @@
                                 #{{ ($usuarios->currentPage() - 1) * $usuarios->perPage() + $loop->iteration }}
                             </td>
                             <td>
-                                <div class="d-flex flex-column">
+                                <div class="flex flex-col">
                                     <span style="font-weight: 700; color: #1e293b;">{{ optional($usuario->persona)->nombre_persona ?? 'N/A' }} {{ optional($usuario->persona)->apellido_persona ?? 'N/A' }} </span>
                                 </div>
                             </td>
@@ -98,14 +98,14 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="d-flex align-items-center">
+                                <div class="flex items-center">
                                     <span class="badge" style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 10px;">
                                         {{ $usuario->roles->pluck('nombre')->first() ?: ($usuario->perfil->nombre_perfil ?? '—') }}
                                     </span>
                                 </div>
                             </td>
                             <td class="text-center">
-                                <div class="d-flex justify-content-center gap-2">
+                                <div class="flex justify-center gap-2">
                                     <a href="{{ route('admin.configuracion.empleados.show', $usuario->id_usuario) }}" 
                                        class="rd-action" title="Ver Perfil">
                                         <i class="fas fa-eye "></i>
@@ -121,7 +121,7 @@
                                     @endphp
 
                                     @if(!$isSelf)
-                                        <form action="{{ route('admin.configuracion.empleados.destroy', $usuario->id_usuario) }}" method="POST" onsubmit="return confirm('¿Eliminar empleado?');" class="d-inline">
+                                        <form action="{{ route('admin.configuracion.empleados.destroy', $usuario->id_usuario) }}" method="POST" onsubmit="return confirm('¿Eliminar empleado?');" class="inline">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="rd-action rd-btn-danger">
                                                 <i class="fas fa-trash"></i>
@@ -149,7 +149,7 @@
             </table>
         </div>
 
-        <div class="rd-card-body border-top bg-light d-flex justify-content-center">
+        <div class="rd-card-body border-top bg-light flex justify-center">
             {{ $usuarios->appends(request()->query())->onEachSide(1)->links('components.pagination') }}
         </div>
     </div>

@@ -24,39 +24,39 @@
 
         <div class="form-group">
             <label>Pregunta 1</label>
-            <select name="security_questions[0][question_type]" class="form-control" id="q0_type" required>
+            <select name="security_questions[0][question_type]" class="block w-full rounded-lg border px-3 py-2 text-sm" id="q0_type" required>
                 <option value="">-- Seleccione una pregunta --</option>
                 @foreach($questions as $q)
                     <option value="{{ $q }}">{{ $q }}</option>
                 @endforeach
             </select>
-            <input type="text" name="security_questions[0][question]" id="q0_custom" class="form-control mt-2" placeholder="Escribe tu pregunta personal" style="display:none">
+            <input type="text" name="security_questions[0][question]" id="q0_custom" class="block w-full rounded-lg border px-3 py-2 text-sm mt-2" placeholder="Escribe tu pregunta personal" style="display:none">
         </div>
 
         <div class="form-group">
             <label>Respuesta 1</label>
-            <input class="form-control" name="security_questions[0][answer]" required>
+            <input class="block w-full rounded-lg border px-3 py-2 text-sm" name="security_questions[0][answer]" required>
         </div>
 
         <hr>
 
         <div class="form-group">
             <label>Pregunta 2</label>
-            <select name="security_questions[1][question_type]" class="form-control" id="q1_type" required>
+            <select name="security_questions[1][question_type]" class="block w-full rounded-lg border px-3 py-2 text-sm" id="q1_type" required>
                 <option value="">-- Seleccione una pregunta --</option>
                 @foreach($questions as $q)
                     <option value="{{ $q }}">{{ $q }}</option>
                 @endforeach
             </select>
-            <input type="text" name="security_questions[1][question]" id="q1_custom" class="form-control mt-2" placeholder="Escribe tu pregunta personal" style="display:none">
+            <input type="text" name="security_questions[1][question]" id="q1_custom" class="block w-full rounded-lg border px-3 py-2 text-sm mt-2" placeholder="Escribe tu pregunta personal" style="display:none">
         </div>
 
         <div class="form-group">
             <label>Respuesta 2</label>
-            <input class="form-control" name="security_questions[1][answer]" required>
+            <input class="block w-full rounded-lg border px-3 py-2 text-sm" name="security_questions[1][answer]" required>
         </div>
 
-        <button class="btn btn-primary">Guardar preguntas</button>
+        <button class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">Guardar preguntas</button>
     </form>
 </div>
 @endsection

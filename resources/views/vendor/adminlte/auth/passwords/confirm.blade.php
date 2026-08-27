@@ -47,12 +47,12 @@
                 class="lockscreen-credentials @if(! config('adminlte.usermenu_image')) ml-0 @endif">
                 @csrf
 
-                <div class="input-group">
+                <div class="flex items-stretch w-full">
                     <input id="password" type="password" name="password"
-                        class="form-control @error('password') is-invalid @enderror"
+                        class="block w-full rounded-lg border px-3 py-2 text-sm @error('password') is-invalid @enderror"
                         placeholder="{{ __('adminlte::adminlte.password') }}" required autofocus>
 
-                    <div class="input-group-append">
+                    <div class="flex">
                         <button type="submit" class="btn">
                             <i class="fas fa-arrow-right text-muted"></i>
                         </button>

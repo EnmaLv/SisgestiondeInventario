@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 flex justify-between items-center">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem;">Editar Beca</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -38,7 +38,7 @@
                 <div id="tab-config" class="tab-pane fade show active">
                     @include('admin.becas._form_fields')
                     <hr>
-                    <div class="d-flex justify-content-end" style="gap:12px;">
+                    <div class="flex justify-end" style="gap:12px;">
                         @if(request('from') == 'show')
                             <a href="{{ route('admin.becas.show', $beca) }}" class="rd-btn rd-btn-default">Cancelar</a>
                         @else

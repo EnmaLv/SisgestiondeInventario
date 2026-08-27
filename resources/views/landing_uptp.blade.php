@@ -747,9 +747,9 @@
             </nav>
 
             <div class="header-ctas">
-                <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
+                <a href="/login" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">Iniciar Sesión</a>
                 @if (!(isset($hasEmployees) && $hasEmployees))
-                    <a href="/register" class="btn btn-outline">Registrarse</a>
+                    <a href="/register" class="inline-flex items-center justify-center rounded-lg border border-white/70 px-4 py-2 font-semibold text-white hover:bg-white/10">Registrarse</a>
                 @endif
                 <button class="mobile-menu" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
             </div>
@@ -766,8 +766,8 @@
             <p>Servicios integrales: apoyo psicológico, salud, deporte, becas y orientación para el éxito académico y
                 personal de la comunidad estudiantil UPTP.</p>
             <div class="hero-actions">
-                <a href="#sobre-nosotros" class="btn btn-primary">Sobre nosotros</a>
-                <a href="#programas" class="btn btn-outline">Programas Académicos</a>
+                <a href="#sobre-nosotros" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">Sobre nosotros</a>
+                <a href="#programas" class="inline-flex items-center justify-center rounded-lg border border-white/70 px-4 py-2 font-semibold text-white hover:bg-white/10">Programas Académicos</a>
             </div>
         </div>
     </section>

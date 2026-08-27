@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -21,9 +21,9 @@
         </div>
 
         <!-- Imagen + Fecha -->
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -46,14 +46,14 @@
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12 m-auto">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full mx-auto">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title"><b>Compra Creada</b></h3>
 
                     <div class="card-tools">
-                        <a href="{{ route('admin.movimientos.compras.index') }}" class="btn btn-tool">
+                        <a href="{{ route('admin.movimientos.compras.index') }}" class="inline-flex items-center rounded-lg p-2 text-slate-500 hover:bg-slate-100">
                             <i class="fas fa-arrow-left"></i>
                             <b>Volver</b>
                         </a>
@@ -61,18 +61,18 @@
                 </div>
                 <div class="card-body" style="display: block;">
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-3" style="display: inline-block;">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-full">
+                            <div class="flex flex-wrap -mx-2">
+                                <div class="w-full md:w-1/4" style="display: inline-block;">
                                     <div class="form-group">
                                         <label for="proveedor_id">Proveedor</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text inline-block"><i
+                                        <div class="flex items-stretch w-full mb-3">
+                                            <div class="flex items-stretch w-full-prepend">
+                                                <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 inline-block"><i
                                                         class="fas fa-tags"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" id="proveedor_id" name="proveedor_id"
+                                            <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm" id="proveedor_id" name="proveedor_id"
                                                 placeholder="Seleccione proveedor"
                                                 value="{{ old('proveedor_id', $compra->proveedor_nombre) }}" readonly>
                                         </div>
@@ -83,15 +83,15 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="form-group col-md-2" style="display: inline-block;">
+                                <div class="form-group w-full md:w-1/6" style="display: inline-block;">
                                     <label for="fecha">Fecha de Compra</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
+                                    <div class="flex items-stretch w-full mb-3">
+                                        <div class="flex items-stretch w-full-prepend">
+                                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 inline-block"><i
                                                     class="fas fa-calendar-alt"></i></span>
                                         </div>
                                         <input type="datetime-local"
-                                            class="form-control" id="fecha" name="fecha"
+                                            class="block w-full rounded-lg border px-3 py-2 text-sm" id="fecha" name="fecha"
                                             value="{{ old('fecha', $compra->fecha ? \Carbon\Carbon::parse($compra->fecha)->format('Y-m-d\TH:i') : '') }}" disabled>
                                     </div>
                                     @error('fecha')
@@ -100,14 +100,14 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-3" style="display: inline-block;">
+                                <div class="form-group w-full md:w-1/4" style="display: inline-block;">
                                     <label for="observaciones">Observaciones</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
+                                    <div class="flex items-stretch w-full mb-3">
+                                        <div class="flex items-stretch w-full-prepend">
+                                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 inline-block"><i
                                                     class="fas fa-sticky-note"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="observaciones"
+                                        <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm" id="observaciones"
                                             name="observaciones" placeholder="Ingrese observaciones"
                                             value="{{ old('observaciones', $compra->observaciones ?? 'Sin observaciones') }}" readonly>
                                     </div>
@@ -117,14 +117,14 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-2" style="display: inline-block;">
+                                <div class="form-group w-full md:w-1/6" style="display: inline-block;">
                                     <label for="estado">Estado Compra</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
+                                    <div class="flex items-stretch w-full mb-3">
+                                        <div class="flex items-stretch w-full-prepend">
+                                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 inline-block"><i
                                                     class="fas fa-sticky-note"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="estado" name="estado"
+                                        <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm" id="estado" name="estado"
                                             placeholder="Ingrese estado" value="{{ old('estado', $compra->estado) }}"
                                             readonly>
                                     </div>
@@ -134,14 +134,14 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-2" style="display: inline-block;">
+                                <div class="form-group w-full md:w-1/6" style="display: inline-block;">
                                     <label for="sede_destino">Sede de Destino</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text inline-block"><i
+                                    <div class="flex items-stretch w-full mb-3">
+                                        <div class="flex items-stretch w-full-prepend">
+                                            <span class="inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 inline-block"><i
                                                     class="fas fa-building"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="sede_destino"
+                                        <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm" id="sede_destino"
                                             name="sede_destino" placeholder="Sede de destino"
                                             value="{{ $sede_destino ? $sede_destino->nombre : 'Sin concluir' }}" readonly>
                                     </div>
@@ -160,16 +160,16 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12 m-auto">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full mx-auto">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title"><b>Productos Agregados</b></h3>
                 </div>
                 <div class="card-body" style="display: block;">
 
-                    <div class="row">
-                        <div class="col-md-12">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-full">
 
                             @if ($detalles->count() > 0)
                                 <h2 class="my-4">Detalles de la Orden de Compra</h2>
@@ -249,21 +249,21 @@
             font-size: 0.875rem;
         }
 
-        .input-group {
+        .flex items-stretch w-full {
             border: 1px solid #d8dee9;
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease;
         }
 
-        .input-group-text {
+        .inline-flex items-center px-3 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 {
             background: transparent;
             border: none;
             color: #64748b;
             padding: 0.5rem 0.75rem;
         }
 
-        .form-control {
+        .block w-full rounded-lg border px-3 py-2 text-sm {
             border: none;
             background: transparent;
             box-shadow: none;
@@ -271,8 +271,8 @@
             height: auto;
         }
 
-        .form-control:disabled,
-        .form-control[readonly] {
+        .block w-full rounded-lg border px-3 py-2 text-sm:disabled,
+        .block w-full rounded-lg border px-3 py-2 text-sm[readonly] {
             background-color: #f8f9fa;
             color: #6c757d;
             cursor: not-allowed;

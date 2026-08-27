@@ -43,11 +43,14 @@ class LoginController extends Controller
 
         $perfil = $usuario->perfil()->first();
         if ($perfil && $perfil->nombre_perfil === 'Administrador') {
+            AuthFacade::login($usuario);
+            $request->session()->regenerate();
             session(['pending_admin_id' => $usuario->id_usuario]);
             return redirect()->route('admin.configuracion.master_key.form');
         }
 
         AuthFacade::login($usuario);
+        $request->session()->regenerate();
 
         return redirect()->intended($this->redirectTo);
     }

@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center">
+    <div class="rd-card p-4 mb-4 flex justify-between items-center">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Beneficios de Becas</h1>
             <p class="mt-1 mb-0" style="font-size:0.95rem; color:#475569;">
@@ -22,7 +22,7 @@
             <div class="rd-card-header rd-header-space">
                 <h3 class="rd-title-sm">Beneficios registrados</h3>
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="flex gap-3 items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
                         <div class="toggle-container">
                             <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
@@ -89,7 +89,7 @@
                 </table>
             </div>
 
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $beneficios->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>

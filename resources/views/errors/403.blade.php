@@ -500,11 +500,11 @@
 
             <!-- Botones de acción -->
             <div class="button-group">
-                <a href="#" class="btn btn-primary" onclick="goHome(event)">
+                <a href="#" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700" onclick="goHome(event)">
                     <i class="fas fa-home"></i>
                     Ir al inicio
                 </a>
-                <a href="#" class="btn btn-secondary" onclick="goBack(event)">
+                <a href="#" class="inline-flex items-center justify-center rounded-lg bg-slate-600 px-4 py-2 font-semibold text-white hover:bg-slate-700" onclick="goBack(event)">
                     <i class="fas fa-arrow-left"></i>
                     Volver atrás
                 </a>

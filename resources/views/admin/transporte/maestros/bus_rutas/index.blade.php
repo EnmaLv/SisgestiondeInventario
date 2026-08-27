@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem;color:#0f172a;font-weight:700;">Rutas de Transporte</h1>
@@ -27,7 +27,7 @@
                     <h3 class="rd-title-sm">Rutas Registradas</h3>
                 </div>
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="flex gap-3 items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
                         <div class="toggle-container">
                             <input type="checkbox" id="estadoToggle" class="toggle-checkbox"
@@ -135,7 +135,7 @@
                 </tbody>
             </table>
 
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $rutas->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>

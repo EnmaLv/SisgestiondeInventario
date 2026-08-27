@@ -495,7 +495,7 @@
                                                                                         data-assigned-cita-id="{{ $assignedCita->id }}"
                                                                                         data-assigned-paciente="{{ $assignedCita->paciente->persona->nombre_persona }} {{ $assignedCita->paciente->persona->apellido_persona }}"
                                                                                         data-assigned-estado="{{ $assignedCita->estado }}"
-                                                                                        data-assigned-block="true"
+                                                                                        data-assigneblock="true"
                                                                                     @endif>
 
                                                                                     <div class="flex items-center justify-center mb-1">

@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -35,7 +35,7 @@
                     <h3 class="rd-title-sm">Ingredientes para Recetas Registradas</h3>
                 </div>
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="flex gap-3 items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
 
                         <div class="toggle-container">
@@ -102,11 +102,11 @@
                                             @endforeach
                                         </ul>
                                         @if ($showMore)
-                                            <button type="button" class="btn btn-link p-0 ver-mas-btn"
+                                            <button type="button" class="text-blue-600 hover:underline p-0 ver-mas-btn"
                                                 data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
                                                 Ver más...
                                             </button>
-                                            <button type="button" class="btn btn-link p-0 ver-menos-btn d-none"
+                                            <button type="button" class="text-blue-600 hover:underline p-0 ver-menos-btn d-none"
                                                 data-recipiente-id="{{ $receta->id }}" style="font-size: 0.9rem;">
                                                 Ver menos
                                             </button>
@@ -152,7 +152,7 @@
                                             </a>
                                             <form
                                                 action="{{ route('admin.maestros.receta_ingredientes.destroy', $receta->id) }}"
-                                                method="POST" class="d-inline">
+                                                method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="rd-action rd-btn-danger" title="Eliminar"
@@ -190,7 +190,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $recetas->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>

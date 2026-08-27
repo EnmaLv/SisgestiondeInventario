@@ -165,7 +165,7 @@ return [
     |
     | When enabling Livewire's pagination feature by using the `WithPagination`
     | trait, Livewire will use Tailwind templates to render pagination views
-    | on the page. If you want Bootstrap CSS, you can specify: "bootstrap"
+    | on the page. Configure the frontend styles in the application bundle.
     |
     */
 

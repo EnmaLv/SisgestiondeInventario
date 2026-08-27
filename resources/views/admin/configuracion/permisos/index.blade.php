@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Permisos Especiales</h1>
@@ -22,12 +22,12 @@
     <div class="rd-card rd-card-full shadow-sm border-0 overflow-hidden">
         <div class="rd-card-body border-bottom bg-white">
             <form action="{{ route('admin.configuracion.permisos.index') }}" method="GET">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
+                <div class="flex flex-wrap -mx-2 items-center">
+                    <div class="w-full md:w-1/2">
                         <h3 class="rd-title-sm">Usuarios del Sistema</h3>
                     </div>
-                    <div class="col-md-6 d-flex justify-content-end">
-                        <div class="rd-input-group">
+                    <div class="w-full md:w-1/2 flex justify-end">
+                        <div class="flex items-stretch w-full">
                             <span><i class="fas fa-search"></i></span>
                             <input type="text" name="q" value="{{ request('q') }}" class="rd-input w-100" placeholder="Buscar por nombre o usuario...">
                         </div>
@@ -80,7 +80,7 @@
                                 
                                 @if(!$isSelfAdmin)
                                     <a href="{{ route('admin.configuracion.permisos.edit', $usuario->id_usuario) }}" 
-                                       class="rd-btn rd-btn-alter d-inline-flex justify-content-center" 
+                                       class="rd-btn rd-btn-alter inline-flex justify-center" 
                                        style="width: 120px; font-size: 0.85rem;">
                                         <i class="fas fa-cog"></i> Gestionar
                                     </a>
@@ -105,7 +105,7 @@
             </table>
         </div>
 
-        <div class="rd-card-body border-top bg-light d-flex justify-content-center">
+        <div class="rd-card-body border-top bg-light flex justify-center">
             {{ $usuarios->appends(request()->query())->onEachSide(1)->links('components.pagination') }}
         </div>
     </div>

@@ -10,11 +10,11 @@
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-modal-dismiss="alert">&times;</button>
         </div>
     @endif
 
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -34,9 +34,9 @@
         </div>
 
         <!-- Imagen + Fecha -->
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -59,8 +59,8 @@
 
 @section('content')
     @include('components.alert')
-    <div class="row">
-        <div class="col-md-12 m-auto">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full mx-auto">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title"><b>Paso 1 | Requisicion creada</b></h3>
@@ -103,14 +103,14 @@
                     </div>
                 </div>
                 <div class="card-body" style="display: block;">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-3 display: inline-block;">
+                    <div class="flex flex-wrap -mx-2">
+                        <div class="w-full">
+                            <div class="flex flex-wrap -mx-2">
+                                <div class="w-full md:w-1/4 display: inline-block;">
                                     <label for="nombre" class="rd-label">Proveedor</label>
-                                    <div class="rd-input-group">
+                                    <div class="flex items-stretch w-full">
                                         <span><i class="fas fa-user-tie"></i></span>
-                                        <select class="form-control rd-input" id="proveedor_id" name="proveedor_id"
+                                        <select class="block w-full rounded-lg border px-3 py-2 text-sm rd-input" id="proveedor_id" name="proveedor_id"
                                             disabled>
                                             <option value="">Seleccione un proveedor</option>
                                             @foreach ($proveedores as $proveedor)
@@ -126,13 +126,13 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-3" style="display: inline-block;">
+                                <div class="w-full md:w-1/4" style="display: inline-block;">
                                     <label for="codigo">Fecha de la Requisicion</label>
-                                    <div class="rd-input-group">
+                                    <div class="flex items-stretch w-full">
                                         <span><i class="fas fa-calendar-alt"></i></span>
                                         <input type="datetime-local"
                                             value="{{ \Carbon\Carbon::now('America/Caracas')->format('Y-m-d\TH:i') }}"
-                                            class="form-control" id="fecha" name="fecha"
+                                            class="block w-full rounded-lg border px-3 py-2 text-sm" id="fecha" name="fecha"
                                             value="{{ old('fecha', $compra->fecha) }}" disabled>
                                     </div>
                                     @error('fecha')
@@ -141,16 +141,16 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-4" style="display: inline-block;">
+                                <div class="w-full md:w-1/3" style="display: inline-block;">
                                     <label for="codigo">Observaciones</label>
-                                    <div class="rd-input-group">
+                                    <div class="flex items-stretch w-full">
                                         <span><i class="fas fa-sticky-note"></i></span>
                                         @if ($compra->observaciones == !null)
-                                            <input type="text" class="form-control" id="observaciones"
+                                            <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm" id="observaciones"
                                                 name="observaciones" placeholder="Ingrese observaciones"
                                                 value="{{ old('observaciones', $compra->observaciones) }}" disabled>
                                         @else
-                                            <input type="text" class="form-control" id="observaciones"
+                                            <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm" id="observaciones"
                                                 name="observaciones" placeholder="Ingrese observaciones"
                                                 value="Sin observaciones" disabled>
                                         @endif
@@ -161,11 +161,11 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-2" style="display: inline-block;">
+                                <div class="w-full md:w-1/6" style="display: inline-block;">
                                     <label for="codigo">Requisicion</label>
-                                    <div class="rd-input-group">
+                                    <div class="flex items-stretch w-full">
                                         <span><i class="fas fa-sticky-note"></i></span>
-                                        <input type="text" class="form-control" id="estado" name="estado"
+                                        <input type="text" class="block w-full rounded-lg border px-3 py-2 text-sm" id="estado" name="estado"
                                             placeholder="Ingrese estado" value="{{ old('estado', $compra->estado) }}"
                                             disabled>
                                     </div>
@@ -183,8 +183,8 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12 m-auto">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full mx-auto">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title"><b>Paso 2 | Agregar productos</b></h3>
@@ -198,8 +198,8 @@
     </div>
 
     @if ($compra->estado == 'Enviado al proveedor')
-        <div class="row">
-            <div class="col-md-12 m-auto">
+        <div class="flex flex-wrap -mx-2">
+            <div class="w-full mx-auto">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><b>Paso 3 | Registrar Fechas de Vencimiento</b></h3>
@@ -209,8 +209,8 @@
                         <form action="{{ route('admin.movimientos.compras.finalizarCompra', $compra) }}" method="POST"
                             class="rd-prevent-double-submit">
                             @csrf
-                            <div class="row">
-                                <div class="col-md-12">
+                            <div class="flex flex-wrap -mx-2">
+                                <div class="w-full">
                                     <div class="form-group" style="text-align: right;">
                                         <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn"><i
                                                 class="fas fa-check"></i>

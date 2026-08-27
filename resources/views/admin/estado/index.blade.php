@@ -3,7 +3,7 @@
 @section('title', 'Gestión de Estados')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -22,8 +22,8 @@
         <div>
             <button type="button"
                     class="rd-btn rd-btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalCrear">
+                    data-modal-toggle="modal"
+                    data-modal-target="#modalCrear">
                 <i class="fas fa-plus"></i>
                 <span>Nuevo Estado</span>
             </button>
@@ -48,7 +48,7 @@
             Livewire.on('cerrarModal', () => {
                 const modales = document.querySelectorAll('.modal.show');
                 modales.forEach(modal => {
-                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    const modalInstance = TailwindModal.getInstance(modal);
                     if (modalInstance) {
                         modalInstance.hide();
                     }

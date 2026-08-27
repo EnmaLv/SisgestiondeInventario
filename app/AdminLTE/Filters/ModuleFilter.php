@@ -123,9 +123,9 @@ class ModuleFilter implements FilterInterface
             'modulos_permitidos'    => $permitidos,
             'menu_permissions_user' => $menuPermissions,
             'es_admin'              => $esAdmin,
+            'modulo_activo'         => session('modulo_activo') && in_array(session('modulo_activo'), $permitidos)
+                ? session('modulo_activo')
+                : ($permitidos[0] ?? null),
         ]);
-
-        // No se selecciona automáticamente un módulo al entrar por primera vez.
-        // La vista de selección debe mostrarse para que el usuario elija el módulo.
     }
 }

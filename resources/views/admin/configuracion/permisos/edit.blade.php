@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Gestión de Permisos Especiales</h1>
@@ -19,8 +19,8 @@
 @section('content')
     @include('components.alert')
 
-    <div class="row justify-content-center fade-in">
-        <div class="col-md-11">
+    <div class="flex flex-wrap -mx-2 justify-center fade-in">
+        <div class="w-full md:w-11/12">
             <div class="rd-card shadow-sm border-0">
                 <div class="rd-card-body p-4">
                     <form action="{{ route('admin.configuracion.permisos.update', $usuario->id_usuario) }}" method="POST"
@@ -28,7 +28,7 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-5">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-between items-center mb-3">
                                 <label class="rd-label m-0">
                                     <i class="fas fa-cubes mr-2 text-success"></i> Módulos Especiales para este Usuario
                                 </label>
@@ -41,13 +41,13 @@
 
                             <div class="modules-container p-4"
                                 style="border: 1px solid #eef2f6; border-radius: 12px; background: #fafbfc;">
-                                <div class="row">
+                                <div class="flex flex-wrap -mx-2">
                                     @forelse($modulos as $modulo)
                                         @php
                                             $loTienePorRol = in_array($modulo->id, $roleModules);
                                             $loTieneAsignadoExtra = in_array($modulo->id, $modulosExtra);
                                         @endphp
-                                        <div class="col-md-4 mb-2">
+                                        <div class="w-full md:w-1/3 mb-2">
                                             <div class="item-modulo p-2 rounded {{ $loTienePorRol ? 'bg-success-light border border-success' : '' }}"
                                                 style="{{ $loTienePorRol ? 'background-color: #f0fdf4; border-radius: 8px;' : '' }}">
                                                 <div class="custom-control custom-checkbox">
@@ -69,7 +69,7 @@
                                             </div>
                                         </div>
                                     @empty
-                                        <div class="col-12 text-center text-muted py-2">
+                                        <div class="w-full text-center text-muted py-2">
                                             <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> No hay módulos
                                             activos registrados en la base de datos.
                                         </div>
@@ -80,7 +80,7 @@
 
                         <hr class="my-4" style="opacity:0.3;">
                         <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="flex justify-between items-center mb-3">
                                 <label class="rd-label m-0">
                                     <i class="fas fa-list-check mr-2 text-primary"></i> Matriz de Permisos Individuales
                                 </label>
@@ -105,9 +105,9 @@
 
                         <hr class="my-4" style="opacity:0.5;">
 
-                        <div class="d-flex gap-3 justify-content-end" style="gap:10px">
+                        <div class="flex gap-3 justify-end" style="gap:10px">
                             <a href="{{ route('admin.configuracion.permisos.index') }}"
-                                class="rd-btn rd-btn-default px-4 d-flex align-items-center">
+                                class="rd-btn rd-btn-default px-4 flex items-center">
                                 Cancelar
                             </a>
                             <button type="submit" id="save-perms" class="rd-btn rd-btn-primary rd-submit-btn px-5"

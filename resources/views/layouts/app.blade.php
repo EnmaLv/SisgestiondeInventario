@@ -12,7 +12,7 @@
     <meta name="color-scheme" content="light dark">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Bienestar Estudiantil') }}</title>
+    <title>@yield('title', config('app.name', 'Bienestar Estudiantil'))</title>
 
     <script>
         (function() {
@@ -47,6 +47,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
     @stack('css')
+    @yield('css')
 
     <style>
         :root {
@@ -283,8 +284,7 @@
     </style>
 </head>
 
-<body
-    class="preload font-sans antialiased overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+<body class="preload font-sans antialiased overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 {{ View::hasSection('legacy_admin_shell') ? 'legacy-admin-shell' : '' }}">
     <div class="w-full flex flex-col overflow-hidden" style="height: 100dvh;"
         @toggle-chat.window="isChatOpen = !isChatOpen" x-data="{
             isChatOpen: false,
@@ -310,17 +310,23 @@
             @include('layouts.sidebar')
 
             <main class="flex-1 overflow-y-auto invisible-scrollbar p-6 scroll-smooth">
-                @isset($header)
-                    <div class="max-w-7xl mx-auto mb-6">
-                        {{ $header }}
-                    </div>
-                @endisset
+                <div class="w-full max-w-7xl mx-auto">
+                    @isset($header)
+                        <div class="mb-6">
+                            {{ $header }}
+                        </div>
+                    @endisset
 
-                @if (isset($slot))
-                    {{ $slot }}
-                @else
-                    @yield('content')
-                @endif
+                    <div class="legacy-content-header">
+                        @yield('content_header')
+                    </div>
+
+                    @if (isset($slot))
+                        {{ $slot }}
+                    @else
+                        @yield('content')
+                    @endif
+                </div>
             </main>
 
             @if (View::exists('components.chat-window'))
@@ -328,6 +334,9 @@
             @endif
         </div>
     </div>
+
+    @stack('js')
+    @yield('js')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

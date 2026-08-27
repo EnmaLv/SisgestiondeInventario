@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="
             background: #ffffff;
             border-radius: 14px;
@@ -18,7 +18,7 @@
             </p>
         </div>
         <div>
-            <button type="button" class="rd-btn rd-btn-primary" data-toggle="modal" data-target="#modalCrearPnf">
+            <button type="button" class="rd-btn rd-btn-primary" data-modal-toggle="modal" data-target="#modalCrearPnf">
                 <i class="fas fa-plus"></i> Nuevo PNF
             </button>
         </div>
@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="rd-actions">
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="flex gap-3 items-center">
                         <span class="font-weight-bold" style="margin-right:10px;">Filtrar por estado:</span>
 
                         <div class="toggle-container">
@@ -160,18 +160,18 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3 d-flex justify-content-center">
+            <div class="mt-3 flex justify-center">
                 {{ $pnfs->onEachSide(1)->links('components.pagination') }}
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalCrearPnf" tabindex="-1" role="dialog" aria-labelledby="modalCrearPnfLabel"
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4" id="modalCrearPnf" tabindex="-1" role="dialog" aria-labelledby="modalCrearPnfLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-            <div class="modal-content" style="border-radius: 14px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <div class="relative w-full w-full max-w-2xl flex items-center justify-center min-h-full" role="document">
+            <div class="relative w-full" style="border-radius: 14px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
                 <div class="modal-header" style="border-bottom: 1px solid #e5e7eb;">
                     <h5 class="modal-title rd-title-sm" id="modalCrearPnfLabel">Crear un PNF</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" data-modal-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -182,9 +182,9 @@
                     <div class="modal-body p-4">
                         <div>
                             <label class="rd-label">Nombre del PNF</label>
-                            <div class="rd-input-group">
+                            <div class="flex items-stretch w-full">
                                 <span class="rd-input-icon"><i class="fas fa-tag"></i></span>
-                                <input type="text" name="nombre" class="form-control rd-filter-input"
+                                <input type="text" name="nombre" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input"
                                     placeholder="Ingrese el nombre" value="{{ old('nombre') }}" required>
                             </div>
                             @error('nombre')
@@ -195,7 +195,7 @@
 
                     <div class="modal-footer"
                         style="border-top: 1px solid #e5e7eb; background: #f8fafc; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
-                        <button type="button" class="rd-btn rd-btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="rd-btn rd-btn-default" data-modal-dismiss="modal">Cancelar</button>
                         <button type="submit" class="rd-btn rd-btn-primary">Guardar PNF</button>
                     </div>
                 </form>

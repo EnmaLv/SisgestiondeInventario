@@ -1,5 +1,5 @@
 <div class="main-content pt-3">
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center content-header">
+    <div class="rd-card p-4 mb-4 flex justify-between items-center content-header">
         <div>
             <h1 class="m-0 rd-title-sm" style="font-size:1.4rem">
                 Importación de Archivos
@@ -10,9 +10,9 @@
             </p>
         </div>
 
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hoy</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Hoy</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -47,9 +47,9 @@
                 Subir archivo
             </h3>
 
-            <div class="row g-3">
+            <div class="flex flex-wrap -mx-2 g-3">
 
-                <div class="col-md-7">
+                <div class="w-full md:w-7/12">
 
                     <label class="rd-card p-4 text-center" for="archivo">
 
@@ -68,7 +68,7 @@
                             x-on:livewire-upload-finish="isUploading = false"
                             x-on:livewire-upload-error="isUploading = false"
                             x-on:livewire-upload-progress="progress = $event.detail.progress">
-                            <input type="file" class="form-control rd-filter-input" wire:model="archivo"
+                            <input type="file" class="block w-full rounded-lg border px-3 py-2 text-sm rd-filter-input" wire:model="archivo"
                                 wire:key="{{ $archivoKey }}" accept=".xlsx,.xls"
                                 style="padding: 20px; font-size: 1rem; height: auto;" id="archivo" hidden>
 
@@ -83,7 +83,7 @@
                         </div>
                     </label>
                 </div>
-                <div class="col-md-5">
+                <div class="w-full md:w-5/12">
                     <label class="rd-label mb-1">¿Cómo funciona?</label>
 
                     <div class="rd-card p-3" style="background:#fbfdff">
@@ -97,7 +97,7 @@
                             <li>Los errores se reportan antes de guardar</li>
                             <li>La inserción se realiza en una transacción</li>
                         </ul>
-                        <div class="d-flex justify-content-end gap-2 mt-4">
+                        <div class="flex justify-end gap-2 mt-4">
                             <button wire:click="save" class="rd-btn rd-btn-primary">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 Procesar archivo

@@ -130,13 +130,13 @@
             margin-bottom: 16px;
         }
 
-        .form-row {
+        .flex flex-wrap -mx-2 {
             display: flex;
             gap: 12px;
             margin-bottom: 16px;
         }
 
-        .form-row .form-group {
+        .flex flex-wrap -mx-2 .form-group {
             flex: 1;
             margin-bottom: 0;
         }
@@ -239,7 +239,7 @@
                 min-height: 240px;
             }
 
-            .form-row {
+            .flex flex-wrap -mx-2 {
                 flex-direction: column;
                 gap: 16px;
             }
@@ -294,7 +294,7 @@
                         </div>
                     @endif
 
-                    <div class="form-row">
+                    <div class="flex flex-wrap -mx-2">
                         <div class="form-group">
                             <input class="input" name="first_name" placeholder="Primer nombre" required
                                 value="{{ old('first_name') }}">
@@ -322,7 +322,7 @@
                             value="{{ old('email') }}">
                     </div>
 
-                    <div class="form-row">
+                    <div class="flex flex-wrap -mx-2">
                         <div class="form-group">
                             <input class="input" type="password" name="password" placeholder="Contraseña" required>
                         </div>
@@ -335,7 +335,7 @@
                     <h3 class="section-title">Preguntas de seguridad</h3>
 
                     @for ($i = 0; $i < 2; $i++)
-                        <div class="form-row">
+                        <div class="flex flex-wrap -mx-2">
                             <div class="form-group">
                                 <select name="security_questions[{{ $i }}][question]"
                                     id="q{{ $i }}_type" class="select" required>

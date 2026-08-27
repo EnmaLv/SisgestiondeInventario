@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
+    <div class="rd-card p-4 mb-4 flex justify-between items-center"
         style="background: #ffffff; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
         <div>
             <h1 class="m-0" style="font-size:1.45rem; color:#0f172a; font-weight:700;">Editar Ingredientes de Receta</h1>
@@ -10,9 +10,9 @@
                 Usuario: <strong>{{ auth()->user()->persona->nombre_persona }}</strong>
             </p>
         </div>
-        <div class="d-flex align-items-center" style="gap:14px;">
+        <div class="flex items-center" style="gap:14px;">
             <div class="text-right d-none d-sm-block">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Fecha de edición</small>
+                <small class="text-muted block" style="font-size:0.75rem;">Fecha de edición</small>
                 <span style="font-weight:600; font-size:0.95rem;">
                     {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                 </span>
@@ -29,11 +29,11 @@
 @section('content')
     @include('components.alert')
 
-    <div class="row justify-content-center fade-in">
-        <div class="col-md-11">
+    <div class="flex flex-wrap -mx-2 justify-center fade-in">
+        <div class="w-full md:w-11/12">
             <div class="rd-card shadow-sm border-0 overflow-hidden">
                 <div class="rd-card-body border-bottom bg-light">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex justify-between items-center">
                         <h3 class="rd-title-sm m-0">
                             <i class="fas fa-edit mr-2" style="color: var(--color-secondary)"></i>Configuración de la Receta
                         </h3>
@@ -47,24 +47,24 @@
                         class="rd-prevent-double-submit">
                         @csrf
                         @method('PUT')
-                        <div class="row">
-                            <div class="col-md-4 border-right">
+                        <div class="flex flex-wrap -mx-2">
+                            <div class="w-full md:w-1/3 border-right">
                                 <div class="form-group">
                                     <label class="rd-label mb-2">Nombre de la Receta</label>
-                                    <div class="rd-input-group" style="background: #f8fafc; cursor: not-allowed;">
+                                    <div class="flex items-stretch w-full" style="background: #f8fafc; cursor: not-allowed;">
                                         <span><i class="fas fa-book-open"></i></span>
                                         <input type="text" class="rd-input w-100" value="{{ $receta->nombre }}" disabled>
                                         <input type="hidden" name="recetas_id" value="{{ $receta->id }}">
                                     </div>
-                                    <small class="text-muted mt-2 d-block">Estás editando la composición técnica de esta
+                                    <small class="text-muted mt-2 block">Estás editando la composición técnica de esta
                                         preparación.</small>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="w-full md:w-2/3">
                                 <label class="rd-label mb-2">Añadir nuevos ingredientes</label>
-                                <div class="d-flex gap-2 align-items-start mb-4">
+                                <div class="flex gap-2 items-start mb-4">
                                     <div class="flex-grow-1">
-                                        <div class="rd-input-group">
+                                        <div class="flex items-stretch w-full">
                                             <span><i class="fas fa-box-open"></i></span>
                                             <select class="rd-input w-100" id="producto_select">
                                                 <option value="">Producto...</option>
@@ -78,14 +78,14 @@
                                         </div>
                                     </div>
                                     <div style="width:130px">
-                                        <div class="rd-input-group">
+                                        <div class="flex items-stretch w-full">
                                             <span><i class="fas fa-weight-hanging"></i></span>
                                             <input type="number" step="any" min="0" id="cantidad_input"
                                                 class="rd-input w-100" placeholder="Cant.">
                                         </div>
                                     </div>
                                     <div style="width:160px">
-                                        <div class="rd-input-group">
+                                        <div class="flex items-stretch w-full">
                                             <span><i class="fas fa-ruler-combined"></i></span>
                                             <select class="rd-input w-100" id="unidad_select">
                                                 <option value="">Unidad</option>
@@ -99,7 +99,7 @@
                                         </div>
                                     </div>
                                     <button type="button"
-                                        class="rd-btn rd-btn-primary rd-submit-btn shadow-sm d-flex justify-content-center align-items-center"
+                                        class="rd-btn rd-btn-primary rd-submit-btn shadow-sm flex justify-center items-center"
                                         id="agregarProducto" style="height: 45px; width: 45px;">
                                         <i class="fas fa-plus"></i>
                                     </button>
@@ -109,10 +109,10 @@
                                     <ul id="listaProductos" class="list-group list-group-flush"
                                         style="max-height: 400px; overflow-y: auto;">
                                         @forelse ($receta->recetaIngredientes as $ing)
-                                            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom"
+                                            <li class="list-group-item flex justify-between items-center bg-transparent py-3 border-bottom"
                                                 id="prod_{{ $ing->producto_id }}">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="rounded-circle mr-3 d-flex align-items-center justify-content-center"
+                                                <div class="flex items-center">
+                                                    <div class="rounded-circle mr-3 flex items-center justify-center"
                                                         style="width:35px; height:35px; background: #f1f5f9;">
                                                         <i class="fas fa-carrot text-muted"></i>
                                                     </div>
@@ -123,7 +123,7 @@
                                                             {{ $ing->unidad->nombre }}</div>
                                                     </div>
                                                 </div>
-                                                <div class="d-flex align-items-center gap-2">
+                                                <div class="flex items-center gap-2">
                                                     <input type="hidden" name="producto_id[]"
                                                         value="{{ $ing->producto_id }}">
                                                     <input type="hidden" name="cantidad_porcion[]"
@@ -151,7 +151,7 @@
                             </div>
                         </div>
                         <hr class="my-4" style="opacity: 0.5;">
-                        <div class="d-flex justify-content-end gap-3">
+                        <div class="flex justify-end gap-3">
                             <a href="{{ url('admin/maestros/receta_ingredientes') }}"
                                 class="rd-btn rd-btn-default px-4">Cancelar</a>
                             <button type="submit" class="rd-btn rd-btn-primary rd-submit-btn px-5 shadow-sm">
@@ -217,12 +217,12 @@
 
                 const li = document.createElement('li');
                 li.className =
-                    'list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 border-bottom fade-in';
+                    'list-group-item flex justify-between items-center bg-transparent py-3 border-bottom fade-in';
                 li.id = 'prod_' + prodId;
 
                 li.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width:35px; height:35px; background: #f1f5f9;">
+                    <div class="flex items-center">
+                        <div class="rounded-circle mr-3 flex items-center justify-center" style="width:35px; height:35px; background: #f1f5f9;">
                             <i class="fas fa-plus text-success small"></i>
                         </div>
                         <div>
@@ -230,7 +230,7 @@
                             <div class="small text-muted">${cantidad} ${unidadNombre}</div>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center">
+                    <div class="flex items-center">
                         <input type="hidden" name="producto_id[]" value="${prodId}">
                         <input type="hidden" name="cantidad_porcion[]" value="${cantidad}">
                         <input type="hidden" name="unidad_id[]" value="${unidadId}">

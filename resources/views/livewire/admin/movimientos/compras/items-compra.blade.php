@@ -1,11 +1,11 @@
 <div>
-    <div class="row">
-        <div class="col-md-3">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full md:w-1/4">
             <label for="nombre">Producto</label>
-            <div class="rd-input-group">
+            <div class="flex items-stretch w-full">
                 <span><i class="fas fa-box"></i></span>
                 <select @disabled($compra->estado == 'Enviado al proveedor') name="nombre" wire:model.live="productoId" id="nombre"
-                    class="form-control select2">
+                    class="block w-full rounded-lg border px-3 py-2 text-sm select2">
                     <option value="">Seleccione un producto</option>
                     @foreach ($productos as $producto)
                         <option value="{{ $producto->id }}" {{ old('productoId', request('productoId')) == $producto->id ? 'selected' : '' }}>{{ $producto->codigo }} -
@@ -30,11 +30,11 @@
             </div>
         </div>
 
-        <div class="col-md-2">
+        <div class="w-full md:w-1/6">
             <label for="nombre">Lote</label>
-            <div class="rd-input-group">
+            <div class="flex items-stretch w-full">
                 <span><i class="fas fa-box"></i></span>
-                <input type="text" wire:model="codigoLote" class="form-control" id="lote" name="lote" placeholder="Código de lote" readonly>
+                <input type="text" wire:model="codigoLote" class="block w-full rounded-lg border px-3 py-2 text-sm" id="lote" name="lote" placeholder="Código de lote" readonly>
             </div>
             @error('codigoLote')
                 <div class="alert text-danger p-0 m-0">
@@ -44,11 +44,11 @@
         </div>
 
 
-        <div class="col-md-2">
+        <div class="w-full md:w-1/6">
             <label for="cantidad">Cantidad (U)</label>
-            <div class="rd-input-group">
+            <div class="flex items-stretch w-full">
                     <span><i class="fas fa-plus"></i></span>
-                <input @disabled($compra->estado == 'Enviado al proveedor') type="number" class="form-control" id="cantidad"
+                <input @disabled($compra->estado == 'Enviado al proveedor') type="number" class="block w-full rounded-lg border px-3 py-2 text-sm" id="cantidad"
                     wire:model="cantidad" name="cantidad" placeholder="Ingrese cantidad"
                     value="{{ old('cantidad', $compra->cantidad) }}" min="0">
             </div>
@@ -59,11 +59,11 @@
             @enderror
         </div>
 
-        <div class="col-md-2">
+        <div class="w-full md:w-1/6">
             <label for="precioCompra">Precio Compra(.BS)</label>
-            <div class="rd-input-group">
+            <div class="flex items-stretch w-full">
                     <span><i class="fas fa-dollar-sign"></i></span>
-                <input @disabled($compra->estado == 'Enviado al proveedor') type="number" wire:model="precioCompra" class="form-control"
+                <input @disabled($compra->estado == 'Enviado al proveedor') type="number" wire:model="precioCompra" class="block w-full rounded-lg border px-3 py-2 text-sm"
                     id="precioCompra" name="precio_compra" placeholder="Ingrese precio de compra"
                     value="{{ old('precio_compra', $compra->precio_compra) }}" min="0">
             </div>
@@ -74,7 +74,7 @@
             @enderror
         </div>
 
-        <div class="col-md-1">
+        <div class="w-full md:w-1/12">
             <div style="height: 31px;"></div>
             <div class="form-group">
                 @if ($compra->estado == 'Enviado al proveedor')
@@ -98,8 +98,8 @@
                 });">
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full">
 
             @if ($compra->detalleCompras->count() > 0)
                 <h2 class="my-4">Detalles de la Requisicion</h2>
@@ -125,7 +125,7 @@
                                 <td>{{ number_format($detalle->precio_unitario, 2, ',', '.') }} .BS</td>
                                 <td>{{ number_format($detalle->subtotal, 2, ',', '.') }} .BS</td>
                                 <td>
-                                    <button @disabled($compra->estado == 'Enviado al proveedor') class="btn btn-danger disabled:opacity-25"
+                                    <button @disabled($compra->estado == 'Enviado al proveedor') class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700 disabled:opacity-25"
                                         wire:click="eliminarItem({{ $detalle->id }})" wire:loading.attr="disabled"><i
                                             class="fas fa-trash"></i></button>
                                 </td>

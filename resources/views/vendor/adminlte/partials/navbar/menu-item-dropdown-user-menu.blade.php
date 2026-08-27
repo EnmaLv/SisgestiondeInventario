@@ -13,10 +13,10 @@
     @php($logout_url = $logout_url ? url($logout_url) : '')
 @endif
 
-<li class="nav-item user-menu d-flex align-items-center">
+<li class="nav-item user-menu flex items-center">
 
     {{-- User menu toggler --}}
-    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+    <a href="#" class="nav-link dropdown-toggle" data-modal-toggle="dropdown">
         <img src="{{ asset('img/user-icon.webp') }}" class="user-image img-circle elevation-2"
             alt="{{ Auth::user()->name }}" style="object-fit: cover">
         @if (config('adminlte.usermenu_image'))
@@ -64,12 +64,12 @@
         {{-- User menu footer --}}
         <li class="user-footer" style="border-radius:10px">
             @if ($profile_url)
-                <a href="{{ $profile_url }}" class="nav-link btn btn-default btn-flat d-inline-block">
+                <a href="{{ $profile_url }}" class="nav-link inline-flex items-center rounded-lg border border-slate-300 px-3 py-2 btn-flat d-inline-block">
                     <i class="fa fa-fw fa-user text-lightblue"></i>
                     {{ __('adminlte::menu.profile') }}
                 </a>
             @endif
-            <a class="btn btn-default btn-flat float-right @if (!$profile_url) btn-block @endif"
+            <a class="inline-flex items-center rounded-lg border border-slate-300 px-3 py-2 btn-flat float-right @if (!$profile_url) btn-block @endif"
                 href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                 style="border-radius:10px">
                 <i class="fa fa-fw fa-power-off text-red"></i>
