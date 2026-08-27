@@ -59,6 +59,25 @@ class ModuleFilter implements FilterInterface
         return $item;
     }
 
+    public function resolveInitialRoute($userId): string
+    {
+        session()->forget(['modulos_permitidos', 'menu_permissions_user', 'es_admin', 'modulo_activo']);
+        $this->inicializarSesion($userId);
+
+        $permitidos = session('modulos_permitidos', []);
+
+        if (count($permitidos) === 1) {
+            session(['modulo_activo' => $permitidos[0]]);
+            return route('home');
+        }
+
+        if (count($permitidos) > 1) {
+            return route('admin.modulos.seleccionar');
+        }
+
+        return route('home');
+    }
+
     private function inicializarSesion($userId)
     {
         $modulesTable = Schema::hasTable('modulos') ? 'modulos' : (Schema::hasTable('modulo') ? 'modulo' : null);

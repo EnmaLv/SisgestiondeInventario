@@ -338,7 +338,6 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         // PSICOLOGIA
         require __DIR__ . '/psicologia.php';
 
-        /* Configuración - Empleados, Permisos, Roles */
 
         Route::prefix('configuracion')
             ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
@@ -383,31 +382,23 @@ Route::prefix('/admin')->group(function () {
         ->name('admin.modulos.cambiar');
 });
 
-// Custom auth routes (replacing adminlte auth views)
-// Login
 Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
-// Logout
 Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
-// Register
 Route::get('register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-// Security questions flow shown immediately after register
 Route::middleware('auth')->group(function () {
     Route::get('security-questions', [App\Http\Controllers\Auth\RegisterController::class, 'showSecurityQuestionsForm'])->name('security.questions');
     Route::post('security-questions', [App\Http\Controllers\Auth\RegisterController::class, 'saveSecurityQuestions'])->name('security.questions.save');
 });
 
-// Admin master key verification
 Route::get('admin/master-key', [AdminMasterKeyController::class, 'showForm'])->name('admin.master_key.form');
 Route::post('admin/master-key/verify', [AdminMasterKeyController::class, 'verify'])->name('admin.master_key.verify');
 
-// Admin manage master key (only for logged admin users)
 Route::get('admin/master-key/manage', [App\Http\Controllers\Admin\MasterKeyController::class, 'showForm'])->name('admin.master_key.manage')->middleware('auth');
 Route::post('admin/master-key/manage', [App\Http\Controllers\Admin\MasterKeyController::class, 'update'])->name('admin.master_key.update')->middleware('auth');
 
-// Password recovery via security questions
 Route::get('password/recover', [PasswordRecoveryController::class, 'showEmailForm'])->name('password.recover.email');
 Route::post('password/recover', [PasswordRecoveryController::class, 'postEmail'])->name('password.recover.post_email');
 Route::get('password/recover/verify', [PasswordRecoveryController::class, 'showVerifyForm'])->name('password.recover.verify.form');
