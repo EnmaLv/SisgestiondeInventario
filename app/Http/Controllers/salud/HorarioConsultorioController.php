@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\salud\Consultorio;
 use App\Models\salud\HorarioConsultorio;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class HorarioConsultorioController extends Controller
 {
@@ -60,10 +62,8 @@ class HorarioConsultorioController extends Controller
         $consultorioId = $validated['consultorio_id'];
         $seleccionados = $request->input('horarios', []);
 
-        // Obtener todos los registros actuales de este consultorio (activos e inactivos)
         $existentes = HorarioConsultorio::where('consultorio_id', $consultorioId)->get();
 
-        // Mapear registros existentes por la clave 'dia|hora_inicio|hora_fin'
         $existentesMap = $existentes->keyBy(function ($h) {
             $inicio = \Carbon\Carbon::parse($h->hora_inicio)->format('H:i');
             $fin    = \Carbon\Carbon::parse($h->hora_fin)->format('H:i');
@@ -72,7 +72,6 @@ class HorarioConsultorioController extends Controller
 
         $clavesProcesadas = [];
 
-        // Procesar los bloques seleccionados
         foreach ($seleccionados as $item) {
             $partes = explode('|', $item);
 
@@ -91,12 +90,10 @@ class HorarioConsultorioController extends Controller
 
             if ($existentesMap->has($key)) {
                 $horario = $existentesMap->get($key);
-                // Si estaba inactivo, lo reactivamos
                 if (!$horario->activo) {
                     $horario->update(['activo' => true]);
                 }
             } else {
-                // Si no existe, creamos el nuevo registro
                 HorarioConsultorio::create([
                     'consultorio_id' => $consultorioId,
                     'dia'            => $dia,
@@ -107,7 +104,6 @@ class HorarioConsultorioController extends Controller
             }
         }
 
-        // Desactivar aquellos horarios que estaban activos pero el usuario desmarcó
         foreach ($existentes as $horario) {
             $inicio = \Carbon\Carbon::parse($horario->hora_inicio)->format('H:i');
             $fin    = \Carbon\Carbon::parse($horario->hora_fin)->format('H:i');
@@ -123,7 +119,6 @@ class HorarioConsultorioController extends Controller
             ->with('success', 'Horarios actualizados correctamente.');
     }
 
-
     public function destroy(HorarioConsultorio $horario)
     {
         $consultorioId = $horario->consultorio_id;
@@ -132,5 +127,43 @@ class HorarioConsultorioController extends Controller
         return redirect()
             ->route('admin.salud.movimientos.horarios.index', ['consultorio_id' => $consultorioId])
             ->with('success', 'Bloque de horario eliminado.');
+    }
+
+    /**
+     * PDF.
+     */
+    public function exportarPdf(Request $request)
+    {
+        ini_set('memory_limit', '512M');
+
+        $consultorios = Consultorio::where('activo', true)->orderBy('nombre')->get();
+        $consultorioId = (int) $request->input('consultorio_id', optional($consultorios->first())->id);
+
+        $consultorio = Consultorio::findOrFail($consultorioId);
+
+        // Obtener bloques activos registrados para este consultorio
+        $horariosActivos = HorarioConsultorio::where('consultorio_id', $consultorioId)
+            ->where('activo', true)
+            ->get();
+
+        // Mapear para verificación directa: "dia|hora_inicio|hora_fin"
+        $activosMap = [];
+        foreach ($horariosActivos as $h) {
+            $inicio = \Carbon\Carbon::parse($h->hora_inicio)->format('H:i');
+            $fin    = \Carbon\Carbon::parse($h->hora_fin)->format('H:i');
+            $activosMap["{$h->dia}|{$inicio}|{$fin}"] = true;
+        }
+
+        $bloquesJornadas = HorarioConsultorio::BLOQUES;
+        $dias = HorarioConsultorio::DIAS;
+
+        $pdf = Pdf::loadView('admin.salud.movimientos.horarios.pdf', compact(
+            'consultorio',
+            'activosMap',
+            'bloquesJornadas',
+            'dias'
+        ))->setPaper('a4', 'landscape');
+
+        return $pdf->stream('Horario_Consultorio_' . Str::slug($consultorio->nombre) . '.pdf');
     }
 }

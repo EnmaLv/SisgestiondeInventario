@@ -331,6 +331,7 @@ Route::middleware(['auth', 'tasa.actualizada'])->group(function () {
         Route::get('/salud/movimientos/horarios/create', [HorarioConsultorioController::class, 'create'])->name('admin.salud.movimientos.horarios.create');
         Route::post('/salud/movimientos/horarios', [HorarioConsultorioController::class, 'store'])->name('admin.salud.movimientos.horarios.store');
         Route::delete('/salud/movimientos/horarios/{horario}', [HorarioConsultorioController::class, 'destroy'])->name('admin.salud.movimientos.horarios.destroy');
+        Route::get('/movimientos/horarios/pdf', [HorarioConsultorioController::class, 'exportarPdf'])->name('admin.salud.movimientos.horarios.pdf');
 
         // TRANSPORTE
         require __DIR__ . '/transporte.php';

@@ -7,7 +7,8 @@
             {{-- Encabezado Principal --}}
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-3" style="color: var(--text-main);">
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-3"
+                        style="color: var(--text-main);">
                         <span>Asignar Horario</span>
                         <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">
                             Gestión de Asignación
@@ -34,11 +35,11 @@
 
                 {{-- Card de Selección de Consultorio y Barra de Estado --}}
                 <div style="background-color: var(--bg-card); border-color: var(--border-color);"
-                    class="p-4 sm:p-5 rounded-2xl border shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    class="p-2 sm:p-5 rounded-2xl border shadow-sm mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     
                     {{-- Selector de Consultorio --}}
                     <div class="w-full md:max-w-md">
-                        <label class="block text-[11px] font-black uppercase tracking-wider text-gray-400 mb-1.5">
+                        <label class="block text-[13px] font-black uppercase tracking-wider text-gray-400 mb-1.5">
                             Seleccionar Consultorio
                         </label>
                         <div class="flex items-center rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all shadow-sm"
@@ -87,25 +88,52 @@
                     </div>
                 @enderror
 
+                @php
+                    $totalJornadas = count(\App\Models\salud\HorarioConsultorio::BLOQUES);
+                @endphp
+
                 {{-- Cuadrilla de bloques por jornada --}}
                 @foreach (\App\Models\salud\HorarioConsultorio::BLOQUES as $jornada => $bloques)
                     @php
-                        $jornadaIconos = [
-                            'Matutino'   => 'fa-sun text-amber-500',
-                            'Vespertino' => 'fa-cloud-sun text-orange-500',
-                            'Nocturno'   => 'fa-moon text-indigo-400'
-                        ];
                         $iconoJornada = $jornadaIconos[$jornada] ?? 'fa-clock text-sky-500';
+                        $jornadaIndex = $loop->index;
                     @endphp
 
-                    <div class="mb-8">
-                        {{-- Titular de Jornada --}}
-                        <div class="flex items-center gap-2 mb-3 px-1">
-                            <i class="fas {{ $iconoJornada }} text-sm"></i>
-                            <h3 class="text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                                Jornada {{ $jornada }}
-                            </h3>
-                            <div class="flex-1 h-px bg-gray-200 dark:bg-gray-800 ml-2"></div>
+                    <div id="jornada-block-{{ $jornadaIndex }}" class="jornada-block mb-8 {{ $jornadaIndex !== 0 ? 'hidden' : '' }}">
+                        
+                        {{-- Encabezado con Recuadro Centrado y Paginación --}}
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
+                            <div class="hidden sm:block sm:w-44"></div>
+
+                            {{-- Nombre de Jornada en recuadro centrado --}}
+                            <div class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800/70 border border-gray-200/80 dark:border-gray-700/60 shadow-sm text-center">
+                                <i class="fas text-sm"></i>
+                                <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-gray-700 dark:text-gray-200">
+                                    Jornada {{ $jornada }}
+                                </h3>
+                            </div>
+
+                            {{-- Paginación --}}
+                            <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+                                class="flex items-center justify-between md:justify-center gap-1 border border-gray-200 dark:border-gray-700/60 p-1 h-12 rounded-2xl shadow-sm flex-shrink-0 w-full sm:w-auto">
+                                <button type="button" onclick="cambiarJornada(-1)" title="Jornada Anterior"
+                                    class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                                
+                                <span class="px-2 sm:px-4 text-[10px] sm:text-[11px] font-black text-gray-800 dark:text-gray-200 min-w-[90px] text-center uppercase tracking-wider leading-none whitespace-nowrap">
+                                    {{ $loop->iteration }} / {{ $totalJornadas }}
+                                </span>
+
+                                <button type="button" onclick="cambiarJornada(1)" title="Siguiente Jornada"
+                                    class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         {{-- Tabla de Selección --}}
@@ -127,8 +155,8 @@
 
                                 {{-- Filas por Bloque de Horario --}}
                                 @foreach ($bloques as $bloque)
-                                    {{-- Columna Hora Horizontal --}}
-                                    <div class="p-3 flex items-center justify-center text-center text-xs font-extrabold text-gray-700 dark:text-gray-200 whitespace-nowrap border-r bg-gray-50/30 dark:bg-black/10 {{ !$loop->last ? 'border-b' : '' }}"
+                                    {{-- Columna Hora (p-8) --}}
+                                    <div class="p-8 flex items-center justify-center text-center text-xs font-extrabold text-gray-700 dark:text-gray-200 whitespace-nowrap border-r bg-gray-50/30 dark:bg-black/10 {{ !$loop->last ? 'border-b' : '' }}"
                                         style="border-color: var(--border-color);">
                                         {{ \Carbon\Carbon::parse($bloque['inicio'])->format('g:i') }} - {{ \Carbon\Carbon::parse($bloque['fin'])->format('g:i') }}
                                     </div>
@@ -145,13 +173,20 @@
                                                     data-fin="{{ $bloque['fin'] }}"
                                                     class="bloque-checkbox sr-only peer">
                                                 
-                                                <div class="bloque-visual w-full h-full min-h-[46px] rounded-xl border border-dashed border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-black/10 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400 transition-all peer-checked:bg-sky-600 peer-checked:text-white peer-checked:border-sky-600 peer-checked:border-solid peer-checked:shadow-md hover:border-sky-400 hover:border-solid select-none">
-                                                    <span class="bloque-hora flex items-center gap-1.5">
-                                                        <i class="fas fa-check text-[10px] hidden peer-checked:inline"></i>
-                                                        <i class="fas fa-plus text-[10px] opacity-40 peer-checked:hidden"></i>
-                                                        <span class="text-[11px] peer-checked:hidden">Disponible</span>
-                                                        <span class="text-[11px] hidden peer-checked:inline">Asignado</span>
+                                                <div class="bloque-visual w-full h-full min-h-[46px] rounded-xl border border-dashed border-gray-300 dark:border-gray-700/80 bg-gray-50/50 dark:bg-black/10 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300 transition-all peer-checked:bg-gradient-to-r peer-checked:from-sky-500/20 peer-checked:to-sky-600/10 peer-checked:dark:from-sky-500/30 peer-checked:dark:to-sky-600/20 peer-checked:border peer-checked:border-sky-300 peer-checked:dark:border-sky-800 px-3 py-2 peer-checked:hover:border-sky-400 peer-checked:dark:hover:border-sky-700 peer-checked:border-solid peer-checked:hover:border-solid select-none peer-checked:[&_.estado-disponible]:hidden peer-checked:[&_.estado-asignado]:flex">
+                                                    
+                                                    {{-- Estado Disponible --}}
+                                                    <span class="estado-disponible flex items-center gap-1.5">
+                                                        <i class="fas fa-plus text-[12px] opacity-60"></i>
+                                                        <span class="text-[12px]">Disponible</span>
                                                     </span>
+
+                                                    {{-- Estado Asignado --}}
+                                                    <span class="estado-asignado hidden items-center gap-1.5 text-sky-700 dark:text-sky-300 ">
+                                                        <i class="fas fa-check text-[10px]"></i>
+                                                        <span class="text-[12px]">Asignado</span>
+                                                    </span>
+
                                                 </div>
                                             </label>
 
@@ -183,6 +218,23 @@
     </div>
 
     <script>
+        let jornadaActual = 0;
+        const totalJornadas = {{ count(\App\Models\salud\HorarioConsultorio::BLOQUES) }};
+
+        function cambiarJornada(direccion) {
+            const bloqueActual = document.getElementById(`jornada-block-${jornadaActual}`);
+            if (bloqueActual) {
+                bloqueActual.classList.add('hidden');
+            }
+
+            jornadaActual = (jornadaActual + direccion + totalJornadas) % totalJornadas;
+
+            const siguienteBloque = document.getElementById(`jornada-block-${jornadaActual}`);
+            if (siguienteBloque) {
+                siguienteBloque.classList.remove('hidden');
+            }
+        }
+
         const ocupadosPorConsultorio = @json($ocupadosPorConsultorio);
 
         function actualizarOcupados() {
@@ -191,7 +243,6 @@
 
             document.querySelectorAll('.bloque-checkbox').forEach(function(cb) {
                 const key = cb.dataset.dia + '|' + cb.dataset.inicio + '|' + cb.dataset.fin;
-                // Si ya está registrado en la base de datos como activo, se marca como seleccionado
                 cb.checked = lista.includes(key);
             });
 

@@ -32,12 +32,10 @@
                 </div>
             </div>
 
-            {{-- Selector de consultorio y Filtros dinámicos --}}
+            {{-- Selector de consultorio y Acciones --}}
             <form id="filtro-form" action="{{ route('admin.salud.movimientos.horarios.index') }}" method="GET"
                 style="background-color: var(--bg-card); border-color: var(--border-color);"
                 class="p-4 rounded-2xl border shadow-sm mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-                <input type="hidden" name="estado" id="estado-input" value="{{ $estadoFilter }}">
 
                 {{-- Selector de Consultorio --}}
                 <div class="flex items-center rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all w-full lg:max-w-md shadow-sm"
@@ -61,32 +59,10 @@
                     </select>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-start lg:justify-end gap-3 w-full lg:w-auto">
-
-                    {{-- Botones de Filtro por Estado --}}
-                    <div class="flex items-center gap-1.5 p-1 bg-gray-100 dark:bg-black/40 rounded-xl border"
-                        style="border-color: var(--border-color);">
-
-                        <button type="button" onclick="aplicarFiltroEstado('todos')"
-                            class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all {{ $estadoFilter === 'todos' ? 'bg-white dark:bg-gray-800 text-sky-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300' }}">
-                            Todos
-                        </button>
-
-                        <button type="button" onclick="aplicarFiltroEstado('ocupado')"
-                            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all {{ $estadoFilter === 'ocupado' ? 'bg-white dark:bg-gray-800 text-sky-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300' }}">
-                            <span class="w-2 h-2 rounded-full bg-sky-500"></span>
-                            Ocupados
-                        </button>
-
-                        <button type="button" onclick="aplicarFiltroEstado('disponible')"
-                            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all {{ $estadoFilter === 'disponible' ? 'bg-white dark:bg-gray-800 text-sky-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300' }}">
-                            <span class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></span>
-                            Disponibles
-                        </button>
-                    </div>
-
-                    {{-- Botón PDF --}}
-                    <a href="#" target="_blank"
+                {{-- Botón PDF --}}
+                <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
+                    <a href="{{ route('admin.salud.movimientos.horarios.pdf', ['consultorio_id' => $consultorioSeleccionado ?? $consultorioId]) }}"
+                        target="_blank"
                         class="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all flex items-center justify-center flex-shrink-0"
                         title="Imprimir Agenda en PDF">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +70,6 @@
                                 d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                     </a>
-
                 </div>
 
             </form>
@@ -112,28 +87,60 @@
                         horarios.</p>
                 </div>
             @else
-                {{-- cuadrilla semanal por jornada --}}
+                @php
+                    $totalJornadas = count(\App\Models\salud\HorarioConsultorio::BLOQUES);
+                @endphp
+
+                {{-- Cuadrila semanal por jornada --}}
                 @foreach (\App\Models\salud\HorarioConsultorio::BLOQUES as $jornada => $bloques)
                     @php
-                        $jornadaIconos = [
-                            'Matutino' => 'fa-sun text-amber-500',
-                            'Vespertino' => 'fa-cloud-sun text-orange-500',
-                            'Nocturno' => 'fa-moon text-indigo-400',
-                        ];
-                        $iconoJornada = $jornadaIconos[$jornada] ?? 'fa-clock text-sky-500';
+                        $jornadaIndex = $loop->index;
                     @endphp
 
-                    <div class="mb-8">
-                        {{-- Titular de Jornada --}}
-                        <div class="flex items-center gap-2 mb-3 px-1">
-                            <i class="fas {{ $iconoJornada }} text-sm"></i>
-                            <h3 class="text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                                Jornada {{ $jornada }}
-                            </h3>
-                            <div class="flex-1 h-px bg-gray-200 dark:bg-gray-800 ml-2"></div>
+                    <div id="jornada-block-{{ $jornadaIndex }}"
+                        class="jornada-block mb-8 {{ $jornadaIndex !== 0 ? 'hidden' : '' }}">
+
+                        {{-- Encabezado  --}}
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
+                            <div class="hidden sm:block sm:w-44"></div>
+
+                            {{-- Nombre de Jornada en recuadro centrado --}}
+                            <div
+                                class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800/70 border border-gray-200/80 dark:border-gray-700/60 shadow-sm text-center">
+                                <i class="fas text-sm"></i>
+                                <h3
+                                    class="text-xs sm:text-sm font-black uppercase tracking-wider text-gray-700 dark:text-gray-200">
+                                    Jornada {{ $jornada }}
+                                </h3>
+                            </div>
+
+                            {{-- Paginación estilizada --}}
+                            <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
+                                class="flex items-center justify-between md:justify-center gap-1 border border-gray-200 dark:border-gray-700/60 p-1 h-12 rounded-2xl shadow-sm flex-shrink-0 w-full sm:w-auto">
+                                <button type="button" onclick="cambiarJornada(-1)" title="Jornada Anterior"
+                                    class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+
+                                <span
+                                    class="px-2 sm:px-4 text-[10px] sm:text-[11px] font-black text-gray-800 dark:text-gray-200 min-w-[90px] text-center uppercase tracking-wider leading-none whitespace-nowrap">
+                                    {{ $loop->iteration }} / {{ $totalJornadas }}
+                                </span>
+
+                                <button type="button" onclick="cambiarJornada(1)" title="Siguiente Jornada"
+                                    class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
-                        {{-- Tabla responsiva --}}
+                        {{-- Tabla --}}
                         <div style="border-color: var(--border-color); background-color: var(--bg-card);"
                             class="rounded-2xl border shadow-sm overflow-x-auto">
                             <div class="grid min-w-[750px]" style="grid-template-columns: 130px repeat(5, 1fr);">
@@ -167,19 +174,14 @@
                                                 $bloque['inicio'],
                                                 $bloque['fin'],
                                             );
-
-                                            $mostrarOcupado =
-                                                $registro && in_array($estadoFilter, ['todos', 'ocupado']);
-                                            $mostrarDisponible =
-                                                !$registro && in_array($estadoFilter, ['todos', 'disponible']);
                                         @endphp
 
                                         <div class="p-2 flex items-center justify-center {{ !$loop->last ? 'border-r' : '' }} {{ !$loop->parent->last ? 'border-b' : '' }}"
                                             style="border-color: var(--border-color);">
 
-                                            @if ($mostrarOcupado)
+                                            @if ($registro)
                                                 <div
-                                                    class="w-full h-full min-h-[46px] rounded-xl bg-gradient-to-r from-sky-500/10 to-sky-600/10 dark:from-sky-500/20 dark:to-sky-600/20 border border-sky-300 dark:border-sky-800 px-3 py-2 flex items-center justify-between gap-2 shadow-sm group hover:border-sky-400 transition-all">
+                                                    class="w-full h-full min-h-[46px] rounded-xl bg-gradient-to-r from-sky-500/20 to-sky-600/10 dark:from-sky-500/20 dark:to-sky-600/10 border border-sky-300 dark:border-sky-800 px-3 py-2 flex items-center justify-between gap-2 shadow-sm group hover:border-sky-400 dark:hover:border-sky-600 transition-all">
                                                     <div class="flex items-center gap-1.5">
                                                         <span class="relative flex h-2 w-2">
                                                             <span
@@ -189,7 +191,7 @@
                                                         </span>
                                                         <span
                                                             class="text-[11px] font-black uppercase tracking-wider text-sky-700 dark:text-sky-300">
-                                                            Ocupado
+                                                            Asignado
                                                         </span>
                                                     </div>
 
@@ -206,15 +208,10 @@
                                                         </button>
                                                     </form>
                                                 </div>
-                                            @elseif ($mostrarDisponible)
+                                            @else
                                                 <div
                                                     class="w-full h-full min-h-[46px] rounded-xl border border-dashed border-gray-400 dark:border-gray-700 bg-gray-100/50 dark:bg-black/10 flex items-center justify-center text-[11px] font-bold text-gray-400 dark:text-gray-700 select-none">
                                                     Disponible
-                                                </div>
-                                            @else
-                                                <div
-                                                    class="w-full h-full min-h-[46px] rounded-xl bg-gray-50/20 dark:bg-black/5 opacity-30 flex items-center justify-center text-[10px] text-gray-600">
-                                                    —
                                                 </div>
                                             @endif
 
@@ -231,9 +228,21 @@
     </div>
 
     <script>
-        function aplicarFiltroEstado(estado) {
-            document.getElementById('estado-input').value = estado;
-            document.getElementById('filtro-form').submit();
+        let jornadaActual = 0;
+        const totalJornadas = {{ count(\App\Models\salud\HorarioConsultorio::BLOQUES) }};
+
+        function cambiarJornada(direccion) {
+            const bloqueActual = document.getElementById(`jornada-block-${jornadaActual}`);
+            if (bloqueActual) {
+                bloqueActual.classList.add('hidden');
+            }
+
+            jornadaActual = (jornadaActual + direccion + totalJornadas) % totalJornadas;
+
+            const siguienteBloque = document.getElementById(`jornada-block-${jornadaActual}`);
+            if (siguienteBloque) {
+                siguienteBloque.classList.remove('hidden');
+            }
         }
     </script>
 </x-app-layout>
