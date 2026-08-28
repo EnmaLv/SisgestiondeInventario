@@ -65,8 +65,6 @@
             <div class="flex items-center gap-3 overflow-hidden">
                 <a href="{{ Route::has('home') ? route('home') : url('/') }}"
                     class="flex items-center gap-3 flex-shrink-0">
-                    <img src="{{ asset('img/Logo.webp') }}" alt="Logo" class="h-8 w-auto object-contain"
-                        onerror="this.style.display='none'" />
                     <span class="font-black text-lg text-white tracking-tight">Bienestar Estudiantil</span>
                 </a>
 

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        RedirectIfAuthenticated::redirectUsing(function ($request) {
+            if (Auth::check()) {
+                $user = Auth::user();
+                return (new \App\AdminLTE\Filters\ModuleFilter())->resolveInitialRoute($user->id_usuario ?? $user->id);
+            }
+            return '/';
+        });
         View::composer(['admin.psicologia.*', 'admin.enfermedades.*'], function ($view) {
             $data = $view->getData();
             $categoriaVal = $data['categoria'] ?? $data['categoriaFiltro'] ?? request('categoria') ?? request('categoriaFiltro') ?? '';

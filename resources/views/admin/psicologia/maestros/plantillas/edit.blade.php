@@ -14,29 +14,22 @@
                 ? array_values($plantilla->segmentos)
                 : ['']);
     @endphp
-
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <!-- Botón Volver -->
             <a href="{{ route('admin.psicologia.maestros.plantillas.index') }}"
                 class="inline-flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-{{ $themeColor }}-600 mb-6 transition-colors group">
                 <i class="fas fa-arrow-left text-xs transition-transform group-hover:-translate-x-1"></i>
-                <span>Volver a anexos y plantillas</span>
+                <span>Volver a Anexos</span>
             </a>
-
-            <!-- Cabecera -->
             <div class="mb-8">
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
-                    Editar Plantilla
+                    Editar Anexo
                 </h1>
                 <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
                     Modificación del instrumento clínico: <strong
                         class="text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400">{{ $plantilla->titulo }}</strong>
                 </p>
             </div>
-
-            <!-- Card Formulario -->
             <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
                 class="rounded-2xl border shadow-sm overflow-hidden p-6 sm:p-8" x-data="{
                     numCampos: {{ count($segmentosIniciales) }},
@@ -66,10 +59,7 @@
                     method="POST">
                     @csrf
                     @method('PUT')
-
                     <div class="space-y-6">
-
-                        <!-- Título de la Sección -->
                         <div>
                             <label for="titulo"
                                 class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
@@ -87,7 +77,6 @@
                             @enderror
                         </div>
 
-                        <!-- Descripción General -->
                         <div>
                             <label for="descripcion_general"
                                 class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">
@@ -107,7 +96,6 @@
 
                         <hr class="border-gray-100 dark:border-gray-800 my-6">
 
-                        <!-- Configuración de Segmentos/Campos -->
                         <div>
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                                 <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400">
@@ -115,7 +103,6 @@
                                 </label>
 
                                 <div class="flex items-center gap-3">
-                                    <!-- Alerta Máximo Registros -->
                                     <div x-show="mostrarMensaje" x-transition:enter="transition ease-out duration-300"
                                         x-transition:enter-start="opacity-0 transform translate-x-4"
                                         x-transition:enter-end="opacity-100 transform translate-x-0"
@@ -128,7 +115,6 @@
                                         <span class="text-[11px] font-bold">Máximo 4 campos por sección</span>
                                     </div>
 
-                                    <!-- Contador de Campos -->
                                     <div
                                         class="inline-flex items-center gap-1 p-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black/20">
                                         <button type="button"
@@ -150,7 +136,6 @@
                                 </div>
                             </div>
 
-                            <!-- Lista Dinámica de Campos -->
                             <div class="space-y-3">
                                 <template x-for="(seg, index) in segmentos" :key="index">
                                     <div class="flex items-center gap-3">
@@ -170,10 +155,7 @@
                                 </p>
                             @enderror
                         </div>
-
                     </div>
-
-                    <!-- Pie de Formulario -->
                     <div
                         class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-3">
                         <a href="{{ route('admin.psicologia.maestros.plantillas.index') }}"
@@ -183,11 +165,10 @@
                         <button type="submit"
                             class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl {{ $btnClass }} text-white text-xs font-bold shadow-md active:scale-95 transition-all">
                             <i class="fas fa-floppy-disk text-xs"></i>
-                            <span>Actualizar Plantilla</span>
+                            <span>Actualizar Anexo</span>
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>

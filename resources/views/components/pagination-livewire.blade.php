@@ -1,5 +1,4 @@
 @props(['paginator'])
-@vite('resources/css/gerenal.css')
 
 @if ($paginator->hasPages())
     <nav>

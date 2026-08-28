@@ -204,19 +204,19 @@ Breadcrumbs::for('admin.movimientos.registro_comida.index', function (Trail $tra
     $trail->push('Registro Comida', route('admin.movimientos.registro_comida.index'));
 });
 
-Breadcrumbs::for('admin.maestros.pnf.index', function(Trail $trail){
+Breadcrumbs::for('admin.maestros.pnf.index', function (Trail $trail) {
     $trail->parent('home');
-    $trail->push('Pnf', route('admin.maestros.pnf.index')); 
+    $trail->push('Pnf', route('admin.maestros.pnf.index'));
 });
 
-Breadcrumbs::for('admin.maestros.pnf.create', function(Trail $trail){
+Breadcrumbs::for('admin.maestros.pnf.create', function (Trail $trail) {
     $trail->parent('admin.maestros.pnf.index');
-    $trail->push('Crear', route('admin.maestros.pnf.create')); 
+    $trail->push('Crear', route('admin.maestros.pnf.create'));
 });
 
-Breadcrumbs::for('admin.maestros.pnf.edit', function(Trail $trail, $id){
+Breadcrumbs::for('admin.maestros.pnf.edit', function (Trail $trail, $id) {
     $trail->parent('admin.maestros.pnf.index');
-    $trail->push('Editar', route('admin.maestros.pnf.edit', $id)); 
+    $trail->push('Editar', route('admin.maestros.pnf.edit', $id));
 });
 
 // Estado
@@ -259,7 +259,7 @@ Breadcrumbs::for('admin.configuracion.persona.create', function (Trail $trail) {
     $trail->parent('admin.configuracion.persona.index');
     $trail->push('Crear Estudiante', route('admin.configuracion.persona.create'));
 });
-    
+
 
 // Configuración > Ver Persona
 Breadcrumbs::for('admin.configuracion.persona.show', function (Trail $trail, $id) {
@@ -328,3 +328,205 @@ Breadcrumbs::for('admin.configuracion.archivos.index', function (Trail $trail) {
     $trail->push('Archivo', route('admin.configuracion.archivos.index'));
 });
 
+Breadcrumbs::for('admin.psicologia.maestros.agenda.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Agenda', route('admin.psicologia.maestros.agenda.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.agenda.estadisticas', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.agenda.index');
+    $trail->push('Estadisticas', route('admin.psicologia.maestros.agenda.estadisticas'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.avances_sesion.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Avances', route('admin.psicologia.maestros.avances_sesion.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.avances_sesion.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.avances_sesion.index');
+    $trail->push('Crear Avances', route('admin.psicologia.maestros.avances_sesion.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.avances_sesion.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.avances_sesion.index');
+    $trail->push('Editar Avances', route('admin.psicologia.maestros.avances_sesion.edit', $id));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.campos_evolucion.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Campos de Evoluciòn', route('admin.psicologia.maestros.campos_evolucion.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.campos_evolucion.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.campos_evolucion.index');
+    $trail->push('Crear Campos de Evoluciòn', route('admin.psicologia.maestros.campos_evolucion.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.campos_evolucion.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.campos_evolucion.index');
+    $trail->push('Editar Campos de Evoluciòn', route('admin.psicologia.maestros.campos_evolucion.edit', $id));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.citas.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Citas', route('admin.psicologia.maestros.citas.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.citas.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.citas.index');
+    $trail->push('Crear Citas', route('admin.psicologia.maestros.citas.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.citas.edit_note', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.citas.index');
+    $trail->push('Notas de Cita', route('admin.psicologia.maestros.citas.edit_note'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.citas.show', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.citas.index');
+    $trail->push('Ver mas Citas', route('admin.psicologia.maestros.citas.show'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.estado_animos.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Estado de Animo', route('admin.psicologia.maestros.estado_animos.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.estado_animos.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.estado_animos.index');
+    $trail->push('Crear Estado de Animo', route('admin.psicologia.maestros.estado_animos.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.estado_animos.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.estado_animos.index');
+    $trail->push('Editar Estado de Animo', route('admin.psicologia.maestros.estado_animos.edit', $id));
+});
+
+
+Breadcrumbs::for('admin.psicologia.maestros.grupos_horarios.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Grupo de Horarios', route('admin.psicologia.maestros.grupos_horarios.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.grupos_horarios.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.grupos_horarios.index');
+    $trail->push('Crear Grupo de Horarios', route('admin.psicologia.maestros.grupos_horarios.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.grupos_horarios.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.grupos_horarios.index');
+    $trail->push('Editar Grupo de Horarios', route('admin.psicologia.maestros.grupos_horarios.edit', $id));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.grupos_horarios.show', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.grupos_horarios.index');
+    $trail->push('Editar Grupo de Horarios', route('admin.psicologia.maestros.grupos_horarios.show'));
+});
+
+
+Breadcrumbs::for('admin.psicologia.maestros.historias.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Historias', route('admin.psicologia.maestros.historias.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.historias.show', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.historias.index');
+    $trail->push('Editar Historias', route('admin.psicologia.maestros.historias.show'));
+});
+
+
+Breadcrumbs::for('admin.psicologia.maestros.horarios.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Horarios', route('admin.psicologia.maestros.horarios.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.horarios.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.horarios.index');
+    $trail->push('Crear Horarios', route('admin.psicologia.maestros.horarios.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.horarios.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.horarios.index');
+    $trail->push('Editar Horarios', route('admin.psicologia.maestros.horarios.edit', $id));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.horarios.show', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.horarios.index');
+    $trail->push('Editar Show', route('admin.psicologia.maestros.horarios.show'));
+});
+
+
+Breadcrumbs::for('admin.psicologia.maestros.plantillas.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Anexos', route('admin.psicologia.maestros.plantillas.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.plantillas.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.plantillas.index');
+    $trail->push('Crear Anexos', route('admin.psicologia.maestros.plantillas.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.plantillas.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.plantillas.index');
+    $trail->push('Editar Anexos', route('admin.psicologia.maestros.plantillas.edit', $id));
+});
+
+
+Breadcrumbs::for('admin.psicologia.maestros.plantillas_globales.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Plantillas Globales', route('admin.psicologia.maestros.plantillas_globales.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.plantillas_globales.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.plantillas_globales.index');
+    $trail->push('Crear Plantillas Globales', route('admin.psicologia.maestros.plantillas_globales.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.plantillas_globales.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.plantillas_globales.index');
+    $trail->push('Editar Plantillas Globales', route('admin.psicologia.maestros.plantillas_globales.edit', $id));
+});
+
+
+Breadcrumbs::for('admin.psicologia.maestros.prioridades.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Prioridades', route('admin.psicologia.maestros.prioridades.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.prioridades.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.prioridades.index');
+    $trail->push('Crear Prioridades', route('admin.psicologia.maestros.prioridades.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.prioridades.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.prioridades.index');
+    $trail->push('Editar Prioridades', route('admin.psicologia.maestros.prioridades.edit', $id));
+});
+
+
+Breadcrumbs::for('admin.psicologia.maestros.publicaciones.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Publicaciones', route('admin.psicologia.maestros.publicaciones.index'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.publicaciones.create', function (Trail $trail) {
+    $trail->parent('admin.psicologia.maestros.publicaciones.index');
+    $trail->push('Crear Publicaciones', route('admin.psicologia.maestros.publicaciones.create'));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.publicaciones.edit', function (Trail $trail, $id) {
+    $trail->parent('admin.psicologia.maestros.publicaciones.index');
+    $trail->push('Editar Publicaciones', route('admin.psicologia.maestros.publicaciones.edit', $id));
+});
+
+Breadcrumbs::for('admin.psicologia.maestros.publicaciones.mural', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Mural', route('admin.psicologia.maestros.publicaciones.mural'));
+});
+
+
+Breadcrumbs::for('admin.enfermedades.index', function (Trail $trail) {
+    $trail->parent('home');
+    $trail->push('Enfermedades', route('admin.enfermedades.index'));
+});

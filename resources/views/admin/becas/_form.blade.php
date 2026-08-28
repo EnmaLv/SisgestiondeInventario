@@ -18,20 +18,6 @@
             @enderror
         </div>
     </div>
-    <div class="col-md-4">
-        <label class="font-weight-bold d-block">Estado</label>
-        <div class="d-flex align-items-center mt-2">
-            <div class="toggle-container">
-                <input type="checkbox" id="activo" name="activo" value="1" class="toggle-checkbox"
-                    {{ old('activo', $beca->activo ?? true) ? 'checked' : '' }}>
-                <label for="activo" class="toggle-label">
-                    <span class="toggle-inner"></span>
-                    <span class="toggle-switch"></span>
-                </label>
-            </div>
-            <span class="ml-2 text-muted">Activa</span>
-        </div>
-    </div>
 </div>
 
 <div class="form-group mb-3">
@@ -44,9 +30,6 @@
 
 <div class="rd-card-header mb-3">
     <h3 class="rd-title-sm">Beneficios asignados</h3>
-    <a href="{{ route('admin.becas.beneficios.create') }}" class="rd-btn rd-btn-default">
-
-    </a>
 </div>
 <div class="table-responsive mb-4">
     <table class="rd-table">
@@ -96,9 +79,258 @@
     </table>
 </div>
 
+@php
+    $becaTutores = old('tutores', isset($beca) ? $beca->tutores->map(function ($item) {
+        return [
+            'id' => $item->id,
+            'rol_id' => $item->rol_id ?? optional($item->tutor?->usuarios->first()?->roles->first())->id_rol,
+            'tutor_id' => $item->tutor_id,
+            'descripcion' => $item->descripcion ?? '',
+        ];
+    })->toArray() : []);
+@endphp
+
+<div class="rd-card-header mb-3 d-flex justify-content-between align-items-center">
+    <h3 class="rd-title-sm">Tutores de la beca</h3>
+    <button type="button" id="addTutorBtn" class="rd-btn rd-btn-secondary">
+        <i class="fas fa-plus"></i> Agregar tutor
+    </button>
+</div>
+<div class="table-responsive mb-4">
+    <table class="rd-table" id="tutorsTable">
+        <thead>
+            <tr>
+                <th>Rol</th>
+                <th>Tutor</th>
+                <th>Descripción</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($becaTutores as $index => $tutorRow)
+                <tr data-index="{{ $index }}">
+                    <input type="hidden" name="tutores[{{ $index }}][id]" value="{{ $tutorRow['id'] ?? '' }}">
+                    <input type="hidden" name="tutores[{{ $index }}][rol_id]" value="{{ $tutorRow['rol_id'] ?? '' }}">
+                    <input type="hidden" name="tutores[{{ $index }}][tutor_id]" value="{{ $tutorRow['tutor_id'] ?? '' }}">
+                    <input type="hidden" name="tutores[{{ $index }}][descripcion]" value="{{ $tutorRow['descripcion'] ?? '' }}">
+                    <td>{{ optional($roles->firstWhere('id_rol', $tutorRow['rol_id']))->nombre ?? 'Sin rol' }}</td>
+                    <td>{{ optional($tutores->firstWhere('id_persona', $tutorRow['tutor_id'])) ? trim(optional($tutores->firstWhere('id_persona', $tutorRow['tutor_id']))->nombre_persona . ' ' . optional($tutores->firstWhere('id_persona', $tutorRow['tutor_id']))->apellido_persona) : 'Sin tutor' }}</td>
+                    <td>{{ $tutorRow['descripcion'] ?? '' }}</td>
+                    <td class="text-center">
+                        <button type="button" class="rd-btn rd-btn-danger btn-sm remove-tutor" title="Eliminar tutor">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center py-4">No hay tutores asignados aún.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="addTutorModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar tutor a la beca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Rol del tutor</label>
+                            <select id="tutorRoleSelect" class="form-control rd-filter-input">
+                                <option value="">Seleccione rol</option>
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->id_rol }}">{{ $role->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Persona</label>
+                            <select id="tutorPersonSelect" class="form-control rd-filter-input" disabled>
+                                <option value="">Seleccione primero un rol</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="tutorDescription" class="form-control rd-filter-input" rows="3" placeholder="Describe el rol completo de esta persona"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="rd-btn rd-btn-default" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="saveTutorModalBtn" class="rd-btn rd-btn-primary">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@php
+    $tutorJsRoles = $roles->map(function ($role) {
+        return ['id' => $role->id_rol, 'name' => $role->nombre];
+    })->toArray();
+
+    $tutorJsPersonas = $tutores->map(function ($tutor) {
+        return [
+            'id' => $tutor->id_persona,
+            'name' => trim($tutor->nombre_persona . ' ' . $tutor->apellido_persona),
+            'role_ids' => $tutor->usuarios->flatMap(function ($usuario) {
+                return $usuario->roles->pluck('id_rol');
+            })->unique()->values()->all(),
+        ];
+    })->toArray();
+@endphp
+
 @push('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const tutorTableBody = document.querySelector('#tutorsTable tbody');
+            const addTutorBtn = document.getElementById('addTutorBtn');
+            const roleSelect = document.getElementById('tutorRoleSelect');
+            const personSelect = document.getElementById('tutorPersonSelect');
+            const descriptionInput = document.getElementById('tutorDescription');
+            const saveTutorModalBtn = document.getElementById('saveTutorModalBtn');
+            const addTutorModalEl = document.getElementById('addTutorModal');
+
+            const ROLES = @json($tutorJsRoles);
+            const PERSONAS = @json($tutorJsPersonas);
+
+            function buildPersonaOptions(roleId) {
+                const personas = PERSONAS.filter(function(persona) {
+                    return persona.role_ids.includes(parseInt(roleId, 10));
+                });
+
+                if (!personas.length) {
+                    return '<option value="">No hay personas disponibles para este rol</option>';
+                }
+
+                return '<option value="">Seleccione persona</option>' + personas.map(function(persona) {
+                    return `<option value="${persona.id}">${persona.name}</option>`;
+                }).join('');
+            }
+
+            function getTutorRowCount() {
+                return Array.from(tutorTableBody.querySelectorAll('tr')).filter(function(row) {
+                    return row.querySelector('input[name^="tutores"]');
+                }).length;
+            }
+
+            function updateTutorButtonLabel() {
+                const rowCount = getTutorRowCount();
+                addTutorBtn.innerHTML = `<i class="fas fa-plus"></i> ${rowCount ? 'Agregar otro tutor' : 'Agregar tutor'}`;
+            }
+
+            function attachRemoveHandler(button) {
+                button.addEventListener('click', function() {
+                    const row = button.closest('tr');
+                    row.remove();
+                    if (!getTutorRowCount()) {
+                        tutorTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No hay tutores asignados aún.</td></tr>';
+                    }
+                    updateTutorButtonLabel();
+                });
+            }
+
+            function buildTutorRow(index, value = {}) {
+                const row = document.createElement('tr');
+                row.dataset.index = index;
+                row.innerHTML = `
+                    <td>
+                        <input type="hidden" name="tutores[${index}][id]" value="${value.id ?? ''}">
+                        <input type="hidden" name="tutores[${index}][rol_id]" value="${value.rol_id ?? ''}">
+                        <input type="hidden" name="tutores[${index}][tutor_id]" value="${value.tutor_id ?? ''}">
+                        <input type="hidden" name="tutores[${index}][descripcion]" value="${value.descripcion ?? ''}">
+                        ${value.rol_name || ''}
+                    </td>
+                    <td>${value.tutor_name || ''}</td>
+                    <td>${value.descripcion || ''}</td>
+                    <td class="text-center">
+                        <button type="button" class="rd-btn rd-btn-danger btn-sm remove-tutor" title="Eliminar tutor">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+                attachRemoveHandler(row.querySelector('.remove-tutor'));
+                return row;
+            }
+
+            function resetTutorModal() {
+                roleSelect.value = '';
+                personSelect.innerHTML = '<option value="">Seleccione primero un rol</option>';
+                personSelect.disabled = true;
+                descriptionInput.value = '';
+            }
+
+            roleSelect.addEventListener('change', function() {
+                if (!this.value) {
+                    personSelect.innerHTML = '<option value="">Seleccione primero un rol</option>';
+                    personSelect.disabled = true;
+                    return;
+                }
+
+                personSelect.innerHTML = buildPersonaOptions(this.value);
+                personSelect.disabled = false;
+            });
+
+            addTutorBtn.addEventListener('click', function() {
+                $('#addTutorModal').modal('show');
+            });
+
+            addTutorModalEl.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    $('#addTutorModal').modal('hide');
+                    resetTutorModal();
+                });
+            });
+
+            saveTutorModalBtn.addEventListener('click', function() {
+                const rolId = roleSelect.value;
+                const tutorId = personSelect.value;
+                const descripcion = descriptionInput.value.trim();
+
+                if (!rolId || !tutorId) {
+                    alert('Seleccione rol y persona antes de continuar.');
+                    return;
+                }
+
+                const rolName = ROLES.find(function(role) {
+                    return role.id == rolId;
+                })?.name || '';
+
+                const tutorName = PERSONAS.find(function(persona) {
+                    return persona.id == tutorId;
+                })?.name || '';
+
+                const placeholder = tutorTableBody.querySelector('tr td[colspan="4"]');
+                if (placeholder) {
+                    placeholder.closest('tr').remove();
+                }
+
+                const index = getTutorRowCount();
+                const newRow = buildTutorRow(index, {
+                    id: '',
+                    rol_id: rolId,
+                    tutor_id: tutorId,
+                    descripcion: descripcion,
+                    rol_name: rolName,
+                    tutor_name: tutorName,
+                });
+                tutorTableBody.appendChild(newRow);
+                updateTutorButtonLabel();
+                resetTutorModal();
+                $('#addTutorModal').modal('hide');
+            });
+
+            document.querySelectorAll('.remove-tutor').forEach(attachRemoveHandler);
             document.querySelectorAll('.beneficio-check').forEach(function(input) {
                 input.addEventListener('change', function() {
                     Swal.fire({
@@ -110,6 +342,7 @@
                     });
                 });
             });
+            updateTutorButtonLabel();
         });
     </script>
 @endpush

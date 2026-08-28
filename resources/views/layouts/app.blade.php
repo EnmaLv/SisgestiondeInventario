@@ -15,7 +15,7 @@
     <title>{{ config('app.name', 'Bienestar Estudiantil') }}</title>
 
     <script>
-        (function () {
+        (function() {
             const getStoredTheme = () => localStorage.getItem('theme');
             const getSystemTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
@@ -94,6 +94,7 @@
             --ck-color-panel-background: #1f2937;
             --ck-color-panel-border: #374151;
         }
+
         .dark .ck-placeholder::before {
             color: #9ca3af !important;
         }
@@ -329,7 +330,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const primaryColor = '{{ $primaryColorHex }}';
 
             window.Toast = Swal.mixin({
@@ -348,7 +349,7 @@
             });
 
             window.AppModal = {
-                show: function (title, text, options = {}) {
+                show: function(title, text, options = {}) {
                     const isDark = document.documentElement.classList.contains('dark');
                     return Swal.fire({
                         title: title || 'Aviso',
@@ -367,13 +368,13 @@
                         buttonsStyling: true
                     }).then((result) => result.isConfirmed);
                 },
-                confirm: function (title, text) {
+                confirm: function(title, text) {
                     return this.show(title, text, {
                         type: 'confirm',
                         icon: 'warning'
                     });
                 },
-                alert: function (title, text) {
+                alert: function(title, text) {
                     return this.show(title, text, {
                         type: 'alert',
                         icon: 'info'
@@ -472,7 +473,7 @@
                         }
                     });
                 @endif
-                });
+            });
         </script>
     @endif
 </body>

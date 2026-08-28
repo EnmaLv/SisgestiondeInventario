@@ -35,10 +35,10 @@ class AdminMasterKeyController extends Controller
         }
 
         if ($user->verifyMasterKey($request->input('master_key'))) {
-            // clear pending and login
             session()->forget('pending_admin_id');
             Auth::loginUsingId($user->id_usuario ?? $user->id);
-            return redirect()->intended('/home');
+            $destino = (new \App\AdminLTE\Filters\ModuleFilter())->resolveInitialRoute($user->id_usuario ?? $user->id);
+            return redirect()->intended($destino);
         }
 
         return back()->withErrors(['master_key' => 'Llave maestra incorrecta.']);

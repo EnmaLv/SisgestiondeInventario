@@ -58,14 +58,9 @@ class HomeController extends Controller
         if ($roleName && strtolower($roleName) === 'obrero') {
             return redirect()->route('admin.movimientos.registro_comida.index');
         }
-        if (!session()->has('modulo_activo') || is_null(session('modulo_activo'))) {
-            $sessionPermissions = session('menu_permissions_user', []);
-
-            if (in_array('admin/modulos/seleccionar', $sessionPermissions)) {
-                return redirect('admin/modulos/seleccionar');
-            }
-        }
-
+        // Mantener la pantalla inicial del sistema como landing page normal.
+        // La selección de módulo sigue disponible manualmente desde el menú,
+        // pero no se fuerza la redirección automática al entrar al inicio.
         $rol = $roleName ? Rol::where('nombre', $roleName)->first() : null;
         $menuPermissions = $rol?->menu_permissions ?? [];
         $isAdministrator = $roleName && strtolower($roleName) === 'administrador';

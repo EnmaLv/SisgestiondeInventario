@@ -100,7 +100,10 @@ class CitaController extends Controller
 
         $citasPorFecha = [];
         foreach ($citasConfirmadas as $cita) {
-            $citasPorFecha[$cita->fecha][] = Carbon::parse($cita->hora);
+            $fechaKey = $cita->fecha instanceof \Carbon\Carbon 
+                ? $cita->fecha->format('Y-m-d') 
+                : Carbon::parse($cita->fecha)->format('Y-m-d');
+            $citasPorFecha[$fechaKey][] = Carbon::parse($cita->hora);
         }
 
         $disponibilidad = [];
@@ -127,7 +130,7 @@ class CitaController extends Controller
 
                 $ocupado = false;
                 foreach ($citasDelDia as $horaCita) {
-                    if ($horaCita->betweenIncluded($inicio, $fin->copy()->subMinute())) {
+                    if ($horaCita->gte($inicio) && $horaCita->lt($fin)) {
                         $ocupado = true;
                         break;
                     }

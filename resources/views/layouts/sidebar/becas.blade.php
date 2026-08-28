@@ -2,7 +2,6 @@
     $becaItems = collect(config('adminlte.menu'))->filter(function ($item) {
         return isset($item['module']) && $item['module'] === 'beca';
     });
-
     $headerItem = $becaItems->first(function ($item) {
         return isset($item['header']);
     });
@@ -43,3 +42,4 @@
         @endcanMenu
     @endforeach
 @endcanMenu
+

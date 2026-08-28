@@ -395,8 +395,8 @@
                     <p class="text-xs text-gray-500 dark:text-gray-400">No se encontraron pacientes que coincidan con tu búsqueda.</p>
                 </div>
 
-                <div class="mt-auto flex justify-center pb-2 pt-8">
-                    {{ $historias->appends(request()->query())->links('admin.psicologia.maestros.historias.partials.pagination') }}
+                <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+                    {{ $historias->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
                 </div>
             @endif
         </div>

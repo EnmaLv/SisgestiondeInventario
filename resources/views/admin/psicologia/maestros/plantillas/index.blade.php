@@ -1,12 +1,8 @@
 <x-app-layout>
     <div class="pt-8 pb-12 min-h-[calc(100vh-4rem)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
             @include('components.alert')
-
             <div x-data="{ search: '', items: {{ json_encode($plantillas->pluck('titulo')->map(function($t) { return strtolower($t); })) }} }">
-                
-                {{-- Encabezado de la página --}}
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
@@ -36,7 +32,6 @@
                     </div>
                 </div>
 
-                {{-- Grid de Tarjetas --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($plantillas as $plantilla)
                         <div x-show="search === '' || '{{ strtolower($plantilla->titulo) }}'.includes(search.toLowerCase())"
@@ -119,12 +114,11 @@
                 </div>
 
                 @if($plantillas->hasPages())
-                    <div class="mt-8">
-                        {{ $plantillas->links() }}
+                    <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+                        {{ $plantillas->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
                     </div>
                 @endif
             </div>
-
         </div>
     </div>
 </x-app-layout>

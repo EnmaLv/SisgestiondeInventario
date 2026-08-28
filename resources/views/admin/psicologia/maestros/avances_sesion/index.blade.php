@@ -155,8 +155,8 @@
             </div>
 
             @if ($avances->hasPages())
-                <div class="mt-8 flex justify-center">
-                    {{ $avances->appends(request()->query())->links('admin.psicologia.maestros.avances_sesion.partials.pagination') }}
+                <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+                    {{ $avances->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
                 </div>
             @endif
 

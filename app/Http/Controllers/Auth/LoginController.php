@@ -7,10 +7,6 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth as AuthFacade;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Usuario;
 
 
 class LoginController extends Controller
@@ -48,24 +44,8 @@ class LoginController extends Controller
         }
 
         AuthFacade::login($usuario);
-
-        return redirect()->intended($this->redirectTo);
+        $destino = (new \App\AdminLTE\Filters\ModuleFilter())->resolveInitialRoute($usuario->id_usuario ?? $usuario->id);
+        return redirect()->intended($destino);
     }
-
-    protected function authenticated(Request $request, $user)
-    {
-        try {
-            $isAdmin = $user->roles()->where('nombre', 'Administrador')->exists();
-        } catch (\Exception $e) {
-            $isAdmin = ($user->role ?? '') === 'Administrador';
-        }
-
-        if ($isAdmin) {
-            Auth::logout();
-            session(['pending_admin_id' => $user->id_usuario ?? $user->id]);
-            return redirect()->route('admin.configuracion.master_key.form');
-        }
-
-        return redirect()->intended($this->redirectPath());
-    }
+    
 }
