@@ -17,7 +17,7 @@
                     </h1>
                     <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
                         Bienvenido <span
-                            class="font-bold text-gray-700 dark:text-gray-200">{{ auth()->user()->persona->nombre_persona }}</span>
+                            class="font-bold text-gray-700 dark:text-gray-200">{{ auth()->user()->persona->nombre_persona ?? auth()->user()->username }}</span>
                         ·
                         {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                     </p>
@@ -81,17 +81,15 @@
                         class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400">
                         <i class="fas fa-door-closed text-2xl"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider">No hay consultorios registrados
-                    </h3>
-                    <p class="text-xs text-gray-400 mt-1">Registra un consultorio para comenzar a gestionar sus
-                        horarios.</p>
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider">No hay consultorios registrados</h3>
+                    <p class="text-xs text-gray-400 mt-1">Registra un consultorio para comenzar a gestionar sus horarios.</p>
                 </div>
             @else
                 @php
                     $totalJornadas = count(\App\Models\salud\HorarioConsultorio::BLOQUES);
                 @endphp
 
-                {{-- Cuadrila semanal por jornada --}}
+                {{-- Cuadrilla semanal por jornada --}}
                 @foreach (\App\Models\salud\HorarioConsultorio::BLOQUES as $jornada => $bloques)
                     @php
                         $jornadaIndex = $loop->index;
@@ -100,41 +98,33 @@
                     <div id="jornada-block-{{ $jornadaIndex }}"
                         class="jornada-block mb-8 {{ $jornadaIndex !== 0 ? 'hidden' : '' }}">
 
-                        {{-- Encabezado  --}}
+                        {{-- Encabezado --}}
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
                             <div class="hidden sm:block sm:w-44"></div>
 
-                            {{-- Nombre de Jornada en recuadro centrado --}}
-                            <div
-                                class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800/70 border border-gray-200/80 dark:border-gray-700/60 shadow-sm text-center">
-                                <i class="fas text-sm"></i>
-                                <h3
-                                    class="text-xs sm:text-sm font-black uppercase tracking-wider text-gray-700 dark:text-gray-200">
+                            <div class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800/70 border border-gray-200/80 dark:border-gray-700/60 shadow-sm text-center">
+                                <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-gray-700 dark:text-gray-200">
                                     Jornada {{ $jornada }}
                                 </h3>
                             </div>
 
-                            {{-- Paginación estilizada --}}
                             <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
                                 class="flex items-center justify-between md:justify-center gap-1 border border-gray-200 dark:border-gray-700/60 p-1 h-12 rounded-2xl shadow-sm flex-shrink-0 w-full sm:w-auto">
                                 <button type="button" onclick="cambiarJornada(-1)" title="Jornada Anterior"
                                     class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 19l-7-7 7-7" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                     </svg>
                                 </button>
 
-                                <span
-                                    class="px-2 sm:px-4 text-[10px] sm:text-[11px] font-black text-gray-800 dark:text-gray-200 min-w-[90px] text-center uppercase tracking-wider leading-none whitespace-nowrap">
+                                <span class="px-2 sm:px-4 text-[10px] sm:text-[11px] font-black text-gray-800 dark:text-gray-200 min-w-[90px] text-center uppercase tracking-wider leading-none whitespace-nowrap">
                                     {{ $loop->iteration }} / {{ $totalJornadas }}
                                 </span>
 
                                 <button type="button" onclick="cambiarJornada(1)" title="Siguiente Jornada"
                                     class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5l7 7-7 7" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                     </svg>
                                 </button>
                             </div>
@@ -160,7 +150,7 @@
                                 {{-- Filas por Bloque de Horario --}}
                                 @foreach ($bloques as $bloque)
                                     {{-- Columna Hora --}}
-                                    <div class="p-8 flex items-center justify-center text-center text-xs font-extrabold text-gray-700 dark:text-gray-200 whitespace-nowrap border-r bg-gray-50/30 dark:bg-black/10 {{ !$loop->last ? 'border-b' : '' }}"
+                                    <div class="p-4 flex items-center justify-center text-center text-xs font-extrabold text-gray-700 dark:text-gray-200 whitespace-nowrap border-r bg-gray-50/30 dark:bg-black/10 {{ !$loop->last ? 'border-b' : '' }}"
                                         style="border-color: var(--border-color);">
                                         {{ \Carbon\Carbon::parse($bloque['inicio'])->format('g:i') }} -
                                         {{ \Carbon\Carbon::parse($bloque['fin'])->format('g:i') }}
@@ -169,48 +159,60 @@
                                     {{-- Celdas por Día --}}
                                     @foreach (\App\Models\salud\HorarioConsultorio::DIAS as $diaKey => $diaLabel)
                                         @php
-                                            $registro = \App\Models\salud\HorarioConsultorio::buscarRegistroEnBloque(
-                                                $horarios->get($diaKey),
-                                                $bloque['inicio'],
-                                                $bloque['fin'],
-                                            );
+                                            $diaRegistros = $horarios->get($diaKey) ?? collect();
+                                            $registrosEnBloque = collect($diaRegistros)->filter(function ($item) use ($bloque) {
+                                                $inicioItem = \Carbon\Carbon::parse($item->hora_inicio)->format('H:i:s');
+                                                $finItem = \Carbon\Carbon::parse($item->hora_fin)->format('H:i:s');
+                                                $inicioBloque = \Carbon\Carbon::parse($bloque['inicio'])->format('H:i:s');
+                                                $finBloque = \Carbon\Carbon::parse($bloque['fin'])->format('H:i:s');
+                                                return $inicioItem === $inicioBloque && $finItem === $finBloque;
+                                            });
                                         @endphp
 
-                                        <div class="p-2 flex items-center justify-center {{ !$loop->last ? 'border-r' : '' }} {{ !$loop->parent->last ? 'border-b' : '' }}"
+                                        <div class="p-1.5 flex flex-col gap-1 items-center justify-center min-h-[68px] {{ !$loop->last ? 'border-r' : '' }} {{ !$loop->parent->last ? 'border-b' : '' }}"
                                             style="border-color: var(--border-color);">
 
-                                            @if ($registro)
-                                                <div
-                                                    class="w-full h-full min-h-[46px] rounded-xl bg-gradient-to-r from-sky-500/20 to-sky-600/10 dark:from-sky-500/20 dark:to-sky-600/10 border border-sky-300 dark:border-sky-800 px-3 py-2 flex items-center justify-between gap-2 shadow-sm group hover:border-sky-400 dark:hover:border-sky-600 transition-all">
-                                                    <div class="flex items-center gap-1.5">
-                                                        <span class="relative flex h-2 w-2">
-                                                            <span
-                                                                class="absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                                                            <span
-                                                                class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
-                                                        </span>
-                                                        <span
-                                                            class="text-[11px] font-black uppercase tracking-wider text-sky-700 dark:text-sky-300">
-                                                            Asignado
-                                                        </span>
-                                                    </div>
+                                            @if ($registrosEnBloque->isNotEmpty())
+                                                <div class="w-full h-full max-h-[160px] overflow-y-auto flex flex-col gap-1 pr-0.5">
+                                                    @foreach ($registrosEnBloque as $registro)
+                                                        @php
+                                                            $nombrePersonal = null;
+                                                            if (isset($registro->usuario->persona)) {
+                                                                $nombrePersonal = trim(($registro->usuario->persona->nombre_persona ?? '') . ' ' . ($registro->usuario->persona->apellido_persona ?? ''));
+                                                            }
+                                                            if (!$nombrePersonal && isset($registro->usuario)) {
+                                                                $nombrePersonal = $registro->usuario->username;
+                                                            }
+                                                            if (!$nombrePersonal) {
+                                                                $nombrePersonal = 'Asignado';
+                                                            }
+                                                        @endphp
 
-                                                    <form id="form-delete-{{ $registro->id }}"
-                                                        action="{{ route('admin.salud.movimientos.horarios.destroy', $registro->id) }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="button"
-                                                            onclick="confirmToggleEstado('{{ $registro->id }}', 'inactivar', 'form-delete-')"
-                                                            title="Eliminar Horario"
-                                                            class="w-6 h-6 flex items-center justify-center rounded-lg text-sky-400 hover:text-rose-600 hover:bg-rose-100 dark:hover:bg-rose-950/60 transition-all active:scale-90">
-                                                            <i class="fas fa-trash-alt text-xs"></i>
-                                                        </button>
-                                                    </form>
+                                                        <div class="w-full rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 p-1.5 flex items-center justify-between gap-1 shadow-sm group hover:border-sky-400 dark:hover:border-sky-600 transition-all">
+                                                            <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                                                                <i class="fas fa-user-md text-[10px] text-sky-600 dark:text-sky-400 flex-shrink-0"></i>
+                                                                <span class="text-[10px] font-bold text-sky-900 dark:text-sky-100 truncate" title="{{ $nombrePersonal }}">
+                                                                    {{ $nombrePersonal }}
+                                                                </span>
+                                                            </div>
+
+                                                            <form id="form-delete-{{ $registro->id }}"
+                                                                action="{{ route('admin.salud.movimientos.horarios.destroy', $registro->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="button"
+                                                                    onclick="confirmToggleEstado('{{ $registro->id }}', 'inactivar', 'form-delete-')"
+                                                                    title="Eliminar Horario"
+                                                                    class="w-4 h-4 flex items-center justify-center rounded text-sky-400 hover:text-rose-600 hover:bg-rose-100 dark:hover:bg-rose-950/60 transition-all active:scale-90 flex-shrink-0">
+                                                                    <i class="fas fa-times text-[9px]"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
                                             @else
-                                                <div
-                                                    class="w-full h-full min-h-[46px] rounded-xl border border-dashed border-gray-400 dark:border-gray-700 bg-gray-100/50 dark:bg-black/10 flex items-center justify-center text-[11px] font-bold text-gray-400 dark:text-gray-700 select-none">
+                                                <div class="w-full h-full min-h-[58px] rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-black/10 flex items-center justify-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 select-none">
                                                     Disponible
                                                 </div>
                                             @endif

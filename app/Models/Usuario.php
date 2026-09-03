@@ -17,6 +17,7 @@ class Usuario extends Authenticatable
     protected $table = 'usuario';
     protected $primaryKey = 'id_usuario';
     public $timestamps = true;
+    protected $appends = ['nombre_completo'];
 
     protected $fillable = [
         'id_persona',
@@ -136,6 +137,22 @@ class Usuario extends Authenticatable
 
             return false;
         }
+    }
+
+    public function getNombreCompletoAttribute(): string
+    {
+        if ($this->persona) {
+            $nombre   = trim($this->persona->nombre_persona ?? '');
+            $apellido = trim($this->persona->apellido_persona ?? '');
+
+            $nombreCompleto = trim("{$nombre} {$apellido}");
+
+            if (!empty($nombreCompleto)) {
+                return $nombreCompleto;
+            }
+        }
+
+        return 'Sin nombre registrado';
     }
 
     public function tieneRol(array|string $roles): bool

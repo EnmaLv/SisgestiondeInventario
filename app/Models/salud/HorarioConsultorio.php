@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Carbon\Carbon;
+use App\Models\Usuario;
 
 class HorarioConsultorio extends Model
 {
@@ -15,6 +16,7 @@ class HorarioConsultorio extends Model
 
     protected $fillable = [
         'consultorio_id',
+        'id_usuario',
         'dia',
         'hora_inicio',
         'hora_fin',
@@ -27,7 +29,7 @@ class HorarioConsultorio extends Model
     ];
 
     /**
-     * Días hábiles (lunes a viernes) respetando el horario estudiantil.
+     * Días hábiles (lunes a viernes).
      */
     public const DIAS = [
         'lunes'     => 'Lunes',
@@ -38,10 +40,7 @@ class HorarioConsultorio extends Model
     ];
 
     /**
-     * Bloques de hora fijos por jornada.
-     */
-    /**
-     * Bloques de hora fijos por jornada (respetando formato 24h para BD).
+     * Bloques de hora fijos por jornada (formato 24h).
      */
     public const BLOQUES = [
         'Matutino' => [
@@ -95,20 +94,25 @@ class HorarioConsultorio extends Model
         return $this->belongsTo(Consultorio::class, 'consultorio_id');
     }
 
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
+    }
+
     /**
      * Horarios activos de un consultorio, agrupados por día.
      */
     public static function porConsultorioAgrupado(int $consultorioId)
     {
-        return self::where('consultorio_id', $consultorioId)
+        return self::with('usuario.persona')
+            ->where('consultorio_id', $consultorioId)
             ->where('activo', true)
             ->get()
             ->groupBy('dia');
     }
 
     /**
-     * Mapa [consultorio_id => ['lunes|07:00|09:00', ...]] usado para
-     * bloquear en el formulario de creación los cruces ya ocupados.
+     * Mapa [consultorio_id => ['lunes|07:00|08:15|10', ...]]
      */
     public static function ocupadosPorConsultorio()
     {
@@ -117,21 +121,27 @@ class HorarioConsultorio extends Model
             ->groupBy('consultorio_id')
             ->map(function ($items) {
                 return $items->map(function ($h) {
-                    return $h->dia . '|' . $h->hora_inicio . '|' . $h->hora_fin;
+                    $inicio = Carbon::parse($h->hora_inicio)->format('H:i');
+                    $fin    = Carbon::parse($h->hora_fin)->format('H:i');
+                    return [
+                        'clave' => "{$h->dia}|{$inicio}|{$fin}",
+                        'usuario_id' => $h->id_usuario,
+                        'full' => "{$h->dia}|{$inicio}|{$fin}|{$h->id_usuario}"
+                    ];
                 })->values();
             });
     }
 
     /**
-     * Busca si un conjunto de horarios de un día coincide con un bloque específico.
+     * Retorna la colección de todos los usuarios asignados a un bloque específico.
      */
-    public static function buscarRegistroEnBloque($horariosDia, string $horaInicio, string $horaFin)
+    public static function buscarRegistrosEnBloque($horariosDia, string $horaInicio, string $horaFin)
     {
         if (!$horariosDia) {
-            return null;
+            return collect();
         }
 
-        return $horariosDia->first(function ($h) use ($horaInicio, $horaFin) {
+        return $horariosDia->filter(function ($h) use ($horaInicio, $horaFin) {
             $inicio = Carbon::parse($h->hora_inicio)->format('H:i');
             $fin    = Carbon::parse($h->hora_fin)->format('H:i');
 

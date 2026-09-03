@@ -430,9 +430,9 @@ Breadcrumbs::for('admin.psicologia.maestros.historias.index', function (Trail $t
     $trail->push('Historias', route('admin.psicologia.maestros.historias.index'));
 });
 
-Breadcrumbs::for('admin.psicologia.maestros.historias.show', function (Trail $trail) {
+Breadcrumbs::for('admin.psicologia.maestros.historias.show', function (Trail $trail, $id) {
     $trail->parent('admin.psicologia.maestros.historias.index');
-    $trail->push('Editar Historias', route('admin.psicologia.maestros.historias.show'));
+    $trail->push('Editar Historias', route('admin.psicologia.maestros.historias.show', $id));
 });
 
 
