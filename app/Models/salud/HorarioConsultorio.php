@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Carbon\Carbon;
-use App\Models\Usuario;
 
 class HorarioConsultorio extends Model
 {
@@ -16,7 +15,7 @@ class HorarioConsultorio extends Model
 
     protected $fillable = [
         'consultorio_id',
-        'id_usuario',
+        'id_rol_usuario',
         'dia',
         'hora_inicio',
         'hora_fin',
@@ -94,9 +93,46 @@ class HorarioConsultorio extends Model
         return $this->belongsTo(Consultorio::class, 'consultorio_id');
     }
 
-    public function usuario()
+    public function rolUsuario()
     {
-        return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
+        return $this->belongsTo(\App\Models\RolUsuario::class, 'id_rol_usuario');
+    }
+
+    /**
+     * Nombre de la persona asignada a este bloque (vía rol_usuario -> usuario -> persona).
+     */
+    public function getNombrePersonalAttribute(): string
+    {
+        return optional($this->rolUsuario)->nombre_completo ?? 'Asignado';
+    }
+
+    /**
+     * Nombre del rol con el que la persona fue asignada a este bloque.
+     */
+    public function getNombreRolAsignadoAttribute(): string
+    {
+        return optional($this->rolUsuario)->nombre_rol ?? 'Sin Rol';
+    }
+
+    /**
+     * Usuarios elegibles para asignar horarios: filas de rol_usuario cuyo
+     * id_rol sea Administrador de Salud (4) o Secretaria de Salud (5).
+     */
+    public static function usuariosElegibles()
+    {
+        $rolesPermitidos = [4, 5];
+
+        return \App\Models\RolUsuario::with(['usuario.persona', 'rol'])
+            ->whereIn('id_rol', $rolesPermitidos)
+            ->get()
+            ->map(function ($ru) {
+                return (object) [
+                    'id_rol_usuario'  => $ru->id,
+                    'nombre_completo' => $ru->nombre_completo,
+                    'nombre_rol'      => $ru->nombre_rol,
+                ];
+            })
+            ->values();
     }
 
     /**
@@ -104,7 +140,7 @@ class HorarioConsultorio extends Model
      */
     public static function porConsultorioAgrupado(int $consultorioId)
     {
-        return self::with('usuario.persona')
+        return self::with('rolUsuario.usuario.persona', 'rolUsuario.rol')
             ->where('consultorio_id', $consultorioId)
             ->where('activo', true)
             ->get()
@@ -124,9 +160,9 @@ class HorarioConsultorio extends Model
                     $inicio = Carbon::parse($h->hora_inicio)->format('H:i');
                     $fin    = Carbon::parse($h->hora_fin)->format('H:i');
                     return [
-                        'clave' => "{$h->dia}|{$inicio}|{$fin}",
-                        'usuario_id' => $h->id_usuario,
-                        'full' => "{$h->dia}|{$inicio}|{$fin}|{$h->id_usuario}"
+                        'clave'          => "{$h->dia}|{$inicio}|{$fin}",
+                        'rol_usuario_id' => $h->id_rol_usuario,
+                        'full'           => "{$h->dia}|{$inicio}|{$fin}|{$h->id_rol_usuario}"
                     ];
                 })->values();
             });

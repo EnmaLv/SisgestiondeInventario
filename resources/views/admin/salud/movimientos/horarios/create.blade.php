@@ -1,63 +1,57 @@
 <x-app-layout>
-    <div class="pt-6 pb-12 min-h-[calc(100vh-4rem)]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="pb-12 min-h-[calc(100vh-4rem)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
             @include('components.alert')
 
             {{-- Encabezado Principal --}}
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1 border-b border-gray-200/50 dark:border-gray-800/50">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-3"
-                        style="color: var(--text-main);">
-                        <span>Asignar Horario</span>
-                        <span
-                            class="px-2.5 py-1 text-xs font-bold rounded-full bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h1 class="text-2xl sm:text-3xl font-black tracking-tight" style="color: var(--text-main);">
+                            Asignar Horario
+                        </h1>
+                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300">
                             Gestión Múltiple
                         </span>
-                    </h1>
+                    </div>
                     <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
-                        Bienvenido <span
-                            class="font-bold text-gray-700 dark:text-gray-200">{{ auth()->user()->persona->nombre_persona ?? auth()->user()->username }}</span>
-                        ·
-                        {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                        Bienvenido <span class="font-bold text-gray-700 dark:text-gray-200">{{ auth()->user()->nombre_completo }}</span> · {{ \Carbon\Carbon::now()->format('d/m/Y') }}
                     </p>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('admin.salud.movimientos.horarios.index', ['consultorio_id' => $consultorioSeleccionado]) }}"
-                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all shadow-sm"
-                        style="border-color: var(--border-color); color: var(--text-main);">
-                        <i class="fas fa-arrow-left text-[10px]"></i>
-                        <span>Volver</span>
-                    </a>
-                </div>
+                <a href="{{ route('admin.salud.movimientos.horarios.index', ['consultorio_id' => $consultorioSeleccionado]) }}"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all shadow-sm self-start sm:self-center"
+                    style="border-color: var(--border-color); color: var(--text-main);">
+                    <i class="fas fa-arrow-left text-[10px]"></i>
+                    <span>Volver</span>
+                </a>
             </div>
 
-            <form action="{{ route('admin.salud.movimientos.horarios.store') }}" method="POST"
-                class="rd-prevent-double-submit">
+            <form action="{{ route('admin.salud.movimientos.horarios.store') }}" method="POST" class="rd-prevent-double-submit space-y-6">
                 @csrf
 
                 {{-- Card de Selección de Consultorio y Barra de Estado --}}
                 <div style="background-color: var(--bg-card); border-color: var(--border-color);"
-                    class="p-2 sm:p-5 rounded-2xl border shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    class="p-4 sm:p-5 rounded-2xl border shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-4">
 
                     {{-- Selector de Consultorio --}}
                     <div class="w-full md:max-w-md">
-                        <label class="block text-[13px] font-black uppercase tracking-wider text-gray-400 mb-1.5">
+                        <label class="block text-[11px] font-black uppercase tracking-wider text-gray-400 mb-1.5">
                             Seleccionar Consultorio
                         </label>
                         <div class="flex items-center rounded-xl border overflow-hidden focus-within:ring-2 focus-within:ring-sky-500 transition-all shadow-sm"
                             style="border-color: var(--border-color);">
-                            <span
-                                class="flex items-center justify-center px-4 py-2.5 bg-gray-50 dark:bg-black/20 text-sky-600 dark:text-sky-400 border-r"
+                            <span class="flex items-center justify-center px-3.5 py-2.5 bg-gray-50 dark:bg-black/20 text-sky-600 dark:text-sky-400 border-r"
                                 style="border-color: var(--border-color);">
-                                <i class="fas fa-door-open text-base"></i>
+                                <i class="fas fa-door-open text-sm"></i>
                             </span>
                             <select name="consultorio_id" id="consultorio_id" required
                                 style="background-color: rgba(0,0,0,0.02); color: var(--text-main);"
-                                class="w-full px-3 py-2.5 text-sm font-semibold border-none focus:ring-0 focus:outline-none transition-all cursor-pointer">
+                                class="w-full px-3 py-2 text-sm font-semibold border-none focus:ring-0 focus:outline-none transition-all cursor-pointer">
                                 <option value="" disabled {{ !$consultorioSeleccionado ? 'selected' : '' }}>
-                                    Seleccione un consultorio</option>
+                                    Seleccione un consultorio
+                                </option>
                                 @foreach ($consultorios as $consultorio)
                                     <option value="{{ $consultorio->id }}"
                                         {{ old('consultorio_id', $consultorioSeleccionado) == $consultorio->id ? 'selected' : '' }}>
@@ -72,10 +66,8 @@
                     </div>
 
                     {{-- Contador y Limpieza de Selección --}}
-                    <div
-                        class="flex items-center justify-between md:justify-end gap-4 self-stretch md:self-end pt-2 md:pt-0">
-                        <div
-                            class="px-3.5 py-2 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/50 flex items-center gap-2">
+                    <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto border-t md:border-t-0 pt-3 md:pt-0 border-gray-100 dark:border-gray-800">
+                        <div class="px-3.5 py-2 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/50 flex items-center gap-2">
                             <i class="fas fa-check-circle text-sky-600 dark:text-sky-400 text-xs"></i>
                             <span class="text-xs font-extrabold text-sky-700 dark:text-sky-300">
                                 <span id="contadorSeleccion">0</span> asignación(es) realizada(s)
@@ -83,78 +75,71 @@
                         </div>
 
                         <button type="button" id="btnLimpiarSeleccion"
-                            class="px-3 py-2 rounded-xl text-xs font-bold text-gray-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-200 dark:hover:border-rose-900 transition-all">
-                            <i class="fas fa-eraser mr-1 text-[11px]"></i> Limpiar Todo
+                            class="px-3 py-2 rounded-xl text-xs font-bold text-gray-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-200 dark:hover:border-rose-900 transition-all flex items-center gap-1.5">
+                            <i class="fas fa-eraser text-[11px]"></i>
+                            <span>Limpiar Todo</span>
                         </button>
                     </div>
                 </div>
 
                 @error('horarios')
-                    <div
-                        class="mb-6 px-4 py-3 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                    <div class="px-4 py-3 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2">
                         <i class="fas fa-exclamation-circle text-sm"></i>
                         <span>{{ $message }}</span>
                     </div>
                 @enderror
 
-                {{-- Contenedor Principal en Grid de 2 Columnas --}}
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                {{-- Contenedor Principal en Grid 12 Columnas --}}
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
                     {{-- Lista Lateral de Personal Disponible --}}
-                    <div class="lg:col-span-1">
+                    <div class="lg:col-span-3 lg:sticky lg:top-6">
                         <div style="background-color: var(--bg-card); border-color: var(--border-color);"
-                            class="p-4 rounded-2xl border shadow-sm sticky top-6">
+                            class="p-4 rounded-2xl border shadow-sm flex flex-col max-h-[calc(100vh-8rem)]">
 
-                            <div class="flex items-center justify-between mb-3">
-                                <h3
-                                    class="text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                            <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-800">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-200 flex items-center gap-2">
                                     <i class="fas fa-user-md text-sky-500"></i>
                                     <span>Personal Disponible</span>
                                 </h3>
-                                <span
-                                    class="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+                                <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
                                     {{ count($usuariosElegibles) }}
                                 </span>
                             </div>
 
-                            <p class="text-[11px] text-gray-500 dark:text-gray-400 mb-3">
-                                Arrastra uno o varios usuarios hacia los bloques de la tabla.
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400 mb-3 leading-tight">
+                                Arrastra los usuarios hacia los bloques correspondientes.
                             </p>
 
                             {{-- Buscador de Usuarios --}}
                             <div class="relative mb-3">
                                 <i class="fas fa-search absolute left-3 top-2.5 text-xs text-gray-400"></i>
-                                <input type="text" id="searchUser" placeholder="Buscar personal..."
+                                <input type="text" id="searchUser" placeholder="Buscar persona..."
                                     class="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black/20 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-sky-500">
                             </div>
 
                             {{-- Tarjetas Draggable --}}
-                            <div id="usersList" class="space-y-2 max-h-[460px] overflow-y-auto pr-1">
+                            <div id="usersList" class="space-y-2 overflow-y-auto pr-1 flex-1 min-h-0">
                                 @forelse ($usuariosElegibles as $usr)
-                                    @php
-                                        // Nombre obtenido directamente desde Usuario -> id_persona -> Persona
-                                        $displayNombre = $usr->nombre_completo;
-                                        $rolNombre = $usr->roles->pluck('nombre')->first() ?? 'Sin rol';
-                                    @endphp
-
-                                    <div class="user-card flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700/80 bg-white dark:bg-gray-800/60 hover:border-sky-400 cursor-grab transition-all select-none"
+                                    <div class="user-card flex items-center gap-2.5 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700/80 bg-white dark:bg-gray-800/60 hover:border-sky-400 cursor-grab active:cursor-grabbing transition-all select-none group"
                                         draggable="true" ondragstart="handleDragStart(event)"
-                                        data-id="{{ $usr->id_usuario }}" data-nombre="{{ $displayNombre }}">
+                                        data-id="{{ $usr->id_rol_usuario }}" data-nombre="{{ $usr->nombre_completo }}"
+                                        data-rol="{{ $usr->nombre_rol }}">
 
-                                        <div
-                                            class="w-7 h-7 rounded-lg bg-sky-100 dark:bg-sky-900/50 text-sky-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                        <div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/50 text-sky-600 flex items-center justify-center font-bold text-xs flex-shrink-0 group-hover:bg-sky-500 group-hover:text-white transition-colors">
                                             <i class="fas fa-user text-[11px]"></i>
                                         </div>
 
                                         <div class="overflow-hidden min-w-0 flex-1">
-                                            <p
-                                                class="user-card-name text-xs font-bold text-gray-800 dark:text-gray-200 truncate">
-                                                {{ $displayNombre }}
+                                            <p class="user-card-name text-xs font-bold text-gray-800 dark:text-gray-200 truncate">
+                                                {{ $usr->nombre_completo }}
                                             </p>
                                             <p class="text-[10px] font-medium text-sky-600 dark:text-sky-400 truncate">
-                                                {{ $rolNombre }}
+                                                {{ $usr->nombre_rol }}
                                             </p>
                                         </div>
+
+                                        <i class="fas fa-grip-vertical text-gray-300 dark:text-gray-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                     </div>
                                 @empty
                                     <div class="text-center py-6 text-xs text-gray-400">
@@ -167,7 +152,7 @@
                     </div>
 
                     {{-- Tabla de Horarios --}}
-                    <div class="lg:col-span-3">
+                    <div class="lg:col-span-9 space-y-4">
                         @php
                             $totalJornadas = count(\App\Models\salud\HorarioConsultorio::BLOQUES);
                         @endphp
@@ -177,72 +162,65 @@
                                 $jornadaIndex = $loop->index;
                             @endphp
 
-                            <div id="jornada-block-{{ $jornadaIndex }}"
-                                class="jornada-block {{ $jornadaIndex !== 0 ? 'hidden' : '' }}">
+                            <div id="jornada-block-{{ $jornadaIndex }}" class="jornada-block {{ $jornadaIndex !== 0 ? 'hidden' : '' }}">
 
-                                {{-- Encabezado con Recuadro Centrado y Paginación --}}
-                                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
-                                    <div class="hidden sm:block sm:w-44"></div>
+                                {{-- Header Unificado de Jornada --}}
+                                <div style="background-color: var(--bg-card); border-color: var(--border-color);"
+                                    class="p-3 rounded-2xl border shadow-sm mb-4 flex items-center justify-between gap-3">
 
-                                    <div
-                                        class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800/70 border border-gray-200/80 dark:border-gray-700/60 shadow-sm text-center">
-                                        <h3
-                                            class="text-xs sm:text-sm font-black uppercase tracking-wider text-gray-700 dark:text-gray-200">
-                                            Jornada {{ $jornada }}
-                                        </h3>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2.5 h-7 rounded-full bg-sky-500"></div>
+                                        <div>
+                                            <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-gray-800 dark:text-gray-200">
+                                                Jornada {{ $jornada }}
+                                            </h3>
+                                        </div>
                                     </div>
 
-                                    <div style="background-color: var(--bg-card); border-color: var(--border-color); color: var(--text-main);"
-                                        class="flex items-center justify-between md:justify-center gap-1 border border-gray-200 dark:border-gray-700/60 p-1 h-12 rounded-2xl shadow-sm flex-shrink-0 w-full sm:w-auto">
+                                    <div class="flex items-center gap-1.5 bg-gray-50 dark:bg-black/20 p-1 rounded-xl border border-gray-200/60 dark:border-gray-700/60">
                                         <button type="button" onclick="cambiarJornada(-1)" title="Jornada Anterior"
-                                            class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 19l-7-7 7-7" />
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all shadow-sm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                             </svg>
                                         </button>
 
-                                        <span
-                                            class="px-2 sm:px-4 text-[10px] sm:text-[11px] font-black text-gray-800 dark:text-gray-200 min-w-[90px] text-center uppercase tracking-wider leading-none whitespace-nowrap">
+                                        <span class="px-3 text-[11px] font-black text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                                             {{ $loop->iteration }} / {{ $totalJornadas }}
                                         </span>
 
                                         <button type="button" onclick="cambiarJornada(1)" title="Siguiente Jornada"
-                                            class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all flex-shrink-0">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 5l7 7-7 7" />
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all shadow-sm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                             </svg>
                                         </button>
                                     </div>
                                 </div>
 
-                                {{-- Tabla de Selección y Drop Zone --}}
+                                {{-- Tabla Grid --}}
                                 <div style="border-color: var(--border-color); background-color: var(--bg-card);"
                                     class="rounded-2xl border shadow-sm overflow-x-auto">
-                                    <div class="grid min-w-[700px]"
-                                        style="grid-template-columns: 120px repeat(5, 1fr);">
+                                    <div class="grid min-w-[720px]" style="grid-template-columns: 110px repeat(5, minmax(0, 1fr));">
 
-                                        {{-- Header Días --}}
-                                        <div class="p-3 border-b border-r bg-gray-50/70 dark:bg-black/30 flex items-center justify-center font-bold text-[11px] text-gray-400 uppercase tracking-wider"
+                                        {{-- Header --}}
+                                        <div class="p-3 border-b border-r bg-gray-50/80 dark:bg-black/30 flex items-center justify-center font-extrabold text-[11px] text-gray-400 uppercase tracking-wider"
                                             style="border-color: var(--border-color);">
                                             <i class="far fa-clock mr-1.5"></i> Bloque
                                         </div>
+
                                         @foreach (\App\Models\salud\HorarioConsultorio::DIAS as $diaKey => $diaLabel)
-                                            <div class="p-3 text-center text-[11px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-300 border-b bg-gray-50/70 dark:bg-black/30 {{ !$loop->last ? 'border-r' : '' }}"
+                                            <div class="p-3 text-center text-[11px] font-black uppercase tracking-wider text-gray-700 dark:text-gray-200 border-b bg-gray-50/80 dark:bg-black/30 {{ !$loop->last ? 'border-r' : '' }}"
                                                 style="border-color: var(--border-color);">
                                                 {{ $diaLabel }}
                                             </div>
                                         @endforeach
 
-                                        {{-- Filas por Bloque de Horario --}}
+                                        {{-- Filas --}}
                                         @foreach ($bloques as $bloque)
-                                            <div class="p-4 flex items-center justify-center text-center text-[11px] font-extrabold text-gray-700 dark:text-gray-200 whitespace-nowrap border-r bg-gray-50/30 dark:bg-black/10 {{ !$loop->last ? 'border-b' : '' }}"
+                                            <div class="p-3 flex items-center justify-center text-center text-[11px] font-extrabold text-gray-700 dark:text-gray-200 whitespace-nowrap border-r bg-gray-50/30 dark:bg-black/10 {{ !$loop->last ? 'border-b' : '' }}"
                                                 style="border-color: var(--border-color);">
-                                                {{ \Carbon\Carbon::parse($bloque['inicio'])->format('g:i') }} -
-                                                {{ \Carbon\Carbon::parse($bloque['fin'])->format('g:i') }}
+                                                {{ \Carbon\Carbon::parse($bloque['inicio'])->format('g:i') }} - {{ \Carbon\Carbon::parse($bloque['fin'])->format('g:i') }}
                                             </div>
 
                                             @foreach (\App\Models\salud\HorarioConsultorio::DIAS as $diaKey => $diaLabel)
@@ -252,7 +230,7 @@
                                                 <div class="p-1.5 flex items-center justify-center {{ !$loop->last ? 'border-r' : '' }} {{ !$loop->parent->last ? 'border-b' : '' }}"
                                                     style="border-color: var(--border-color);">
 
-                                                    <div class="drop-zone w-full h-full min-h-[68px] max-h-[160px] overflow-y-auto rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-black/10 p-1 flex flex-col gap-1 transition-all duration-200 relative group"
+                                                    <div class="drop-zone w-full h-full min-h-[72px] max-h-[160px] overflow-y-auto rounded-xl border border-dashed border-gray-300 dark:border-gray-700/80 bg-gray-50/40 dark:bg-black/10 p-1.5 flex flex-col gap-1 transition-all duration-200 relative group hover:border-sky-400"
                                                         data-key="{{ $cellKey }}"
                                                         data-dia="{{ $diaKey }}"
                                                         data-inicio="{{ $bloque['inicio'] }}"
@@ -261,15 +239,12 @@
                                                         ondragleave="handleDragLeave(event)"
                                                         ondrop="handleDrop(event)">
 
-                                                        {{-- Indicador Vacío --}}
-                                                        <div
-                                                            class="empty-placeholder flex flex-col items-center justify-center my-auto py-2 text-[10px] font-semibold text-gray-400 dark:text-gray-500 gap-1 pointer-events-none">
-                                                            <i class="fas fa-plus-circle text-xs opacity-50"></i>
+                                                        <div class="empty-placeholder flex flex-col items-center justify-center my-auto py-2 text-[10px] font-semibold text-gray-400 dark:text-gray-500 gap-1 pointer-events-none transition-opacity">
+                                                            <i class="fas fa-plus-circle text-xs opacity-40"></i>
                                                             <span>Arrastrar aquí</span>
                                                         </div>
 
-                                                        {{-- Lista de Usuarios Asignados a este Bloque --}}
-                                                        <div class="assigned-list w-full flex flex-col gap-1"></div>
+                                                        <div class="assigned-list w-full flex flex-col gap-1.5"></div>
 
                                                     </div>
 
@@ -286,7 +261,7 @@
 
                 {{-- Botones de Acción --}}
                 <div style="background-color: var(--bg-card); border-color: var(--border-color);"
-                    class="p-4 rounded-2xl border shadow-sm flex items-center justify-end gap-3">
+                    class="p-4 rounded-2xl border shadow-sm flex items-center justify-between sm:justify-end gap-3">
                     <a href="{{ route('admin.salud.movimientos.horarios.index', ['consultorio_id' => $consultorioSeleccionado]) }}"
                         class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border text-xs font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
                         style="border-color: var(--border-color); color: var(--text-main);">
@@ -307,12 +282,6 @@
         let jornadaActual = 0;
         const totalJornadas = {{ count(\App\Models\salud\HorarioConsultorio::BLOQUES) }};
 
-        // Si estás usando los datos desde dataset en JS:
-        const nombre = cardElement.dataset.nombre; // Obtiene el nombre completo
-
-        // O si procesas un objeto JSON de usuario:
-        console.log(usuario.nombre_completo);
-
         function cambiarJornada(direccion) {
             const bloqueActual = document.getElementById(`jornada-block-${jornadaActual}`);
             if (bloqueActual) {
@@ -327,13 +296,15 @@
             }
         }
 
-        // --- LÓGICA DRAG AND DROP MÚLTIPLE ---
+        // --- DRAG AND DROP ---
         function handleDragStart(e) {
             const id = e.currentTarget.getAttribute('data-id');
             const nombre = e.currentTarget.getAttribute('data-nombre');
+            const rol = e.currentTarget.getAttribute('data-rol');
             e.dataTransfer.setData('text/plain', JSON.stringify({
                 id,
-                nombre
+                nombre,
+                rol
             }));
             e.dataTransfer.effectAllowed = 'copy';
         }
@@ -356,21 +327,21 @@
             try {
                 const data = JSON.parse(e.dataTransfer.getData('text/plain'));
                 if (data && data.id) {
-                    asignarUsuarioABloque(zone, data.id, data.nombre);
+                    asignarUsuarioABloque(zone, data.id, data.nombre, data.rol);
                 }
             } catch (err) {
-                console.error("Error al procesar el objeto soltado:", err);
+                console.error("Error procesando soltado:", err);
             }
         }
 
-        function asignarUsuarioABloque(zone, userId, userName) {
-            const key = zone.getAttribute('data-key'); // "dia|hora_inicio|hora_fin"
+        function asignarUsuarioABloque(zone, userId, userName, userRol) {
+            const key = zone.getAttribute('data-key');
             const listContainer = zone.querySelector('.assigned-list');
             const placeholder = zone.querySelector('.empty-placeholder');
 
             if (!listContainer) return;
 
-            // Evitar duplicados del mismo usuario en la misma celda
+            // Evitar duplicados en la misma casilla
             if (listContainer.querySelector(`[data-user-id="${userId}"]`)) {
                 return;
             }
@@ -379,21 +350,25 @@
                 placeholder.classList.add('hidden');
             }
 
-            // Crear elemento/pill para el usuario
+            const rolTexto = userRol || '';
+
             const pill = document.createElement('div');
             pill.className =
-                "user-pill flex items-center justify-between w-full px-2 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/80 border border-sky-200 dark:border-sky-800 text-[10px] shadow-sm";
+                "user-pill flex items-center justify-between w-full px-2 py-1 rounded-lg bg-sky-300/20 dark:bg-sky-800/30 border border-sky-200 dark:border-sky-800 text-[12px] shadow-sm";
             pill.setAttribute('data-user-id', userId);
             pill.innerHTML = `
-            <div class="flex items-center gap-1 min-w-0 pr-1">
-                <i class="fas fa-user-md text-sky-600 dark:text-sky-400 text-[9px]"></i>
-                <span class="font-bold text-sky-900 dark:text-sky-200 truncate" title="${userName}">${userName}</span>
-            </div>
-            <button type="button" onclick="quitarUsuarioPill(this)" class="text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 flex-shrink-0 p-0.5">
-                <i class="fas fa-times"></i>
-            </button>
-            <input type="hidden" class="input-horario" name="horarios[]" value="${key}|${userId}">
-        `;
+                <div class="flex items-center gap-1 min-w-0 pr-1">
+                    <i class="fas fa-user-md text-sky-600 dark:text-sky-400 text-[10px] flex-shrink-0"></i>
+                    <div class="min-w-0 leading-tight">
+                        <span class="block font-bold text-sky-900 dark:text-sky-200 truncate" title="${userName}">${userName}</span>
+                        <span class="block text-[9px] font-medium text-sky-500 dark:text-sky-400 truncate">${rolTexto}</span>
+                    </div>
+                </div>
+                <button type="button" onclick="quitarUsuarioPill(this)" class="text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 hover:bg-rose-200/30 dark:hover:bg-rose-700/50 rounded flex-shrink-0 p-0.5">
+                    <i class="fas fa-times"></i>
+                </button>
+                <input type="hidden" class="input-horario" name="horarios[]" value="${key}|${userId}">
+            `;
 
             listContainer.appendChild(pill);
             actualizarContador();
@@ -422,7 +397,7 @@
             }
         }
 
-        // --- BUSCADOR DE USUARIOS EN TIEMPO REAL ---
+        // --- BUSCADOR REAL-TIME ---
         document.getElementById('searchUser').addEventListener('input', function(e) {
             const query = e.target.value.toLowerCase().trim();
             document.querySelectorAll('.user-card').forEach(function(card) {
@@ -446,7 +421,7 @@
             actualizarContador();
         });
 
-        // --- RECARGAR AL CAMBIAR DE CONSULTORIO ---
+        // --- RECARGAR AL CAMBIAR CONSULTORIO ---
         document.getElementById('consultorio_id').addEventListener('change', function() {
             const consultorioId = this.value;
             if (consultorioId) {
@@ -455,16 +430,16 @@
             }
         });
 
-        // --- CARGAR PREVIAMENTE LOS HORARIOS GUARDADOS ---
+        // --- RESTAURAR DATOS GUARDADOS EN CARGA INICIAL ---
         const horariosActuales = @json($horariosActuales ?? []);
 
         document.addEventListener('DOMContentLoaded', function() {
             if (horariosActuales && horariosActuales.length > 0) {
                 horariosActuales.forEach(item => {
-                    // Se busca la celda por la clave "dia|hora_inicio|hora_fin"
                     const zone = document.querySelector(`.drop-zone[data-key="${item.clave_simple}"]`);
                     if (zone) {
-                        asignarUsuarioABloque(zone, item.id_usuario, item.nombre_usuario);
+                        asignarUsuarioABloque(zone, item.id_rol_usuario, item.nombre_usuario, item
+                            .rol_usuario);
                     }
                 });
             }

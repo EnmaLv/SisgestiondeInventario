@@ -4,11 +4,11 @@ namespace App\Http\Controllers\salud;
 
 use App\Http\Controllers\Controller;
 use App\Models\salud\Consultorio;
-use App\Models\Usuario;
 use App\Models\salud\HorarioConsultorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class HorarioConsultorioController extends Controller
 {
@@ -32,7 +32,8 @@ class HorarioConsultorioController extends Controller
     }
 
     /**
-     * Formulario de selección de bloques para un consultorio.
+     * Formulario de selección de bloques. Usuarios elegibles y horarios ya
+     * asignados se resuelven a través de la relación HorarioConsultorio -> RolUsuario -> Usuario -> Persona.
      */
     public function create(Request $request)
     {
@@ -40,47 +41,27 @@ class HorarioConsultorioController extends Controller
         $consultorioSeleccionado = $request->input('consultorio_id');
         $ocupadosPorConsultorio = HorarioConsultorio::ocupadosPorConsultorio();
 
-        // Horarios cargados previamente con persona Y roles del usuario
-        $horariosActuales = $consultorioSeleccionado
-            ? HorarioConsultorio::with(['usuario.persona', 'usuario.roles'])
-            ->where('consultorio_id', $consultorioSeleccionado)
-            ->where('activo', true)
-            ->get()
-            ->map(function ($h) {
-                $inicio = \Carbon\Carbon::parse($h->hora_inicio)->format('H:i');
-                $fin    = \Carbon\Carbon::parse($h->hora_fin)->format('H:i');
+        $usuariosElegibles = HorarioConsultorio::usuariosElegibles();
 
-                // Nombre completo desde la tabla persona
-                $nombreCompleto = trim(
-                    ($h->usuario->persona->nombre_persona ?? '') . ' ' .
-                        ($h->usuario->persona->apellido_persona ?? '')
-                );
+        $horariosActuales = collect();
 
-                // Rol del usuario
-                $rolNombre = $h->usuario->roles->pluck('nombre')->first() ?? 'Sin Rol';
+        if ($consultorioSeleccionado) {
+            $horariosActuales = HorarioConsultorio::with('rolUsuario.usuario.persona', 'rolUsuario.rol')
+                ->where('consultorio_id', $consultorioSeleccionado)
+                ->where('activo', true)
+                ->get()
+                ->map(function ($h) {
+                    $dia = strtolower(trim($h->dia));
+                    $dia = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $dia);
 
-                return [
-                    'clave_simple'   => "{$h->dia}|{$inicio}|{$fin}",
-                    'id_usuario'     => $h->id_usuario,
-                    'nombre_usuario' => $nombreCompleto ?: $h->usuario->username,
-                    'rol_usuario'    => $rolNombre,
-                ];
-            })
-            : collect();
-
-        $slugsPermitidos = [
-            'administrador',
-            'administrador-de-salud',
-            'secretaria-de-salud',
-            'medicina'
-        ];
-
-        // Usuarios elegibles con persona Y roles
-        $usuariosElegibles = Usuario::whereHas('roles', function ($q) use ($slugsPermitidos) {
-            $q->whereIn('slug', $slugsPermitidos);
-        })
-            ->with(['persona', 'roles']) // Carga la relación 'persona'
-            ->get();
+                    return [
+                        'clave_simple'   => "{$dia}|{$h->hora_inicio}|{$h->hora_fin}",
+                        'id_rol_usuario' => $h->id_rol_usuario,
+                        'nombre_usuario' => $h->nombre_personal,
+                        'rol_usuario'    => $h->nombre_rol_asignado,
+                    ];
+                });
+        }
 
         return view('admin.salud.movimientos.horarios.create', compact(
             'consultorios',
@@ -91,9 +72,6 @@ class HorarioConsultorioController extends Controller
         ));
     }
 
-    /**
-     * Guarda cada asignación de usuario/bloque como un registro independiente.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -107,37 +85,33 @@ class HorarioConsultorioController extends Controller
         $consultorioId = $validated['consultorio_id'];
         $seleccionados = $request->input('horarios', []);
 
-        // Obtener todos los registros existentes del consultorio
         $existentes = HorarioConsultorio::where('consultorio_id', $consultorioId)->get();
 
-        // Mapear los existentes usando la clave completa incluyendo id_usuario
         $existentesMap = $existentes->keyBy(function ($h) {
-            $inicio = \Carbon\Carbon::parse($h->hora_inicio)->format('H:i');
-            $fin    = \Carbon\Carbon::parse($h->hora_fin)->format('H:i');
-            return "{$h->dia}|{$inicio}|{$fin}|{$h->id_usuario}";
+            $dia = strtolower(trim($h->dia));
+            $dia = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $dia);
+            return "{$dia}|{$h->hora_inicio}|{$h->hora_fin}|{$h->id_rol_usuario}";
         });
 
         $clavesProcesadas = [];
 
         foreach ($seleccionados as $item) {
-            // Formato esperado: "dia|hora_inicio|hora_fin|id_usuario"
             $partes = explode('|', $item);
 
             if (count($partes) < 4) {
                 continue;
             }
 
-            $dia       = $partes[0];
-            $inicio    = $partes[1];
-            $fin       = $partes[2];
-            $idUsuario = !empty($partes[3]) ? (int)$partes[3] : null;
+            $dia          = strtolower(trim($partes[0]));
+            $inicio       = $partes[1];
+            $fin          = $partes[2];
+            $idRolUsuario = !empty($partes[3]) ? (int) $partes[3] : null;
 
-            if (!$idUsuario || !array_key_exists($dia, HorarioConsultorio::DIAS)) {
+            if (!$idRolUsuario || !array_key_exists($dia, HorarioConsultorio::DIAS)) {
                 continue;
             }
 
-            // Clave única compuesta por bloque Y usuario
-            $key = "{$dia}|{$inicio}|{$fin}|{$idUsuario}";
+            $key = "{$dia}|{$inicio}|{$fin}|{$idRolUsuario}";
             $clavesProcesadas[] = $key;
 
             if ($existentesMap->has($key)) {
@@ -146,23 +120,21 @@ class HorarioConsultorioController extends Controller
                     $horario->update(['activo' => true]);
                 }
             } else {
-                $nuevo = HorarioConsultorio::create([
+                HorarioConsultorio::create([
                     'consultorio_id' => $consultorioId,
-                    'id_usuario'     => $idUsuario,
+                    'id_rol_usuario' => $idRolUsuario,
                     'dia'            => $dia,
                     'hora_inicio'    => $inicio,
                     'hora_fin'       => $fin,
                     'activo'         => true,
                 ]);
-                $existentesMap->put($key, $nuevo);
             }
         }
 
-        // Desactivar las asignaciones que fueron quitadas en el formulario
         foreach ($existentes as $horario) {
-            $inicio = \Carbon\Carbon::parse($horario->hora_inicio)->format('H:i');
-            $fin    = \Carbon\Carbon::parse($horario->hora_fin)->format('H:i');
-            $key    = "{$horario->dia}|{$inicio}|{$fin}|{$horario->id_usuario}";
+            $dia = strtolower(trim($horario->dia));
+            $dia = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $dia);
+            $key = "{$dia}|{$horario->hora_inicio}|{$horario->hora_fin}|{$horario->id_rol_usuario}";
 
             if (!in_array($key, $clavesProcesadas) && $horario->activo) {
                 $horario->update(['activo' => false]);
@@ -193,18 +165,21 @@ class HorarioConsultorioController extends Controller
 
         $consultorio = Consultorio::findOrFail($consultorioId);
 
-        $horariosActivos = HorarioConsultorio::with('usuario.persona')
+        $horariosActivos = HorarioConsultorio::with('rolUsuario.usuario.persona', 'rolUsuario.rol')
             ->where('consultorio_id', $consultorioId)
             ->where('activo', true)
             ->get();
 
-        // Agrupar como array para soportar múltiples asignaciones por casilla
         $activosMap = [];
         foreach ($horariosActivos as $h) {
-            $inicio = \Carbon\Carbon::parse($h->hora_inicio)->format('H:i');
-            $fin    = \Carbon\Carbon::parse($h->hora_fin)->format('H:i');
-            $activosMap["{$h->dia}|{$inicio}|{$fin}"][] = $h;
+            $dia = strtolower(trim($h->dia));
+            $inicioKey = Carbon::parse($h->hora_inicio)->format('H:i');
+            $finKey = Carbon::parse($h->hora_fin)->format('H:i');
+            $activosMap["{$dia}|{$inicioKey}|{$finKey}"][] = $h;
         }
+
+        // Agrupar asignaciones por persona para el detalle de la página 2
+        $personalAsignado = $horariosActivos->groupBy('id_rol_usuario');
 
         $bloquesJornadas = HorarioConsultorio::BLOQUES;
         $dias = HorarioConsultorio::DIAS;
@@ -212,6 +187,7 @@ class HorarioConsultorioController extends Controller
         $pdf = Pdf::loadView('admin.salud.movimientos.horarios.pdf', compact(
             'consultorio',
             'activosMap',
+            'personalAsignado',
             'bloquesJornadas',
             'dias'
         ))->setPaper('a4', 'landscape');

@@ -169,31 +169,28 @@
                                             });
                                         @endphp
 
-                                        <div class="p-1.5 flex flex-col gap-1 items-center justify-center min-h-[68px] {{ !$loop->last ? 'border-r' : '' }} {{ !$loop->parent->last ? 'border-b' : '' }}"
+                                        <div class="p-4 flex flex-col gap-1 items-center justify-center min-h-[68px] {{ !$loop->last ? 'border-r' : '' }} {{ !$loop->parent->last ? 'border-b' : '' }}"
                                             style="border-color: var(--border-color);">
 
                                             @if ($registrosEnBloque->isNotEmpty())
                                                 <div class="w-full h-full max-h-[160px] overflow-y-auto flex flex-col gap-1 pr-0.5">
                                                     @foreach ($registrosEnBloque as $registro)
                                                         @php
-                                                            $nombrePersonal = null;
-                                                            if (isset($registro->usuario->persona)) {
-                                                                $nombrePersonal = trim(($registro->usuario->persona->nombre_persona ?? '') . ' ' . ($registro->usuario->persona->apellido_persona ?? ''));
-                                                            }
-                                                            if (!$nombrePersonal && isset($registro->usuario)) {
-                                                                $nombrePersonal = $registro->usuario->username;
-                                                            }
-                                                            if (!$nombrePersonal) {
-                                                                $nombrePersonal = 'Asignado';
-                                                            }
+                                                            $nombrePersonal = $registro->nombre_personal;
+                                                            $nombreRolAsignado = $registro->nombre_rol_asignado;
                                                         @endphp
 
-                                                        <div class="w-full rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 p-1.5 flex items-center justify-between gap-1 shadow-sm group hover:border-sky-400 dark:hover:border-sky-600 transition-all">
+                                                        <div class="w-full rounded-xl bg-sky-300/20 hover:bg-sky-300/30 dark:bg-sky-800/30 hover:dark:bg-sky-800/50 border border-sky-200 dark:border-sky-800 p-1.5 flex items-center justify-between gap-1 shadow-sm group hover:border-sky-400 dark:hover:border-sky-600 transition-all">
                                                             <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                                                                <i class="fas fa-user-md text-[10px] text-sky-600 dark:text-sky-400 flex-shrink-0"></i>
-                                                                <span class="text-[10px] font-bold text-sky-900 dark:text-sky-100 truncate" title="{{ $nombrePersonal }}">
-                                                                    {{ $nombrePersonal }}
-                                                                </span>
+                                                                <i class="fas fa-user-md text-[12px] text-sky-600 dark:text-sky-400 flex-shrink-0"></i>
+                                                                <div class="min-w-0 leading-tight">
+                                                                    <span class="block text-[12px] font-bold text-sky-900 dark:text-sky-100 truncate" title="{{ $nombrePersonal }}">
+                                                                        {{ $nombrePersonal }}
+                                                                    </span>
+                                                                    <span class="block text-[10px] font-medium text-sky-600 dark:text-sky-400 truncate">
+                                                                        {{ $nombreRolAsignado }}
+                                                                    </span>
+                                                                </div>
                                                             </div>
 
                                                             <form id="form-delete-{{ $registro->id }}"
@@ -212,7 +209,7 @@
                                                     @endforeach
                                                 </div>
                                             @else
-                                                <div class="w-full h-full min-h-[58px] rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-black/10 flex items-center justify-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 select-none">
+                                                <div class="w-full h-full min-h-[58px] rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-black/10 flex items-center justify-center text-[10px] font-semibold text-gray-500 dark:text-gray-500 select-none">
                                                     Disponible
                                                 </div>
                                             @endif
