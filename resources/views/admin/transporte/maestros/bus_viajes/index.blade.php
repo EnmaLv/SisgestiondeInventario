@@ -1,191 +1,230 @@
-@extends('adminlte::page')
-
-@section('content_header')
-    <div class="rd-card p-4 mb-4 d-flex justify-content-between align-items-center"
-        style="background:#ffffff;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.06);border:1px solid #e5e7eb;">
+<x-app-layout>
+    @include('components.alert')
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="m-0" style="font-size:1.45rem;color:#0f172a;font-weight:700;">Despacho y Control de Viajes</h1>
-            <p class="mt-1 mb-0" style="font-size:0.95rem;color:#475569;">
-                Bienvenido <strong>{{ auth()->user()->persona->nombre_persona ?? auth()->user()->name }}</strong>. Gestione
-                los viajes activos y programados.
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: var(--text-main);">
+                Despacho y Control de Viajes
+            </h1>
+            <p class="mt-1 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
+                Bienvenido <span
+                    class="font-bold">{{ auth()->user()->persona->nombre_persona ?? auth()->user()->name }}</span>.
+                Gestione los viajes activos y programados.
             </p>
         </div>
-        <div>
-            <a href="{{ route('admin.transporte.maestros.bus_viajes.create') }}" class="rd-btn rd-btn-primary">
-                <i class="fas fa-bus"></i> Programar Nuevo Viaje
+
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.transporte.maestros.bus_viajes.create') }}"
+                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-900 text-white font-extrabold text-sm shadow-lg active:scale-95 transition-all">
+                <i class="fas fa-bus text-xs"></i>
+                <span>Programar Nuevo Viaje</span>
             </a>
         </div>
     </div>
-@stop
 
-@section('content')
-    @include('components.alert')
+    <div style="background-color: var(--bg-card); border-color: var(--border-color);"
+        class="p-2.5 rounded-2xl border shadow-sm mb-3 flex flex-col lg:flex-row lg:items-center gap-3">
 
-    <div class="rd-card rd-card-full">
-        <div class="rd-card-body">
-            <div class="rd-card-header rd-header-space">
-                <div>
-                    <h3 class="rd-title-sm">Listado de Viajes</h3>
-                </div>
-                <div class="rd-actions">
-                    <!-- Filtro por Estado -->
-                    <form action="{{ route('admin.transporte.maestros.bus_viajes.index') }}" method="GET" id="filterForm"
-                        class="d-flex align-items-center gap-2">
-                        <select name="estado" class="form-control rd-filter-input" style="min-width: 160px; height: 38px;"
-                            onchange="this.form.submit()">
-                            <option value="todos"
-                                {{ request('estado') == 'todos' || !request('estado') ? 'selected' : '' }}>Todos los estados
-                            </option>
-                            <option value="programado" {{ request('estado') == 'programado' ? 'selected' : '' }}>Programados
-                            </option>
-                            <option value="en_curso" {{ request('estado') == 'en_curso' ? 'selected' : '' }}>En Curso
-                            </option>
-                            <option value="finalizado" {{ request('estado') == 'finalizado' ? 'selected' : '' }}>Finalizados
-                            </option>
-                            <option value="cancelado" {{ request('estado') == 'cancelado' ? 'selected' : '' }}>Cancelados
-                            </option>
-                        </select>
+        <form action="{{ route('admin.transporte.maestros.bus_viajes.index') }}" method="GET" id="filterForm"
+            class="flex flex-col sm:flex-row items-center gap-3 w-full">
 
-                        <!-- Buscador -->
-                        <div class="rd-search-inline">
-                            <input type="text" name="buscar" value="{{ request('buscar') }}" class="rd-search-input"
-                                placeholder="Buscar bus, ruta, chofer..." />
-                            <button class="rd-icon-btn" type="submit"><i class="fas fa-search"></i></button>
-                        </div>
-                    </form>
-                </div>
+            <div class="relative w-full lg:w-48 shrink-0">
+                <select name="estado" onchange="this.form.submit()"
+                    style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                    class="w-full py-2.5 px-3 rounded-xl border text-xs font-bold focus:outline-none focus:ring-2 focus:ring-red-500 transition-all">
+                    <option value="todos" {{ request('estado') == 'todos' || !request('estado') ? 'selected' : '' }}>
+                        Todos los estados</option>
+                    <option value="programado" {{ request('estado') == 'programado' ? 'selected' : '' }}>Programados
+                    </option>
+                    <option value="en_curso" {{ request('estado') == 'en_curso' ? 'selected' : '' }}>En Curso</option>
+                    <option value="finalizado" {{ request('estado') == 'finalizado' ? 'selected' : '' }}>Finalizados
+                    </option>
+                    <option value="cancelado" {{ request('estado') == 'cancelado' ? 'selected' : '' }}>Cancelados
+                    </option>
+                </select>
             </div>
 
-            <table class="rd-table">
+            <div class="relative w-full">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-search text-sm"></i>
+                </div>
+                <input type="text" name="buscar" value="{{ request('buscar') }}"
+                    placeholder="Buscar bus, ruta, chofer..."
+                    style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color); color: var(--text-main);"
+                    class="w-full pl-10 pr-10 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500 transition-all">
+                <button type="submit"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-red-600 transition-colors">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div style="background-color: var(--bg-card); border-color: var(--border-color);"
+        class="rounded-2xl border shadow-sm overflow-hidden">
+
+        <div class="overflow-x-auto" id="printArea">
+            <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr>
-                        <th style="width:50px" class="text-center">#</th>
-                        <th class="text-center">Vehículo</th>
-                        <th class="text-center">Ruta Asignada</th>
-                        <th class="text-center">Conductor</th>
-                        <th class="text-center">Turno</th>
-                        <th class="text-center">Inicio / Registro</th>
-                        <th style="width:130px" class="text-center">Estado</th>
-                        <th style="width:140px" class="text-center">Acciones</th>
+                    <tr
+                        class="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-gray-800 text-[13px] font-black uppercase tracking-wider">
+                        <th class="px-6 py-4 text-center" style="width: 60px;">#</th>
+                        <th class="px-6 py-4 text-center">Vehículo</th>
+                        <th class="px-6 py-4 text-center">Ruta Asignada</th>
+                        <th class="px-6 py-4 text-center">Conductor</th>
+                        <th class="px-6 py-4 text-center">Turno</th>
+                        <th class="px-6 py-4 text-center">Inicio / Registro</th>
+                        <th class="px-6 py-4 text-center" style="width: 130px;">Estado</th>
+                        <th class="px-6 py-4 text-center" style="width: 120px;">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800/60 text-xs font-medium">
                     @forelse($viajes as $viaje)
-                        <tr>
-                            <td class="text-center font-weight-bold">
-                                {{ ($viajes->currentPage() - 1) * $viajes->perPage() + $loop->iteration }}
+                        <x-table-row :id="$viaje->id">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-3 py-1 text-[12px] font-black rounded-lg text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-800">
+                                    {{ ($viajes->currentPage() - 1) * $viajes->perPage() + $loop->iteration }}
+                                </span>
                             </td>
 
-                            <!-- Unidad -->
-                            <td class="text-center">
-                                <span class="font-weight-bold text-dark">
-                                    <i class="fas fa-bus mr-1" style="color:var(--color-primary)"></i>
+                            <td class="px-6 py-4 text-center whitespace-nowrap font-bold"
+                                style="color: var(--text-main);">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fas fa-bus text-red-600 dark:text-red-500"></i>
                                     {{ $viaje->vehiculo->placa ?? 'N/A' }}
                                 </span>
                             </td>
 
-                            <!-- Ruta -->
-                            <td class="text-center">
-                                <span class="font-weight-bold" style="color:#0f172a;">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
+                                <div class="font-bold" style="color: var(--text-main);">
                                     {{ $viaje->ruta->nombre ?? 'N/A' }}
-                                </span>
-                                <br>
-                                <small class="text-muted">{{ $viaje->ruta->distancia_km ?? '0' }} km</small>
+                                </div>
+                                <div class="text-[11px] text-gray-400">
+                                    {{ $viaje->ruta->distancia_km ?? '0' }} km
+                                </div>
                             </td>
 
-                            <!-- Conductor -->
-                            <td class="text-center">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if ($viaje->conductor && $viaje->conductor->persona)
-                                    {{ $viaje->conductor->persona->nombre_persona }}
-                                    {{ $viaje->conductor->persona->apellido_persona }}
+                                    <span class="font-semibold" style="color: var(--text-main);">
+                                        {{ $viaje->conductor->persona->nombre_persona }}
+                                        {{ $viaje->conductor->persona->apellido_persona }}
+                                    </span>
                                 @else
-                                    <span class="text-muted" style="font-size:0.85rem;">Por asignar</span>
+                                    <span class="text-gray-400 italic">Por asignar</span>
                                 @endif
                             </td>
 
-                            <!-- Turno -->
-                            <td class="text-center">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if ($viaje->turno === 'mañana')
-                                    <span class="rd-badge rd-badge-warning"
-                                        style="background:#fef3c7; color:#d97706;">Mañana</span>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 text-[10px] font-black rounded-lg bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
+                                        Mañana
+                                    </span>
                                 @elseif($viaje->turno === 'tarde')
-                                    <span class="rd-badge rd-badge-info"
-                                        style="background:#e0f2fe; color:#0284c7;">Tarde</span>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 text-[10px] font-black rounded-lg bg-sky-100 text-sky-800 dark:bg-sky-950/50 dark:text-sky-300">
+                                        Tarde
+                                    </span>
                                 @elseif($viaje->turno === 'noche')
-                                    <span class="rd-badge" style="background:#1e293b; color:#f8fafc;">Noche</span>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 text-[10px] font-black rounded-lg bg-slate-800 text-slate-100 dark:bg-slate-900 dark:text-slate-200">
+                                        Noche
+                                    </span>
                                 @else
-                                    <span class="text-muted">-</span>
+                                    <span class="text-gray-400">-</span>
                                 @endif
                             </td>
 
-                            <!-- Fecha inicio -->
-                            <td class="text-center" style="font-size:0.85rem;">
+                            <td
+                                class="px-6 py-4 text-center whitespace-nowrap text-gray-500 dark:text-gray-400 font-semibold">
                                 {{ $viaje->fecha_inicio ? $viaje->fecha_inicio->format('d/m/Y h:i A') : $viaje->created_at->format('d/m/Y h:i A') }}
                             </td>
 
-                            <!-- Estado con animación para En Curso -->
-                            <td class="text-center">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if ($viaje->estado === 'programado')
-                                    <span class="rd-badge rd-badge-warning">Programado</span>
+                                    <span
+                                        class="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-black rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900">
+                                        Programado
+                                    </span>
                                 @elseif($viaje->estado === 'en_curso')
-                                    <span class="rd-badge rd-badge-success pulse-badge">
-                                        <i class="fas fa-satellite-dish mr-1"></i> En Curso
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-black rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900 pulse-badge">
+                                        <i class="fas fa-satellite-dish"></i> En Curso
                                     </span>
                                 @elseif($viaje->estado === 'finalizado')
-                                    <span class="rd-badge" style="background:#f1f5f9; color:#475569;">Finalizado</span>
+                                    <span
+                                        class="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-black rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                                        Finalizado
+                                    </span>
                                 @elseif($viaje->estado === 'cancelado')
-                                    <span class="rd-badge rd-badge-danger">Cancelado</span>
+                                    <span
+                                        class="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-black rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">
+                                        Cancelado
+                                    </span>
                                 @endif
                             </td>
 
-                            <!-- Acciones -->
-                            <td class="text-center">
-                                <div class="rd-action-group">
-                                    <!-- Ver Mapa / Detalle del Viaje -->
-                                    <a href="{{ route('admin.transporte.maestros.bus_viajes.show', $viaje->id) }}"
-                                        class="rd-action" title="Ver Monitoreo / Detalle">
-                                        <i class="fas fa-map-marked-alt"></i>
-                                    </a>
+                            <x-table-actions :id="$viaje->id" baseUrl="admin/transporte/maestros/bus_viajes"
+                                :status="$viaje->estado !== 'inactivo'" :toggle="false" :edit="$viaje->estado === 'programado'" :show="false">
 
-                                    <a href="{{ route('admin.transporte.maestros.bus_viajes.edit', $viaje->id) }}"
-                                        class="rd-action" title="Editar Viaje">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                @if (in_array($viaje->estado, ['programado', 'en_curso']))
+                                    <button type="button" onclick="abrirModalCancelar({{ $viaje->id }})"
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-950/50 transition-colors"
+                                        title="Cancelar Viaje">
+                                        <i class="fas fa-ban text-xs"></i>
+                                    </button>
+                                @endif
 
-                                    @if ($viaje->estado === 'programado')
-                                        <form
-                                            action="{{ route('admin.transporte.maestros.bus_viajes.destroy', $viaje->id) }}"
-                                            method="POST" style="display:inline;">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="rd-action rd-btn-danger"
-                                                onclick="confirmAccion(event, this, 'cancelar', 'este viaje')">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
+                                @if (in_array($viaje->estado, ['programado', 'en_curso']))
+                                    <button type="button" onclick="confirmarEliminar({{ $viaje->id }})"
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-rose-500 hover:bg-rose-100 dark:hover:bg-rose-950/50 transition-colors"
+                                        title="Eliminar Viaje">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                @endif
+
+                                <a href="{{ url('admin/transporte/maestros/bus_viajes/' . $viaje->id) }}"
+                                    onclick="event.stopPropagation()"
+                                    class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-sky-500 hover:bg-sky-100 dark:hover:bg-sky-950/50 transition-colors"
+                                    title="Ver en Mapa">
+                                    <i class="fas fa-map-marked-alt text-xs"></i>
+                                </a>
+
+                                <form id="form-eliminar-{{ $viaje->id }}"
+                                    action="{{ route('admin.transporte.maestros.bus_viajes.destroy', $viaje->id) }}"
+                                    method="POST" class="hidden">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+
+                            </x-table-actions>
+
+                        </x-table-row>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">No hay viajes registrados con el filtro
-                                seleccionado.</td>
+                            <td colspan="8"
+                                class="px-6 py-12 text-center text-gray-400 dark:text-gray-500 font-bold text-xs uppercase tracking-wider">
+                                <i class="fas fa-bus text-3xl mb-3 block text-gray-300 dark:text-gray-700"></i>
+                                No hay viajes registrados con el filtro seleccionado
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
-
-            <div class="mt-3 d-flex justify-content-center">
-                {{ $viajes->onEachSide(1)->links('components.pagination') }}
-            </div>
         </div>
-    </div>
-@stop
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/diseño.css') }}">
+        @if ($viajes->hasPages())
+            <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+                {{ $viajes->onEachSide(1)->appends(request()->query())->links('partials.pagination') }}
+            </div>
+        @endif
+    </div>
+
+    @include('admin.transporte.maestros.bus_viajes.modal-cancelar')
+
     <style>
-        /* Animación suave para el indicador En Curso */
         .pulse-badge {
             animation: pulse-animation 2s infinite;
         }
@@ -204,24 +243,39 @@
             }
         }
     </style>
-@stop
 
-@push('js')
     <script>
-        function confirmAccion(event, button, accion, entidad) {
-            event.preventDefault();
+        function abrirModalCancelar(id) {
+            const url = `{{ url('admin/transporte/maestros/bus_viajes') }}/${id}/cancelar`;
+            document.getElementById('formCancelarViaje').action = url;
+            document.getElementById('motivo_cancelacion').value = '';
+            document.getElementById('modalCancelarViaje').classList.remove('hidden');
+        }
+
+        function cerrarModalCancelar() {
+            document.getElementById('modalCancelarViaje').classList.add('hidden');
+        }
+
+        function confirmarEliminar(id) {
             Swal.fire({
-                title: '¿Estás seguro?',
-                text: `¿Desea ${accion} ${entidad}?`,
+                title: '¿Desea eliminar este viaje?',
+                text: "El viaje pasará a estar inactivo y no se podrá recuperar.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: `Sí, ${accion}`,
-                cancelButtonText: 'Cancelar'
+                confirmButtonColor: '#f43f5e',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'rounded-2xl dark:bg-gray-800 dark:text-white',
+                    confirmButton: 'rounded-xl',
+                    cancelButton: 'rounded-xl'
+                }
             }).then((result) => {
-                if (result.isConfirmed) button.closest('form').submit();
+                if (result.isConfirmed) {
+                    document.getElementById(`form-eliminar-${id}`).submit();
+                }
             });
         }
     </script>
-@endpush
+</x-app-layout>

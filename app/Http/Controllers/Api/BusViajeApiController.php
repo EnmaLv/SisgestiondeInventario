@@ -173,6 +173,41 @@ class BusViajeApiController extends Controller
         ]);
     }
 
+    public function cancelar(Request $request, BusViaje $viaje): JsonResponse
+    {
+        if ($viaje->conductor_id !== $request->user()->id_usuario) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para cancelar este viaje.',
+            ], 403);
+        }
+
+        if (!in_array($viaje->estado, ['programado', 'en_curso'])) {
+            return response()->json([
+                'success' => false,
+                'message' => "No se puede cancelar el viaje porque su estado es '{$viaje->estado}'.",
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'motivo_cancelacion' => 'required|string|min:5|max:500',
+        ], [
+            'motivo_cancelacion.required' => 'Debe ingresar una razón para cancelar el viaje.',
+            'motivo_cancelacion.min'      => 'La razón debe contener al menos 5 caracteres.',
+        ]);
+
+        $viaje->update([
+            'estado'             => 'cancelado',
+            'motivo_cancelacion' => $validated['motivo_cancelacion'],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'El viaje ha sido cancelado exitosamente.',
+            'data'    => $viaje->fresh(),
+        ]);
+    }
+
     public function historial(Request $request): JsonResponse
     {
         $viajes = BusViaje::delConductor($request->user()->id_usuario)

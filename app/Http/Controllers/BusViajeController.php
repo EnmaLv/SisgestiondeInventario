@@ -27,8 +27,7 @@ class BusViajeController extends Controller
             $buscar = $request->buscar;
             $query->where(function ($q) use ($buscar) {
                 $q->whereHas('vehiculo', function ($v) use ($buscar) {
-                    $v->where('placa', 'like', "%{$buscar}%")
-                        ->orWhere('unidad', 'like', "%{$buscar}%");
+                    $v->where('placa', 'like', "%{$buscar}%");
                 })
                     ->orWhereHas('ruta', function ($r) use ($buscar) {
                         $r->where('nombre', 'like', "%{$buscar}%");
@@ -212,7 +211,27 @@ class BusViajeController extends Controller
 
     public function destroy(BusViaje $busViaje)
     {
-        $busViaje->update(['estado' => 'cancelado']);
-        return redirect()->back()->with('success', 'El viaje ha sido cancelado exitosamente.');
+        $busViaje->update([
+            'estado' => 'inactivo'
+        ]);
+
+        return redirect()->route('admin.transporte.maestros.bus_viajes.index')->with('success', 'El viaje ha sido desactivado correctamente.');
+    }
+
+    public function cancelar(Request $request, BusViaje $busViaje)
+    {
+        $request->validate([
+            'motivo_cancelacion' => ['required', 'string', 'min:5', 'max:500'],
+        ], [
+            'motivo_cancelacion.required' => 'Debe ingresar una razón para cancelar el viaje.',
+            'motivo_cancelacion.min'      => 'La razón debe contener al menos 5 caracteres.',
+        ]);
+
+        $busViaje->update([
+            'estado'             => 'cancelado',
+            'motivo_cancelacion' => $request->motivo_cancelacion,
+        ]);
+
+        return redirect()->route('admin.transporte.maestros.bus_viajes.index')->with('success', 'El viaje ha sido cancelado exitosamente.');
     }
 }

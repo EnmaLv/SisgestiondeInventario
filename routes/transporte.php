@@ -12,6 +12,7 @@ use App\Http\Controllers\BusCargaCombustibleController;
 use App\Http\Controllers\BusRutaController;
 
 /* Marcas */
+
 Route::get('/transporte/maestros/bus_marcas', [BusMarcaController::class, 'index'])->name('admin.transporte.maestros.bus_marcas.index');
 Route::post('/transporte/maestros/bus_marcas/store', [BusMarcaController::class, 'store'])->name('admin.transporte.maestros.bus_marcas.store');
 Route::put('/transporte/maestros/bus_marcas/{busMarca}', [BusMarcaController::class, 'update'])->name('admin.transporte.maestros.bus_marcas.update');
@@ -78,6 +79,7 @@ Route::get('/transporte/maestros/bus_viajes/{busViaje}/edit', [BusViajeControlle
 Route::get('/transporte/maestros/bus_viajes/{busViaje}', [BusViajeController::class, 'show'])->name('admin.transporte.maestros.bus_viajes.show');
 Route::put('/transporte/maestros/bus_viajes/{busViaje}', [BusViajeController::class, 'update'])->name('admin.transporte.maestros.bus_viajes.update');
 Route::delete('/transporte/maestros/bus_viajes/{busViaje}', [BusViajeController::class, 'destroy'])->name('admin.transporte.maestros.bus_viajes.destroy');
+Route::post('/transporte/maestros/bus_viajes/{busViaje}/cancelar', [BusViajeController::class, 'cancelar'])->name('admin.transporte.maestros.bus_viajes.cancelar');
 
 /* Cargas de Combustible */
 Route::get('/transporte/maestros/bus_carga_combustibles', [BusCargaCombustibleController::class, 'index'])->name('admin.transporte.maestros.bus_carga_combustibles.index');
